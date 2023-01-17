@@ -5,7 +5,10 @@ import com.ultreon.devices.init.DeviceItems;
 import dev.architectury.registry.CreativeTabRegistry;
 import dev.architectury.registry.registries.RegistrySupplier;
 import net.minecraft.world.item.*;
-
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import static com.ultreon.devices.Devices.id;
 
 public class DeviceTab {

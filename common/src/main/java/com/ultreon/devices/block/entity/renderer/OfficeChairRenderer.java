@@ -63,7 +63,6 @@ public class OfficeChairRenderer implements BlockEntityRenderer<OfficeChairBlock
             BlockRenderDispatcher blockrendererdispatcher = Minecraft.getInstance().getBlockRenderer();
             blockrendererdispatcher.renderSingleBlock(state, poseStack, bufferSource, packedLight, packedOverlay);
 
-
             Lighting.setupFor3DItems();
         }
         poseStack.popPose();

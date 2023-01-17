@@ -77,7 +77,6 @@ public class DeviceItems {
         public RegistrySupplier<Item> register(Registrar<Item> registrar, DyeColor color) {
             return registrar.register(Devices.id(color.getName() + "_flash_drive"), () -> new FlashDriveItem(DyeColor.WHITE));
         }
-
         @Override
         protected Registrar<Item> autoInit() {
             return REGISTER;

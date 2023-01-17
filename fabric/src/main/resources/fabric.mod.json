@@ -39,6 +39,9 @@
     ],
     "devices:application_registration": [
       "com.ultreon.devices.fabric.BuiltinAppsRegistration"
+    ],
+    "fabric-datagen": [
+      "com.ultreon.devices.datagen.DevicesDataGenerator"
     ]
   },
   "mixins": [
