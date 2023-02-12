@@ -60,6 +60,11 @@ public class Image extends Component {
         @Override
         public void init(Layout layout) {
             super.init(layout);
+            if (appInfo.getIcon().getBase().getU() == -1 && appInfo.getIcon().getBase().getV() == -1) {
+                var image = new Image(0, 0, componentWidth, componentHeight, 0, 0, 14, 14, 224, 224, Laptop.ICON_TEXTURES);
+                this.addComponent(image);
+                return;
+            }
             for (AppInfo.Icon.Glyph glyph : glyphs) {
                 if (glyph.getU() == -1 || glyph.getV() == -1) continue;
                 var image = new Image(0, 0, componentWidth, componentHeight, glyph.getU(), glyph.getV(), 14, 14, 224, 224, Laptop.ICON_TEXTURES);
