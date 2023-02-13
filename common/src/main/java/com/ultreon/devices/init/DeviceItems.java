@@ -1,12 +1,12 @@
 package com.ultreon.devices.init;
 
-import com.ultreon.devices.ModDeviceTypes;
 import com.ultreon.devices.Devices;
+import com.ultreon.devices.ModDeviceTypes;
 import com.ultreon.devices.item.*;
 import com.ultreon.devices.util.DyeableRegistration;
 import dev.architectury.registry.registries.Registrar;
 import dev.architectury.registry.registries.RegistrySupplier;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 
 @SuppressWarnings("unused")
 public class DeviceItems {
-    private static final Registrar<Item> REGISTER = Devices.REGISTRIES.get().get(Registry.ITEM_REGISTRY);
+    private static final Registrar<Item> REGISTER = Devices.REGISTRIES.get().get(Registries.ITEM);
 
     // Laptops
     public static final DyeableRegistration<Item> LAPTOPS = new DyeableRegistration<>() {
@@ -105,7 +105,7 @@ public class DeviceItems {
     public static final RegistrySupplier<ComponentItem> COMPONENT_SMALL_ELECTRIC_MOTOR = REGISTER.register(Devices.id("small_electric_motor"), () -> new ComponentItem(new Item.Properties()));
     public static final RegistrySupplier<ComponentItem> COMPONENT_CARRIAGE = REGISTER.register(Devices.id("carriage"), () -> new ComponentItem(new Item.Properties()));
 
-    public static final RegistrySupplier<EthernetCableItem> ETHERNET_CABLE = REGISTER.register(Devices.id("ethernet_cable"), () -> new EthernetCableItem());
+    public static final RegistrySupplier<EthernetCableItem> ETHERNET_CABLE = REGISTER.register(Devices.id("ethernet_cable"), EthernetCableItem::new);
     
 
     public static Stream<Item> getAllItems() {

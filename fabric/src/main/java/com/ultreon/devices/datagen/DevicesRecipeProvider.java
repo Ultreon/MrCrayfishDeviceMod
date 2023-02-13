@@ -1,34 +1,29 @@
 package com.ultreon.devices.datagen;
 
 import com.ultreon.devices.init.DeviceBlocks;
-import dev.architectury.registry.registries.RegistrySupplier;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.tags.TagEntry;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
-import net.minecraft.world.level.block.Block;
 
 import java.util.function.Consumer;
 
 public class DevicesRecipeProvider extends FabricRecipeProvider {
-    public DevicesRecipeProvider(FabricDataGenerator dataGenerator) {
+    public DevicesRecipeProvider(FabricDataOutput dataGenerator) {
         super(dataGenerator);
     }
 
     @Override
-    protected void generateRecipes(Consumer<FinishedRecipe> exporter) {
-        DeviceBlocks.LAPTOPS.getMap().forEach(((dyeColor, blockRegistrySupplier) -> {
-            laptop(exporter, blockRegistrySupplier.get(), dyeColor);
-        }));
+    public void buildRecipes(Consumer<FinishedRecipe> exporter) {
+        DeviceBlocks.LAPTOPS.getMap().forEach(((dyeColor, blockRegistrySupplier) -> laptop(exporter, blockRegistrySupplier.get(), dyeColor)));
     }
 
     public static void laptop(Consumer<FinishedRecipe> finishedRecipeConsumer, ItemLike laptop, DyeColor color) {
-        ShapedRecipeBuilder.shaped(laptop)
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, laptop)
                 .define('+', DyeUtils.getWoolFromDye(color))
                 .define('#', Items.NETHERITE_INGOT)
                 .define('|', Items.QUARTZ)

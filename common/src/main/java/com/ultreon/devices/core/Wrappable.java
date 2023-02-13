@@ -69,7 +69,6 @@ public abstract class Wrappable {
      * sure you call this super method.
      *
      * @param character the typed character
-     * @param code      the typed character code
      */
     public abstract void handleCharTyped(char character, int modifiers);
 
@@ -125,9 +124,10 @@ public abstract class Wrappable {
      *
      * @param mouseX    the x position of the mouse
      * @param mouseY    the y position of the mouse
+     * @param delta
      * @param direction the direction of the scroll. true is up, false is down
      */
-    public abstract void handleMouseScroll(int mouseX, int mouseY, boolean direction);
+    public abstract void handleMouseScroll(int mouseX, int mouseY, double delta, boolean direction);
 
     /**
      * Gets the text in the title bar.

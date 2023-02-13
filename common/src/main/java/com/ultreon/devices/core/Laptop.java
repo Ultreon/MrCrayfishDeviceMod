@@ -233,7 +233,6 @@ public class Laptop extends Screen implements System {
      */
     @Override
     public void init() {
-        Minecraft.getInstance().keyboardHandler.setSendRepeatsToGui(true);
         int posX = (width - DEVICE_WIDTH) / 2;
         int posY = (height - DEVICE_HEIGHT) / 2;
         bar.init(posX + BORDER, posY + DEVICE_HEIGHT - 28);
@@ -254,8 +253,6 @@ public class Laptop extends Screen implements System {
 
     @Override
     public void removed() {
-        Minecraft.getInstance().keyboardHandler.setSendRepeatsToGui(false);
-
         /* Close all windows and sendTask application data */
         for (int i = 0; i < windows.size(); i++) {
             Window<?> window = windows.get(i);
@@ -755,7 +752,7 @@ public class Laptop extends Screen implements System {
         if (delta != 0) {
             try {
                 if (windows.get(0) != null) {
-                    windows.get(0).handleMouseScroll((int) mouseX, (int) mouseY, delta >= 0);
+                    windows.get(0).handleMouseScroll((int) mouseX, (int) mouseY, delta, delta >= 0);
                 }
             } catch (Exception e) {
                 e.printStackTrace();

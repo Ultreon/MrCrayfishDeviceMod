@@ -5,20 +5,20 @@ import com.ultreon.devices.init.DeviceItems;
 import dev.architectury.registry.CreativeTabRegistry;
 import dev.architectury.registry.registries.RegistrySupplier;
 import net.minecraft.world.item.*;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
+
 import static com.ultreon.devices.Devices.id;
 
 public class DeviceTab {
     @SuppressWarnings("UnstableApiUsage")
-    public static CreativeModeTab create() {
+    public static CreativeTabRegistry.TabSupplier create() {
         System.out.println("creating creative tab");
 //        CreativeTabRegistry.modify(CreativeModeTabs.TAB_REDSTONE, output -> {
 //            output.acceptAll();
 //        });
-        return CreativeTabRegistry.create(id("devices_tab_device"), () -> new ItemStack(DeviceBlocks.LAPTOPS.of(DyeColor.RED).get()), (featureFlagSet, output) -> {
+        CreativeTabRegistry.TabSupplier devicesTabDevice = CreativeTabRegistry.create(id("devices_tab_device"), () -> new ItemStack(DeviceBlocks.LAPTOPS.of(DyeColor.RED).get()));
+        CreativeTabRegistry.modify(devicesTabDevice, (flags, output, canUseGameMasterBlocks) -> {
             for (RegistrySupplier<Item> laptop : DeviceItems.LAPTOPS) {
                 output.accept(laptop.get());
             }
@@ -35,5 +35,6 @@ public class DeviceTab {
                 output.accept(flashdrive.get());
             }
         });
+        return devicesTabDevice;
     }
 }
