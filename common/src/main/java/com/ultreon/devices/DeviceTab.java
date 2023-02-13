@@ -4,8 +4,8 @@ import com.ultreon.devices.init.DeviceBlocks;
 import com.ultreon.devices.init.DeviceItems;
 import dev.architectury.registry.CreativeTabRegistry;
 import dev.architectury.registry.registries.RegistrySupplier;
-import net.minecraft.world.item.*;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import static com.ultreon.devices.Devices.id;
@@ -22,6 +22,7 @@ public class DeviceTab {
             for (RegistrySupplier<Item> laptop : DeviceItems.LAPTOPS) {
                 output.accept(laptop.get());
             }
+            output.accept(DeviceItems.MAC_MAX_X.get());
             for (RegistrySupplier<Item> printer : DeviceItems.PRINTERS) {
                 output.accept(printer.get());
             }
