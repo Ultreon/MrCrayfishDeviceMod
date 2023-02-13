@@ -13,6 +13,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.DyeColor;
 
 /**
  * Adds a button to the title screen to test system applications that don't require the system
@@ -27,7 +28,7 @@ public class ClientAppDebug {
                 var y = screen.height / 4 + 48;
 
                 var a = new Button(screen.width / 2 - 100, y + rowHeight * -1, 200, 20, Component.literal("DV TEST"), (button) -> {
-                    Minecraft.getInstance().setScreen(new Laptop(new LaptopBlockEntity(new BlockPos(0, 0, 0), DeviceBlocks.WHITE_LAPTOP.get().defaultBlockState()), true));
+                    Minecraft.getInstance().setScreen(new Laptop(new LaptopBlockEntity(new BlockPos(0, 0, 0), DeviceBlocks.LAPTOPS.of(DyeColor.WHITE).get().defaultBlockState()), true));
                 }, Button.NO_TOOLTIP);
                 access.addRenderableWidget(a);
             }

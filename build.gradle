@@ -12,10 +12,10 @@ repositories {
 architectury {
     minecraft = rootProject.minecraft_version
 }
-version = "${mod_version}-${System.getenv("GITHUB_BUILD_NUMBER") == null ? "local" : System.getenv("GITHUB_BUILD_NUMBER")}"
+version = "${mod_version}"//-${System.getenv("GITHUB_BUILD_NUMBER") == null ? "local" : System.getenv("GITHUB_BUILD_NUMBER")}"
 
 Object getIngame_version() {
-    return "${mod_version}+${System.getenv("GITHUB_BUILD_NUMBER") == null ? "local" : System.getenv("GITHUB_BUILD_NUMBER")}"
+    return "${mod_version}"//+${System.getenv("GITHUB_BUILD_NUMBER") == null ? "local" : System.getenv("GITHUB_BUILD_NUMBER")}"
 }
 
 Object getModDescription() {
@@ -119,10 +119,7 @@ allprojects {
         // See https://docs.gradle.org/current/userguide/declaring_repositories.html
         // for more information about repositories.
         maven { url = "https://maven.parchmentmc.org" }
-
-        flatDir {
-            dir "${rootProject.projectDir}/libs"
-        }
+        maven { url = "https://maven.jab125.dev" }
     }
 
     tasks.withType(JavaCompile) {
@@ -132,6 +129,20 @@ allprojects {
 
     java {
         withSourcesJar()
+    }
+}
+
+void setupRepositories(RepositoryHandler repositories) {
+    //repositories.mavenLocal() // uncomment for testing
+    def ENV = System.getenv()
+    if (ENV.MAVEN_URL) {
+        repositories.maven {
+            url ENV.MAVEN_URL
+            credentials {
+                username ENV.MAVEN_USERNAME
+                password ENV.MAVEN_PASSWORD
+            }
+        }
     }
 }
 

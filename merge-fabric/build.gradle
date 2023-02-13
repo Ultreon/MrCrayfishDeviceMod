@@ -25,7 +25,7 @@ configurations {
 }
 
 dependencies {
-    include(project(":fabric"))
+    include(project(path: ":fabric", configuration: "namedElements"))
 }
 
 processResources {
