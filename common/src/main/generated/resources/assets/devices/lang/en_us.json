@@ -129,5 +129,10 @@
   "message.devices.router_max_devices": "The maximum amount of devices has been reached for this router.",
   "message.devices.select_router": "Now select a router to connect this device to.",
   "message.devices.successful_connection": "Successfully connected the selected device to this router.",
-  "message.devices.successful_registered": "Successfully registered the selected device to this router."
+  "message.devices.successful_registered": "Successfully registered the selected device to this router.",
+  "screen.devices.cef.license.title": "CEF License Agreement",
+  "screen.devices.cef.license.description": "In order to use the web browser in the mod, you need to agree to the CEF license.",
+  "button.devices.cef.license.agree": "Agree",
+  "button.devices.cef.license.decline": "Decline",
+  "screen.devices.cef.download.title": "Downloading CEF"
 }

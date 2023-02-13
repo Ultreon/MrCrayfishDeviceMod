@@ -35,6 +35,7 @@ dependencies {
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 
+    modImplementation 'com.github.Ultreon.ultreonlib:ultreon-lib-forge:1.3.2'
 
     forgeRuntimeLibrary "org.jetbrains.kotlin:kotlin-stdlib:1.7.10"
     forgeRuntimeLibrary "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10"
@@ -54,6 +55,7 @@ dependencies {
     forgeRuntimeLibrary "org.jetbrains.kotlin:kotlin-stdlib:1.7.10"
     //forgeRuntimeLibrary "com.ultreon:ultranlang:0.1.0+6"
     forgeRuntimeLibrary "com.jab125:apoint:1.0.0"
+    forgeRuntimeLibrary 'me.friwi:jcefmaven:109.1.11.1'
 
 //    include("org.jetbrains.kotlin:kotlin-stdlib:1.7.10")
 //    implementation include("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10")
@@ -74,20 +76,17 @@ dependencies {
 
 //    implementation include("com.ultreon:ultranlang:0.1.0+6")
     implementation include("com.jab125:apoint:1.0.0")
-
-   // shadowCommon "org.jetbrains.kotlin:kotlin-reflect:1.7.10"
-    //shadowCommon "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10"
-   // shadowCommon "com.jab125:apoint:1.0.0"
+    implementation include('me.friwi:jcefmaven:109.1.11.1')
 }
 
 processResources {
-    inputs.property "version", rootProject.getIngame_version()
+    inputs.property "version", rootProject.getInGameVersion()
     inputs.property "description", rootProject.getModDescription()
     System.out.println(inputs.getProperties())
 
     filesMatching("META-INF/mods.toml") {
         HashMap<String, ?> p = new HashMap<>()
-        p.put("version", rootProject.getIngame_version())
+        p.put("version", rootProject.getInGameVersion())
         p.put("description", rootProject.getModDescription())
         p.put("loaderVersion", rootProject.forge_version.split("\\.")[0])
         p.put("forgeVersion", rootProject.forge_version)
@@ -102,12 +101,6 @@ shadowJar {
 
     configurations = [project.configurations.shadowCommon]
     classifier "dev-shadow"
-
-//    relocate 'org.jetbrains.kotlin', "com.ultreon.devices.shadow.org.jetbrains.kotlin"
-//    relocate 'org.jetbrains.kotlinx', "com.ultreon.devices.shadow.org.jetbrains.kotlinx"
-//
-//    relocate 'kotlin', "com.ultreon.devices.shadow.kotlin"
-//    relocate 'kotlinx', "com.ultreon.devices.shadow.kotlinx"
 }
 
 remapJar {

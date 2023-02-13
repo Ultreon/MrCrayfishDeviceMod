@@ -1,6 +1,11 @@
 {
     "itemGroup.devices_tab_device": "Devices Mod",
     "block.devices.printed_paper": "Defaced Paper",
+    "screen.devices.cef.license.title": "CEF License Agreement",
+    "screen.devices.cef.license.description": "In order to use the web browser in the mod, you need to agree to the CEF license.",
+    "button.devices.cef.license.agree": "Agree",
+    "button.devices.cef.license.decline": "Decline",
+    "screen.devices.cef.download.title": "Downloading CEF",
     "item.devices.ethernet_cable": "Ethernet Cable",
     "item.devices.circuit_board": "Circuit Board",
     "item.devices.motherboard": "Motherboard",

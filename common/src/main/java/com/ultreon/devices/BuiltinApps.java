@@ -5,6 +5,7 @@ import com.ultreon.devices.programs.BoatRacersApp;
 import com.ultreon.devices.programs.NoteStashApp;
 import com.ultreon.devices.programs.PixelPainterApp;
 import com.ultreon.devices.programs.auction.MineBayApp;
+import com.ultreon.devices.programs.browser.WebBrowser;
 import com.ultreon.devices.programs.email.EmailApp;
 import com.ultreon.devices.programs.gitweb.GitWebApp;
 import com.ultreon.devices.programs.snake.SnakeApp;
@@ -19,6 +20,7 @@ public class BuiltinApps {
         ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "bank"), () -> BankApp::new, false);
         ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "file_browser"), () -> FileBrowserApp::new, true);
         ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "gitweb"), () -> GitWebApp::new, false);
+        ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "browser"), () -> WebBrowser::new, false);
         ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "note_stash"), () -> NoteStashApp::new, false);
         ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "pixel_painter"), () -> PixelPainterApp::new, false);
         ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "ender_mail"), () -> EmailApp::new, false);

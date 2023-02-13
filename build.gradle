@@ -1,9 +1,10 @@
+//file:noinspection GroovyAssignabilityCheck
+//file:noinspection GrMethodMayBeStatic
 plugins {
     id "architectury-plugin" version "3.4-SNAPSHOT"
     id "dev.architectury.loom" version "0.12.0-SNAPSHOT" apply false
     id "io.github.pacifistmc.forgix" version "1.2.2"
     id "org.jetbrains.kotlin.jvm" version "1.7.10"
-  //  id 'org.jetbrains.kotlin.jvm' version '1.7.1'
 }
 repositories {
     gradlePluginPortal()
@@ -14,35 +15,28 @@ architectury {
 }
 version = "${mod_version}"//-${System.getenv("GITHUB_BUILD_NUMBER") == null ? "local" : System.getenv("GITHUB_BUILD_NUMBER")}"
 
-Object getIngame_version() {
+Object getInGameVersion() {
     return "${mod_version}"//+${System.getenv("GITHUB_BUILD_NUMBER") == null ? "local" : System.getenv("GITHUB_BUILD_NUMBER")}"
 }
 
 Object getModDescription() {
     return "${mod_description}"
 }
-//forgix {
-//    group = "com.ultreon.mods"
-//    mergedJarName = "devices-${version}.jar"
-//    outputDir = "build/libs/merged"
-//
-//    forge {
-//        projectName = "merge-forge"
-//        jarLocation = "build/libs/devices-${version}.jar"
-//       // additionalRelocate("com.ultreon.devices", "forge.com.ultreon.devices")
-//
-//    //    mixin "devices-common.mixins.json"
-//   //     mixin "devices.mixins.json"
-//    }
-//
-//    fabric {
-//        projectName = "merge-fabric"
-//        jarLocation = "build/libs/devices-${version}.jar"
-//     //   additionalRelocate("com.ultreon.devices", "fabric.com.ultreon.devices")
-//    }
-//}
-//
-//println "forgix.outputDir = $forgix.outputDir"
+forgix {
+    group = "com.ultreon.mods"
+    mergedJarName = "devices-${version}.jar"
+    outputDir = "build/libs/merged"
+
+    forge {
+        projectName = "merge-forge"
+        jarLocation = "build/libs/devices-${version}.jar"
+    }
+
+    fabric {
+        projectName = "merge-fabric"
+        jarLocation = "build/libs/devices-${version}.jar"
+    }
+}
 
 subprojects {
     apply plugin: "dev.architectury.loom"
@@ -58,10 +52,6 @@ subprojects {
             officialMojangMappings()
             parchment("org.parchmentmc.data:parchment-1.19.2:2022.08.10@zip")
         }
-
-//        layered
-        // The following line declares the yarn mappings you may select this one as well.
-        // mappings "net.fabricmc:yarn:@YARN_MAPPINGS@:v2"
     }
 }
 
@@ -80,13 +70,17 @@ allprojects {
         // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
         // See https://docs.gradle.org/current/userguide/declaring_repositories.html
         // for more information about repositories.
-        maven { url "https://maven.parchmentmc.org" }
-        maven { url "https://maven.jab125.dev" }
+        maven { url "https://maven.parchmentmc.org/" }
+        maven { url "https://maven.jab125.dev/" }
+        maven { url "https://jitpack.io/" }
+        maven { url "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" }
+        maven { url "https://cursemaven.com/" }
         flatDir { dir "${rootProject.projectDir}/libs/" }
     }
 
-    tasks.withType(JavaCompile) {
+    tasks.withType(JavaCompile).configureEach {
         options.encoding = "UTF-8"
+        //noinspection GroovyAccessibility
         options.release = 17
     }
 
@@ -110,4 +104,3 @@ void setupRepositories(RepositoryHandler repositories) {
 }
 
 mergeJars.mustRunAfter build
-//build.dependsOn mergeJars

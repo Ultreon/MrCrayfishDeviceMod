@@ -26,14 +26,8 @@ configurations {
 
 dependencies {
     include(project(path: ":fabric", configuration: "namedElements"))
-}
 
-processResources {
-//    inputs.property "version", rootProject.getIngame_version()
-//
-//    filesMatching("fabric.mod.json") {
-//        expand "version": rootProject.getIngame_version()
-//    }
+    include('me.friwi:jcefmaven:109.1.11.1')
 }
 
 shadowJar {

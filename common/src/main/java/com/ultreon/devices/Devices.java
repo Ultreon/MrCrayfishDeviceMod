@@ -13,6 +13,7 @@ import com.ultreon.devices.api.print.PrintingManager;
 import com.ultreon.devices.api.task.TaskManager;
 import com.ultreon.devices.api.utils.OnlineRequest;
 import com.ultreon.devices.block.PrinterBlock;
+import com.ultreon.devices.cef.CEFLicenseScreen;
 import com.ultreon.devices.core.client.ClientNotification;
 import com.ultreon.devices.core.client.debug.ClientAppDebug;
 import com.ultreon.devices.core.io.task.*;
@@ -21,7 +22,6 @@ import com.ultreon.devices.core.network.task.TaskGetDevices;
 import com.ultreon.devices.core.network.task.TaskPing;
 import com.ultreon.devices.core.print.task.TaskPrint;
 import com.ultreon.devices.core.task.TaskInstallApp;
-import com.ultreon.devices.init.DeviceItems;
 import com.ultreon.devices.network.PacketHandler;
 import com.ultreon.devices.network.task.SyncApplicationPacket;
 import com.ultreon.devices.network.task.SyncConfigPacket;
@@ -40,7 +40,12 @@ import com.ultreon.devices.programs.system.SystemApp;
 import com.ultreon.devices.programs.system.task.*;
 import com.ultreon.devices.util.SiteRegistration;
 import com.ultreon.devices.util.Vulnerability;
+import com.ultreon.ultranlang.SpiKt;
+import com.ultreon.ultranlang.func.NativeCalls;
+import com.ultreon.ultranlang.symbol.BuiltinTypeSymbol;
+import dev.architectury.event.CompoundEventResult;
 import dev.architectury.event.EventResult;
+import dev.architectury.event.events.client.ClientGuiEvent;
 import dev.architectury.event.events.client.ClientPlayerEvent;
 import dev.architectury.event.events.common.InteractionEvent;
 import dev.architectury.event.events.common.LifecycleEvent;
@@ -49,24 +54,22 @@ import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.architectury.injectables.targets.ArchitecturyTarget;
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.CreativeTabRegistry;
-import dev.architectury.registry.registries.Registries;
+import dev.architectury.registry.registries.RegistrarManager;
 import dev.architectury.utils.Env;
 import dev.architectury.utils.EnvExecutor;
+import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import org.burningwave.core.assembler.StaticComponentContainer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
@@ -90,6 +93,8 @@ public class Devices {
     private static final SiteRegisterStack SITE_REGISTER_STACK = new SiteRegisterStack();
     static List<AppInfo> allowedApps;
     private static List<Vulnerability> vulnerabilities;
+    private static boolean shownLicense;
+
     public static List<Vulnerability> getVulnerabilities() {
         return vulnerabilities;
     }
@@ -97,6 +102,11 @@ public class Devices {
     private static TestManager tests;
 
     public static void init() {
+        StaticComponentContainer.Modules.exportAllToAll();
+        String prop = System.getProperty("java.awt.headless");
+        System.out.println("property = " + prop);
+        System.getProperties().remove("java.awt.headless");
+
         if (ArchitecturyTarget.getCurrentTarget().equals("fabric")) {
             preInit();
             serverSetup();
@@ -337,6 +347,16 @@ public class Devices {
 
             TaskManager.registerTask(TaskNotificationTest::new);
         }
+
+        ClientGuiEvent.SET_SCREEN.register(screen -> {
+            if (screen instanceof TitleScreen) {
+                if (!shownLicense) {
+                    shownLicense = true;
+                    return CompoundEventResult.interruptTrue(new CEFLicenseScreen(screen));
+                }
+            }
+            return CompoundEventResult.pass();
+        });
 
         EnvExecutor.runInEnv(Env.CLIENT, () -> () -> PrintingManager.registerPrint(new ResourceLocation(Reference.MOD_ID, "picture"), PixelPainterApp.PicturePrint.class));
     }

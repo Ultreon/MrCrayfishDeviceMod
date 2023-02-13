@@ -11,13 +11,8 @@ architectury {
 
 loom {
     forge {
-     //   convertAccessWideners = true
-      //  extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
+
     }
-//    forge {
-//        convertAccessWideners = true
-//        extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
-//    }
 }
 
 configurations {
@@ -32,14 +27,9 @@ dependencies {
     forge "net.minecraftforge:forge:${rootProject.architectury.minecraft}-${rootProject.forge_version}"
     forgeRuntimeLibrary project(":forge");
      /*modRuntimeOnly*/ include(project(":forge"));
-}
 
-processResources {
-//    inputs.property "version", rootProject.getIngame_version()
-//
-//    filesMatching("META-INF/mods.toml") {
-//        expand "version": rootProject.getIngame_version()
-//    }
+    forgeRuntimeLibrary('me.friwi:jcefmaven:109.1.11.1')
+    include('me.friwi:jcefmaven:109.1.11.1')
 }
 
 shadowJar {
@@ -47,12 +37,6 @@ shadowJar {
 
     configurations = [project.configurations.shadowCommon]
     classifier "dev-shadow"
-
-//    relocate 'org.jetbrains.kotlin', "com.ultreon.devices.shadow.org.jetbrains.kotlin"
-//    relocate 'org.jetbrains.kotlinx', "com.ultreon.devices.shadow.org.jetbrains.kotlinx"
-//
-//    relocate 'kotlin', "com.ultreon.devices.shadow.kotlin"
-//    relocate 'kotlinx', "com.ultreon.devices.shadow.kotlinx"
 }
 
 remapJar {
