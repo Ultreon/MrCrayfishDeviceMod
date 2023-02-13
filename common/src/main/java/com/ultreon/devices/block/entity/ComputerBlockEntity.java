@@ -1,6 +1,6 @@
 package com.ultreon.devices.block.entity;
 
-import com.ultreon.devices.block.ComputerBlock;
+import com.ultreon.devices.block.LaptopBlock;
 import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.util.BlockEntityUtil;
 import net.fabricmc.api.EnvType;
@@ -51,11 +51,11 @@ public abstract class ComputerBlockEntity extends NetworkDeviceBlockEntity.Color
             prevRotation = rotation;
             if (!open) {
                 if (rotation > 0) {
-                    rotation -= 10F;
+                    rotation -= 10;
                 }
             } else {
                 if (rotation < OPENED_ANGLE) {
-                    rotation += 10F;
+                    rotation += 10;
                 }
             }
         }
@@ -66,7 +66,7 @@ public abstract class ComputerBlockEntity extends NetworkDeviceBlockEntity.Color
         super.load(compound);
         if (compound.contains("open")) {
             this.open = compound.getBoolean("open");
-            this.getBlockState().setValue(ComputerBlock.OPEN, open);
+            this.getBlockState().setValue(LaptopBlock.OPEN, open);
         }
         if (compound.contains("system_data", Tag.TAG_COMPOUND)) {
             this.systemData = compound.getCompound("system_data");
@@ -134,30 +134,10 @@ public abstract class ComputerBlockEntity extends NetworkDeviceBlockEntity.Color
             level.gameEvent(!open ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, getBlockPos(), GameEvent.Context.of(entity, this.getBlockState()));
         }
         boolean oldOpen = open;
-        open = !getBlockState().getValue(ComputerBlock.OPEN);
+        open = !getBlockState().getValue(LaptopBlock.OPEN);
         if (oldOpen != open) {
             pipeline.putBoolean("open", open);
-            var d = getBlockState().setValue(ComputerBlock.OPEN, open);
-            this.level.setBlock(this.getBlockPos(), d, 18);
-            sync();
-        }
-
-        if (level != null) {
-            markUpdated();
-            doNeighborUpdates(level, this.getBlockPos(), this.getBlockState());
-        }
-    }
-
-    public void open(@Nullable Entity entity, boolean open) {
-        Level level = this.level;
-        if (level != null) {
-            level.gameEvent(open ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, getBlockPos(), GameEvent.Context.of(entity, this.getBlockState()));
-        }
-        boolean oldOpen = open;
-        open = !getBlockState().getValue(ComputerBlock.OPEN);
-        if (oldOpen != open) {
-            pipeline.putBoolean("open", open);
-            var d = getBlockState().setValue(ComputerBlock.OPEN, open);
+            var d = getBlockState().setValue(LaptopBlock.OPEN, open);
             this.level.setBlock(this.getBlockPos(), d, 18);
             sync();
         }

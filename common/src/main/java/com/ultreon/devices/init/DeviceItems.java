@@ -3,6 +3,7 @@ package com.ultreon.devices.init;
 import com.ultreon.devices.Devices;
 import com.ultreon.devices.ModDeviceTypes;
 import com.ultreon.devices.item.*;
+import com.ultreon.devices.util.DyeableRegistration;
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.registries.Registrar;
 import dev.architectury.registry.registries.RegistrySupplier;
@@ -13,6 +14,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -26,7 +28,7 @@ public class DeviceItems {
     public static final DyeableRegistration<Item> LAPTOPS = new DyeableRegistration<>() {
         @Override
         public RegistrySupplier<Item> register(Registrar<Item> registrar, DyeColor color) {
-            return registrar.register(Devices.id(color.getName() + "_laptop"), () -> new ColoredDeviceItem(DeviceBlocks.LAPTOPS.of(color).get(), new Item.Properties().tab(Devices.TAB_DEVICE), color, ModDeviceTypes.LAPTOP));
+            return registrar.register(Devices.id(color.getName() + "_laptop"), () -> new ColoredDeviceItem(DeviceBlocks.LAPTOPS.of(color).get(), new Item.Properties().tab(Devices.TAB_DEVICE), color, ModDeviceTypes.COMPUTER));
         }
 
         @Override
@@ -37,6 +39,7 @@ public class DeviceItems {
 
     // Custom Computers
     public static final RegistrySupplier<BlockItem> MAC_MAX_X = REGISTER.register(Devices.id("mac_max_x"), () -> new DeviceItem(DeviceBlocks.MAC_MAX_X.get(), new Item.Properties().tab(Devices.TAB_DEVICE), ModDeviceTypes.COMPUTER) {
+        @NotNull
         @Override
         public Component getDescription() {
             MutableComponent normalName = Component.translatable("block.devices.mac_max_x");
@@ -46,8 +49,9 @@ public class DeviceItems {
             return normalName;
         }
 
+        @NotNull
         @Override
-        public Component getName(ItemStack stack) {
+        public Component getName(@NotNull ItemStack stack) {
             return getDescription();
         }
     });
