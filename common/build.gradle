@@ -1,6 +1,6 @@
 //file:noinspection GradlePackageUpdate
 architectury {
-    common()
+    common("fabric")
 }
 
 loom {

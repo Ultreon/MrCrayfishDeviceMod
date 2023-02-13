@@ -21,28 +21,28 @@ Object getIngame_version() {
 Object getModDescription() {
     return "${mod_description}"
 }
-forgix {
-    group = "com.ultreon.mods"
-    mergedJarName = "devices-${version}.jar"
-    outputDir = "build/libs/merged"
-
-    forge {
-        projectName = "merge-forge"
-        jarLocation = "build/libs/devices-${version}.jar"
-       // additionalRelocate("com.ultreon.devices", "forge.com.ultreon.devices")
-
-    //    mixin "devices-common.mixins.json"
-   //     mixin "devices.mixins.json"
-    }
-
-    fabric {
-        projectName = "merge-fabric"
-        jarLocation = "build/libs/devices-${version}.jar"
-     //   additionalRelocate("com.ultreon.devices", "fabric.com.ultreon.devices")
-    }
-}
-
-println "forgix.outputDir = $forgix.outputDir"
+//forgix {
+//    group = "com.ultreon.mods"
+//    mergedJarName = "devices-${version}.jar"
+//    outputDir = "build/libs/merged"
+//
+//    forge {
+//        projectName = "merge-forge"
+//        jarLocation = "build/libs/devices-${version}.jar"
+//       // additionalRelocate("com.ultreon.devices", "forge.com.ultreon.devices")
+//
+//    //    mixin "devices-common.mixins.json"
+//   //     mixin "devices.mixins.json"
+//    }
+//
+//    fabric {
+//        projectName = "merge-fabric"
+//        jarLocation = "build/libs/devices-${version}.jar"
+//     //   additionalRelocate("com.ultreon.devices", "fabric.com.ultreon.devices")
+//    }
+//}
+//
+//println "forgix.outputDir = $forgix.outputDir"
 
 subprojects {
     apply plugin: "dev.architectury.loom"
@@ -118,8 +118,9 @@ allprojects {
         // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
         // See https://docs.gradle.org/current/userguide/declaring_repositories.html
         // for more information about repositories.
-        maven { url = "https://maven.parchmentmc.org" }
-        maven { url = "https://maven.jab125.dev" }
+        maven { url "https://maven.parchmentmc.org" }
+        maven { url "https://maven.jab125.dev" }
+        flatDir { dir "${rootProject.projectDir}/libs/" }
     }
 
     tasks.withType(JavaCompile) {

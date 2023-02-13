@@ -4,7 +4,6 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.math.Quaternion;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.object.tiles.Tile;
 import com.ultreon.devices.util.KeyboardHelper;
@@ -15,6 +14,7 @@ import net.minecraft.client.renderer.entity.BoatRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.vehicle.Boat;
+import org.joml.Quaternionf;
 
 import java.util.Objects;
 
@@ -119,11 +119,11 @@ public class Player {
         pose.pushPose();
         pose.translate((float) px, (float) py, 3f);
         pose.scale(-scale, -scale, -scale);
-        pose.mulPose(new Quaternion(180f, 0f, 0f, 1f)); //Flips boat up
-        pose.mulPose(new Quaternion(90, 1, 0, 0));
+        pose.mulPose(new Quaternionf(180f, 0f, 0f, 1f)); //Flips boat up
+        pose.mulPose(new Quaternionf(90, 1, 0, 0));
         pose.translate(0f, -3d, 0f);
-        pose.mulPose(new Quaternion(-90, 1f, 0f, 0f));
-        pose.mulPose(new Quaternion(rot, 0f, 1f, 0f));
+        pose.mulPose(new Quaternionf(-90, 1f, 0f, 0f));
+        pose.mulPose(new Quaternionf(rot, 0f, 1f, 0f));
         RenderSystem.setShaderTexture(0, boatTextures);
         Minecraft.getInstance().getEntityRenderDispatcher().render(this.boat, 0, 0, 0, 0f, partialTicks, pose, MultiBufferSource.immediate(Tesselator.getInstance().getBuilder()), 1);
         boatModel.render(boat, 0f, 0f, pose, Minecraft.getInstance().renderBuffers().bufferSource(), 1);
@@ -133,11 +133,11 @@ public class Player {
         pose.translate((float) px, (float) py, 3f);
         pose.scale(-scale, scale, scale);
         // //Flips boat up
-        pose.mulPose(new Quaternion(90, 1, 0, 0));
+        pose.mulPose(new Quaternionf(90, 1, 0, 0));
         pose.translate(0f, 5f, 0f);
-        pose.mulPose(new Quaternion(90, 1f, 0f, 0f));
-        pose.mulPose(new Quaternion(180f, 0f, 0f, 1f));
-        pose.mulPose(new Quaternion(rot - 90, 0f, 1f, 0f));
+        pose.mulPose(new Quaternionf(90, 1f, 0f, 0f));
+        pose.mulPose(new Quaternionf(180f, 0f, 0f, 1f));
+        pose.mulPose(new Quaternionf(rot - 90, 0f, 1f, 0f));
         pose.translate(0f, -12f, 5f);
 //        Minecraft.getMinecraft().getTextureManager().bindTexture(Minecraft.getMinecraft().player.getLocationSkin());
         //playerModel.render(null, 0f, 0f, 0f, 0f, 0f, 1f);

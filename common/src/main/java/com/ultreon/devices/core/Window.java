@@ -228,12 +228,12 @@ public class Window<T extends Wrappable> {
         content.handleMouseRelease(mouseX, mouseY, mouseButton);
     }
 
-    void handleMouseScroll(int mouseX, int mouseY, boolean direction) {
+    void handleMouseScroll(int mouseX, int mouseY, double delta, boolean direction) {
         if (dialogWindow != null) {
-            dialogWindow.handleMouseScroll(mouseX, mouseY, direction);
+            dialogWindow.handleMouseScroll(mouseX, mouseY, delta, direction);
             return;
         }
-        content.handleMouseScroll(mouseX, mouseY, direction);
+        content.handleMouseScroll(mouseX, mouseY, delta, direction);
     }
 
     public void handleClose() {
@@ -242,8 +242,8 @@ public class Window<T extends Wrappable> {
 
     private void updateComponents(int x, int y) {
         content.updateComponents(x + offsetX + 1, y + offsetY + 13);
-        btnClose.x = x + offsetX + width - 12;
-        btnClose.y = y + offsetY + 1;
+        btnClose.setX(x + offsetX + width - 12);
+        btnClose.setY(y + offsetY + 1);
     }
 
     public void openDialog(Dialog dialog) {

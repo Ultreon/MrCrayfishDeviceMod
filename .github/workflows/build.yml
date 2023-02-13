@@ -32,7 +32,7 @@ jobs:
         if: ${{ runner.os != 'Windows' }}
         run: chmod +x ./gradlew
       - name: build
-        run: ./gradlew build mergeJars
+        run: ./gradlew build # mergeJars
         env:
           GITHUB_BUILD_NUMBER: ${{ github.run_number }}
       - name: capture fabric's build artifacts

@@ -4,8 +4,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import com.ultreon.devices.block.OfficeChairBlock;
 import com.ultreon.devices.block.entity.OfficeChairBlockEntity;
 import com.ultreon.devices.init.DeviceBlocks;
@@ -45,7 +44,7 @@ public class OfficeChairRenderer implements BlockEntityRenderer<OfficeChairBlock
            // poseStack.translate(x, y, z);
 
             poseStack.translate(0.5, 0, 0.5);
-            poseStack.mulPose(Quaternion.fromXYZDegrees(new Vector3f(0, -blockEntity.getRotation()+180, 0)));
+            poseStack.mulPose(Axis.YP.rotationDegrees(-blockEntity.getRotation() + 180));
             poseStack.translate(-0.5, 0, -0.5);
 
             BlockState state = tempState.setValue(OfficeChairBlock.FACING, Direction.NORTH).setValue(OfficeChairBlock.TYPE, OfficeChairBlock.Type.SEAT);
