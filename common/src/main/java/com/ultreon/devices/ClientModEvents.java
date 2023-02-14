@@ -121,7 +121,6 @@ public class ClientModEvents {
             public boolean writeImage(AppInfo info, ResourceLocation location) {
                 //String path = "/assets/" + location.getNamespace() + "/" + location.getPath();
                 try {
-                    System.out.println(location);
                     Resource resource = Minecraft.getInstance().getResourceManager().getResource(location).orElse(null);
                     assert resource != null;
                     InputStream input = resource.open();
@@ -140,7 +139,6 @@ public class ClientModEvents {
                             case 2 -> info.getIcon().getOverlay1();
                             default -> throw new IllegalStateException("Unexpected value: " + mode);
                         };
-                        System.out.println("set glyph" + mode + "to " + iconU + ", " + iconV);
                         glyph.setU(iconU);
                         glyph.setV(iconV);
                     }
@@ -168,7 +166,6 @@ public class ClientModEvents {
                     Minecraft.getInstance().submit(() -> {
                         try {
                             Minecraft.getInstance().getTextureManager().register(Laptop.ICON_TEXTURES, new DynamicTexture(NativeImage.read(input)));
-                            System.out.println("registering texture");
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }

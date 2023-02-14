@@ -67,7 +67,7 @@ dependencies {
         exclude module: "fabric-api"
     }
 
-    modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:9.1.568"
+    modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:10.0.586"
 }
 
 processResources {
@@ -90,6 +90,7 @@ shadowJar {
 
 remapJar {
     injectAccessWidener = true
+    //noinspection GrDeprecatedAPIUsage
     input.set shadowJar.archiveFile
     dependsOn shadowJar
     classifier null

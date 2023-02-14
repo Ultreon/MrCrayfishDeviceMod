@@ -3,6 +3,8 @@ package com.ultreon.devices.core.network;
 import com.ultreon.devices.block.entity.RouterBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
@@ -57,12 +59,16 @@ public class Connection {
     public CompoundTag toTag() {
         CompoundTag tag = new CompoundTag();
         tag.putString("id", routerId.toString());
+        tag.put("Pos", NbtUtils.writeBlockPos(routerPos));
         return tag;
     }
 
     public static Connection fromTag(CompoundTag tag) {
         Connection connection = new Connection();
         connection.routerId = UUID.fromString(tag.getString("id"));
+        if (tag.contains("Pos", Tag.TAG_COMPOUND)) {
+            connection.routerPos = NbtUtils.readBlockPos(tag.getCompound("Pos"));
+        }
         return connection;
     }
 }

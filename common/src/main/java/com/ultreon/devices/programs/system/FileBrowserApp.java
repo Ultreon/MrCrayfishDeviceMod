@@ -40,7 +40,7 @@ public class FileBrowserApp extends SystemApp {
 
     public static class FileBrowserTrayItem extends TrayItem {
         public FileBrowserTrayItem() {
-            super(Icons.FOLDER);
+            super(Icons.FOLDER, Devices.id("file_browser"));
         }
 
         @Override

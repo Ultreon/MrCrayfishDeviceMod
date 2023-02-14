@@ -6,6 +6,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mojang.serialization.Lifecycle;
 import com.ultreon.devices.api.ApplicationManager;
 import com.ultreon.devices.api.app.Application;
 import com.ultreon.devices.api.print.IPrint;
@@ -21,11 +22,11 @@ import com.ultreon.devices.core.network.task.TaskGetDevices;
 import com.ultreon.devices.core.network.task.TaskPing;
 import com.ultreon.devices.core.print.task.TaskPrint;
 import com.ultreon.devices.core.task.TaskInstallApp;
-import com.ultreon.devices.init.DeviceItems;
 import com.ultreon.devices.network.PacketHandler;
 import com.ultreon.devices.network.task.SyncApplicationPacket;
 import com.ultreon.devices.network.task.SyncConfigPacket;
 import com.ultreon.devices.object.AppInfo;
+import com.ultreon.devices.object.TrayItem;
 import com.ultreon.devices.programs.IconsApp;
 import com.ultreon.devices.programs.PixelPainterApp;
 import com.ultreon.devices.programs.TestApp;
@@ -49,15 +50,14 @@ import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.architectury.injectables.targets.ArchitecturyTarget;
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.CreativeTabRegistry;
-import dev.architectury.registry.registries.Registries;
+import dev.architectury.registry.registries.RegistrarManager;
 import dev.architectury.utils.Env;
 import dev.architectury.utils.EnvExecutor;
+import net.minecraft.core.MappedRegistry;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
@@ -66,7 +66,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
@@ -85,9 +84,14 @@ public class Devices {
     private static final String GITWEB_REGISTER_URL = "https://ultreon.gitlab.io/gitweb/site_register.json";
     public static final String VULNERABILITIES_URL = "https://jab125.com/gitweb/vulnerabilities.php";
     private static final boolean PROTECT_FROM_LAUNCH = false;
-    private static final Logger ULTRAN_LANG_LOGGER = LoggerFactory.getLogger("UltranLang");
+//    private static final Logger ULTRAN_LANG_LOGGER = LoggerFactory.getLogger("UltranLang");
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private static final SiteRegisterStack SITE_REGISTER_STACK = new SiteRegisterStack();
+
+    //---- Registry : Start ----//
+    public static MappedRegistry<TrayItem> trayItemRegistry = new MappedRegistry<>(ResourceKey.createRegistryKey(id("tray_item")), Lifecycle.stable());
+    //---- Registry : End ----//
+
     static List<AppInfo> allowedApps;
     private static List<Vulnerability> vulnerabilities;
     public static List<Vulnerability> getVulnerabilities() {
@@ -232,28 +236,28 @@ public class Devices {
 //        }
     }
 
-    private static void registerNativeFunctions(NativeCalls calls) {
-        calls.register("log", SpiKt.params()
-                .add("level", BuiltinTypeSymbol.STRING)
-                .add("message", BuiltinTypeSymbol.STRING), ar -> {
-            Object level = ar.get("level");
-            if (level instanceof String levelName) {
-                Object message = ar.get("message");
-                if (message == null) message = "null";
-
-                switch (levelName.toLowerCase(Locale.ROOT)) {
-                    case "warn" -> ULTRAN_LANG_LOGGER.warn(message.toString());
-                    case "error" -> ULTRAN_LANG_LOGGER.error(message.toString());
-                    case "debug" -> ULTRAN_LANG_LOGGER.debug(message.toString());
-                    case "trace" -> ULTRAN_LANG_LOGGER.trace(message.toString());
-                    default -> ULTRAN_LANG_LOGGER.info(message.toString());
-                }
-            } else {
-                throw new IllegalArgumentException("Invalid level of type " + (level == null ? "null" : level.getClass().getName()));
-            }
-            return null;
-        });
-    }
+//    private static void registerNativeFunctions(NativeCalls calls) {
+//        calls.register("log", SpiKt.params()
+//                .add("level", BuiltinTypeSymbol.STRING)
+//                .add("message", BuiltinTypeSymbol.STRING), ar -> {
+//            Object level = ar.get("level");
+//            if (level instanceof String levelName) {
+//                Object message = ar.get("message");
+//                if (message == null) message = "null";
+//
+//                switch (levelName.toLowerCase(Locale.ROOT)) {
+//                    case "warn" -> ULTRAN_LANG_LOGGER.warn(message.toString());
+//                    case "error" -> ULTRAN_LANG_LOGGER.error(message.toString());
+//                    case "debug" -> ULTRAN_LANG_LOGGER.debug(message.toString());
+//                    case "trace" -> ULTRAN_LANG_LOGGER.trace(message.toString());
+//                    default -> ULTRAN_LANG_LOGGER.info(message.toString());
+//                }
+//            } else {
+//                throw new IllegalArgumentException("Invalid level of type " + (level == null ? "null" : level.getClass().getName()));
+//            }
+//            return null;
+//        });
+//    }
 
     public static void preInit() {
         if (DEVELOPER_MODE && !Platform.isDevelopmentEnvironment() && PROTECT_FROM_LAUNCH) {
@@ -539,9 +543,9 @@ public class Devices {
 
             JsonArray array = JsonParser.parseString(response).getAsJsonArray();
             vulnerabilities = Vulnerability.parseArray(array);
-            System.out.println(array);
-            System.out.println(Arrays.toString(Reference.getVerInfo()));
-            System.out.println("Vulnerabilities:" + vulnerabilities);
+            LOGGER.debug("[VulChecker] {}", array);
+            LOGGER.debug("[VulChecker] {}", Arrays.toString(Reference.getVerInfo()));
+            LOGGER.debug("[VulChecker] Vulnerabilities: {}", vulnerabilities);
         }));
     }
 

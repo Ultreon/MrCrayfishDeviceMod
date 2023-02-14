@@ -9,7 +9,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContextBuilder;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -49,7 +48,6 @@ public class OnlineRequest {
     }
 
     public static void checkURLForSuspicions(URL url) throws IOException {
-        System.out.println(url.getHost());
         if (!isSafe(url.getHost())) {
             throw new IOException();
         }

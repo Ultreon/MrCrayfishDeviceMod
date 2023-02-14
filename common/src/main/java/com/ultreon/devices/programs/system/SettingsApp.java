@@ -414,7 +414,7 @@ public class SettingsApp extends SystemApp {
 
     public static class SettingsTrayItem extends TrayItem {
         public SettingsTrayItem() {
-            super(Icons.WRENCH);
+            super(Icons.WRENCH, Devices.id("settings"));
         }
 
         @Override

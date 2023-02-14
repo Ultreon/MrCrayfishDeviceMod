@@ -25,6 +25,7 @@ import com.ultreon.devices.programs.system.task.TaskUpdateApplicationData;
 import com.ultreon.devices.programs.system.task.TaskUpdateSystemData;
 import com.ultreon.devices.util.GLHelper;
 import dev.architectury.injectables.annotations.PlatformOnly;
+import dev.architectury.platform.Mod;
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.ints.IntArraySet;
 import net.minecraft.client.Minecraft;
@@ -157,7 +158,9 @@ public class Laptop extends Screen implements System {
         this.settings = Settings.fromTag(systemData.getCompound("Settings"));
 
         // GUI Components
-        this.bar = new TaskBar(this);
+        CompoundTag taskBarTag = systemData.getCompound("TaskBar");
+        systemData.put("TaskBar", taskBarTag);
+        this.bar = new TaskBar(this, taskBarTag);
 
         // Wallpaper stuff
         this.currentWallpaper = systemData.contains("CurrentWallpaper", 10) ? new Wallpaper(systemData.getCompound("CurrentWallpaper")) : null;
@@ -176,6 +179,22 @@ public class Laptop extends Screen implements System {
 
         // World-less flag.
         Laptop.worldLess = worldLess;
+    }
+
+    public static Laptop getInstance() {
+        return instance;
+    }
+
+    public CompoundTag getModSystemTag(Mod mod) {
+        return getModSystemTag(mod.getModId());
+    }
+
+    public CompoundTag getModSystemTag(String modId) {
+        CompoundTag mods = systemData.getCompound("Mods");
+        systemData.put("Mods", mods);
+        CompoundTag mod = mods.getCompound(modId);
+        mods.put(modId, mod);
+        return mod;
     }
 
     public static boolean isWorldLess() {
@@ -273,6 +292,7 @@ public class Laptop extends Screen implements System {
     private void updateSystemData() {
         systemData.put("CurrentWallpaper", currentWallpaper.serialize());
         systemData.put("Settings", settings.toTag());
+        systemData.put("TaskBar", bar.serialize());
 
         ListTag tagListApps = new ListTag();
         installedApps.forEach(info -> tagListApps.add(StringTag.valueOf(info.getFormattedId())));
@@ -306,14 +326,13 @@ public class Laptop extends Screen implements System {
         try {
             bar.onTick();
 
-            for (int i = 0; i < windows.size(); i++) {
-                Window<?> window = windows.get(i);
+            for (Window<?> window : windows) {
                 if (window != null) {
                     window.onTick();
                     if (window.removed) {
-                //        java.lang.System.out.println("REMOVED " + window);
-                   //     windows.remove(window);
-                    //    i--;
+                        //        java.lang.System.out.println("REMOVED " + window);
+                        //     windows.remove(window);
+                        //    i--;
                     }
                 }
             }
