@@ -1,6 +1,10 @@
 {
   "schemaVersion": 1,
   "id": "devices-fabric",
+  "version": "1",
+  "contact": {
+    "issues": "https://github.com/Ultreon/devices-mod/issues"
+  },
   "custom": {
     "modmenu": {
       "badges": [
@@ -8,5 +12,11 @@
       ],
       "parent": "devices"
     }
+  },
+  "depends": {
+    "fabricloader": ">=0.14.8",
+    "fabric-api": "*",
+    "minecraft": "~1.18.2",
+    "architectury": ">=4.5.76 <5.0"
   }
 }
