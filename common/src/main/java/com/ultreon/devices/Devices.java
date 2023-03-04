@@ -73,12 +73,13 @@ import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 public class Devices {
+    public static final boolean DEVELOPER_MODE = false;
     public static final String MOD_ID = "devices";
+    public static final Logger LOGGER = LoggerFactory.getLogger("Devices Mod");
+
     public static final CreativeTabRegistry.TabSupplier TAB_DEVICE = DeviceTab.create();
     public static final Supplier<RegistrarManager> REGISTRIES = Suppliers.memoize(() -> RegistrarManager.get(MOD_ID));
     public static final List<SiteRegistration> SITE_REGISTRATIONS = new ProtectedArrayList<>();
-    public static final Logger LOGGER = LoggerFactory.getLogger("Devices Mod");
-    public static final boolean DEVELOPER_MODE = false;
     private static final Pattern DEV_PREVIEW_PATTERN = Pattern.compile("\\d+\\.\\d+\\.\\d+-dev\\d+");
     private static final boolean IS_DEV_PREVIEW = DEV_PREVIEW_PATTERN.matcher(Reference.VERSION).matches();
     private static final String GITWEB_REGISTER_URL = "https://ultreon.gitlab.io/gitweb/site_register.json";
