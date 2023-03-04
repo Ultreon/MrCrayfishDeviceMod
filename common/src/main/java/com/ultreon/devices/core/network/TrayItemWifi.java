@@ -35,7 +35,7 @@ import java.util.List;
  */
 public class TrayItemWifi extends TrayItem {
     private int pingTimer;
-    private Strength strength;
+    private Strength strength = Strength.NONE;
 
     public TrayItemWifi() {
         super(Icons.WIFI_NONE, Devices.id("wifi"));
