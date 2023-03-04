@@ -13,6 +13,7 @@ import com.ultreon.devices.api.app.component.CheckBox;
 import com.ultreon.devices.api.app.component.ComboBox;
 import com.ultreon.devices.api.app.component.Text;
 import com.ultreon.devices.api.app.renderer.ItemRenderer;
+import com.ultreon.devices.api.utils.OnlineRequest;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.core.Settings;
 import com.ultreon.devices.object.AppInfo;
@@ -314,6 +315,10 @@ public class SettingsApp extends SystemApp {
             Dialog.Input dialog = new Dialog.Input("Enter the URL of the image");
             dialog.setResponseHandler((success, string) -> {
                 if (getLaptop() != null) {
+                    if (!OnlineRequest.isSafeAddress(string)) {
+                        openDialog(new Dialog.Message("Unsafe website."));
+                        return true;
+                    }
                     getLaptop().setWallpaper(string);
                     image.setImage(getLaptop().getCurrentWallpaper());
                     prevWallpaperBtn.setEnabled(getLaptop().getCurrentWallpaper().isBuiltIn());

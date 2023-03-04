@@ -15,6 +15,7 @@ import com.ultreon.devices.api.io.File;
 import com.ultreon.devices.api.task.Callback;
 import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.api.task.TaskManager;
+import com.ultreon.devices.api.utils.OnlineRequest;
 import com.ultreon.devices.block.entity.LaptopBlockEntity;
 import com.ultreon.devices.core.task.TaskInstallApp;
 import com.ultreon.devices.object.AppInfo;
@@ -329,11 +330,11 @@ public class Laptop extends Screen implements System {
             for (Window<?> window : windows) {
                 if (window != null) {
                     window.onTick();
-                    if (window.removed) {
-                        //        java.lang.System.out.println("REMOVED " + window);
-                        //     windows.remove(window);
-                        //    i--;
-                    }
+//                    if (window.removed) {
+//                        java.lang.System.out.println("REMOVED " + window);
+//                        windows.remove(window);
+//                        i--;
+//                    }
                 }
             }
 
@@ -1141,14 +1142,20 @@ public class Laptop extends Screen implements System {
         }
 
         private Wallpaper(CompoundTag tag) {
-            var a = tag.getString("url");
-            var b = tag.getInt("location");
+            var url = tag.getString("url");
+            var location = tag.getInt("location");
             if (tag.contains("url", 8)) {
-                this.url = a;
-                this.location = -87;
+                if (!OnlineRequest.isSafeAddress(url)) {
+                    // Reset to default wallpaper.
+                    this.url = null;
+                    this.location = 0;
+                } else {
+                    this.url = url;
+                    this.location = -87;
+                }
             } else {
                 this.url = null;
-                this.location = b;
+                this.location = location;
             }
         }
         private Wallpaper(String url) {

@@ -53,10 +53,19 @@ public class OnlineRequest {
         }
     }
 
+    public static boolean isSafeAddress(String address) {
+        try {
+            URL url = new URL(address);
+            return isSafe(url.getHost());
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     // ignore that
     private static boolean isSafe(String host) {
         return switch (host) {
-            case "ultreon.gitlab.io", "cdn.discordapp.com", "jab125.com", "jab125.dev", "raw.githubusercontent.com", "github.com", "i.imgur.com", "avatars1.githubusercontent.com" -> true;
+            case "ultreon.gitlab.io", "cdn.discordapp.com", "jab125.com", "jab125.dev", "raw.githubusercontent.com", "github.com", "i.imgur.com", "i.giphy.com", "avatars1.githubusercontent.com" -> true;
             default -> false;
         };
     }
