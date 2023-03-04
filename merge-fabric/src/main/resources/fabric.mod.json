@@ -1,6 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "devices-fabric",
+  "name": "Devices Mod Wrapper",
   "version": "1",
   "contact": {
     "issues": "https://github.com/Ultreon/devices-mod/issues"
