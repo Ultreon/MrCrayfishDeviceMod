@@ -13,6 +13,7 @@ description = '''
 Forge wrapper for devices mod
 '''
 itemIcon = "minecraft:red_wool"
+updateJSONURL = "http://ultreon.github.io/update-list/mods/devices.json"
 
 # Dependencies for the main mod.
 [[dependencies.devices_forge]]
