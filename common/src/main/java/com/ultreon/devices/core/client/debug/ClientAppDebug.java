@@ -26,7 +26,7 @@ public class ClientAppDebug {
                 var rowHeight = 24;
                 var y = screen.height / 4 + 48;
 
-                var a = new Button(screen.width / 2 - 100, y + rowHeight * -1, 200, 20, new TextComponent("DV TEST"), (button) -> {
+                var a = new Button(screen.width / 2 - 100, y + rowHeight * -2, 200, 20, new TextComponent("DV TEST"), (button) -> {
                     Minecraft.getInstance().setScreen(new Laptop(new LaptopBlockEntity(new BlockPos(0, 0, 0), DeviceBlocks.WHITE_LAPTOP.get().defaultBlockState()), true));
                 }, Button.NO_TOOLTIP);
                 access.addRenderableWidget(a);
@@ -38,7 +38,7 @@ public class ClientAppDebug {
                 var rowHeight = 24;
                 var y = screen.height / 4 + 48;
 
-                var a = new Button(screen.width / 2 - 100, y + rowHeight * -2, 200, 20, new TextComponent("DV TEST #2"), (button) -> {
+                var a = new Button(screen.width / 2 - 100, y + rowHeight * -3, 200, 20, new TextComponent("DV TEST #2"), (button) -> {
                     var serverLaptop = new ServerLaptop();
                     ServerLaptop.laptops.put(serverLaptop.getUuid(), serverLaptop);
                     var clientLaptop = new ClientLaptop();
