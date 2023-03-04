@@ -143,6 +143,7 @@ public class ClientModEvents {
                         glyph.setV(iconV);
                     }
                     index++;
+                    return true;
                 } catch (Exception e) {
                     Devices.LOGGER.error("Unable to load icon for " + (info == null ? null : info.getId()));
                     //e.printStackTrace();
