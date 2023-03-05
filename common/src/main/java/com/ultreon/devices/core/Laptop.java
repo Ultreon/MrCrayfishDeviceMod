@@ -94,7 +94,7 @@ public class Laptop extends Screen implements System {
     private static Drive mainDrive;
     private final Settings settings;
     private final TaskBar bar;
-    final ArrayList<Window<?>> windows;
+    final CopyOnWriteArrayList<Window<?>> windows;
     private final CompoundTag appData;
     private final CompoundTag systemData;
     protected List<AppInfo> installedApps = new ArrayList<>();
@@ -138,7 +138,7 @@ public class Laptop extends Screen implements System {
         this.systemData = laptop.getSystemData();
 
         // Windows
-        this.windows = new ArrayList<>() {
+        this.windows = new CopyOnWriteArrayList<>() {
             @Override
             public Window<?> get(int index) {
                 try {
@@ -789,6 +789,7 @@ public class Laptop extends Screen implements System {
         super.renderComponentTooltip(pose, tooltips, x, y);
     }
 
+    @SuppressWarnings("ReassignedVariable")
     public Pair<Application, Boolean> sendApplicationToFront(AppInfo info) {
         int i = 0;
         for (; i < windows.size(); i++) {
