@@ -317,7 +317,7 @@ public class SettingsApp extends SystemApp {
                 if (getLaptop() != null) {
                     if (!OnlineRequest.isSafeAddress(string)) {
                         openDialog(new Dialog.Message("Unsafe website."));
-                        return true;
+                        return false;
                     }
                     getLaptop().setWallpaper(string);
                     image.setImage(getLaptop().getCurrentWallpaper());
