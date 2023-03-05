@@ -233,8 +233,8 @@ public class TaskBar {
                 Gui.fill(pose, x, y, x + width, y + height, selected ? Color.DARK_GRAY.getRGB() : Color.GRAY.getRGB());
 
                 // Draw text and icon.
-                RenderUtil.drawStringClipped(pose, appInfo.getName(), x + 16, y + 4, 70, Color.WHITE.getRGB(), false);
-                RenderUtil.drawApplicationIcon(pose, appInfo, x + 3, y + 3);
+                RenderUtil.drawStringClipped(pose, appInfo.getName(), x + 18, y + 4, 70, Color.WHITE.getRGB(), false);
+                RenderUtil.drawApplicationIcon(pose, appInfo, x + 1, y + 1);
             }
         });
 
