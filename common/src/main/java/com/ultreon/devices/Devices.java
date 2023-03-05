@@ -537,16 +537,20 @@ public class Devices {
     private static void checkForVulnerabilities() {
         OnlineRequest.getInstance().make(VULNERABILITIES_URL, ((success, response) -> {
             if (!success) {
-                System.out.println("Could not access vulnerabilities!");
+                LOGGER.error("Could not access vulnerabilities!");
                 vulnerabilities = ImmutableList.of();
                 return;
             }
 
             JsonArray array = JsonParser.parseString(response).getAsJsonArray();
             vulnerabilities = Vulnerability.parseArray(array);
-            LOGGER.debug("[VulChecker] {}", array);
-            LOGGER.debug("[VulChecker] {}", Arrays.toString(Reference.getVerInfo()));
-            LOGGER.debug("[VulChecker] Vulnerabilities: {}", vulnerabilities);
+            vulnerabilities.forEach(vul -> {
+                String s = vul.toPrettyString();
+                s.lines().toList().forEach(line -> {
+                    LOGGER.debug("[VulChecker] {}", line);
+                });
+                LOGGER.debug("[VulChecker]");
+            });
         }));
     }
 
