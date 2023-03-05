@@ -7,9 +7,9 @@ import com.ultreon.devices.block.RouterBlock;
 import com.ultreon.devices.init.DeviceBlocks;
 import com.ultreon.devices.init.DeviceItems;
 import com.ultreon.devices.item.FlashDriveItem;
-import dev.architectury.registry.registries.Registries;
-import net.minecraft.core.Registry;
-import net.minecraft.data.DataGenerator;
+import dev.architectury.registry.registries.RegistrarManager;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
@@ -20,8 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 public class ModItemModelProvider extends ItemModelProvider {
-    public ModItemModelProvider(DataGenerator generator, ExistingFileHelper existingFileHelper) {
-        super(generator, Reference.MOD_ID, existingFileHelper);
+    public ModItemModelProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
+        super(output, Reference.MOD_ID, existingFileHelper);
     }
 
     @Override
@@ -54,12 +54,12 @@ public class ModItemModelProvider extends ItemModelProvider {
     }
 
     private void flashDrive(FlashDriveItem flashDrive) {
-        getBuilder(Objects.requireNonNull(Registries.getId(flashDrive, Registry.ITEM_REGISTRY)).getPath()).parent(getExistingFile(modLoc("item/flash_drive"))).texture("1", mcLoc("block/" + flashDrive.getColor().getSerializedName() + "_wool"));
+        getBuilder(Objects.requireNonNull(RegistrarManager.getId(flashDrive, Registries.ITEM)).getPath()).parent(getExistingFile(modLoc("item/flash_drive"))).texture("1", mcLoc("block/" + flashDrive.getColor().getSerializedName() + "_wool"));
     }
 
     private void blockBuilder(Block block) {
         try {
-            String name = Objects.requireNonNull(Registries.getId(block, Registry.BLOCK_REGISTRY)).getPath();
+            String name = Objects.requireNonNull(RegistrarManager.getId(block, Registries.BLOCK)).getPath();
             withExistingParent(name, modLoc("block/" + name));
         } catch (IllegalStateException ignored) {
 
@@ -67,29 +67,29 @@ public class ModItemModelProvider extends ItemModelProvider {
     }
 
     private void builder(ItemLike item, ModelFile parent) {
-        String name = Objects.requireNonNull(Registries.getId(item.asItem(), Registry.ITEM_REGISTRY)).getPath();
+        String name = Objects.requireNonNull(RegistrarManager.getId(item.asItem(), Registries.ITEM)).getPath();
         builder(item, parent, "item/" + name);
     }
 
 //    private ItemModelBuilder getBuilder(ItemLike item, ModelFile parent) {
-//        String name = Objects.requireNonNull(item.asItem().getRegistryName()).getPath();
+//        String name = Objects.requireNonNull(item.asItem().getRegistriesName()).getPath();
 //        return getBuilder(item, parent, "item/" + name);
 //    }
 
     private void builder(ItemLike item, ModelFile parent, String texture) {
         try {
-            getBuilder(Objects.requireNonNull(Registries.getId(item.asItem(), Registry.ITEM_REGISTRY)).getPath())
+            getBuilder(Objects.requireNonNull(RegistrarManager.getId(item.asItem(), Registries.ITEM)).getPath())
                     .parent(parent)
                     .texture("layer0", modLoc(texture));
         } catch (IllegalArgumentException e) {
-            getBuilder(Objects.requireNonNull(Registries.getId(item.asItem(), Registry.ITEM_REGISTRY)).getPath())
+            getBuilder(Objects.requireNonNull(RegistrarManager.getId(item.asItem(), Registries.ITEM)).getPath())
                     .parent(getExistingFile(mcLoc("item/generated")))
                     .texture("layer0", modLoc("wip"));
         }
     }
 
 //    private ItemModelBuilder getBuilder(ItemLike item, ModelFile parent, String texture) {
-//        return getBuilder(Objects.requireNonNull(item.asItem().getRegistryName()).getPath())
+//        return getBuilder(Objects.requireNonNull(item.asItem().getRegistriesName()).getPath())
 //                .parent(parent)
 //                .texture("layer0", modLoc(texture));
 //    }
