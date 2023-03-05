@@ -5,6 +5,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.Devices;
 import com.ultreon.devices.api.TrayItemAdder;
 import com.ultreon.devices.api.app.Application;
+import com.ultreon.devices.api.app.Layout;
+import com.ultreon.devices.api.app.System;
+import com.ultreon.devices.api.app.component.ItemList;
+import com.ultreon.devices.api.app.renderer.ListItemRenderer;
 import com.ultreon.devices.api.event.LaptopEvent;
 import com.ultreon.devices.api.utils.RenderUtil;
 import com.ultreon.devices.core.network.TrayItemWifi;
@@ -34,6 +38,7 @@ public class TaskBar {
     public static final ResourceLocation APP_BAR_GUI = new ResourceLocation("devices:textures/gui/application_bar.png");
     public static final int BAR_HEIGHT = 18;
     private static final int APPS_DISPLAYED = Devices.DEVELOPER_MODE ? 18 : 10;
+    private static final int TASKS_START = 18;
 
     private final CompoundTag tag;
 
@@ -117,26 +122,33 @@ public class TaskBar {
         bgColor = new Color(Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]));
         RenderSystem.setShaderColor(bgColor.getRed() / 255f, bgColor.getGreen() / 255f, bgColor.getBlue() / 255f, 1f);
 
+        // Draw system tray.
         int trayItemsWidth = trayItems.size() * 14;
         GuiComponent.blit(pose, x, y, 1, 18, 0, 0, 1, 18, 256, 256);
         GuiComponent.blit(pose, x + 1, y, Laptop.SCREEN_WIDTH - 36 - trayItemsWidth, 18, 1, 0, 1, 18, 256, 256);
         GuiComponent.blit(pose, x + Laptop.SCREEN_WIDTH - 35 - trayItemsWidth, y, 35 + trayItemsWidth, 18, 2, 0, 1, 18, 256, 256);
 
-        RenderSystem.disableBlend();
+        // Draw start menu button
+        GuiComponent.blit(pose, x, y, 18, 18, 0, 0, 1, 18, 256, 256);
 
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+        laptop.blit(pose, x + 1, y + 1, 52, 0, 16, 16);
         for (int i = 0; i < APPS_DISPLAYED && i < laptop.installedApps.size(); i++) {
             AppInfo info = laptop.installedApps.get(i + offset);
-            RenderUtil.drawApplicationIcon(pose, info, x + 2 + i * 16, y + 2);
+            RenderUtil.drawApplicationIcon(pose, info, TASKS_START + x + 2 + i * 16, y + 2);
             if (laptop.isApplicationRunning(info)) {
                 RenderSystem.setShaderTexture(0, APP_BAR_GUI);
-                laptop.blit(pose, x + 1 + i * 16, y + 1, 35, 0, 16, 16);
+                laptop.blit(pose, TASKS_START + x + 1 + i * 16, y + 1, 35, 0, 16, 16);
             }
         }
 
+        RenderSystem.disableBlend();
+
         assert mc.level == null || mc.player != null;
-       // assert mc.level != null; //can no longer assume
+//        assert mc.level != null; //can no longer assume
         mc.font.drawShadow(pose, timeToString(mc.level != null ? mc.level.getDayTime() : 0), x + 334, y + 5, Color.WHITE.getRGB(), true);
+
+        RenderSystem.enableBlend();
 
         /* Settings App */
         int startX = x + 317;
@@ -148,13 +160,19 @@ public class TaskBar {
             trayItems.get(i).getIcon().draw(pose, mc, posX + 2, y + 4);
         }
 
+        RenderSystem.disableBlend();
+
         RenderSystem.setShaderTexture(0, APP_BAR_GUI);
+        /* Other Apps */
+        if (isMouseInside(mouseX, mouseY, x + 1, y + 1, x + 17, y + 16)) {
+            laptop.blit(pose, x + 1, y + 1, 35, 0, 16, 16);
+        }
 
         /* Other Apps */
-        if (isMouseInside(mouseX, mouseY, x + 1, y + 1, x + 236, y + 16)) {
-            int appIndex = (mouseX - x - 1) / 16;
+        if (isMouseInside(mouseX, mouseY, TASKS_START + x + 1, y + 1, x + 236, y + 16)) {
+            int appIndex = (mouseX - x - 1 - TASKS_START) / 16;
             if (appIndex >= 0 && appIndex < offset + APPS_DISPLAYED && appIndex < laptop.installedApps.size()) {
-                laptop.blit(pose, x + appIndex * 16 + 1, y + 1, 35, 0, 16, 16);
+                laptop.blit(pose, TASKS_START  + x + appIndex * 16 + 1, y + 1, 35, 0, 16, 16);
                 laptop.renderComponentTooltip(pose, List.of(Component.literal(laptop.installedApps.get(appIndex).getName())), mouseX, mouseY);
             }
         }
@@ -163,9 +181,20 @@ public class TaskBar {
     }
 
     public void handleClick(Laptop laptop, int x, int y, int mouseX, int mouseY, int mouseButton) {
-        if (isMouseInside(mouseX, mouseY, x + 1, y + 1, x + 236, y + 16)) {
+        if (isMouseInside(mouseX, mouseY, x + 1, y + 1, x + 17, y + 16)) {
+            System system = Laptop.getSystem();
+            if (system.hasContext()) {
+                system.closeContext();
+                return;
+            }
+            Layout startMenu = createStartMenu();
+            system.openContext(startMenu, x + 1, y - 1 - startMenu.height);
+            return;
+        }
+
+        if (isMouseInside(mouseX, mouseY, TASKS_START + x + 1, y + 1, x + 236, y + 16)) {
             Devices.LOGGER.debug(MARKER, "Clicked on task bar");
-            int appIndex = (mouseX - x - 1) / 16;
+            int appIndex = (mouseX - x - 1 - TASKS_START) / 16;
             if (appIndex >= 0 && appIndex <= offset + APPS_DISPLAYED && appIndex < laptop.installedApps.size()) {
                 laptop.openApplication(laptop.installedApps.get(appIndex));
                 return;
@@ -182,6 +211,43 @@ public class TaskBar {
                 break;
             }
         }
+    }
+
+    /**
+     * @author Qboi
+     */
+    private Layout createStartMenu() {
+        var layout = new Layout(120, 114);
+
+        // Set background.
+        layout.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> Gui.fill(pose, x, y, x + width, y + height, new Color(0.65f, 0.65f, 0.65f, 0.9f).getRGB()));
+
+        // Create app info list with installed applications.
+        ItemList<AppInfo> appList = new ItemList<>(5, 5, 110, 6);
+        appList.setItems(laptop.installedApps);
+
+        // Application item renderer.
+        appList.setListItemRenderer(new ListItemRenderer<>(16) {
+            @Override
+            public void render(PoseStack pose, AppInfo appInfo, GuiComponent gui, Minecraft mc, int x, int y, int width, int height, boolean selected) {
+                Gui.fill(pose, x, y, x + width, y + height, selected ? Color.DARK_GRAY.getRGB() : Color.GRAY.getRGB());
+
+                // Draw text and icon.
+                RenderUtil.drawStringClipped(pose, appInfo.getName(), x + 16, y + 4, 70, Color.WHITE.getRGB(), false);
+                RenderUtil.drawApplicationIcon(pose, appInfo, x + 3, y + 3);
+            }
+        });
+
+        // Set handler for when the item gets clicked.
+        appList.setItemClickListener((appInfo, index, mouseButton) -> {
+            // Open the application by entry.
+            Laptop.getSystem().closeContext();
+            laptop.openApplication(appInfo);
+        });
+
+        // Add the list to the layout and return.
+        layout.addComponent(appList);
+        return layout;
     }
 
     public boolean isMouseInside(int mouseX, int mouseY, int x1, int y1, int x2, int y2) {
