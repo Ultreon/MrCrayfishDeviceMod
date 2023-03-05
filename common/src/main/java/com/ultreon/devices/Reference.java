@@ -27,11 +27,6 @@ public class Reference {
 
     public static String[] getVerInfo() {
         if (verInfo == null) {
-           // var pattern = Pattern.compile("^((\\d+(\\.|(?=\\+)))+)((\\+)((\\d+|(local))))");
-          //  var matcher = pattern.matcher(getVersion());
-          //  System.out.println(matcher.groupCount());
-         //   var version = pattern.matcher(getVersion()).group(1);
-         //   var build = pattern.matcher(getVersion()).group(7);
             if (getVersion().split("\\+").length == 1) {
                 return verInfo = new String[]{getVersion(), "unknown"};
             }

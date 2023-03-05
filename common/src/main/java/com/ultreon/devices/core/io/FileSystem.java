@@ -149,7 +149,6 @@ public class FileSystem {
     }
 
     private void load(CompoundTag tag) {
-        System.out.println(tag);
         if (tag.contains("main_drive", Tag.TAG_COMPOUND))
             mainDrive = InternalDrive.fromTag(tag.getCompound("main_drive"));
         if (tag.contains("drives", Tag.TAG_LIST)) {

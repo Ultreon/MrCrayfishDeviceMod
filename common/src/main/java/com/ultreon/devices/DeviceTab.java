@@ -13,10 +13,7 @@ import static com.ultreon.devices.Devices.id;
 public class DeviceTab {
     @SuppressWarnings("UnstableApiUsage")
     public static CreativeTabRegistry.TabSupplier create() {
-        System.out.println("creating creative tab");
-//        CreativeTabRegistry.modify(CreativeModeTabs.TAB_REDSTONE, output -> {
-//            output.acceptAll();
-//        });
+        Devices.LOGGER.info("Creating Creative Tab...");
         CreativeTabRegistry.TabSupplier devicesTabDevice = CreativeTabRegistry.create(id("devices_tab_device"), () -> new ItemStack(DeviceBlocks.LAPTOPS.of(DyeColor.RED).get()));
         CreativeTabRegistry.modify(devicesTabDevice, (flags, output, canUseGameMasterBlocks) -> {
             for (RegistrySupplier<Item> laptop : DeviceItems.LAPTOPS) {

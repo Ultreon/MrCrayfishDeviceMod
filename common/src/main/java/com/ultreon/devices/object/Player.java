@@ -11,6 +11,7 @@ import com.ultreon.devices.util.Vec2d;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.BoatRenderer;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.vehicle.Boat;
@@ -33,7 +34,12 @@ public class Player {
     private Boat boat;
 
     public static EntityRendererProvider.Context createEntityRendererContext() {
-        return null;// new EntityRendererProvider.Context(Minecraft.getInstance().getEntityRenderDispatcher(), Minecraft.getInstance().getItemRenderer(), Minecraft.getInstance().getResourceManager(), Minecraft.getInstance().getEntityModels(), Minecraft.getInstance().font);
+        Minecraft mc = Minecraft.getInstance();
+        EntityRenderDispatcher erd = mc.getEntityRenderDispatcher();
+        return new EntityRendererProvider.Context(
+                erd, mc.getItemRenderer(), mc.getBlockRenderer(),
+                erd.getItemInHandRenderer(), mc.getResourceManager(),
+                mc.getEntityModels(), mc.font);
     }
 
     public Player(Game game) {
@@ -43,7 +49,7 @@ public class Player {
         this.boatModel = new BoatRenderer(createEntityRendererContext(), false);
 		assert Minecraft.getInstance().player != null;
 		boolean slim = Minecraft.getInstance().player.getModelName().equals("slim");
-        if (Laptop.isWorldLess()) {
+        if (!Laptop.isWorldLess()) {
             boat = new Boat(Objects.requireNonNull(Minecraft.getInstance().level), 0, 0, 0);
         }
 //        this.playerModel = new ModelDummyPlayer(0f, slim);
@@ -125,8 +131,9 @@ public class Player {
         pose.mulPose(new Quaternionf(-90, 1f, 0f, 0f));
         pose.mulPose(new Quaternionf(rot, 0f, 1f, 0f));
         RenderSystem.setShaderTexture(0, boatTextures);
-        Minecraft.getInstance().getEntityRenderDispatcher().render(this.boat, 0, 0, 0, 0f, partialTicks, pose, MultiBufferSource.immediate(Tesselator.getInstance().getBuilder()), 1);
-        boatModel.render(boat, 0f, 0f, pose, Minecraft.getInstance().renderBuffers().bufferSource(), 1);
+        EntityRenderDispatcher entityRender = Minecraft.getInstance().getEntityRenderDispatcher();
+        entityRender.render(this.boat, 0, 0, 0, 0f, partialTicks, pose, MultiBufferSource.immediate(Tesselator.getInstance().getBuilder()), 1);
+//        boatModel.render(boat, 0f, 0f, pose, Minecraft.getInstance().renderBuffers().bufferSource(), 1);
         pose.popPose();
 
         pose.pushPose();

@@ -190,7 +190,7 @@ public class AppStore extends SystemApp {
 
     public static class StoreTrayItem extends TrayItem {
         public StoreTrayItem() {
-            super(Icons.SHOP);
+            super(Icons.SHOP, Devices.id("app_store"));
         }
 
         @Override
