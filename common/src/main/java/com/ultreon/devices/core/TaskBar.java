@@ -210,6 +210,6 @@ public class TaskBar {
         }
         tag.put("TrayItems", trayItemsTag);
 
-        return null;
+        return tag;
     }
 }
