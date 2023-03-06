@@ -38,7 +38,7 @@ dependencies {
 
 //    include(implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.10"))
 //    include(implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10"))
-    include(implementation("com.ultreon:ultranlang:0.0.1-dev5"))
+//    include(implementation("com.ultreon:ultranlang:0.0.1-dev5"))
     include(implementation("com.jab125:apoint:1.0.0"))
 
     //shadowCommon "org.jetbrains.kotlin:kotlin-reflect:1.7.10"
@@ -46,7 +46,7 @@ dependencies {
   //  shadowCommon "com.ultreon:ultranlang:0.0.1-dev5"
  //   shadowCommon "com.jab125:apoint:1.0.0"
 
-    modApi include("net.fabricmc:fabric-language-kotlin:1.8.2+kotlin.1.7.10")
+//    modApi include("net.fabricmc:fabric-language-kotlin:1.8.2+kotlin.1.7.10")
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }

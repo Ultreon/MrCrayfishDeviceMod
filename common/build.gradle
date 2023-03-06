@@ -18,9 +18,9 @@ dependencies {
     // Remove the next line if you don't want to depend on the API
     modApi "dev.architectury:architectury:${rootProject.architectury_version}"
 
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.10")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10")
-    modApi("com.ultreon:ultranlang:0.0.1-dev5")
+//    implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.10")
+//    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10")
+//    modApi("com.ultreon:ultranlang:0.0.1-dev5")
     modApi("com.jab125:apoint:1.0.0")
 
     modCompileOnly "curse.maven:forgeapiportfabric-547434:3671141"

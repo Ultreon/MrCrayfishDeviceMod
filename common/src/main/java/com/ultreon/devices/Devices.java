@@ -42,13 +42,6 @@ import com.ultreon.devices.programs.system.*;
 import com.ultreon.devices.programs.system.task.*;
 import com.ultreon.devices.util.BlockEntityUtil;
 import com.ultreon.devices.util.SiteRegistration;
-import com.ultreon.ultranlang.*;
-import com.ultreon.ultranlang.ast.Program;
-import com.ultreon.ultranlang.error.LexerException;
-import com.ultreon.ultranlang.error.ParserException;
-import com.ultreon.ultranlang.error.SemanticException;
-import com.ultreon.ultranlang.func.NativeCalls;
-import com.ultreon.ultranlang.symbol.BuiltinTypeSymbol;
 import dev.architectury.event.EventResult;
 import dev.architectury.event.events.client.ClientPlayerEvent;
 import dev.architectury.event.events.common.InteractionEvent;
@@ -127,111 +120,111 @@ public class Devices {
             loadComplete();
         }
 
-        ultranLang:
-        {
-            var inputFile = new File("main.ulan");
-
-            if (!inputFile.exists()) {
-                LOGGER.error("File not found: {}", inputFile.getAbsolutePath());
-            } else {
-                SpiKt.setShouldLogInternalErrors(false);
-                SpiKt.setShouldLogScope(false);
-                SpiKt.setShouldLogStack(false);
-                SpiKt.setShouldLogTokens(false);
-
-                String text;
-                try {
-                    text = Files.readString(inputFile.toPath(), Charset.defaultCharset());
-                } catch (IOException e) {
-                    LOGGER.error("Failed to read file: {}", inputFile.getAbsolutePath(), e);
-                    break ultranLang;
-                }
-
-                registerNativeFunctions();
-                NativeCalls.INSTANCE.load();
-
-                var lexer = new Lexer(text);
-                Program tree;
-                try {
-                    var parser = new Parser(lexer);
-                    tree = parser.parse();
-                } catch (LexerException | ParserException e) {
-                    if (SpiKt.getShouldLogInternalErrors()) e.printStackTrace();
-                    LOGGER.error("Error parsing file: {}", e.getMessage());
-                    break ultranLang;
-                } catch (RuntimeException e) {
-                    var cause = e.getCause();
-                    while (cause instanceof InvocationTargetException || cause instanceof RuntimeException) {
-                        cause = cause.getCause();
-                    }
-                    if (cause instanceof LexerException) {
-                        if (SpiKt.getShouldLogInternalErrors()) cause.printStackTrace();
-                        LOGGER.error("Error parsing file: {}", cause.getMessage());
-                    } else if (cause instanceof ParserException) {
-                        if (SpiKt.getShouldLogInternalErrors()) cause.printStackTrace();
-                        LOGGER.error("Error parsing file: {}", cause.getMessage());
-                    } else {
-                        throw e;
-                    }
-                    break ultranLang;
-                }
-
-                var semanticAnalyzer = new SemanticAnalyzer();
-
-                try {
-                    semanticAnalyzer.visit(tree);
-                } catch (SemanticException e) {
-                    if (SpiKt.getShouldLogInternalErrors()) e.printStackTrace();
-                    LOGGER.error("Error analyzing file: {}", e.getMessage());
-                    break ultranLang;
-                } catch (RuntimeException e) {
-                    var cause = e.getCause();
-                    while (cause instanceof InvocationTargetException || cause instanceof RuntimeException) {
-                        cause = cause.getCause();
-                    }
-                    if (cause instanceof SemanticException) {
-                        if (SpiKt.getShouldLogInternalErrors()) cause.printStackTrace();
-                        LOGGER.error("Error analyzing file: {}", cause.getMessage());
-                    } else {
-                        throw e;
-                    }
-                    break ultranLang;
-                }
-
-                try {
-                    var interpreter = new Interpreter(tree);
-                    interpreter.interpret();
-                } catch (Exception e) {
-                    if (SpiKt.getShouldLogInternalErrors()) e.printStackTrace();
-                    LOGGER.error("Error interpreting file: {}", e.getMessage());
-                }
-            }
-        }
+//        ultranLang:
+//        {
+//            var inputFile = new File("main.ulan");
+//
+//            if (!inputFile.exists()) {
+//                LOGGER.error("File not found: {}", inputFile.getAbsolutePath());
+//            } else {
+//                SpiKt.setShouldLogInternalErrors(false);
+//                SpiKt.setShouldLogScope(false);
+//                SpiKt.setShouldLogStack(false);
+//                SpiKt.setShouldLogTokens(false);
+//
+//                String text;
+//                try {
+//                    text = Files.readString(inputFile.toPath(), Charset.defaultCharset());
+//                } catch (IOException e) {
+//                    LOGGER.error("Failed to read file: {}", inputFile.getAbsolutePath(), e);
+//                    break ultranLang;
+//                }
+//
+//                registerNativeFunctions();
+//                NativeCalls.INSTANCE.load();
+//
+//                var lexer = new Lexer(text);
+//                Program tree;
+//                try {
+//                    var parser = new Parser(lexer);
+//                    tree = parser.parse();
+//                } catch (LexerException | ParserException e) {
+//                    if (SpiKt.getShouldLogInternalErrors()) e.printStackTrace();
+//                    LOGGER.error("Error parsing file: {}", e.getMessage());
+//                    break ultranLang;
+//                } catch (RuntimeException e) {
+//                    var cause = e.getCause();
+//                    while (cause instanceof InvocationTargetException || cause instanceof RuntimeException) {
+//                        cause = cause.getCause();
+//                    }
+//                    if (cause instanceof LexerException) {
+//                        if (SpiKt.getShouldLogInternalErrors()) cause.printStackTrace();
+//                        LOGGER.error("Error parsing file: {}", cause.getMessage());
+//                    } else if (cause instanceof ParserException) {
+//                        if (SpiKt.getShouldLogInternalErrors()) cause.printStackTrace();
+//                        LOGGER.error("Error parsing file: {}", cause.getMessage());
+//                    } else {
+//                        throw e;
+//                    }
+//                    break ultranLang;
+//                }
+//
+//                var semanticAnalyzer = new SemanticAnalyzer();
+//
+//                try {
+//                    semanticAnalyzer.visit(tree);
+//                } catch (SemanticException e) {
+//                    if (SpiKt.getShouldLogInternalErrors()) e.printStackTrace();
+//                    LOGGER.error("Error analyzing file: {}", e.getMessage());
+//                    break ultranLang;
+//                } catch (RuntimeException e) {
+//                    var cause = e.getCause();
+//                    while (cause instanceof InvocationTargetException || cause instanceof RuntimeException) {
+//                        cause = cause.getCause();
+//                    }
+//                    if (cause instanceof SemanticException) {
+//                        if (SpiKt.getShouldLogInternalErrors()) cause.printStackTrace();
+//                        LOGGER.error("Error analyzing file: {}", cause.getMessage());
+//                    } else {
+//                        throw e;
+//                    }
+//                    break ultranLang;
+//                }
+//
+//                try {
+//                    var interpreter = new Interpreter(tree);
+//                    interpreter.interpret();
+//                } catch (Exception e) {
+//                    if (SpiKt.getShouldLogInternalErrors()) e.printStackTrace();
+//                    LOGGER.error("Error interpreting file: {}", e.getMessage());
+//                }
+//            }
+//        }
     }
 
-    private static void registerNativeFunctions() {
-        HashMap<String, String> params = new HashMap<>();
-        params.put("level", BuiltinTypeSymbol.STRING);
-        params.put("message", BuiltinTypeSymbol.STRING);
-        NativeCalls.INSTANCE.register("log", params, ar -> {
-            Object level = ar.get("level");
-            if (level instanceof String levelName) {
-                Object message = ar.get("message");
-                if (message == null) message = "null";
-
-                switch (levelName.toLowerCase(Locale.ROOT)) {
-                    case "warn" -> LOGGER.warn(message.toString());
-                    case "error" -> LOGGER.error(message.toString());
-                    case "debug" -> LOGGER.debug(message.toString());
-                    case "trace" -> LOGGER.trace(message.toString());
-                    default -> LOGGER.info(message.toString());
-                }
-            } else {
-                throw new IllegalArgumentException("Invalid level of type " + (level == null ? "null" : level.getClass().getName()));
-            }
-            return null;
-        });
-    }
+//    private static void registerNativeFunctions() {
+//        HashMap<String, String> params = new HashMap<>();
+//        params.put("level", BuiltinTypeSymbol.STRING);
+//        params.put("message", BuiltinTypeSymbol.STRING);
+//        NativeCalls.INSTANCE.register("log", params, ar -> {
+//            Object level = ar.get("level");
+//            if (level instanceof String levelName) {
+//                Object message = ar.get("message");
+//                if (message == null) message = "null";
+//
+//                switch (levelName.toLowerCase(Locale.ROOT)) {
+//                    case "warn" -> LOGGER.warn(message.toString());
+//                    case "error" -> LOGGER.error(message.toString());
+//                    case "debug" -> LOGGER.debug(message.toString());
+//                    case "trace" -> LOGGER.trace(message.toString());
+//                    default -> LOGGER.info(message.toString());
+//                }
+//            } else {
+//                throw new IllegalArgumentException("Invalid level of type " + (level == null ? "null" : level.getClass().getName()));
+//            }
+//            return null;
+//        });
+//    }
 
     public static void preInit() {
         if (DEVELOPER_MODE && Platform.isDevelopmentEnvironment()) {

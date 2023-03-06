@@ -35,23 +35,23 @@ dependencies {
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 
 
-    forgeRuntimeLibrary "org.jetbrains.kotlin:kotlin-stdlib:1.7.10"
-    forgeRuntimeLibrary "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10"
-    forgeRuntimeLibrary "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.10"
-    forgeRuntimeLibrary "org.jetbrains.kotlin:kotlin-reflect:1.7.10"
-
-    forgeRuntimeLibrary "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
-    forgeRuntimeLibrary "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.6.4"
-    forgeRuntimeLibrary "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.4"
-    forgeRuntimeLibrary "org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.3.3"
-    forgeRuntimeLibrary "org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.3.3"
-    forgeRuntimeLibrary "org.jetbrains.kotlinx:kotlinx-serialization-cbor-jvm:1.3.3"
-    forgeRuntimeLibrary 'org.jetbrains.kotlinx:atomicfu-jvm:0.18.3'
-    forgeRuntimeLibrary "org.jetbrains.kotlinx:kotlinx-datetime-jvm:0.4.0"
-
-    forgeRuntimeLibrary "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.10"
-    forgeRuntimeLibrary "org.jetbrains.kotlin:kotlin-stdlib:1.7.10"
-    forgeRuntimeLibrary "com.ultreon:ultranlang:0.0.1-dev5"
+//    forgeRuntimeLibrary "org.jetbrains.kotlin:kotlin-stdlib:1.7.10"
+//    forgeRuntimeLibrary "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10"
+//    forgeRuntimeLibrary "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.10"
+//    forgeRuntimeLibrary "org.jetbrains.kotlin:kotlin-reflect:1.7.10"
+//
+//    forgeRuntimeLibrary "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
+//    forgeRuntimeLibrary "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.6.4"
+//    forgeRuntimeLibrary "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.4"
+//    forgeRuntimeLibrary "org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.3.3"
+//    forgeRuntimeLibrary "org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.3.3"
+//    forgeRuntimeLibrary "org.jetbrains.kotlinx:kotlinx-serialization-cbor-jvm:1.3.3"
+//    forgeRuntimeLibrary 'org.jetbrains.kotlinx:atomicfu-jvm:0.18.3'
+//    forgeRuntimeLibrary "org.jetbrains.kotlinx:kotlinx-datetime-jvm:0.4.0"
+//
+//    forgeRuntimeLibrary "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.10"
+//    forgeRuntimeLibrary "org.jetbrains.kotlin:kotlin-stdlib:1.7.10"
+//    forgeRuntimeLibrary "com.ultreon:ultranlang:0.0.1-dev5"
     forgeRuntimeLibrary "com.jab125:apoint:1.0.0"
 
 //    include("org.jetbrains.kotlin:kotlin-stdlib:1.7.10")
