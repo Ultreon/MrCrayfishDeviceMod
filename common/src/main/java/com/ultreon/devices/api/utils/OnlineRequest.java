@@ -48,8 +48,8 @@ public class OnlineRequest {
     }
 
     public static void checkURLForSuspicions(URL url) throws IOException {
-        if (!isSafe(url.getHost())) {
-            throw new IOException();
+        if (!isSafe(url.getHost()) || !url.getProtocol().equals("https")) {
+            throw new IOException("Unsafe URL");
         }
     }
 
