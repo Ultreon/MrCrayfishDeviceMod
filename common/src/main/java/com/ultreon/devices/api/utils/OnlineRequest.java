@@ -1,5 +1,6 @@
 package com.ultreon.devices.api.utils;
 
+import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.util.StreamUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -121,6 +122,10 @@ public class OnlineRequest {
 
                 while (!requests.isEmpty()) {
                     RequestWrapper wrapper = requests.poll();
+                    if (Laptop.isOffline()) {
+                        wrapper.handler.handle(false, "Disconnected from the internet.");
+                        return;
+                    }
                     try {
                         URL url = new URL(wrapper.url);
                         checkURLForSuspicions(url);

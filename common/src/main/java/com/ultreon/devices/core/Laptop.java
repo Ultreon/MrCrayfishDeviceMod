@@ -17,6 +17,7 @@ import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.api.task.TaskManager;
 import com.ultreon.devices.api.utils.OnlineRequest;
 import com.ultreon.devices.block.entity.LaptopBlockEntity;
+import com.ultreon.devices.core.network.Connection;
 import com.ultreon.devices.core.task.TaskInstallApp;
 import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.programs.system.DiagnosticsApp;
@@ -71,6 +72,8 @@ public class Laptop extends Screen implements System {
     private static final List<Application> APPLICATIONS = new ArrayList<>();
     private static boolean worldLess;
     private static Laptop instance;
+    @Nullable
+    private final LaptopBlockEntity blockEntity;
 
     @PlatformOnly("fabric")
     public static List<Application> getApplicationsForFabric() {
@@ -180,10 +183,25 @@ public class Laptop extends Screen implements System {
 
         // World-less flag.
         Laptop.worldLess = worldLess;
+        this.blockEntity = laptop;
     }
 
     public static Laptop getInstance() {
         return instance;
+    }
+
+    public static boolean isOffline() {
+        Laptop laptop = instance;
+        if (laptop == null) {
+            return false;
+        }
+
+        LaptopBlockEntity blockEntity = laptop.blockEntity;
+        if (blockEntity == null) {
+             return false;
+        }
+
+        return blockEntity.getConnection() == null;
     }
 
     public CompoundTag getModSystemTag(Mod mod) {
