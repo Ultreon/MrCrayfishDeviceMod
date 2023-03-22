@@ -63,6 +63,16 @@ subprojects {
         // The following line declares the yarn mappings you may select this one as well.
         // mappings "net.fabricmc:yarn:@YARN_MAPPINGS@:v2"
     }
+
+    if (Objects.equals(System.getenv("CIRCLE_CI"), "true")) {
+        def copyToArtifacts = tasks.register("copyToArtifacts", Copy) {
+            it.mustRunAfter(build)
+            it.from files("$buildDir/libs/merged/*.jar")
+            it.into file("/tmp/artifacts/")
+        }
+        remapJar.finalizedBy copyToArtifacts
+        remapSourcesJar.finalizedBy copyToArtifacts
+    }
 }
 
 allprojects {
@@ -110,4 +120,15 @@ void setupRepositories(RepositoryHandler repositories) {
 }
 
 mergeJars.mustRunAfter build
+
+if (Objects.equals(System.getenv("CIRCLE_CI"), "true")) {
+    def copyToArtifacts = tasks.register("copyToArtifacts", Copy) {
+        it.mustRunAfter(mergeJars)
+        it.from files("$buildDir/libs/merged/*.jar")
+        it.into file("/tmp/artifacts/")
+    }
+    mergeJars.finalizedBy(copyToArtifacts)
+}
+
+
 //build.dependsOn mergeJars
