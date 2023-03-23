@@ -23,8 +23,17 @@ jobs:
             environment:
               CIRCLE_CI: true
       - store_artifacts:
-          name: "Store build artifacts."
-          path: /tmp/artifacts
+          name: "Store Merged Artifacts"
+          path: build/libs/merged
+      - store_artifacts:
+          name: "Store Common Artifacts"
+          path: common/build/libs
+      - store_artifacts:
+          name: "Store Fabric Artifacts"
+          path: fabric/build/libs
+      - store_artifacts:
+          name: "Store Forge Artifacts"
+          path: forge/build/libs
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
