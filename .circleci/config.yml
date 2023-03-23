@@ -26,9 +26,6 @@ jobs:
           name: "Store Merged Artifacts"
           path: build/libs/merged
       - store_artifacts:
-          name: "Store Common Artifacts"
-          path: common/build/libs
-      - store_artifacts:
           name: "Store Fabric Artifacts"
           path: fabric/build/libs
       - store_artifacts:
