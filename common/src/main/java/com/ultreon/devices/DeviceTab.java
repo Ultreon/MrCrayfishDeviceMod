@@ -13,10 +13,7 @@ import static com.ultreon.devices.Devices.id;
 public class DeviceTab {
     @SuppressWarnings("UnstableApiUsage")
     public static CreativeTabRegistry.TabSupplier create() {
-        System.out.println("creating creative tab");
-//        CreativeTabRegistry.modify(CreativeModeTabs.TAB_REDSTONE, output -> {
-//            output.acceptAll();
-//        });
+        Devices.LOGGER.info("Creating Creative Tab...");
         CreativeTabRegistry.TabSupplier devicesTabDevice = CreativeTabRegistry.create(id("devices_tab_device"), () -> new ItemStack(DeviceBlocks.LAPTOPS.of(DyeColor.RED).get()));
         CreativeTabRegistry.modify(devicesTabDevice, (flags, output, canUseGameMasterBlocks) -> {
             for (RegistrySupplier<Item> laptop : DeviceItems.LAPTOPS) {
@@ -35,6 +32,20 @@ public class DeviceTab {
             for (RegistrySupplier<Item> flashdrive : DeviceItems.FLASH_DRIVE) {
                 output.accept(flashdrive.get());
             }
+            output.accept(DeviceItems.COMPONENT_CPU.get());
+            output.accept(DeviceItems.COMPONENT_SOLID_STATE_DRIVE.get());
+            output.accept(DeviceItems.COMPONENT_GPU.get());
+            output.accept(DeviceItems.COMPONENT_RAM.get());
+            output.accept(DeviceItems.COMPONENT_HARD_DRIVE.get());
+            output.accept(DeviceItems.COMPONENT_BATTERY.get());
+            output.accept(DeviceItems.COMPONENT_SCREEN.get());
+            output.accept(DeviceItems.COMPONENT_WIFI.get());
+            output.accept(DeviceItems.COMPONENT_CARRIAGE.get());
+            output.accept(DeviceItems.COMPONENT_FLASH_CHIP.get());
+            output.accept(DeviceItems.COMPONENT_CIRCUIT_BOARD.get());
+            output.accept(DeviceItems.COMPONENT_CONTROLLER_UNIT.get());
+            output.accept(DeviceItems.COMPONENT_SMALL_ELECTRIC_MOTOR.get());
+            output.accept(DeviceItems.COMPONENT_MOTHERBOARD.get());
         });
         return devicesTabDevice;
     }

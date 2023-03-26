@@ -57,7 +57,7 @@ public class BoatRacersApp extends Application {
             openDialog(message);
             return;
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
         tileGrid = new TileGrid(266, 3, game);

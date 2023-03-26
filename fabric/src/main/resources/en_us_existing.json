@@ -51,5 +51,6 @@
     "message.devices.router_max_devices": "The maximum amount of devices has been reached for this router.",
     "message.devices.device_already_connected": "The selected device is already connected to this router.",
     "message.devices.successful_connection": "Successfully connected the selected device to this router.",
-    "message.devices.successful_registered": "Successfully registered the selected device to this router."
+    "message.devices.successful_registered": "Successfully registered the selected device to this router.",
+    "itemGroup.devices.devices_tab_device": "Devices"
 }

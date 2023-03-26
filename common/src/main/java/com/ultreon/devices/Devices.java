@@ -6,6 +6,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mojang.serialization.Lifecycle;
 import com.ultreon.devices.api.ApplicationManager;
 import com.ultreon.devices.api.app.Application;
 import com.ultreon.devices.api.print.IPrint;
@@ -25,6 +26,7 @@ import com.ultreon.devices.network.PacketHandler;
 import com.ultreon.devices.network.task.SyncApplicationPacket;
 import com.ultreon.devices.network.task.SyncConfigPacket;
 import com.ultreon.devices.object.AppInfo;
+import com.ultreon.devices.object.TrayItem;
 import com.ultreon.devices.programs.IconsApp;
 import com.ultreon.devices.programs.PixelPainterApp;
 import com.ultreon.devices.programs.TestApp;
@@ -51,7 +53,9 @@ import dev.architectury.registry.CreativeTabRegistry;
 import dev.architectury.registry.registries.RegistrarManager;
 import dev.architectury.utils.Env;
 import dev.architectury.utils.EnvExecutor;
+import net.minecraft.core.MappedRegistry;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.Items;
@@ -69,20 +73,26 @@ import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 public class Devices {
+    public static final boolean DEVELOPER_MODE = false;
     public static final String MOD_ID = "devices";
+    public static final Logger LOGGER = LoggerFactory.getLogger("Devices Mod");
+
     public static final CreativeTabRegistry.TabSupplier TAB_DEVICE = DeviceTab.create();
     public static final Supplier<RegistrarManager> REGISTRIES = Suppliers.memoize(() -> RegistrarManager.get(MOD_ID));
     public static final List<SiteRegistration> SITE_REGISTRATIONS = new ProtectedArrayList<>();
-    public static final Logger LOGGER = LoggerFactory.getLogger("Devices Mod");
-    public static final boolean DEVELOPER_MODE = false;
     private static final Pattern DEV_PREVIEW_PATTERN = Pattern.compile("\\d+\\.\\d+\\.\\d+-dev\\d+");
     private static final boolean IS_DEV_PREVIEW = DEV_PREVIEW_PATTERN.matcher(Reference.VERSION).matches();
     private static final String GITWEB_REGISTER_URL = "https://ultreon.gitlab.io/gitweb/site_register.json";
     public static final String VULNERABILITIES_URL = "https://jab125.com/gitweb/vulnerabilities.php";
     private static final boolean PROTECT_FROM_LAUNCH = false;
-    private static final Logger ULTRAN_LANG_LOGGER = LoggerFactory.getLogger("UltranLang");
+//    private static final Logger ULTRAN_LANG_LOGGER = LoggerFactory.getLogger("UltranLang");
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private static final SiteRegisterStack SITE_REGISTER_STACK = new SiteRegisterStack();
+
+    //---- Registry : Start ----//
+    public static MappedRegistry<TrayItem> trayItemRegistry = new MappedRegistry<>(ResourceKey.createRegistryKey(id("tray_item")), Lifecycle.stable());
+    //---- Registry : End ----//
+
     static List<AppInfo> allowedApps;
     private static List<Vulnerability> vulnerabilities;
     public static List<Vulnerability> getVulnerabilities() {
@@ -527,16 +537,20 @@ public class Devices {
     private static void checkForVulnerabilities() {
         OnlineRequest.getInstance().make(VULNERABILITIES_URL, ((success, response) -> {
             if (!success) {
-                System.out.println("Could not access vulnerabilities!");
+                LOGGER.error("Could not access vulnerabilities!");
                 vulnerabilities = ImmutableList.of();
                 return;
             }
 
             JsonArray array = JsonParser.parseString(response).getAsJsonArray();
             vulnerabilities = Vulnerability.parseArray(array);
-            System.out.println(array);
-            System.out.println(Arrays.toString(Reference.getVerInfo()));
-            System.out.println("Vulnerabilities:" + vulnerabilities);
+            vulnerabilities.forEach(vul -> {
+                String s = vul.toPrettyString();
+                s.lines().toList().forEach(line -> {
+                    LOGGER.debug("[VulChecker] {}", line);
+                });
+                LOGGER.debug("[VulChecker]");
+            });
         }));
     }
 

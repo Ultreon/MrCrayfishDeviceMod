@@ -2,6 +2,7 @@ package com.ultreon.devices.core.network;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.DeviceConfig;
+import com.ultreon.devices.Devices;
 import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.component.Button;
@@ -20,8 +21,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import org.apache.commons.lang3.EnumUtils;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -32,9 +35,10 @@ import java.util.List;
  */
 public class TrayItemWifi extends TrayItem {
     private int pingTimer;
+    private Strength strength = Strength.NONE;
 
     public TrayItemWifi() {
-        super(Icons.WIFI_NONE);
+        super(Icons.WIFI_NONE, Devices.id("wifi"));
     }
 
     private static Layout createWifiMenu(TrayItem item) {
@@ -149,15 +153,52 @@ public class TrayItemWifi extends TrayItem {
                 assert tag != null;
                 int strength = tag.getInt("strength");
                 switch (strength) {
-                    case 2 -> setIcon(Icons.WIFI_LOW);
-                    case 1 -> setIcon(Icons.WIFI_MED);
-                    case 0 -> setIcon(Icons.WIFI_HIGH);
-                    default -> setIcon(Icons.WIFI_NONE);
+                    case 2 -> {
+                        this.strength = Strength.LOW;
+                        setIcon(Icons.WIFI_LOW);
+                    }
+                    case 1 -> {
+                        this.strength = Strength.MED;
+                        setIcon(Icons.WIFI_MED);
+                    }
+                    case 0 -> {
+                        this.strength = Strength.HIGH;
+                        setIcon(Icons.WIFI_HIGH);
+                    }
+                    default -> {
+                        this.strength = Strength.NONE;
+                        setIcon(Icons.WIFI_NONE);
+                    }
                 }
             } else {
                 setIcon(Icons.WIFI_NONE);
             }
         });
         TaskManager.sendTask(task);
+    }
+
+    @Override
+    public void deserialize(CompoundTag tag) {
+        super.deserialize(tag);
+        this.pingTimer = tag.getInt("pingTimer");
+        this.strength = EnumUtils.getEnum(Strength.class, tag.getString("strength"), Strength.NONE);
+        switch (strength) {
+            case LOW -> setIcon(Icons.WIFI_LOW);
+            case MED -> setIcon(Icons.WIFI_MED);
+            case HIGH -> setIcon(Icons.WIFI_HIGH);
+            case NONE -> setIcon(Icons.WIFI_NONE);
+        }
+    }
+
+    @Override
+    public CompoundTag serialize() {
+        CompoundTag tag = super.serialize();
+        tag.putInt("pingTimer", pingTimer);
+        tag.putString("strength", strength.name());
+        return tag;
+    }
+
+    public enum Strength {
+        LOW, MED, HIGH, NONE
     }
 }

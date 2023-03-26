@@ -192,6 +192,7 @@ public class Window<T extends Wrappable> {
         updateComponents(screenStartX, screenStartY);
     }
 
+    @SuppressWarnings("unused")
     void handleMouseClick(Laptop gui, int x, int y, int mouseX, int mouseY, int mouseButton) {
         if (btnClose.isHovered()) {
             if (content instanceof Application) {
@@ -250,7 +251,7 @@ public class Window<T extends Wrappable> {
         if (dialogWindow != null) {
             dialogWindow.openDialog(dialog);
         } else {
-            dialogWindow = new Window(dialog, null);
+            dialogWindow = new Window<>(dialog, null);
             dialogWindow.init(0, 0, null);
             dialogWindow.setParent(this);
         }
@@ -278,11 +279,11 @@ public class Window<T extends Wrappable> {
         }
     }
 
-    public Window getParent() {
+    public Window<?> getParent() {
         return parent;
     }
 
-    public void setParent(Window parent) {
+    public void setParent(Window<?> parent) {
         this.parent = parent;
     }
 

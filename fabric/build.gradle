@@ -90,6 +90,7 @@ shadowJar {
 
 remapJar {
     injectAccessWidener = true
+    //noinspection GrDeprecatedAPIUsage
     input.set shadowJar.archiveFile
     dependsOn shadowJar
     classifier null

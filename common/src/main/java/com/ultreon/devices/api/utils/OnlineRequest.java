@@ -9,7 +9,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContextBuilder;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -49,16 +48,24 @@ public class OnlineRequest {
     }
 
     public static void checkURLForSuspicions(URL url) throws IOException {
-        System.out.println(url.getHost());
-        if (!isSafe(url.getHost())) {
-            throw new IOException();
+        if (!isSafe(url.getHost()) || !url.getProtocol().equals("https")) {
+            throw new IOException("Unsafe URL");
+        }
+    }
+
+    public static boolean isSafeAddress(String address) {
+        try {
+            URL url = new URL(address);
+            return isSafe(url.getHost());
+        } catch (Exception e) {
+            return false;
         }
     }
 
     // ignore that
     private static boolean isSafe(String host) {
         return switch (host) {
-            case "ultreon.gitlab.io", "cdn.discordapp.com", "jab125.com", "jab125.dev", "raw.githubusercontent.com", "github.com", "i.imgur.com", "avatars1.githubusercontent.com" -> true;
+            case "ultreon.gitlab.io", "cdn.discordapp.com", "jab125.com", "jab125.dev", "raw.githubusercontent.com", "github.com", "i.imgur.com", "i.giphy.com", "avatars1.githubusercontent.com" -> true;
             default -> false;
         };
     }

@@ -7,7 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class Wrappable {
-    private Window window;
+    private Window<?> window;
 
     /**
      * The default initialization method. Clears any components in the default
@@ -124,7 +124,7 @@ public abstract class Wrappable {
      *
      * @param mouseX    the x position of the mouse
      * @param mouseY    the y position of the mouse
-     * @param delta
+     * @param delta     the scroll delta.
      * @param direction the direction of the scroll. true is up, false is down
      */
     public abstract void handleMouseScroll(int mouseX, int mouseY, double delta, boolean direction);
@@ -187,7 +187,7 @@ public abstract class Wrappable {
      *
      * @return the window
      */
-    public final Window getWindow() {
+    public final Window<?> getWindow() {
         return window;
     }
 
@@ -196,7 +196,7 @@ public abstract class Wrappable {
      *
      * @param window
      */
-    public final void setWindow(Window window) {
+    public final void setWindow(Window<?> window) {
         if (window == null) throw new IllegalArgumentException("You can't set a null window instance");
         this.window = window;
     }

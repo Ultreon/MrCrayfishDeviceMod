@@ -32,6 +32,6 @@ side = "BOTH"
 [[dependencies.devices]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[${minecraftVersion},1.19.3)"
+versionRange = "[${minecraftVersion},1.19.4)"
 ordering = "NONE"
 side = "BOTH"

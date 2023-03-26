@@ -2,6 +2,8 @@ package com.ultreon.devices.object;
 
 import com.ultreon.devices.api.app.IIcon;
 import com.ultreon.devices.api.app.listener.ClickListener;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * @author MrCrayfish
@@ -9,9 +11,11 @@ import com.ultreon.devices.api.app.listener.ClickListener;
 public class TrayItem {
     private IIcon icon;
     private ClickListener listener;
+    private final ResourceLocation id;
 
-    public TrayItem(IIcon icon) {
+    public TrayItem(IIcon icon, ResourceLocation id) {
         this.icon = icon;
+        this.id = id;
     }
 
     public void init() {
@@ -36,5 +40,17 @@ public class TrayItem {
         if (listener != null) {
             listener.onClick(mouseX, mouseY, mouseButton);
         }
+    }
+
+    public ResourceLocation getId() {
+        return id;
+    }
+
+    public CompoundTag serialize() {
+        return new CompoundTag();
+    }
+
+    public void deserialize(CompoundTag trayTag) {
+
     }
 }
