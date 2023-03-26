@@ -1,11 +1,8 @@
 package com.ultreon.devices.data.client;
 
-import com.ultreon.devices.Reference;
+import com.ultreon.devices.Devices;
 import com.ultreon.devices.block.*;
 import com.ultreon.devices.init.DeviceBlocks;
-import dev.architectury.registry.registries.Registries;
-import net.minecraft.core.Registry;
-import net.minecraft.data.DataGenerator;
 import dev.architectury.registry.registries.RegistrarManager;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
@@ -21,7 +18,7 @@ import java.util.Objects;
 
 public class ModBlockStateProvider extends BlockStateProvider {
     public ModBlockStateProvider(PackOutput gen, ExistingFileHelper exFileHelper) {
-        super(gen, Reference.MOD_ID, exFileHelper);
+        super(gen, Devices.MOD_ID, exFileHelper);
     }
 
     @NotNull
