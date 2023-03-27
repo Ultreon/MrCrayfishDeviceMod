@@ -53,6 +53,16 @@ subprojects {
             parchment("org.parchmentmc.data:parchment-1.19.2:2022.08.10@zip")
         }
     }
+
+    if (Objects.equals(System.getenv("CIRCLE_CI"), "true")) {
+        def copyToArtifacts = tasks.register("copyToArtifacts", Copy) {
+            it.mustRunAfter(build)
+            it.from files("$buildDir/libs/merged/*.jar")
+            it.into file("/tmp/artifacts/")
+        }
+        remapJar.finalizedBy copyToArtifacts
+        remapSourcesJar.finalizedBy copyToArtifacts
+    }
 }
 
 allprojects {
@@ -104,3 +114,15 @@ void setupRepositories(RepositoryHandler repositories) {
 }
 
 mergeJars.mustRunAfter build
+
+if (Objects.equals(System.getenv("CIRCLE_CI"), "true")) {
+    def copyToArtifacts = tasks.register("copyToArtifacts", Copy) {
+        it.mustRunAfter(mergeJars)
+        it.from files("$buildDir/libs/merged/*.jar")
+        it.into file("/tmp/artifacts/")
+    }
+    mergeJars.finalizedBy(copyToArtifacts)
+}
+
+
+//build.dependsOn mergeJars

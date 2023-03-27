@@ -494,7 +494,7 @@ public class Image extends Component {
                 texture.load(Minecraft.getInstance().getResourceManager());
                 CachedImage cachedImage = new CachedImage(texture.getId(), image.imageWidth, image.imageHeight, true);
                 if (texture != MissingTextureAtlasSprite.getTexture())
-                CACHE.put(url, cachedImage);
+                    CACHE.put(url, cachedImage);
                 return cachedImage;
             } catch (IOException e) {
                 return new CachedImage(MissingTextureAtlasSprite.getTexture().getId(), 0, 0, true);
