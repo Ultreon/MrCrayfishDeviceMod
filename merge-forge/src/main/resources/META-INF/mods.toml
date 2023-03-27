@@ -9,8 +9,8 @@ license = "GPL-3.0"
 # The main mod, and all sub-mods.
 [[mods]]
 modId = "devices_forge"
-#version = "${version}"
-#displayName = "Devices Mod Forge"
+version = "0.0.0-generated"
+displayName = "(Wrapper) Devices Mod"
 #updateJSONURL="http://myurl.me/"
 #displayURL = "https://github.com/Ultreon/devices-mod"
 #logoFile="devices_mod.png"

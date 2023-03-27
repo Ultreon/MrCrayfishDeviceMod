@@ -1,7 +1,9 @@
 {
   "schemaVersion": 1,
   "id": "devices-fabric",
-  "version": "1.0.0",
+  "name": "(Wrapper) Devices Mod",
+  "description": "Fabric wrapper for devices mod",
+  "version": "0.0.0-generated",
   "custom": {
     "modmenu": {
       "badges": [
