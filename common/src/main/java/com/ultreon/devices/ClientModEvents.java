@@ -69,7 +69,7 @@ public class ClientModEvents {
         registerRenderLayers();
         registerRenderers();
         registerLayerDefinitions();
-        if (!Platform.isDevelopmentEnvironment()) {
+        if (!Platform.isDevelopmentEnvironment()) { // FIXME: ended up with this wonky piece of code, may need to see an alternative option.
             generateIconAtlas();
         }
         ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, new ReloaderListener());
