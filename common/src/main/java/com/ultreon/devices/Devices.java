@@ -95,7 +95,7 @@ public class Devices {
     //---- Registry : End ----//
 
     static List<AppInfo> allowedApps;
-    private static List<Vulnerability> vulnerabilities;
+    private static List<Vulnerability> vulnerabilities = new ArrayList<>();
     public static List<Vulnerability> getVulnerabilities() {
         return vulnerabilities;
     }
