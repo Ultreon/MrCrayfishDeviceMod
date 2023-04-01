@@ -1,9 +1,9 @@
 {
+    "schemaVersion": 2,
     "name": "GitWeb",
-    "author": "MrCrayfish, MinecraftDoodler",
+    "authors": ["MrCrayfish", "MinecraftDoodler", "Jab125", "Qboi123"],
     "description": "GitWeb is a web browser powered by GitHub. It is community driven, which means websites you browse are created by other players.",
     "version": "0.0.2",
-    "icon": "devices:textures/app/icon/gitweb.png",
     "screenshots": [
         "devices:textures/app/screenshot/gitweb_screenshot_1.png"
     ]

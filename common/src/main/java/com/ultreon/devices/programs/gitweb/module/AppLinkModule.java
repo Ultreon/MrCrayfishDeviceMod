@@ -8,6 +8,7 @@ import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.programs.gitweb.GitWebApp;
 import com.ultreon.devices.programs.gitweb.component.GitWebFrame;
 import com.ultreon.devices.programs.system.AppStore;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.Map;
 
@@ -30,7 +31,7 @@ public class AppLinkModule extends Module {
     @Override
     public void generate(GitWebFrame frame, Layout layout, int width, Map<String, String> data) {
         int height = calculateHeight(data, width) - 5;
-        AppInfo info = ApplicationManager.getApplication(data.get("app"));
+        AppInfo info = ApplicationManager.getApplication(ResourceLocation.tryParse(data.get("app")));
 
         int section = layout.width / 6;
         Button button = new Button(0, 10, "Install", Icons.IMPORT);
@@ -41,7 +42,7 @@ public class AppLinkModule extends Module {
                 System.out.println("FRAME");
                 gitWeb.getSystem().ifPresent(a -> {
                     System.out.println("OPENING APP");
-                    var b = a.openApplication(ApplicationManager.getApplication("devices:app_store"));
+                    var b = a.openApplication(ApplicationManager.getApplication(ResourceLocation.tryParse("devices:app_store")));
                     if (b != null && b instanceof AppStore store) {
                         store.queueOpen(info);
                     }

@@ -1,5 +1,7 @@
 package com.ultreon.devices.programs.system.object;
 
+import com.ultreon.devices.object.AppInfo;
+
 import javax.annotation.Nullable;
 
 /**
@@ -8,6 +10,7 @@ import javax.annotation.Nullable;
 public class RemoteEntry implements AppEntry {
     public String id;
     public String name;
+    public String[] authors;
     public String author;
     public String description;
     public int screenshots;
@@ -23,9 +26,15 @@ public class RemoteEntry implements AppEntry {
         return name;
     }
 
+    @Deprecated
     @Override
     public String author() {
-        return author;
+        return author == null ? AppEntry.super.author() : author;
+    }
+
+    @Override
+    public String[] authors() {
+        return new String[]{author};
     }
 
     @Override
@@ -40,7 +49,7 @@ public class RemoteEntry implements AppEntry {
     }
 
     @Override
-    public String icon() {
+    public AppInfo.Icon icon() {
         return null;
     }
 

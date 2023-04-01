@@ -1,6 +1,6 @@
 {
-    "parent": "devices:block/laptop_full",
-    "textures": {
-        "2": "minecraft:block/white_wool"
-    }
+  "parent": "devices:block/laptop_base",
+  "textures": {
+    "2": "minecraft:block/white_wool"
+  }
 }

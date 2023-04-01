@@ -7,7 +7,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -49,7 +48,7 @@ public abstract class DeviceBlockEntity extends SyncBlockEntity implements Ticka
     }
 
     public Component getDisplayName() {
-        return new TextComponent(getCustomName());
+        return Component.literal(getCustomName());
     }
 
     @Override

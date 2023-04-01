@@ -52,7 +52,10 @@ public class StandardLayout extends Layout {
         if (previous == null && icon != null) {
             icon.draw(pose, mc, x + 5, y + 5);
         }
-        mc.font.drawShadow(pose, title, x + 5 + (previous != null || icon != null ? 16 : 0), y + 7, Color.WHITE.getRGB());
+
+        if (title != null) {
+            mc.font.drawShadow(pose, title, x + 5 + (previous != null || icon != null ? 16 : 0), y + 7, Color.WHITE.getRGB());
+        }
 
         super.render(pose, laptop, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
     }

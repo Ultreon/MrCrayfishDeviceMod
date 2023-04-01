@@ -10,7 +10,6 @@ import com.ultreon.devices.init.RegistrationHandler;
 import dev.architectury.platform.forge.EventBuses;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.data.loading.DatagenModLoader;
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -32,10 +31,13 @@ public class DevicesForge {
 
     public static final boolean DEVELOPER_MODE = false;
 
+    public static IEventBus MOD_EVENTBUS;
+
     public DevicesForge() throws LaunchException {
         EventBuses.registerModEventBus(Devices.MOD_ID, FMLJavaModLoadingContext.get().getModEventBus());
+        MOD_EVENTBUS = FMLJavaModLoadingContext.get().getModEventBus();
+        MOD_EVENTBUS.register(BuiltinAppsRegistration.class);
         Devices.preInit();
-
         FMLJavaModLoadingContext javaFmlLoadingCtx = FMLJavaModLoadingContext.get();
         ModLoadingContext loadingCtx = ModLoadingContext.get();
         IEventBus forgeEventBus = MinecraftForge.EVENT_BUS;

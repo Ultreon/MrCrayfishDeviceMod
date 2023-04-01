@@ -8,8 +8,8 @@ import net.fabricmc.api.ModInitializer;
 public class DevicesFabric implements ModInitializer {
     @Override
     public void onInitialize() {
+        DeviceConfig.register(null);
         Devices.init();
         RegistrationHandler.register();
-        DeviceConfig.register(null);
     }
 }

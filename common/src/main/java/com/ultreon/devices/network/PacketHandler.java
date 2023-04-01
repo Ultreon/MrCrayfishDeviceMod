@@ -1,10 +1,18 @@
 package com.ultreon.devices.network;
 
 import com.ultreon.devices.Devices;
+import com.ultreon.devices.core.laptop.common.C2SUpdatePacket;
+import com.ultreon.devices.core.laptop.common.S2CUpdatePacket;
 import com.ultreon.devices.network.task.*;
 import dev.architectury.networking.NetworkChannel;
+import dev.architectury.networking.NetworkManager;
+import dev.architectury.utils.Env;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
 public class PacketHandler {
@@ -18,14 +26,61 @@ public class PacketHandler {
         INSTANCE.register(SyncConfigPacket.class, Packet::toBytes, SyncConfigPacket::new, SyncConfigPacket::onMessage);
         INSTANCE.register(SyncBlockPacket.class, Packet::toBytes, SyncBlockPacket::new, SyncBlockPacket::onMessage);
         INSTANCE.register(NotificationPacket.class, Packet::toBytes, NotificationPacket::new, NotificationPacket::onMessage);
+        INSTANCE.register(S2CUpdatePacket.class, Packet::toBytes, S2CUpdatePacket::new, S2CUpdatePacket::onMessage);
+        INSTANCE.register(C2SUpdatePacket.class, Packet::toBytes, C2SUpdatePacket::new, C2SUpdatePacket::onMessage);
     }
 
     private static int nextId() {
         return id++;
     }
 
-    public static <T extends Packet<T>> void sendToClient(Packet<T> messageNotification, ServerPlayer player) {
-        INSTANCE.sendToPlayer(player, messageNotification);
+    @Environment(EnvType.CLIENT)
+    public static <T extends Packet<T>> void sendToServer(T message) {
+        if (Minecraft.getInstance().getConnection() != null) {
+            INSTANCE.sendToServer(message);
+        } else {
+            Minecraft.getInstance().doRunTask(() ->
+            message.onMessage(() -> new NetworkManager.PacketContext() {
+
+                @Override
+                public Player getPlayer() {
+                    return Minecraft.getInstance().player;
+                }
+
+                @Override
+                public void queue(Runnable runnable) {
+
+                }
+
+                @Override
+                public Env getEnvironment() {
+                    return Env.SERVER;
+                }
+            }));
+        }
+    }
+
+    public static <T extends Packet<T>> void sendToClient(Packet<T> messageNotification, Player player) { // has to be ServerPlayer if world is not null
+        if (player == null || player.level == null) {
+            messageNotification.onMessage(() -> new NetworkManager.PacketContext() {
+                @Override
+                public Player getPlayer() {
+                    return player;
+                }
+
+                @Override
+                public void queue(Runnable runnable) {
+
+                }
+
+                @Override
+                public Env getEnvironment() {
+                    return Env.CLIENT;
+                }
+            });
+            return;
+        }
+        INSTANCE.sendToPlayer((ServerPlayer) player, messageNotification);
         //INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), messageNotification);
     }
 

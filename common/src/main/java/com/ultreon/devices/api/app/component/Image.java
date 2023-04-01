@@ -8,8 +8,11 @@ import com.ultreon.devices.Devices;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.IIcon;
 import com.ultreon.devices.api.app.Layout;
+import com.ultreon.devices.api.utils.OnlineRequest;
 import com.ultreon.devices.api.utils.RenderUtil;
 import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.object.AppInfo;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -31,9 +34,57 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 @SuppressWarnings("unused")
 public class Image extends Component {
+    public static class AppImage extends Layout {
+        private final AppInfo appInfo;
+        private AppInfo.Icon.Glyph[] glyphs;
+        private int componentWidth;
+        private int componentHeight;
+        public AppImage(int left, int top, AppInfo resource) {
+            this(left, top, 14, 14, resource);
+            this.glyphs = new AppInfo.Icon.Glyph[]{resource.getIcon().getBase(), resource.getIcon().getOverlay0(), resource.getIcon().getOverlay1()};
+        }
+
+        public AppImage(int left, int top, int componentWidth, int componentHeight, AppInfo resource) {
+            super(left, top, componentWidth, componentHeight);
+            this.appInfo = resource;
+            this.glyphs = new AppInfo.Icon.Glyph[]{resource.getIcon().getBase(), resource.getIcon().getOverlay0(), resource.getIcon().getOverlay1()};
+            this.componentWidth = componentWidth;
+            this.componentHeight = componentHeight;
+            //super(left, top, componentWidth, componentHeight, imageU, imageV, 14, 14, 224, 224, resource);
+        }
+
+        @Override
+        public void init(Layout layout) {
+            super.init(layout);
+            if (appInfo.getIcon().getBase().getU() == -1 && appInfo.getIcon().getBase().getV() == -1) {
+                var image = new Image(0, 0, componentWidth, componentHeight, 0, 0, 14, 14, 224, 224, Laptop.ICON_TEXTURES);
+                this.addComponent(image);
+                return;
+            }
+            for (AppInfo.Icon.Glyph glyph : glyphs) {
+                if (glyph.getU() == -1 || glyph.getV() == -1) continue;
+                var image = new Image(0, 0, componentWidth, componentHeight, glyph.getU(), glyph.getV(), 14, 14, 224, 224, Laptop.ICON_TEXTURES);
+                Supplier<ColorSupplier> suscs = () -> {
+                    int tint = appInfo.getTint(glyph.getType());
+                    var col = new Color(tint);
+                    var cs = new ColorSupplier();
+                    cs.r = col.getRed();
+                    cs.g = col.getGreen();
+                    cs.b = col.getBlue();
+                    return cs;
+                };
+                image.setTint(suscs);
+                this.addComponent(image);
+                //image.init(layout);
+            }
+        }
+    }
+
+
     public static final Map<String, CachedImage> CACHE = new HashMap<>();
     protected ImageLoader loader;
     protected CachedImage image;
@@ -42,9 +93,33 @@ public class Image extends Component {
     protected int imageU, imageV;
     protected int imageWidth, imageHeight;
     protected int sourceWidth, sourceHeight;
-    protected int componentWidth, componentHeight;
+    public int componentWidth;
+    public int componentHeight;
     private Spinner spinner;
     private float alpha = 1f;
+    private Supplier<ColorSupplier> tint = () -> Util.make(new ColorSupplier(), cs -> {
+        cs.r = 255;
+        cs.g = 255;
+        cs.b = 255;
+    });
+
+    public void setTint(int r, int g, int b) {
+        var cs = new ColorSupplier();
+        cs.r = r;
+        cs.g = g;
+        cs.b = b;
+        this.setTint(() -> cs);
+    }
+
+    private static class ColorSupplier {
+        int r;
+        int g;
+        int b;
+    }
+
+    public void setTint(Supplier<ColorSupplier> colorSupplier) {
+        this.tint = colorSupplier;
+    }
 
     private boolean hasBorder = false;
     private int borderColor = Color.BLACK.getRGB();
@@ -185,10 +260,12 @@ public class Image extends Component {
                 fill(pose, x, y, x + componentWidth, y + componentHeight, borderColor);
             }
 
+            RenderSystem.setShaderColor(tint.get().r/255f, tint.get().g/255f, tint.get().b/255f, alpha);
+
             if (image != null && image.textureId != -1) {
                 image.restore();
 
-                RenderSystem.setShaderColor(1f, 1f, 1f, alpha);
+                RenderSystem.setShaderColor(tint.get().r/255f, tint.get().g/255f, tint.get().b/255f, alpha);
                 RenderSystem.enableBlend();
                 RenderSystem.setShaderTexture(0, image.textureId);
 
@@ -220,6 +297,7 @@ public class Image extends Component {
                     fill(pose, x, y, x + componentWidth, y + componentHeight, Color.LIGHT_GRAY.getRGB());
                 }
             }
+            RenderSystem.setShaderColor(1f, 1f, 1f, alpha);
         }
     }
 
@@ -374,6 +452,7 @@ public class Image extends Component {
             Runnable r = () -> {
                 try {
                     URL url = new URL(this.url);
+                    OnlineRequest.checkURLForSuspicions(url);
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     conn.setRequestProperty("User-Agent", "Mozilla/5.0");
                     InputStream connIn = conn.getInputStream();
@@ -388,11 +467,13 @@ public class Image extends Component {
                     NativeImage nativeImage = NativeImage.read(in);
 
                     Laptop.runLater(() -> {
-                        System.out.println("Loaded image: " + url);
+                        Devices.LOGGER.debug("Loaded image: " + url);
                         texture = new DynamicTexture(nativeImage);
                         setup = true;
                     });
                 } catch (IOException e) {
+                    texture = MissingTextureAtlasSprite.getTexture();
+                    setup = true;
                     e.printStackTrace();
                 }
             };
@@ -412,7 +493,8 @@ public class Image extends Component {
             try {
                 texture.load(Minecraft.getInstance().getResourceManager());
                 CachedImage cachedImage = new CachedImage(texture.getId(), image.imageWidth, image.imageHeight, true);
-                CACHE.put(url, cachedImage);
+                if (texture != MissingTextureAtlasSprite.getTexture())
+                    CACHE.put(url, cachedImage);
                 return cachedImage;
             } catch (IOException e) {
                 return new CachedImage(MissingTextureAtlasSprite.getTexture().getId(), 0, 0, true);

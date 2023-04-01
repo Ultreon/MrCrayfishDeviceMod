@@ -69,8 +69,8 @@ public class GLHelper {
         ScaledResolution resolution = new ScaledResolution(mc);
         double scale = resolution.getScaleFactor();
         ByteBuffer buffer = BufferUtils.createByteBuffer(3);
-        RenderSystem.readPixels((int) (x * scale), (int) (mc.getWindow().getHeight() - y * scale - scale), 1, 1, GL11.GL_RGB, GL11.GL_FLOAT, buffer);
-        return new Color(buffer.get(0), buffer.get(1), buffer.get(2));
+        RenderSystem.readPixels((int) (x * scale), (int) (mc.getWindow().getHeight() - y * scale - scale), 1, 1, GL11.GL_RGB, GL11.GL_BYTE, buffer);
+        return new Color(Math.min(255, buffer.get(0) % 256*2), Math.min(255, buffer.get(1) % 256*2), Math.min(255, buffer.get(2) % 256*2));
     }
 
     public static class Scissor {

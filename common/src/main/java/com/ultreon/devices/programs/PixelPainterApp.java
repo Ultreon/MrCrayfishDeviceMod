@@ -4,7 +4,6 @@ import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.platform.TextureUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Quaternion;
 import com.ultreon.devices.Reference;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Dialog;
@@ -29,6 +28,7 @@ import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import org.joml.Quaternionf;
 
 import javax.annotation.Nullable;
 import java.awt.*;
@@ -69,7 +69,7 @@ public class PixelPainterApp extends Application {
 
     /* Drawing */
     private Layout layoutDraw;
-    private Canvas canvas;
+    private com.ultreon.devices.object.Canvas canvas;
     private ButtonToggle btnPencil;
     private ButtonToggle btnBucket;
     private ButtonToggle btnEraser;
@@ -272,7 +272,7 @@ public class PixelPainterApp extends Application {
 
         layoutDraw = new Layout(213, 140);
 
-        canvas = new Canvas(5, 5);
+        canvas = new com.ultreon.devices.object.Canvas(5, 5);
         layoutDraw.addComponent(canvas);
 
         RadioGroup toolGroup = new RadioGroup();
@@ -312,6 +312,7 @@ public class PixelPainterApp extends Application {
                 openDialog(dialog);
             }
         });
+        button.setEnabled(false);
         layoutDraw.addComponent(button);
 
         btnCancel = new Button(138, 100, PIXEL_PAINTER_ICONS, 50, 0, 10, 10);
@@ -499,7 +500,7 @@ public class PixelPainterApp extends Application {
                 RenderSystem.enableBlend();
                 RenderSystem.blendFuncSeparate(770, 771, 1, 0);
 //                GlStateManager.disableLighting();
-                pose.mulPose(new Quaternion(0, 1, 0, 180));
+                pose.mulPose(new Quaternionf(0, 1, 0, 180));
 
                 // This is for the paper background
                 if (!cut) {

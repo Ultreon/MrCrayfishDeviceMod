@@ -21,7 +21,7 @@ public class TaskInstallApp extends Task {
     private BlockPos laptopPos;
     private boolean install;
 
-    private TaskInstallApp() {
+    public TaskInstallApp() {
         super("install_app");
     }
 

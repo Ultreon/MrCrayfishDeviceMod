@@ -1,0 +1,4 @@
+# comments are lines that begin with "#"
+# "# is a comment" but "test # not a comment"
+# This is the changelog uploaded to https://jab125.com/updater.php
+- Add Update Checker

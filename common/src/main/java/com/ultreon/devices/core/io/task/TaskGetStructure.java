@@ -23,7 +23,7 @@ public class TaskGetStructure extends Task {
 
     private ServerFolder folder;
 
-    private TaskGetStructure() {
+    public TaskGetStructure() {
         super("get_folder_structure");
     }
 

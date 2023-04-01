@@ -14,8 +14,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -36,7 +34,7 @@ import java.util.List;
  */
 public class EthernetCableItem extends Item {
     public EthernetCableItem() {
-        super(new Properties().tab(Devices.TAB_DEVICE).stacksTo(1));
+        super(new Properties().arch$tab(Devices.TAB_DEVICE).stacksTo(1));
     }
 
     private static double getDistance(BlockPos source, BlockPos target) {
@@ -111,7 +109,7 @@ public class EthernetCableItem extends Item {
 
     private void sendGameInfoMessage(Player player, String message) {
         if (player instanceof ServerPlayer serverPlayer) {
-            serverPlayer.sendMessage(new TranslatableComponent(message), ChatType.GAME_INFO, Util.NIL_UUID);
+            serverPlayer.sendSystemMessage(Component.translatable(message));
         }
     }
 
@@ -134,28 +132,28 @@ public class EthernetCableItem extends Item {
         if (stack.hasTag()) {
             CompoundTag tag = stack.getTag();
             if (tag != null) {
-                tooltip.add(new TextComponent(ChatFormatting.RED.toString() + ChatFormatting.BOLD + "ID: " + ChatFormatting.RESET + tag.getUUID("id")));
-                tooltip.add(new TextComponent(ChatFormatting.RED.toString() + ChatFormatting.BOLD + "Device: " + ChatFormatting.RESET + tag.getString("name")));
+                tooltip.add(net.minecraft.network.chat.Component.literal(ChatFormatting.RED.toString() + ChatFormatting.BOLD + "ID: " + ChatFormatting.RESET + tag.getUUID("id")));
+                tooltip.add(net.minecraft.network.chat.Component.literal(ChatFormatting.RED.toString() + ChatFormatting.BOLD + "Device: " + ChatFormatting.RESET + tag.getString("name")));
 
                 BlockPos devicePos = BlockPos.of(tag.getLong("pos"));
                 String text = ChatFormatting.RED.toString() + ChatFormatting.BOLD + "X: " + ChatFormatting.RESET + devicePos.getX() + " " +
                         ChatFormatting.RED + ChatFormatting.BOLD + "Y: " + ChatFormatting.RESET + devicePos.getY() + " " +
                         ChatFormatting.RED + ChatFormatting.BOLD + "Z: " + ChatFormatting.RESET + devicePos.getZ();
-                tooltip.add(new TextComponent(text));
+                tooltip.add(net.minecraft.network.chat.Component.literal(text));
             }
         } else {
             if (!KeyboardHelper.isShiftDown()) {
-                tooltip.add(new TextComponent(ChatFormatting.GRAY + "Use this cable to connect"));
-                tooltip.add(new TextComponent(ChatFormatting.GRAY + "a device to a router."));
-                tooltip.add(new TextComponent(ChatFormatting.YELLOW + "Hold SHIFT for How-To"));
+                tooltip.add(net.minecraft.network.chat.Component.literal(ChatFormatting.GRAY + "Use this cable to connect"));
+                tooltip.add(net.minecraft.network.chat.Component.literal(ChatFormatting.GRAY + "a device to a router."));
+                tooltip.add(net.minecraft.network.chat.Component.literal(ChatFormatting.YELLOW + "Hold SHIFT for How-To"));
                 return;
             }
 
-            tooltip.add(new TextComponent(ChatFormatting.GRAY + "Start by right clicking a"));
-            tooltip.add(new TextComponent(ChatFormatting.GRAY + "device with this cable"));
-            tooltip.add(new TextComponent(ChatFormatting.GRAY + "then right click the "));
-            tooltip.add(new TextComponent(ChatFormatting.GRAY + "router you want to"));
-            tooltip.add(new TextComponent(ChatFormatting.GRAY + "connect this device to."));
+            tooltip.add(net.minecraft.network.chat.Component.literal(ChatFormatting.GRAY + "Start by right clicking a"));
+            tooltip.add(net.minecraft.network.chat.Component.literal(ChatFormatting.GRAY + "device with this cable"));
+            tooltip.add(net.minecraft.network.chat.Component.literal(ChatFormatting.GRAY + "then right click the "));
+            tooltip.add(net.minecraft.network.chat.Component.literal(ChatFormatting.GRAY + "router you want to"));
+            tooltip.add(net.minecraft.network.chat.Component.literal(ChatFormatting.GRAY + "connect this device to."));
         }
         super.appendHoverText(stack, level, tooltip, isAdvanced);
     }
@@ -169,7 +167,7 @@ public class EthernetCableItem extends Item {
     @Override
     public Component getName(ItemStack stack) {
         if (stack.hasTag()) {
-            return new TextComponent(ChatFormatting.GRAY.toString() + ChatFormatting.BOLD + super.getDescription());
+            return super.getDescription().copy().withStyle(ChatFormatting.GRAY, ChatFormatting.BOLD);
         }
         return super.getName(stack);
     }

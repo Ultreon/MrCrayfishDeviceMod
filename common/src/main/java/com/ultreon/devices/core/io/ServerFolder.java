@@ -14,8 +14,9 @@ import java.util.function.Predicate;
 /**
  * @author MrCrayfish
  */
-public class ServerFolder extends ServerFile {
+public final class ServerFolder extends ServerFile {
     private List<ServerFile> files = new ArrayList<>();
+    private final Object interrupt = new Object();
 
     public ServerFolder(String name) {
         this(name, false);
@@ -26,8 +27,16 @@ public class ServerFolder extends ServerFile {
         this.protect = protect;
     }
 
+    private ServerFolder(String name, boolean protect, CompoundTag tag) {
+        this.name = name;
+        this.protect = protect;
+        this.creationTime = tag.getLong("creationTime");
+        this.lastModified = tag.getLong("lastModified");
+        this.lastAccessed = tag.getLong("lastAccessed");
+    }
+
     public static ServerFolder fromTag(String name, CompoundTag folderTag) {
-        ServerFolder folder = new ServerFolder(name);
+        ServerFolder folder = new ServerFolder(name, false, folderTag);
 
         if (folderTag.contains("protected", Tag.TAG_BYTE)) folder.protect = folderTag.getBoolean("protected");
 
@@ -49,15 +58,20 @@ public class ServerFolder extends ServerFile {
         if (!FileSystem.PATTERN_FILE_NAME.matcher(file.getName()).matches())
             return FileSystem.createResponse(Status.FILE_INVALID_NAME, "Invalid file name");
 
-        if (hasFile(file.name)) {
-            if (!override) return FileSystem.createResponse(Status.FILE_EXISTS, "A file with that name already exists");
-            if (getFile(file.name).isProtected())
-                return FileSystem.createResponse(Status.FILE_IS_PROTECTED, "Unable to override protected files");
-            files.remove(getFile(file.name));
-        }
+        synchronized (interrupt) {
+            ServerFile child = getFile(file.name);
+            if (child != null) {
+                if (!override)
+                    return FileSystem.createResponse(Status.FILE_EXISTS, "A file with that name already exists");
+                if (child.isProtected())
+                    return FileSystem.createResponse(Status.FILE_IS_PROTECTED, "Unable to override protected files");
+                files.remove(child);
+            }
 
-        files.add(file);
-        file.parent = this;
+            files.add(file);
+            file.parent = this;
+            file.onCreate();
+        }
         return FileSystem.createSuccessResponse();
     }
 
@@ -68,14 +82,16 @@ public class ServerFolder extends ServerFile {
     public FileSystem.Response delete(ServerFile file) {
         if (file == null) return FileSystem.createResponse(Status.FILE_INVALID, "Illegal file");
 
-        if (!files.contains(file))
-            return FileSystem.createResponse(Status.FILE_INVALID, "The file does not exist in this folder");
+        synchronized (interrupt) {
+            if (!files.contains(file))
+                return FileSystem.createResponse(Status.FILE_INVALID, "The file does not exist in this folder");
 
-        if (file.isProtected())
-            return FileSystem.createResponse(Status.FILE_IS_PROTECTED, "Cannot delete protected files");
+            if (file.isProtected())
+                return FileSystem.createResponse(Status.FILE_IS_PROTECTED, "Cannot delete protected files");
 
-        file.parent = null;
-        files.remove(file);
+            file.parent = null;
+            files.remove(file);
+        }
         return FileSystem.createSuccessResponse();
     }
 
@@ -112,10 +128,10 @@ public class ServerFolder extends ServerFile {
     }
 
     private void search(List<ServerFile> results, Predicate<ServerFile> conditions, boolean includeSubServerFolders) {
-        files.stream().forEach(file -> {
+        files.forEach(file -> {
             if (file.isFolder()) {
                 if (includeSubServerFolders) {
-                    ((ServerFolder) file).search(results, conditions, includeSubServerFolders);
+                    ((ServerFolder) file).search(results, conditions, true);
                 }
             } else if (conditions.test(file)) {
                 results.add(file);
@@ -133,10 +149,14 @@ public class ServerFolder extends ServerFile {
         CompoundTag folderTag = new CompoundTag();
 
         CompoundTag fileList = new CompoundTag();
-        files.stream().forEach(file -> fileList.put(file.getName(), file.toTag()));
+        files.forEach(file -> fileList.put(file.getName(), file.toTag()));
         folderTag.put("files", fileList);
 
         if (protect) folderTag.putBoolean("protected", true);
+
+        folderTag.putLong("creationTime", creationTime);
+        folderTag.putLong("lastModified", lastModified);
+        folderTag.putLong("lastAccessed", lastAccessed);
 
         return folderTag;
     }

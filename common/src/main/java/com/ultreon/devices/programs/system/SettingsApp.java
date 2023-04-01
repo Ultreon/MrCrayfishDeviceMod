@@ -1,17 +1,19 @@
 package com.ultreon.devices.programs.system;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.ultreon.devices.Devices;
+import com.ultreon.devices.Reference;
 import com.ultreon.devices.api.ApplicationManager;
 import com.ultreon.devices.api.app.Dialog;
 import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Layout;
+import com.ultreon.devices.api.app.ScrollableLayout;
 import com.ultreon.devices.api.app.component.Button;
 import com.ultreon.devices.api.app.component.CheckBox;
 import com.ultreon.devices.api.app.component.ComboBox;
-import com.ultreon.devices.api.app.component.Image;
+import com.ultreon.devices.api.app.component.Text;
 import com.ultreon.devices.api.app.renderer.ItemRenderer;
-import com.ultreon.devices.api.utils.RenderUtil;
+import com.ultreon.devices.api.utils.OnlineRequest;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.core.Settings;
 import com.ultreon.devices.object.AppInfo;
@@ -22,16 +24,16 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
 import java.awt.*;
-import java.util.List;
+import java.text.MessageFormat;
+import java.util.Objects;
 import java.util.Stack;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class SettingsApp extends SystemApp {
-    private Button buttonPrevious;
+    private Button backBtn;
 
     private Layout layoutMain;
     private Layout layoutGeneral;
@@ -39,34 +41,81 @@ public class SettingsApp extends SystemApp {
 
     private Layout layoutPersonalise;
     private Layout layoutWallpaper;
-    private Button buttonWallpaperLeft;
-    private Button buttonWallpaperRight;
-    private Button buttonWallpaperUrl;
+    private Button prevWallpaperBtn;
+    private Button nextWallpaperBtn;
+    private Button urlWallpaperBtn;
 
     private Layout layoutColorScheme;
     private Button buttonColorSchemeApply;
 
     private final Stack<Layout> predecessor = new Stack<>();
 
+    private void resetColorSchemeClick(int mouseX, int mouseY, int mouseButton) {
+        if (mouseButton == 0) {
+            Laptop.getSystem().getSettings().getColorScheme().resetDefault();
+        }
+    }
+
     @Override
     public void init(@Nullable CompoundTag intent) {
-        buttonPrevious = new Button(2, 2, Icons.ARROW_LEFT);
-        buttonPrevious.setVisible(false);
-        buttonPrevious.setClickListener((mouseX, mouseY, mouseButton) ->
+        backBtn = new Button(2, 2, Icons.ARROW_LEFT);
+        backBtn.setVisible(false);
+        backBtn.setClickListener((mouseX, mouseY, mouseButton) ->
         {
             if (mouseButton == 0) {
                 if (predecessor.size() > 0) {
                     setCurrentLayout(predecessor.pop());
                 }
                 if (predecessor.isEmpty()) {
-                    buttonPrevious.setVisible(false);
+                    backBtn.setVisible(false);
                 }
             }
         });
 
-        layoutMain = new Menu("Home");
+        layoutMain = addMainLayout();
+        setCurrentLayout(layoutMain);
+    }
 
-        Button buttonColorScheme = new Button(5, 26, "Personalise", Icons.EDIT);
+    /**
+     * Creates the main layout of the settings app
+     *
+     * @return the main layout.
+     */
+    private Menu addMainLayout() {
+        Menu layoutMain = new Menu("Home");
+
+        Button aboutButton = new Button(5, 26, "About", Icons.INFO);
+        aboutButton.setSize(90, 20);
+        aboutButton.setClickListener((__, ___, ____) -> {
+            var qq = new Menu("About");
+            qq.addComponent(backBtn);
+            var l = new ScrollableLayout(layoutMain.width, layoutMain.height, 124);
+            l.top = 26;
+            l = ScrollableLayout.create(0, 26, layoutMain.width, 124, MessageFormat.format("""
+                    Version: {0} ({1})
+                    """
+//                    Model: CD1
+//                    STORAGE: 32MB
+//                    RAM: 512KB
+//
+//                    Credits:
+//                    - MrCrayfish (https://mrcrayfish.com/)
+//                    - Qboi123
+//                    - Jab125
+//                    - lizterzapzap
+//                    - MrBean6000
+//                    - them
+//                    - alfff
+//                    - 6
+//                    - あ
+/*                    """*/, Reference.getVerInfo()[0], Reference.getVerInfo()[1]));
+            //l.height = 124;
+            qq.addComponent(l);
+            this.showMenu(qq);
+        });
+        layoutMain.addComponent(aboutButton);
+        //aboutButton.setToolTip("About", "When to call emergency services because you just lost all of your NFTs to a scammer");
+        Button buttonColorScheme = new Button(5, 26+20+4, "Personalise", Icons.EDIT);
         buttonColorScheme.setSize(90, 20);
         buttonColorScheme.setToolTip("Personalise", "Change the wallpaper, UI colors, and more!");
         buttonColorScheme.setClickListener((mouseX, mouseY, mouseButton) ->
@@ -78,165 +127,96 @@ public class SettingsApp extends SystemApp {
         layoutMain.addComponent(buttonColorScheme);
 
         layoutGeneral = new Menu("General");
-        layoutGeneral.addComponent(buttonPrevious);
+        layoutGeneral.addComponent(backBtn);
 
         checkBoxShowApps = new CheckBox("Show All Apps", 5, 5);
         checkBoxShowApps.setSelected(Settings.isShowAllApps());
-        checkBoxShowApps.setClickListener((mouseX, mouseY, mouseButton) ->
-        {
-            Settings.setShowAllApps(checkBoxShowApps.isSelected());
-            Laptop laptop = getLaptop();
-            assert laptop != null;
-            laptop.getTaskBar().setupApplications(laptop.getApplications());
-        });
+        checkBoxShowApps.setClickListener(this::showAllAppsClick);
         layoutGeneral.addComponent(checkBoxShowApps);
 
-        layoutPersonalise = new Menu("Personalise");
-        layoutPersonalise.addComponent(buttonPrevious);
-        layoutWallpaper = new Menu("Wallpaper");
+        layoutPersonalise = createPersonaliseLayout();
 
+        return layoutMain;
+    }
+
+    /**
+     * Create the layout for personalising the laptop
+     *
+     * @return the menu layout.
+     */
+    private Layout createPersonaliseLayout() {
+        Layout layoutPersonalise = new Menu("Personalise");
+        layoutPersonalise.addComponent(backBtn);
+
+        // Wallpaper button on personalise menu.
         Button buttonWallpaper = new Button(5, 26, "Wallpaper", Icons.EDIT);
         buttonWallpaper.setSize(90, 20);
         //buttonWallpaper.top = this.getHeight()-buttonWallpaper.getHeight()-5;
         buttonWallpaper.setToolTip("Wallpaper", "Manage the wallpaper.");
-        buttonWallpaper.setClickListener((mouseX, mouseY, mouseButton) ->
-        {
-            if (mouseButton == 0) {
-                showMenu(layoutWallpaper);
-            }
-        });
+        buttonWallpaper.setClickListener(this::wallpaperClick);
         layoutPersonalise.addComponent(buttonWallpaper);
-        var image = new Image(6, 29, 6+122, 29+70);
-        image.setBorderThickness(1);
-        image.setBorderVisible(true);
-        image.setImage(getLaptop().getCurrentWallpaper());
-        layoutWallpaper.addComponent(image);
 
+        //****************************//
+        //     Wallpaper settings     //
+        //****************************//
+        layoutWallpaper = addWallpaperLayout();
 
-//        layoutPersonalise.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) ->
-//        {
-//            int wallpaperX = 7;
-//            int wallpaperY = 28;
-//            assert getLaptop() != null;
-//            Gui.fill(pose, x + wallpaperX - 1, y + wallpaperY - 1, x + wallpaperX - 1 + 122, y + wallpaperY - 1 + 70, getLaptop().getSettings().getColorScheme().getHeaderColor());
-//            RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-//            List<ResourceLocation> wallpapers = getLaptop().getWallapapers();
-////            RenderSystem.setShaderTexture(0, wallpapers.get(getLaptop().getCurrentWallpaper()));
-////            RenderUtil.drawRectWithFullTexture(pose, x + wallpaperX, y + wallpaperY, 0, 0, 120, 68);
-//            mc.font.drawShadow(pose, "Wallpaper", x + wallpaperX + 3, y + wallpaperY + 3, getLaptop().getSettings().getColorScheme().getTextColor());
-//        });
-
-        buttonWallpaperLeft = new Button(135, 27, Icons.ARROW_LEFT);
-        buttonWallpaperLeft.setSize(25, 20);
-        buttonWallpaperLeft.setClickListener((mouseX, mouseY, mouseButton) ->
-        {
-            if (mouseButton != 0)
-                return;
-
-            Laptop laptop = getLaptop();
-            if (laptop != null) {
-                laptop.prevWallpaper();
-                image.setImage(getLaptop().getCurrentWallpaper());
-            }
-        });
-        buttonWallpaperLeft.setEnabled(getLaptop().getCurrentWallpaper().isBuiltIn());
-        layoutWallpaper.addComponent(buttonWallpaperLeft);
-
-        buttonWallpaperRight = new Button(165, 27, Icons.ARROW_RIGHT);
-        buttonWallpaperRight.setSize(25, 20);
-        buttonWallpaperRight.setClickListener((mouseX, mouseY, mouseButton) ->
-        {
-            if (mouseButton != 0)
-                return;
-
-            Laptop laptop = getLaptop();
-            if (laptop != null) {
-                laptop.nextWallpaper();
-                image.setImage(getLaptop().getCurrentWallpaper());
-            }
-        });
-        buttonWallpaperRight.setEnabled(getLaptop().getCurrentWallpaper().isBuiltIn());
-        layoutWallpaper.addComponent(buttonWallpaperRight);
-
-        Button resetWallpaper = new Button(6, 100, "Reset Wallpaper");
-        resetWallpaper.setClickListener((mouseX, mouseY, mouseButton) ->
-        {
-            if (mouseButton == 0) {
-                getLaptop().setWallpaper(0);
-                image.setImage(getLaptop().getCurrentWallpaper());
-                buttonWallpaperLeft.setEnabled(getLaptop().getCurrentWallpaper().isBuiltIn());
-                buttonWallpaperRight.setEnabled(getLaptop().getCurrentWallpaper().isBuiltIn());
-            }
-        });
-        resetWallpaper.top = layoutWallpaper.height - resetWallpaper.getHeight() - 5;
-        layoutWallpaper.addComponent(resetWallpaper);
-        layoutWallpaper.addComponent(buttonPrevious);
-//        var i = 0;
-//        for (var wallpaper : Laptop.getWALLPAPERS()) {
-//            var a = new Button(i%2==0?0:75, 20+(i/2)*30, 75, 30, wallpaper, 0, 0, 75, 30);
-//            int finalI = i;
-//            a.setClickListener(((mouseX, mouseY, mouseButton) -> {
-//                assert getLaptop() != null;
-//                getLaptop().setWallpaper(finalI);
-//            }));
-//            a.setIconU(512, 288);
-//            a.setIconSource(512, 288);
-//            layoutWallpaper.addComponent(a);
-//            i++;
-//        }
-        buttonWallpaperUrl = new Button(135, 52, "Load", Icons.EARTH);
-        buttonWallpaperUrl.setSize(55, 20);
-        buttonWallpaperUrl.setClickListener((mouseX, mouseY, mouseButton) ->
-        {
-            if (mouseButton != 0)
-                return;
-
-            Dialog.Input dialog = new Dialog.Input("Enter the URL of the image");
-            dialog.setResponseHandler((success, string) -> {
-                if (getLaptop() != null) {
-                    getLaptop().setWallpaper(string);
-                    image.setImage(getLaptop().getCurrentWallpaper());
-                    buttonWallpaperLeft.setEnabled(getLaptop().getCurrentWallpaper().isBuiltIn());
-                    buttonWallpaperRight.setEnabled(getLaptop().getCurrentWallpaper().isBuiltIn());
-                }
-                return success;
-            });
-            openDialog(dialog);
-        });
-        layoutWallpaper.addComponent(buttonWallpaperUrl);
-
+        // Reset color scheme button on personalise menu.
         Button buttonReset = new Button(6, 100, "Reset Color Scheme");
-        buttonReset.setClickListener((mouseX, mouseY, mouseButton) ->
-        {
-            if (mouseButton == 0) {
-                Laptop.getSystem().getSettings().getColorScheme().resetDefault();
-            }
-        });
+        buttonReset.setClickListener(this::resetColorSchemeClick);
         buttonReset.top = layoutPersonalise.height - buttonReset.getHeight() - 5;
         layoutPersonalise.addComponent(buttonReset);
+        layoutPersonalise.addComponent(backBtn);
 
-        layoutColorScheme = new Menu("UI Colors");
-        layoutPersonalise.addComponent(buttonPrevious);
+        //***********************//
+        //     Color schemes     //
+        //***********************//
+        layoutColorScheme = createColorSchemeLayout();
+
+        // Reset color scheme button on personalise menu.
+        Button buttonColorScheme = new Button(6, 80, "Color scheme");
+        buttonColorScheme.setClickListener(this::colorSchemeClick);
+        buttonColorScheme.top = layoutPersonalise.height - buttonColorScheme.getHeight() - 25;
+        layoutPersonalise.addComponent(buttonColorScheme);
+
+        return layoutPersonalise;
+    }
+
+    /**
+     * Create the layout for the color schemes
+     *
+     * @return the layout.
+     */
+    private Layout createColorSchemeLayout() {
+        final Layout layoutColorScheme = new Menu("UI Colors");
+        layoutColorScheme.addComponent(backBtn);
 
         ComboBox.Custom<Integer> comboBoxTextColor = createColorPicker(145, 26);
+        comboBoxTextColor.setValue(Laptop.getSystem().getSettings().getColorScheme().getTextColor());
         layoutColorScheme.addComponent(comboBoxTextColor);
 
         ComboBox.Custom<Integer> comboBoxTextSecondaryColor = createColorPicker(145, 44);
+        comboBoxTextSecondaryColor.setValue(Laptop.getSystem().getSettings().getColorScheme().getTextSecondaryColor());
         layoutColorScheme.addComponent(comboBoxTextSecondaryColor);
 
         ComboBox.Custom<Integer> comboBoxHeaderColor = createColorPicker(145, 62);
+        comboBoxHeaderColor.setValue(Laptop.getSystem().getSettings().getColorScheme().getHeaderColor());
         layoutColorScheme.addComponent(comboBoxHeaderColor);
 
         ComboBox.Custom<Integer> comboBoxBackgroundColor = createColorPicker(145, 80);
+        comboBoxBackgroundColor.setValue(Laptop.getSystem().getSettings().getColorScheme().getBackgroundColor());
         layoutColorScheme.addComponent(comboBoxBackgroundColor);
 
         ComboBox.Custom<Integer> comboBoxBackgroundSecondaryColor = createColorPicker(145, 98);
+        comboBoxBackgroundSecondaryColor.setValue(Laptop.getSystem().getSettings().getColorScheme().getBackgroundSecondaryColor());
         layoutColorScheme.addComponent(comboBoxBackgroundSecondaryColor);
 
         ComboBox.Custom<Integer> comboBoxItemBackgroundColor = createColorPicker(145, 116);
+        comboBoxItemBackgroundColor.setValue(Laptop.getSystem().getSettings().getColorScheme().getItemBackgroundColor());
         layoutColorScheme.addComponent(comboBoxItemBackgroundColor);
 
         ComboBox.Custom<Integer> comboBoxItemHighlightColor = createColorPicker(145, 134);
+        comboBoxItemHighlightColor.setValue(Laptop.getSystem().getSettings().getColorScheme().getItemHighlightColor());
         layoutColorScheme.addComponent(comboBoxItemHighlightColor);
 
         buttonColorSchemeApply = new Button(5, 79, Icons.CHECK);
@@ -246,13 +226,115 @@ public class SettingsApp extends SystemApp {
         {
             if (mouseButton == 0) {
                 ColorScheme colorScheme = Laptop.getSystem().getSettings().getColorScheme();
-                colorScheme.setBackgroundColor(comboBoxHeaderColor.getValue());
+                colorScheme.setTextColor(comboBoxTextColor.getValue());
+                colorScheme.setTextSecondaryColor(comboBoxTextSecondaryColor.getValue());
+                colorScheme.setHeaderColor(comboBoxHeaderColor.getValue());
+                colorScheme.setBackgroundColor(comboBoxBackgroundColor.getValue());
+                colorScheme.setBackgroundSecondaryColor(comboBoxBackgroundSecondaryColor.getValue());
+                colorScheme.setItemBackgroundColor(comboBoxItemBackgroundColor.getValue());
+                colorScheme.setItemHighlightColor(comboBoxItemHighlightColor.getValue());
                 buttonColorSchemeApply.setEnabled(false);
             }
         });
         layoutColorScheme.addComponent(buttonColorSchemeApply);
 
-        setCurrentLayout(layoutMain);
+        return layoutColorScheme;
+    }
+
+    /**
+     * Create the layout for the wallpaper settings
+     *
+     * @return the layout.
+     */
+    private Layout addWallpaperLayout() {
+        // Create layout.
+        Layout wallpaperLayout = new Menu("Wallpaper");
+
+        // Wallpaper image.
+        var image = new com.ultreon.devices.api.app.component.Image(6, 29, 6+122, 29+70);
+        image.setBorderThickness(1);
+        image.setBorderVisible(true);
+        image.setImage(Objects.requireNonNull(getLaptop()).getCurrentWallpaper());
+        wallpaperLayout.addComponent(image);
+
+        // Previous wallpaper button.
+        prevWallpaperBtn = new Button(135, 27, Icons.ARROW_LEFT);
+        prevWallpaperBtn.setSize(25, 20);
+        prevWallpaperBtn.setClickListener((mouseX, mouseY, mouseButton) -> {
+            if (mouseButton != 0)
+                return;
+
+            Laptop laptop = getLaptop();
+            if (laptop != null) {
+                laptop.prevWallpaper();
+                image.setImage(getLaptop().getCurrentWallpaper());
+            }
+        });
+        prevWallpaperBtn.setEnabled(getLaptop().getCurrentWallpaper().isBuiltIn());
+        wallpaperLayout.addComponent(prevWallpaperBtn);
+
+        // Next wallpaper button.
+        nextWallpaperBtn = new Button(165, 27, Icons.ARROW_RIGHT);
+        nextWallpaperBtn.setSize(25, 20);
+        nextWallpaperBtn.setClickListener((mouseX, mouseY, mouseButton) -> {
+            if (mouseButton != 0)
+                return;
+
+            Laptop laptop = getLaptop();
+            if (laptop != null) {
+                laptop.nextWallpaper();
+                image.setImage(getLaptop().getCurrentWallpaper());
+            }
+        });
+        nextWallpaperBtn.setEnabled(getLaptop().getCurrentWallpaper().isBuiltIn());
+        wallpaperLayout.addComponent(nextWallpaperBtn);
+
+        // Reset wallpaper button.
+        Button resetWallpaperBtn = new Button(6, 100, "Reset Wallpaper");
+        resetWallpaperBtn.setClickListener((mouseX, mouseY, mouseButton) -> {
+            if (mouseButton == 0) {
+                getLaptop().setWallpaper(0);
+                image.setImage(getLaptop().getCurrentWallpaper());
+                prevWallpaperBtn.setEnabled(getLaptop().getCurrentWallpaper().isBuiltIn());
+                nextWallpaperBtn.setEnabled(getLaptop().getCurrentWallpaper().isBuiltIn());
+            }
+        });
+        resetWallpaperBtn.top = wallpaperLayout.height - resetWallpaperBtn.getHeight() - 5;
+        wallpaperLayout.addComponent(resetWallpaperBtn);
+
+        // Add back button.
+        wallpaperLayout.addComponent(backBtn);
+
+        // Add wallpaper load from url button.
+        urlWallpaperBtn = new Button(135, 52, "Load", Icons.EARTH);
+        urlWallpaperBtn.setSize(55, 20);
+        urlWallpaperBtn.setClickListener((mouseX, mouseY, mouseButton) -> {
+            if (mouseButton != 0)
+                return;
+
+            Dialog.Input dialog = new Dialog.Input("Enter the URL of the image");
+            dialog.setResponseHandler((success, string) -> {
+                if (getLaptop() != null) {
+                    if (!OnlineRequest.isSafeAddress(string)) {
+                        openDialog(new Dialog.Message("Unsafe website."));
+                        return false;
+                    }
+                    getLaptop().setWallpaper(string);
+                    image.setImage(getLaptop().getCurrentWallpaper());
+                    prevWallpaperBtn.setEnabled(getLaptop().getCurrentWallpaper().isBuiltIn());
+                    nextWallpaperBtn.setEnabled(getLaptop().getCurrentWallpaper().isBuiltIn());
+                }
+                return success;
+            });
+            openDialog(dialog);
+        });
+        wallpaperLayout.addComponent(urlWallpaperBtn);
+        var wallpaperText = new Text("Wallpaper", image.left+3, image.top+3, image.componentWidth-6);
+        wallpaperText.setShadow(true);
+        wallpaperText.setTextColor(new Color(getLaptop().getSettings().getColorScheme().getTextColor()));
+        wallpaperLayout.addComponent(wallpaperText);
+
+        return wallpaperLayout;
     }
 
     @Override
@@ -267,7 +349,7 @@ public class SettingsApp extends SystemApp {
 
     private void showMenu(Layout layout) {
         predecessor.push(getCurrentLayout());
-        buttonPrevious.setVisible(true);
+        backBtn.setVisible(true);
         setCurrentLayout(layout);
     }
 
@@ -277,7 +359,26 @@ public class SettingsApp extends SystemApp {
         predecessor.clear();
     }
 
-    private static class Menu extends Layout {
+    private void wallpaperClick(int mouseX, int mouseY, int mouseButton) {
+        if (mouseButton == 0) {
+            showMenu(layoutWallpaper);
+        }
+    }
+
+    private void colorSchemeClick(int mouseX, int mouseY, int mouseButton) {
+        if (mouseButton == 0) {
+            showMenu(layoutColorScheme);
+        }
+    }
+
+    private void showAllAppsClick(int mouseX, int mouseY, int mouseButton) {
+        Settings.setShowAllApps(checkBoxShowApps.isSelected());
+        Laptop laptop = getLaptop();
+        assert laptop != null;
+        laptop.getTaskBar().setupApplications(laptop.getApplications());
+    }
+
+    public static class Menu extends Layout {
         private final String title;
 
         public Menu(String title) {
@@ -307,7 +408,7 @@ public class SettingsApp extends SystemApp {
             }
         });
         colorPicker.setChangeListener((oldValue, newValue) ->
-                buttonColorSchemeApply.setEnabled(true));
+        {if (buttonColorSchemeApply != null) buttonColorSchemeApply.setEnabled(true);});
 
         Palette palette = new Palette(5, 5, colorPicker);
         Layout layout = colorPicker.getLayout();
@@ -318,12 +419,12 @@ public class SettingsApp extends SystemApp {
 
     public static class SettingsTrayItem extends TrayItem {
         public SettingsTrayItem() {
-            super(Icons.WRENCH);
+            super(Icons.WRENCH, Devices.id("settings"));
         }
 
         @Override
         public void handleClick(int mouseX, int mouseY, int mouseButton) {
-            AppInfo info = ApplicationManager.getApplication("devices:settings");
+            AppInfo info = ApplicationManager.getApplication(Devices.id("settings"));
             if (info != null) {
                 Laptop.getSystem().openApplication(info);
             }

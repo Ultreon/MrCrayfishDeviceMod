@@ -1,6 +1,6 @@
 {
-    "parent": "devices:block/router",
-    "textures": {
-        "1": "minecraft:block/green_wool"
-    }
+  "parent": "devices:block/router",
+  "textures": {
+    "1": "minecraft:block/green_wool"
+  }
 }

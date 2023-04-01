@@ -29,7 +29,7 @@ public class TaskGetFiles extends Task {
 
     private List<ServerFile> files;
 
-    private TaskGetFiles() {
+    public TaskGetFiles() {
         super("get_files");
     }
 

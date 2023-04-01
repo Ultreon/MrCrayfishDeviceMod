@@ -19,7 +19,7 @@ public class TileGrass extends Tile
 		if(!game.isFullTile(layer, x, y + 1))
 		{
 			RenderSystem.setShaderColor(0.6f, 0.6f, 0.6f, 1f);
-			RenderUtil.drawRectWithTexture(pose, game.xPosition + x * Tile.WIDTH, game.yPosition + y * Tile.HEIGHT + 6, Tile.dirt.x * 16, Tile.dirt.y * 16, Tile.WIDTH, Tile.HEIGHT, 16, 16);
+			RenderUtil.drawRectWithTexture(pose, game.xPosition + x * WIDTH, game.yPosition + y * HEIGHT + 6, dirt.x * 16, dirt.y * 16, WIDTH, HEIGHT, 16, 16);
 			RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 		}
 	}
@@ -29,24 +29,24 @@ public class TileGrass extends Tile
 	{
 		super.renderForeground(pose, game, x, y, layer);
 
-		if(game.getTile(layer, x, y - 1) == Tile.water)
+		if(game.getTile(layer, x, y - 1) == water)
 		{
-			RenderUtil.drawRectWithTexture(pose, game.xPosition + x * Tile.WIDTH, game.yPosition + y * Tile.HEIGHT - 1, 16, 16, 8, 1, 16, 2);
+			RenderUtil.drawRectWithTexture(pose, game.xPosition + x * WIDTH, game.yPosition + y * HEIGHT - 1, 16, 16, 8, 1, 16, 2);
 		}
 
-		if(game.getTile(layer, x, y + 1) == Tile.water)
+		if(game.getTile(layer, x, y + 1) == water)
 		{
-			RenderUtil.drawRectWithTexture(pose, game.xPosition + x * Tile.WIDTH, game.yPosition + y * Tile.HEIGHT + 6, 16, 18, 8, 3, 16, 6);
+			RenderUtil.drawRectWithTexture(pose, game.xPosition + x * WIDTH, game.yPosition + y * HEIGHT + 6, 16, 18, 8, 3, 16, 6);
 		}
 
-		if(game.getTile(layer, x - 1, y) == Tile.water)
+		if(game.getTile(layer, x - 1, y) == water)
 		{
-			RenderUtil.drawRectWithTexture(pose, game.xPosition + x * Tile.WIDTH - 1, game.yPosition + y * Tile.HEIGHT, 0, 16, 1, 6, 2, 12);
+			RenderUtil.drawRectWithTexture(pose, game.xPosition + x * WIDTH - 1, game.yPosition + y * HEIGHT, 0, 16, 1, 6, 2, 12);
 		}
 
-		if(game.getTile(layer, x + 1, y) == Tile.water)
+		if(game.getTile(layer, x + 1, y) == water)
 		{
-			RenderUtil.drawRectWithTexture(pose, game.xPosition + x * Tile.WIDTH + 8, game.yPosition + y * Tile.HEIGHT, 2, 16, 1, 6, 2, 12);
+			RenderUtil.drawRectWithTexture(pose, game.xPosition + x * WIDTH + 8, game.yPosition + y * HEIGHT, 2, 16, 1, 6, 2, 12);
 		}
 	}
 

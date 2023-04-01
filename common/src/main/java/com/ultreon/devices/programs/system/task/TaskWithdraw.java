@@ -16,7 +16,7 @@ import net.minecraft.world.level.Level;
 public class TaskWithdraw extends Task {
     private int amount;
 
-    private TaskWithdraw() {
+    public TaskWithdraw() {
         super("bank_withdraw");
     }
 

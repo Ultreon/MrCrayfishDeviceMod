@@ -2,11 +2,11 @@
     "__comment": "Model generated using MrCrayfish's Model Creator (https://mrcrayfish.com/tools?id=mc)",
     "textures": {
         "particle": "block/anvil",
-        "0": "block/concrete_black",
+        "0": "block/black_concrete",
         "1": "block/anvil",
         "2": "block/stone",
-        "3": "block/concrete_gray",
-        "chair_color": "block/wool_colored_red"
+        "3": "block/gray_concrete",
+        "chair_color": "block/red_wool"
     },
     "display": {
         "gui": {

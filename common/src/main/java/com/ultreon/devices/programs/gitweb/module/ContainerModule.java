@@ -69,7 +69,7 @@ public abstract class ContainerModule extends Module {
 
     public abstract ContainerBox createContainer(Map<String, String> data);
 
-    protected ItemStack getItem(Map<String, String> data, String key) {
+    protected static ItemStack getItem(Map<String, String> data, String key) {
         if (data.containsKey(key)) {
             try {
                 return ItemStack.of(TagParser.parseTag(data.get(key)));

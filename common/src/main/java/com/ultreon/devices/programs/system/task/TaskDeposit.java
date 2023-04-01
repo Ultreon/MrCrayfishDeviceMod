@@ -15,7 +15,7 @@ import net.minecraft.world.level.Level;
 public class TaskDeposit extends Task {
     private int amount;
 
-    protected TaskDeposit() {
+    public TaskDeposit() {
         super("bank_deposit");
     }
 

@@ -17,7 +17,7 @@ import java.util.List;
 public class Text extends Component {
     protected String rawText;
     protected List<String> lines;
-    protected int width;
+    public int width;
     protected int padding;
     protected boolean shadow = false;
 
@@ -63,7 +63,6 @@ public class Text extends Component {
     public void setText(String text) {
         rawText = text;
         text = text.replace("\\n", "\n");
-        System.out.println(Laptop.getFont().plainSubstrByWidth(text, width - padding * 2));
         var a = new ArrayList<String>();
         Laptop.getFont().getSplitter().splitLines(FormattedText.of(text), width - padding * 2, Style.EMPTY).forEach(b -> a.add(b.getString()));
         this.lines = a;
@@ -141,6 +140,10 @@ public class Text extends Component {
 
     public void setWordListener(WordListener wordListener) {
         this.wordListener = wordListener;
+    }
+
+    public boolean hasWordListener() {
+        return this.wordListener != null;
     }
 
     public interface WordListener {

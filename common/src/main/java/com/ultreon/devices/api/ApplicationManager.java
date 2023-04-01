@@ -4,6 +4,8 @@ import com.ultreon.devices.Devices;
 import com.ultreon.devices.api.app.Application;
 import com.ultreon.devices.object.AppInfo;
 import net.minecraft.resources.ResourceLocation;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -11,10 +13,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public final class ApplicationManager {
     private static final Map<ResourceLocation, AppInfo> APP_INFO = new HashMap<>();
+    private static final Marker MARKER = MarkerFactory.getMarker("ApplicationManager");
 
     private ApplicationManager() {
     }
@@ -27,12 +31,24 @@ public final class ApplicationManager {
      * Example: {@code new ResourceLocation("modid:appid");}
      *
      * @param identifier the
-     * @param clazz      the class of the application
+     * @param app      a supplier that provides an application
+     * @param isSystem whether the application is a SystemApp (required as on the server, "Application" cannot instantiate)
      */
     @Nullable
-    public static Application registerApplication(ResourceLocation identifier, Class<? extends Application> clazz) {
-        Application application = Devices.registerApplication(identifier, clazz);
-        System.out.println("application = " + application);
+    public static Application registerApplication(ResourceLocation identifier, Supplier<Supplier<Application>> app, boolean isSystem) {
+        Devices.LOGGER.debug(MARKER, "Registering application {}", identifier);
+        @SuppressWarnings("deprecation")
+        Application application = Devices.registerApplication(identifier, new Devices.ApplicationSupplier() {
+            @Override
+            public Supplier<Application> get() {
+                return app.get();
+            }
+
+            @Override
+            public boolean isSystem() {
+                return isSystem;
+            }
+        });
         if (application != null) {
             APP_INFO.put(identifier, application.getInfo());
             return application;
@@ -61,7 +77,7 @@ public final class ApplicationManager {
     }
 
     @Nullable
-    public static AppInfo getApplication(String appId) {
-        return APP_INFO.get(new ResourceLocation(appId.replace(".", ":")));
+    public static AppInfo getApplication(ResourceLocation appId) {
+        return APP_INFO.get(appId);
     }
 }

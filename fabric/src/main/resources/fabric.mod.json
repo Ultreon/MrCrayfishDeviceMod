@@ -2,22 +2,46 @@
   "schemaVersion": 1,
   "id": "devices",
   "version": "${version}",
-  "name": "Devices",
-  "description": "ARCH",
+  "name": "Devices Mod",
+  "description": "${description}",
   "authors": [
-    "Testing"
+    "Qboi123",
+    "Jab125"
+  ],
+  "contributors": [
+    "MrCrayfish",
+    "MinecraftDoodler",
+    "Mastef Chief",
+    "lizterzapzap",
+    "Haunted Corpse",
+    "Jake Crowley",
+    "fabbe50",
+    "PlayDashGaming",
+    "jack jook",
+    "Hunstagamez",
+    "Techyy YT",
+    "MinecraftDoodler",
+    "Norge100YT",
+    "Cyberman2208",
+    "CreepergamingsMC"
   ],
   "contact": {
-    "website": "non",
-    "repo": "no",
-    "issues": "no"
+    "website": "https://ultreon.github.io/web/",
+    "repo": "https://github.com/Ultreon/devices-mod",
+    "issues": "https://github.com/Ultreon/devices-mod/issues"
   },
   "license": "GPL-3.0",
-  "icon": "icon.png",
+  "icon": "devices_mod.png",
   "environment": "*",
   "entrypoints": {
     "main": [
       "com.ultreon.devices.fabric.DevicesFabric"
+    ],
+    "devices:application_registration": [
+      "com.ultreon.devices.fabric.BuiltinAppsRegistration"
+    ],
+    "fabric-datagen": [
+      "com.ultreon.devices.datagen.DevicesDataGenerator"
     ]
   },
   "mixins": [
@@ -25,7 +49,8 @@
     "devices-common.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.14.8",
-    "minecraft": ">=1.18.2"
+    "fabricloader": ">=${loaderVersion}",
+    "minecraft": [">=${minecraftVersion} <1.20"],
+    "architectury": ">=7.1 <8"
   }
 }

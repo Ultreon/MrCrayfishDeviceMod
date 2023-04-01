@@ -2,6 +2,8 @@ plugins {
     id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
+version rootProject.version
+
 architectury {
     platformSetupLoomIde()
     fabric()
@@ -9,10 +11,23 @@ architectury {
 
 loom {
     accessWidenerPath = project(":common").loom.accessWidenerPath
+    runs {
+        data {
+            inherit client
+            name "Data Generation"
+            vmArg "-Dfabric-api.datagen"
+            vmArg "-Dfabric-api.datagen.output-dir=${file("../common/src/main/generated/resources")}"
+            vmArg "-Dfabric-api.datagen.modid=devices"
+   //         vmArg "-Dfabric-api.datagen.strict-validation"
+            runDir "build/datagen"
+        }
+    }
 }
 
 repositories {
     maven { url = "https://cursemaven.com" }
+    maven { url "https://maven.terraformersmc.com/releases" }
+    mavenCentral()
 }
 
 configurations {
@@ -29,19 +44,42 @@ dependencies {
     // Remove the next line if you don't want to depend on the API
     modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
 
-    modImplementation "curse.maven:forgeapiportfabric-547434:3671141"
-    modImplementation 'com.electronwill.night-config:core:3.6.3'
-    modImplementation 'com.electronwill.night-config:toml:3.6.3'
+    modImplementation "curse.maven:forgeapiportfabric-547434:3946675"
+    modImplementation 'com.electronwill.night-config:core:3.6.5'
+    modImplementation 'com.electronwill.night-config:toml:3.6.5'
+
+//    include(implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.10"))
+//    include(implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10"))
+//    include(implementation("com.ultreon:ultranlang:0.1.0+6"))
+    include(implementation("com.jab125:apoint:1.0.0"))
+
+    //shadowCommon "org.jetbrains.kotlin:kotlin-reflect:1.7.10"
+    //shadowCommon "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10"
+    //  shadowCommon "com.ultreon:ultranlang:0.1.0+6"
+ //   shadowCommon "com.jab125:apoint:1.0.0"
+
+    modApi include("net.fabricmc:fabric-language-kotlin:1.8.2+kotlin.1.7.10")
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
+
+    modCompileOnly "com.terraformersmc:modmenu:4.0.6", {
+        exclude module: "fabric-api"
+    }
+
+    modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:10.0.586"
 }
 
 processResources {
-    inputs.property "version", project.version
+    inputs.property "version", rootProject.getIngame_version()
 
     filesMatching("fabric.mod.json") {
-        expand "version": project.version
+        HashMap<String, ?> p = new HashMap<>()
+        p.put("version", rootProject.getIngame_version())
+        p.put("description", rootProject.getModDescription())
+        p.put("loaderVersion", rootProject.fabric_loader_version)
+        p.put("minecraftVersion", rootProject.architectury.minecraft)
+        expand(p)
     }
 }
 
@@ -52,6 +90,7 @@ shadowJar {
 
 remapJar {
     injectAccessWidener = true
+    //noinspection GrDeprecatedAPIUsage
     input.set shadowJar.archiveFile
     dependsOn shadowJar
     classifier null
@@ -76,7 +115,9 @@ components.java {
 publishing {
     publications {
         mavenFabric(MavenPublication) {
-            artifactId = rootProject.archives_base_name + "-" + project.name
+            System.out.println(artifactId)
+            artifactId = rootProject.archivesBaseName + "-fabric"
+            //artifactId = rootProject.archives_base_name + "-fabric" + //project.name
             from components.java
         }
     }
@@ -85,4 +126,5 @@ publishing {
     repositories {
         // Add repositories to publish to here.
     }
+    rootProject.setupRepositories(repositories)
 }

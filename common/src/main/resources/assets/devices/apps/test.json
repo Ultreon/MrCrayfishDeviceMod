@@ -1,6 +1,7 @@
 {
+    "schemaVersion": 2,
     "name": "Test",
-    "author": "MrCrayfish",
+    "authors": ["MrCrayfish", "Jab125"],
     "description": "",
     "version": "1.0",
     "screenshots": [

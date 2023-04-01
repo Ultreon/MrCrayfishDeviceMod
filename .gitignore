@@ -59,6 +59,8 @@ hs_err_pid*
 Icon
 !common/src/main/resources/assets/devices/textures/app/icon
 
+
+!updater/updater.jar
 # Thumbnails
 ._*
 
@@ -122,3 +124,9 @@ run/
 
 # Arch
 .architectury-transformer
+
+# Avoid ignoring UltranLang main file.
+!*.ulan
+
+# Avoid ignoring libraries
+!libs/*

@@ -6,6 +6,8 @@ import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.ScrollableLayout;
 import com.ultreon.devices.api.app.component.Button;
+import com.ultreon.devices.api.app.component.Image;
+import com.ultreon.devices.api.app.component.Label;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.programs.gitweb.component.GitWebFrame;
@@ -19,7 +21,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import java.awt.*;
@@ -33,9 +35,9 @@ public class LayoutAppPage extends Layout {
     private final AppStore store;
 
     private com.ultreon.devices.api.app.component.Image imageBanner;
-    private com.ultreon.devices.api.app.component.Image imageIcon;
-    private com.ultreon.devices.api.app.component.Label labelTitle;
-    private com.ultreon.devices.api.app.component.Label labelVersion;
+    private com.ultreon.devices.api.app.Component imageIcon;
+    private Label labelTitle;
+    private Label labelVersion;
 
     private boolean installed;
 
@@ -76,7 +78,8 @@ public class LayoutAppPage extends Layout {
         if (entry instanceof LocalEntry) {
             LocalEntry localEntry = (LocalEntry) entry;
             AppInfo info = localEntry.info();
-            imageIcon = new com.ultreon.devices.api.app.component.Image(5, 26, 28, 28, info.getIconU(), info.getIconV(), 14, 14, 224, 224, Laptop.ICON_TEXTURES);
+            imageIcon = new Image.AppImage(5, 26, 28, 28, info);
+          //  imageIcon = new com.ultreon.devices.api.app.component.Image(5, 26, 28, 28, info.getIconU(), info.getIconV(), 14, 14, 224, 224, Laptop.ICON_TEXTURES);
         } else if (entry instanceof RemoteEntry) {
             imageIcon = new com.ultreon.devices.api.app.component.Image(5, 26, 28, 28, AppStore.CERTIFICATES_BASE_URL + "/assets/" + resource.getNamespace() + "/" + resource.getPath() + "/icon.png");
         }
@@ -87,12 +90,12 @@ public class LayoutAppPage extends Layout {
             com.ultreon.devices.api.app.component.Image certifiedIcon = new com.ultreon.devices.api.app.component.Image(38 + width + 3, 29, 20, 20, Icons.VERIFIED);
             this.addComponent(certifiedIcon);
         }
-        labelTitle = new com.ultreon.devices.api.app.component.Label(entry.name(), 38, 32);
+        labelTitle = new Label(entry.name(), 38, 32);
         labelTitle.setScale(2);
         this.addComponent(labelTitle);
 
         String version = entry instanceof LocalEntry ? "v" + entry.version() + " - " + entry.author() : entry.author();
-        labelVersion = new com.ultreon.devices.api.app.component.Label(version, 38, 50);
+        labelVersion = new Label(version, 38, 50);
         this.addComponent(labelVersion);
 
         String description = GitWebFrame.parseFormatting(entry.description());
@@ -167,7 +170,7 @@ public class LayoutAppPage extends Layout {
         if (store.certifiedApps.contains(entry)) {
             int width = Laptop.getFont().width(entry.name()) * 2;
             if (GuiHelper.isMouseWithin(mouseX, mouseY, xPosition + 38 + width + 3, yPosition + 29, 20, 20)) {
-                laptop.renderComponentTooltip(pose, Lists.newArrayList(new TextComponent("Certified App").withStyle(ChatFormatting.GREEN)), mouseX, mouseY);
+                laptop.renderComponentTooltip(pose, Lists.newArrayList(Component.literal("Certified App").withStyle(ChatFormatting.GREEN)), mouseX, mouseY);
             }
         }
     }

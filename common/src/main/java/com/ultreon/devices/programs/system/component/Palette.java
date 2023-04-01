@@ -1,6 +1,7 @@
 package com.ultreon.devices.programs.system.component;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.ultreon.devices.api.app.Component;
@@ -12,6 +13,7 @@ import com.ultreon.devices.util.GLHelper;
 import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.renderer.GameRenderer;
 
 import java.awt.*;
 
@@ -66,6 +68,7 @@ public class Palette extends Component {
         Gui.fill(pose, x, y, x + 52, y + 52, Color.DARK_GRAY.getRGB());
 
         // Todo: Disable lighting somehow.
+        Lighting.setupForFlatItems();
 //        RenderSystem.disableLighting();
         RenderSystem.disableTexture();
         RenderSystem.enableBlend();
@@ -73,6 +76,7 @@ public class Palette extends Component {
 //        RenderSystem.disableAlpha();
         RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
         // Todo: Make shade model for GL_SMOOTH possible.
+       // RenderSystem.setShaderTexture(0, GameRenderer.());
 //        RenderSystem.shadeModel(GL11.GL_SMOOTH);
 
         Tesselator tessellator = Tesselator.getInstance();
@@ -90,6 +94,7 @@ public class Palette extends Component {
         // Todo: Make enabling alpha possible.
 //        RenderSystem.enableAlpha();
         RenderSystem.enableTexture();
+        Lighting.setupFor3DItems();
     }
 
     @Override

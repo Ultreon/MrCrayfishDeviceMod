@@ -5,7 +5,7 @@ import com.ultreon.devices.init.DeviceBlocks;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
@@ -44,7 +44,7 @@ public interface IPrint {
         stack.setTag(itemTag);
 
         if (print.getName() != null && !print.getName().isEmpty()) {
-            stack.setHoverName(new TextComponent(print.getName()));
+            stack.setHoverName(Component.literal(print.getName()));
         }
         return stack;
     }

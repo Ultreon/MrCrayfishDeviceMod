@@ -1,6 +1,6 @@
 package com.ultreon.devices.item;
 
-import com.ultreon.devices.DeviceType;
+import com.ultreon.devices.ModDeviceTypes;
 import com.ultreon.devices.IDeviceType;
 import dev.architectury.injectables.annotations.PlatformOnly;
 import net.minecraft.nbt.CompoundTag;
@@ -13,9 +13,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 public class DeviceItem extends BlockItem implements IDeviceType {
-    private final DeviceType deviceType;
+    private final ModDeviceTypes deviceType;
 
-    public DeviceItem(Block block, Properties properties, DeviceType deviceType) {
+    public DeviceItem(Block block, Properties properties, ModDeviceTypes deviceType) {
         super(block, properties.stacksTo(1));
         this.deviceType = deviceType;
     }
@@ -32,7 +32,7 @@ public class DeviceItem extends BlockItem implements IDeviceType {
         return tag;
     }
 
-    public DeviceType getDeviceType() {
+    public ModDeviceTypes getDeviceType() {
         return deviceType;
     }
 }

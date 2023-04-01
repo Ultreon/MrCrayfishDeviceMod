@@ -44,9 +44,9 @@ public class TextArea extends Component {
     protected int width, height;
     /* Personalisation */
     protected int placeholderColor = new Color(1f, 1f, 1f, 0.35f).getRGB();
-    protected int textColor = Color.WHITE.getRGB();
-    protected int backgroundColor = Color.DARK_GRAY.getRGB();
-    protected int secondaryBackgroundColor = Color.GRAY.getRGB();
+    protected int textColor = getColorScheme().getTextColor();
+    protected int backgroundColor = getColorScheme().getBackgroundColor();
+    protected int secondaryBackgroundColor = getColorScheme().getBackgroundSecondaryColor();
     protected int borderColor = Color.BLACK.getRGB();
     private int padding = 4;
     private boolean isFocused = false;
@@ -98,7 +98,7 @@ public class TextArea extends Component {
         if (this.visible) {
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 
-            Color bgColor = new Color(color(backgroundColor, getColorScheme().getBackgroundColor()));
+            Color bgColor = new Color(backgroundColor);
             Gui.fill(pose, x, y, x + width, y + height, bgColor.darker().darker().getRGB());
             Gui.fill(pose, x + 1, y + 1, x + width - 1, y + height - 1, bgColor.getRGB());
 
@@ -127,7 +127,7 @@ public class TextArea extends Component {
                     }
                     font.draw(pose, builder.toString(), x + padding - scrollX, y + padding + i * font.lineHeight, -1);
                 } else {
-                    font.draw(pose, lines.get(lineY), x + padding - scrollX, y + padding + i * font.lineHeight, color(textColor, getColorScheme().getTextColor()));
+                    font.draw(pose, lines.get(lineY), x + padding - scrollX, y + padding + i * font.lineHeight, textColor);
                 }
             }
             GLHelper.popScissor();
@@ -868,6 +868,14 @@ public class TextArea extends Component {
      */
     public void setBackgroundColor(Color color) {
         this.backgroundColor = color.getRGB();
+    }
+
+    public Color getBackgroundColor() {
+        return new Color(backgroundColor);
+    }
+
+    public int getBackgroundColorRGB() {
+        return backgroundColor;
     }
 
     /**

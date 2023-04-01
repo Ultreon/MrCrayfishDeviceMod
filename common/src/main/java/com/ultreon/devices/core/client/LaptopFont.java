@@ -7,12 +7,12 @@ import net.minecraft.client.gui.Font;
 /**
  * @author MrCrayfish
  */
-public class LaptopFont extends Font {
+public class LaptopFont{//} extends Font {
     private boolean debug = false;
 
-    public LaptopFont(Minecraft mc) {
-        super(res -> new LaptopFontSet(mc.getTextureManager(), Devices.res("laptop")));
-    }
+//    public LaptopFont(Minecraft mc) {
+//        super(res -> new LaptopFontSet(mc.getTextureManager(), Devices.res("laptop")));
+//    }
 
     // Todo: Port to 1.18.2 where possible.
 //    @Override

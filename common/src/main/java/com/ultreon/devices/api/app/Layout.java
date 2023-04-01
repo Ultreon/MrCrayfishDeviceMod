@@ -13,6 +13,7 @@ import net.minecraft.nbt.CompoundTag;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * The Layout class is the main implementation for displaying
@@ -29,11 +30,11 @@ import java.util.List;
  * @author MrCrayfish
  */
 @SuppressWarnings("unused")
-public class Layout extends Component {
+public class Layout extends com.ultreon.devices.api.app.Component {
     /**
      * The list of components in the layout
      */
-    public List<Component> components;
+    public List<com.ultreon.devices.api.app.Component> components;
 
     /**
      * The width of the layout
@@ -63,13 +64,13 @@ public class Layout extends Component {
     public Layout(int width, int height) {
         this(0, 0, width, height);
 
-        if (width < 13)
+        if (width < 13 && false)
             throw new IllegalArgumentException("Width can not be less than 13 wide");
 
-        if (height < 1)
+        if (height < 1 && false)
             throw new IllegalArgumentException("Height can not be less than 1 tall");
 
-        this.components = new ArrayList<>();
+        this.components = new CopyOnWriteArrayList<>();
         this.width = width;
         this.height = height;
     }
@@ -85,13 +86,13 @@ public class Layout extends Component {
     public Layout(int left, int top, int width, int height) {
         super(left, top);
 
-        if (width < 13)
+        if (width < 13 && false)
             throw new IllegalArgumentException("Width can not be less than 13 wide");
 
-        if (height < 1)
+        if (height < 1 && false)
             throw new IllegalArgumentException("Height can not be less than 1 tall");
 
-        this.components = new ArrayList<Component>();
+        this.components = new CopyOnWriteArrayList<>();
         this.width = width;
         this.height = height;
     }
@@ -349,7 +350,7 @@ public class Layout extends Component {
         return initialized;
     }
 
-    public void setInitialized() {
+    public void setInitialized(boolean initialized) {
         this.initialized = initialized;
     }
 

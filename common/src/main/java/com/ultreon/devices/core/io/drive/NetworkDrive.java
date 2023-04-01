@@ -26,8 +26,7 @@ public final class NetworkDrive extends AbstractDrive {
     @Override
     public ServerFolder getRoot(Level level) {
         BlockEntity tileEntity = level.getBlockEntity(pos);
-        if (tileEntity instanceof Interface) {
-            Interface impl = (Interface) tileEntity;
+        if (tileEntity instanceof Interface impl) {
             AbstractDrive drive = impl.getDrive();
             if (drive != null) {
                 return drive.getRoot(level);
@@ -39,8 +38,7 @@ public final class NetworkDrive extends AbstractDrive {
     @Override
     public FileSystem.Response handleFileAction(FileSystem fileSystem, FileAction action, Level level) {
         BlockEntity tileEntity = level.getBlockEntity(pos);
-        if (tileEntity instanceof Interface) {
-            Interface impl = (Interface) tileEntity;
+        if (tileEntity instanceof Interface impl) {
             AbstractDrive drive = impl.getDrive();
             if (drive.handleFileAction(fileSystem, action, level).getStatus() == FileSystem.Status.SUCCESSFUL) {
                 tileEntity.setChanged();

@@ -1,13 +1,13 @@
 package com.ultreon.devices.block;
 
-import com.ultreon.devices.DeviceType;
+import com.ultreon.devices.ModDeviceTypes;
 import com.ultreon.devices.IDeviceType;
 import com.ultreon.devices.block.entity.DeviceBlockEntity;
 import com.ultreon.devices.util.BlockEntityUtil;
 import com.ultreon.devices.util.Colorable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.DyeColor;
@@ -17,7 +17,6 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -35,12 +34,17 @@ import java.util.Objects;
 
 @SuppressWarnings("deprecation")
 public abstract class DeviceBlock extends HorizontalDirectionalBlock implements EntityBlock, IDeviceType {
-    private final DeviceType deviceType;
+    private final ModDeviceTypes deviceType;
 
-    public DeviceBlock(Properties properties, DeviceType deviceType) {
+    public DeviceBlock(Properties properties, ModDeviceTypes deviceType) {
         super(properties.strength(0.5f));
         this.deviceType = deviceType;
     }
+
+//    @Override
+//    public RenderShape getRenderShape(BlockState state) {
+//        return RenderShape.INVISIBLE;
+//    }
 
     @NotNull
     @Override
@@ -91,7 +95,7 @@ public abstract class DeviceBlock extends HorizontalDirectionalBlock implements 
                 drop.setTag(tag);
 
                 if (device.hasCustomName()) {
-                    drop.setHoverName(new TextComponent(device.getCustomName()));
+                    drop.setHoverName(Component.literal(device.getCustomName()));
                 }
 
                 level.addFreshEntity(new ItemEntity((Level) level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, drop));
@@ -124,14 +128,14 @@ public abstract class DeviceBlock extends HorizontalDirectionalBlock implements 
     }
 
     @Override
-    public DeviceType getDeviceType() {
+    public ModDeviceTypes getDeviceType() {
         return deviceType;
     }
 
     public static abstract class Colored extends DeviceBlock {
         private final DyeColor color;
 
-        protected Colored(Properties properties, DyeColor color, DeviceType deviceType) {
+        protected Colored(Properties properties, DyeColor color, ModDeviceTypes deviceType) {
             super(properties, deviceType);
             this.color = color;
         }

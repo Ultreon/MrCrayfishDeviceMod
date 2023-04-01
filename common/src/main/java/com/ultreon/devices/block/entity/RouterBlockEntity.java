@@ -2,15 +2,12 @@ package com.ultreon.devices.block.entity;
 
 import com.ultreon.devices.core.network.Router;
 import com.ultreon.devices.init.DeviceBlockEntities;
-import dev.architectury.injectables.annotations.ExpectPlatform;
-import dev.architectury.injectables.annotations.PlatformOnly;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 
 @SuppressWarnings("unused")
 public class RouterBlockEntity extends DeviceBlockEntity.Colored {
@@ -76,11 +73,11 @@ public class RouterBlockEntity extends DeviceBlockEntity.Colored {
 //    public double getMaxRenderDistanceSqr() {
 //        return 16384;
 //    }
-
-    @PlatformOnly("forge")
-    @Environment(EnvType.CLIENT)
-    @ExpectPlatform
-    public AABB getRenderBoundingBox() {
-        throw new AssertionError();
-    }
+//
+//    @PlatformOnly("forge")
+//    @Environment(EnvType.CLIENT)
+//    @ExpectPlatform
+//    public AABB getRenderBoundingBox() {
+//        throw new AssertionError();
+//    }
 }

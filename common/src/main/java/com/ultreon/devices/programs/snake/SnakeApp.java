@@ -2,20 +2,14 @@ package com.ultreon.devices.programs.snake;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.app.Application;
-import com.ultreon.devices.api.app.Component;
-import com.ultreon.devices.api.app.Dialog;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.component.Button;
 import com.ultreon.devices.api.app.component.Label;
-import com.ultreon.devices.api.app.component.Text;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.programs.snake.layout.SnakeLayout;
-import com.ultreon.devices.programs.system.AppStore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.Nullable;
-
-import static com.ultreon.devices.api.app.component.Button.getTextWidth;
 
 public class SnakeApp extends Application {
     public Layout titleScreen;

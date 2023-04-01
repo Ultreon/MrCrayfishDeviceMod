@@ -9,7 +9,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -97,7 +96,7 @@ public abstract class NetworkDeviceBlockEntity extends DeviceBlockEntity impleme
     @Nullable
     @Override
     public Component getDisplayName() {
-        return new TextComponent(getCustomName());
+        return Component.literal(getCustomName());
     }
 
     @Override

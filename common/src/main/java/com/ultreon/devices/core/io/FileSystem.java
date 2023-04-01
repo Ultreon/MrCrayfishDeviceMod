@@ -22,7 +22,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -37,8 +37,8 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 public class FileSystem {
-    public static final Pattern PATTERN_FILE_NAME = Pattern.compile("^[\\w'. ]{1,32}$");
-    public static final Pattern PATTERN_DIRECTORY = Pattern.compile("^(/)|(/[\\w'. ]{1,32})*$");
+    public static final Pattern PATTERN_FILE_NAME = Pattern.compile("^[\\w'.:_ ]{1,32}$");
+    public static final Pattern PATTERN_DIRECTORY = Pattern.compile("^(/)|(/[\\w'.:_ ]{1,32})*$");
 
     public static final String DIR_ROOT = "/";
     public static final String DIR_APPLICATION_DATA = DIR_ROOT + "Application Data";
@@ -80,28 +80,23 @@ public class FileSystem {
     public static void getApplicationFolder(Application app, Callback<Folder> callback) {
         if (Devices.hasAllowedApplications()) { // in arch we do not do instances
             if (!Devices.getAllowedApplications().contains(app.getInfo())) {
-                System.out.println("Application " + app.getInfo().getName() + " is not allowed");
                 callback.execute(null, false);
                 return;
             }
         }
 
         if (Laptop.getMainDrive() == null) {
-            System.out.println("Main drive is not initialized");
             Task task = new TaskGetMainDrive(Laptop.getPos());
             task.setCallback((tag, success) -> {
                 if (success) {
-                    System.out.println("Main drive has been initialized");
                     setupApplicationFolder(app, callback);
                 } else {
-                    System.out.println("Main drive initialization failed");
                     callback.execute(null, false);
                 }
             });
 
             TaskManager.sendTask(task);
         } else {
-            System.out.println("Main drive is initialized");
             setupApplicationFolder(app, callback);
         }
     }
@@ -111,38 +106,30 @@ public class FileSystem {
         Folder folder = Laptop.getMainDrive().getFolder(FileSystem.DIR_APPLICATION_DATA);
         if (folder != null) {
             if (folder.hasFolder(app.getInfo().getFormattedId())) {
-                System.out.println("Application folder is already initialized");
                 Folder appFolder = folder.getFolder(app.getInfo().getFormattedId());
                 assert appFolder != null;
                 if (appFolder.isSynced()) {
-                    System.out.println("Application folder is synced");
                     callback.execute(appFolder, true);
                 } else {
-                    System.out.println("Application folder is not synced");
                     Task task = new TaskGetFiles(appFolder, Laptop.getPos());
                     task.setCallback((tag, success) -> {
                         assert tag != null;
                         if (success && tag.contains("files", Tag.TAG_LIST)) {
-                            System.out.println("Application folder has been synced");
                             ListTag files = tag.getList("files", Tag.TAG_COMPOUND);
                             appFolder.syncFiles(files);
                             callback.execute(appFolder, true);
                         } else {
-                            System.out.println("Application folder synchronization failed");
                             callback.execute(null, false);
                         }
                     });
                     TaskManager.sendTask(task);
                 }
             } else {
-                System.out.println("Application folder is not initialized");
                 Folder appFolder = new Folder(app.getInfo().getFormattedId());
                 folder.add(appFolder, (response, success) -> {
                     if (response != null && response.getStatus() == Status.SUCCESSFUL) {
-                        System.out.println("Application folder has been initialized");
                         callback.execute(appFolder, true);
                     } else {
-                        System.out.println("Application folder initialization failed");
                         callback.execute(null, false);
                     }
                 });
@@ -162,8 +149,8 @@ public class FileSystem {
     }
 
     private void load(CompoundTag tag) {
-        if (tag.contains("mainDrive", Tag.TAG_COMPOUND))
-            mainDrive = InternalDrive.fromTag(tag.getCompound("mainDrive"));
+        if (tag.contains("main_drive", Tag.TAG_COMPOUND))
+            mainDrive = InternalDrive.fromTag(tag.getCompound("main_drive"));
         if (tag.contains("drives", Tag.TAG_LIST)) {
             ListTag list = tag.getList("drives", Tag.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
@@ -172,10 +159,10 @@ public class FileSystem {
                 additionalDrives.put(drive.getUuid(), drive);
             }
         }
-        if (tag.contains("externalDrive", Tag.TAG_COMPOUND))
-            attachedDrive = ExternalDrive.fromTag(tag.getCompound("externalDrive"));
-        if (tag.contains("externalDriveColor", Tag.TAG_BYTE))
-            attachedDriveColor = DyeColor.byId(tag.getByte("externalDriveColor"));
+        if (tag.contains("external_drive", Tag.TAG_COMPOUND))
+            attachedDrive = ExternalDrive.fromTag(tag.getCompound("external_drive"));
+        if (tag.contains("external_drive_color", Tag.TAG_BYTE))
+            attachedDriveColor = DyeColor.byId(tag.getByte("external_drive_color"));
 
         setupDefault();
     }
@@ -243,7 +230,7 @@ public class FileSystem {
 
                 attachedDriveColor = DyeColor.byId(flashDriveTag.getByte("color"));
 
-                blockEntity.getPipeline().putByte("externalDriveColor", (byte) attachedDriveColor.getId());
+                blockEntity.getPipeline().putByte("external_drive_color", (byte) attachedDriveColor.getId());
                 blockEntity.sync();
 
                 return true;
@@ -265,7 +252,7 @@ public class FileSystem {
     public ItemStack removeAttachedDrive() {
         if (attachedDrive != null) {
             ItemStack stack = new ItemStack(DeviceItems.getFlashDriveByColor(attachedDriveColor), 1);
-            stack.setHoverName(new TextComponent(attachedDrive.getName()));
+            stack.setHoverName(Component.literal(attachedDrive.getName()));
             stack.getOrCreateTag().put("drive", attachedDrive.toTag());
             attachedDrive = null;
             return stack;

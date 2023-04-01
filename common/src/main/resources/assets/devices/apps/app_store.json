@@ -1,9 +1,9 @@
 {
+    "schemaVersion": 2,
     "name": "Application Market",
-    "author": "MrCrayfish",
+    "authors": ["MrCrayfish", "Jab125"],
     "description": "${desc}",
     "version": "1.0",
-    "icon": "devices:textures/app/icon/app_store.png",
     "screenshots": [
         "https://i.imgur.com/7CzbiA7.png",
         "https://i.imgur.com/4AiXzf8.jpg",

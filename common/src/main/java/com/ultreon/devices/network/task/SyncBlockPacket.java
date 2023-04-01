@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.chunk.LevelChunk;
 
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -33,7 +34,7 @@ public class SyncBlockPacket extends Packet<SyncBlockPacket> {
     @Override
     public boolean onMessage(Supplier<NetworkManager.PacketContext> ctx) {
         Level level = Objects.requireNonNull(ctx.get().getPlayer()).level;
-        BlockEntity blockEntity = level.getBlockEntity(routerPos);
+        BlockEntity blockEntity = level.getChunkAt(routerPos).getBlockEntity(routerPos, LevelChunk.EntityCreationType.IMMEDIATE);
         if (blockEntity instanceof RouterBlockEntity router) {
             router.syncDevicesToClient();
         }

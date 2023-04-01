@@ -11,6 +11,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.chunk.LevelChunk;
 
 import java.util.UUID;
 
@@ -22,7 +23,7 @@ public class TaskPrint extends Task {
     private UUID printerId;
     private IPrint print;
 
-    private TaskPrint() {
+    public TaskPrint() {
         super("print");
     }
 
@@ -42,7 +43,7 @@ public class TaskPrint extends Task {
 
     @Override
     public void processRequest(CompoundTag tag, Level level, Player player) {
-        BlockEntity tileEntity = level.getBlockEntity(BlockPos.of(tag.getLong("devicePos")));
+        BlockEntity tileEntity = level.getChunkAt(BlockPos.of(tag.getLong("devicePos"))).getBlockEntity(BlockPos.of(tag.getLong("devicePos")), LevelChunk.EntityCreationType.IMMEDIATE);
         if (tileEntity instanceof NetworkDeviceBlockEntity device) {
             Router router = device.getRouter();
             if (router != null) {

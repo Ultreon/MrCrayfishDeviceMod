@@ -1,6 +1,7 @@
 package com.ultreon.devices.programs.system;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.Tesselator;
 import com.ultreon.devices.api.app.Application;
 import com.ultreon.devices.api.app.Dialog;
 import com.ultreon.devices.api.app.Layout;
@@ -18,10 +19,18 @@ import com.ultreon.devices.util.InventoryUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.VillagerRenderer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.npc.VillagerData;
+import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.VillagerType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -35,7 +44,6 @@ public class BankApp extends Application {//The bank is not a system application
     private static final ResourceLocation BANK_ASSETS = new ResourceLocation("devices:textures/gui/bank.png");
     //    private static final ResourceLocation villagerTextures = new ResourceLocation("textures/entity/villager/villager.png");
 //    private static final VillagerModel<Villager> villagerModel = new VillagerModel<Villager>();
-    private Villager villager;
     private Layout layoutStart;
     private Label labelTeller;
     private Text textWelcome;
@@ -84,25 +92,34 @@ public class BankApp extends Application {//The bank is not a system application
         layoutStart = new Layout();
         layoutStart.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
             assert Minecraft.getInstance().level != null;
-            villager = new Villager(EntityType.VILLAGER, Minecraft.getInstance().level, VillagerType.PLAINS);
             // TODO: get villager to render without instant game crash
-//            pose.pushPose();
-//            {
-//                RenderSystem.enableDepthTest();
-//                pose.translate(x + 25, y + 33, 15);
-//                pose.scale((float) -2.5, (float) -2.5, (float) -2.5);
-//                // Todo: do rotations
-//                pose.mulPose(new Quaternion(1, 0, 0, -d+f));
-//                pose.mulPose(new Quaternion(0, 0, 1, d+f));
-//                pose.mulPose(new Quaternion(0, 1, 0, -d+f));
-//                float scaleX = (mouseX - x - 25) / (float) width;
-//                float scaleY = (mouseY - y - 20) / (float) height;
-////                RenderSystem.setShaderTexture(villagerTextures);
-//                MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
-//                Minecraft.getInstance().getEntityRenderDispatcher().render(villager, 0f, 0f, 0f, 0f, 0f, pose, buffer, 1);
-//                RenderSystem.disableDepthTest();
-//            }
-//            pose.popPose();
+            pose.pushPose();
+            {
+                RenderSystem.enableDepthTest();
+                pose.translate(x + 25, y + 33, 15);
+                pose.scale((float) -2.5, (float) -2.5, (float) -2.5);
+                // Todo: do rotations
+              //  pose.mulPose(new Quaternion(1, 0, 0, -mouseX+mouseY));
+               // pose.mulPose(new Quaternion(0, 0, 1, mouseX+mouseY));
+              //  pose.mulPose(new Quaternion(0, 1, 0, -mouseX+mouseY));
+                float scaleX = (mouseX - x - 25) / (float) width;
+                float scaleY = (mouseY - y - 20) / (float) height;
+//                RenderSystem.setShaderTexture(villagerTextures);
+
+                MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
+//                var renderer = new VillagerRenderer(new EntityRendererProvider.Context(Minecraft.getInstance().getEntityRenderDispatcher(), Minecraft.getInstance().getItemRenderer(), Minecraft.getInstance().getResourceManager(), Minecraft.getInstance().getEntityModels(), Minecraft.getInstance().font));
+                var villager = EntityType.VILLAGER.create(Minecraft.getInstance().level);
+                assert villager != null;
+                villager.setVillagerData(new VillagerData(VillagerType.PLAINS, VillagerProfession.NITWIT, 1));
+                villager.getVillagerData().setProfession(VillagerProfession.NITWIT);
+                pose.pushPose();
+                pose.scale(scaleX, scaleY, 1F);
+        //        renderer.render(villager, 0F, 0F, pose, buffer, 15);
+                pose.popPose();
+
+                RenderSystem.disableDepthTest();
+            }
+            pose.popPose();
 
             RenderSystem.setShaderTexture(0, BANK_ASSETS);
             RenderUtil.drawRectWithTexture(pose, x + 46, y + 19, 0, 0, 146, 52, 146, 52);
@@ -111,8 +128,8 @@ public class BankApp extends Application {//The bank is not a system application
         labelTeller = new Label(ChatFormatting.YELLOW + "Casey The Teller", 60, 7);
         layoutStart.addComponent(labelTeller);
 
-        assert Minecraft.getInstance().player != null;
-        textWelcome = new Text(ChatFormatting.BLACK + "Hello " + Minecraft.getInstance().player.getName() + ", welcome to The Emerald Bank! How can I help you?", 62, 25, 125);
+        assert Minecraft.getInstance().level == null || Minecraft.getInstance().player != null;
+        textWelcome = new Text(ChatFormatting.BLACK + "Hello " + Minecraft.getInstance().player.getGameProfile().getName() + ", welcome to The Emerald Bank! How can I help you?", 62, 25, 125);
         layoutStart.addComponent(textWelcome);
 
         btnDepositWithdraw = new Button(54, 74, "View Account");

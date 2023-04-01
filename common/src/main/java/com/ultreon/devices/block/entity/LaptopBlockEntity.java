@@ -9,18 +9,21 @@ import net.fabricmc.api.Environment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class LaptopBlockEntity extends NetworkDeviceBlockEntity.Colored {
     private static final int OPENED_ANGLE = 102;
 
     private boolean open = false;
 
-    private CompoundTag applicationData;
-    private CompoundTag systemData;
+    private CompoundTag applicationData = new CompoundTag();
+    private CompoundTag systemData = new CompoundTag();
     private FileSystem fileSystem;
 
     @Environment(EnvType.CLIENT)
@@ -48,11 +51,11 @@ public class LaptopBlockEntity extends NetworkDeviceBlockEntity.Colored {
             prevRotation = rotation;
             if (!open) {
                 if (rotation > 0) {
-                    rotation -= 10F;
+                    rotation -= 10;
                 }
             } else {
                 if (rotation < OPENED_ANGLE) {
-                    rotation += 10F;
+                    rotation += 10;
                 }
             }
         }
@@ -63,6 +66,7 @@ public class LaptopBlockEntity extends NetworkDeviceBlockEntity.Colored {
         super.load(compound);
         if (compound.contains("open")) {
             this.open = compound.getBoolean("open");
+            this.getBlockState().setValue(LaptopBlock.OPEN, open);
         }
         if (compound.contains("system_data", Tag.TAG_COMPOUND)) {
             this.systemData = compound.getCompound("system_data");
@@ -124,17 +128,28 @@ public class LaptopBlockEntity extends NetworkDeviceBlockEntity.Colored {
 //        return INFINITE_EXTENT_AABB;
 //    }
 
-    public void openClose() {
+    public void openClose(@Nullable Entity entity) {
         Level level = this.level;
         if (level != null) {
-            BlockEntityUtil.sendUpdate(level, this.worldPosition, this.getBlockState().setValue(LaptopBlock.OPEN, !open));
+            level.gameEvent(!open ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, getBlockPos(), GameEvent.Context.of(entity, this.getBlockState()));
         }
         boolean oldOpen = open;
-        open = getBlockState().getValue(LaptopBlock.OPEN);
+        open = !getBlockState().getValue(LaptopBlock.OPEN);
         if (oldOpen != open) {
             pipeline.putBoolean("open", open);
+            var d = getBlockState().setValue(LaptopBlock.OPEN, open);
+            this.level.setBlock(this.getBlockPos(), d, 18);
             sync();
         }
+
+        if (level != null) {
+            markUpdated();
+            doNeighborUpdates(level, this.getBlockPos(), this.getBlockState());
+        }
+    }
+
+    private static void doNeighborUpdates(Level level, BlockPos pos, BlockState state) {
+        state.updateNeighbourShapes(level, pos, 3);
     }
 
     public boolean isOpen() {

@@ -2,7 +2,7 @@
 # Copyright (c) 2022 - Ultreon Team, GPLv3 License. See the license at https://www.gnu.org/licenses/gpl-3.0-standalone.html
 
 modLoader = "javafml"
-loaderVersion = "[40,)"
+loaderVersion = "[${loaderVersion},)"
 license = "GPL-3.0"
 issueTrackerURL = "https://github.com/Ultreon/devices-mod/issues"
 
@@ -12,25 +12,33 @@ modId = "devices"
 version = "${version}"
 displayName = "Devices Mod"
 #updateJSONURL="http://myurl.me/"
-displayURL = "https://mrcrayfish.com/mods?id=devices"
-#logoFile="device-mod.png"
-credits = "Thanks to MrCrayfish for the idea and the original mod that was made in 1.12.2. Thank you to MinecraftDoodler for helping with textures. Cheers to these people for donating during the development: Mastef Chief, Haunted Corpse, Jake Crowley, fabbe50, PlayDashGaming, jack jook, Hunstagamez, Techyy YT, MinecraftDoodler, Norge100YT, Cyberman2208, CreepergamingsMC"
-authors = "Qboi123"
-description = '''
-Adds working electronic devices into Minecraft!
-'''
+displayURL = "https://github.com/Ultreon/devices-mod"
+logoFile="devices_mod.png"
+credits = "Thanks to MrCrayfish for the idea and the original mod that was made in 1.12.2. Thank you to MinecraftDoodler for helping with textures. Thank you to lizterzapzap for the Devices Mod icon. Cheers to these people for donating during the development: Mastef Chief, Haunted Corpse, Jake Crowley, fabbe50, PlayDashGaming, jack jook, Hunstagamez, Techyy YT, MinecraftDoodler, Norge100YT, Cyberman2208, CreepergamingsMC"
+authors = "Qboi123, Jab125"
+description = """
+${description}
+"""
+itemIcon = "devices:red_laptop"
 
 # Dependencies for the main mod.
 [[dependencies.devices]]
 modId = "forge"
 mandatory = true
-versionRange = "[40,)"
+versionRange = "[${forgeVersion},)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.devices]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.18.2,1.19)"
+versionRange = "[${minecraftVersion},1.19.4)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.devices]]
+modId = "architectury"
+mandatory = true
+versionRange = "[7.1,8)"
 ordering = "NONE"
 side = "BOTH"

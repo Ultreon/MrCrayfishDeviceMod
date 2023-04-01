@@ -7,6 +7,7 @@ import com.ultreon.devices.network.Packet;
 import com.ultreon.devices.object.AppInfo;
 import dev.architectury.networking.NetworkManager;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -22,7 +23,7 @@ public class SyncApplicationPacket extends Packet<SyncApplicationPacket> {
         ImmutableList.Builder<AppInfo> builder = ImmutableList.builder();
         for (int i = 0; i < size; i++) {
             String appId = buf.readUtf();
-            AppInfo info = ApplicationManager.getApplication(appId);
+            AppInfo info = ApplicationManager.getApplication(ResourceLocation.tryParse(appId));
             if (info != null) {
                 builder.add(info);
             } else {

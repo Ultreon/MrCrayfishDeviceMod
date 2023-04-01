@@ -14,7 +14,7 @@ public class ColorGrid extends Component {
 
     private final int hoverColor = new Color(255, 255, 255, 100).getRGB();
 
-    private final Canvas canvas;
+    private final com.ultreon.devices.object.Canvas canvas;
     private final Slider redSlider;
     private final Slider greenSlider;
     private final Slider blueSlider;

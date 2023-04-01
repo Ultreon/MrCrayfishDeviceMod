@@ -345,7 +345,7 @@ public class MineBayApp extends Application {
                 });
                 TaskManager.sendTask(task);
                 dialog.close();
-                restoreDefaultLayout();
+                init(intent);
             });
             openDialog(dialog);
         });

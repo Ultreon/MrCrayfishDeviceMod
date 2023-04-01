@@ -105,12 +105,13 @@ public class ColorScheme {
 
     public void resetDefault() {
         textColor = Color.decode("0xFFFFFF").getRGB();
-        textSecondaryColor = Color.decode("0x9BEDF2").getRGB();
-        headerColor = Color.decode("0x959fa6").getRGB();
-        backgroundColor = Color.decode("0x535861").getRGB();
-        backgroundSecondaryColor = 0;
-        itemBackgroundColor = Color.decode("0x9E9E9E").getRGB();
-        itemHighlightColor = Color.decode("0x757575").getRGB();
+        textSecondaryColor = Color.decode("0xABEFF4").getRGB();
+        headerColor = Color.decode("0x387A96").getRGB();
+        //backgroundColor = Color.decode("0x535861").getRGB();
+        backgroundColor = Color.decode("0x6899C2").getRGB();
+        backgroundSecondaryColor = Color.decode("0x36C052").getRGB();
+        itemBackgroundColor = Color.decode("0x2E6897").getRGB();
+        itemHighlightColor = Color.decode("0x8B74C9").getRGB();
     }
 
     public CompoundTag toTag() {

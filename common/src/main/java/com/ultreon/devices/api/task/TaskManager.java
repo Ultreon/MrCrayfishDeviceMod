@@ -8,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public final class TaskManager {
     private static TaskManager instance = null;
@@ -26,15 +27,11 @@ public final class TaskManager {
         return instance;
     }
 
-    public static void registerTask(Class<? extends Task> clazz) {
+    public static void registerTask(Supplier<Task> clazz) {
+        var task = clazz.get();
         try {
-            Constructor<? extends Task> constructor = clazz.getDeclaredConstructor();
-            constructor.setAccessible(true);
-            Task task = constructor.newInstance();
             Devices.LOGGER.info("Registering task '" + task.getName() + "'");
             get().registeredRequests.put(task.getName(), task);
-        } catch (InstantiationException e) {
-            System.err.println("- Missing constructor '" + clazz.getSimpleName() + "()'");
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -23,7 +23,7 @@ public class TaskSendAction extends Task {
 
     private FileSystem.Response response;
 
-    private TaskSendAction() {
+    public TaskSendAction() {
         super("send_action");
     }
 

@@ -1,9 +1,9 @@
 {
+    "schemaVersion": 2,
     "name": "Bank",
-    "author": "MrCrayfish",
+    "authors": ["MrCrayfish", "Jab125", "Qboi123"],
     "description": "${desc}",
     "version": "1.0",
-    "icon": "devices:textures/app/icon/bank.png",
     "screenshots": [
         "https://i.imgur.com/7CzbiA7.png",
         "https://i.imgur.com/4AiXzf8.jpg",

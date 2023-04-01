@@ -13,13 +13,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(FontSet.class)
 public class FontSetMixin {
-    @Shadow @Final private ResourceLocation name;
-    private static final GlyphInfo DEVICES_TAB_INFO = () -> 16.0f;
-
-    @Inject(method = "getGlyphInfoForSpace", at = @At("HEAD"))
-    public void getGlyphInfoForSpace(int i, CallbackInfoReturnable<GlyphInfo> cir) {
-        if (name.equals(Devices.res("laptop"))) {
-            cir.setReturnValue(i == 9 ? DEVICES_TAB_INFO : cir.getReturnValue());
-        }
-    }
+//    @Shadow @Final private ResourceLocation name;
+//    private static final GlyphInfo DEVICES_TAB_INFO = () -> 16.0f;
+//
+//    @Inject(method = "getGlyphInfoForSpace", at = @At("HEAD"))
+//    public void getGlyphInfoForSpace(int i, CallbackInfoReturnable<GlyphInfo> cir) {
+//        if (name.equals(Devices.res("laptop")) && i == 9) {
+//            cir.setReturnValue(DEVICES_TAB_INFO);
+//        }
+//    }
 }

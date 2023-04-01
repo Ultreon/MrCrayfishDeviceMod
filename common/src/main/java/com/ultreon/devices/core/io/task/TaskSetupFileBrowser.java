@@ -25,7 +25,7 @@ public class TaskSetupFileBrowser extends Task {
     private AbstractDrive mainDrive;
     private Map<UUID, AbstractDrive> availableDrives;
 
-    private TaskSetupFileBrowser() {
+    public TaskSetupFileBrowser() {
         super("get_file_system");
     }
 

@@ -7,6 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.chunk.LevelChunk;
 
 /**
  * @author MrCrayfish
@@ -15,7 +16,7 @@ public class TaskPing extends Task {
     private BlockPos sourceDevicePos;
     private int strength;
 
-    private TaskPing() {
+    public TaskPing() {
         super("ping");
     }
 
@@ -31,7 +32,7 @@ public class TaskPing extends Task {
 
     @Override
     public void processRequest(CompoundTag tag, Level level, Player player) {
-        BlockEntity blockEntity = level.getBlockEntity(BlockPos.of(tag.getLong("sourceDevicePos")));
+        BlockEntity blockEntity = level.getChunkAt(BlockPos.of(tag.getLong("sourceDevicePos"))).getBlockEntity(BlockPos.of(tag.getLong("sourceDevicePos")), LevelChunk.EntityCreationType.IMMEDIATE);
         if (blockEntity instanceof NetworkDeviceBlockEntity networkDevice) {
             if (networkDevice.isConnected()) {
                 this.strength = networkDevice.getSignalStrength();

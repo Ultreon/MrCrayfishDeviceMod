@@ -3,15 +3,18 @@ package com.ultreon.devices.api.utils;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import com.ultreon.devices.api.app.component.Image;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.object.AppInfo;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
+import java.awt.*;
 
 @SuppressWarnings("unused")
 public class RenderUtil {
@@ -28,6 +31,26 @@ public class RenderUtil {
         // Todo - Port to 1.18.2 if possible
         //RenderSystem.enableAlpha();
         //Lighting.setupForFlatItems();
+    }
+
+    public static void drawIcon(PoseStack pose, double x, double y, AppInfo info, int width, int height) {
+        RenderSystem.setShaderTexture(0, Laptop.ICON_TEXTURES);
+        //Gui.blit(pose, (int) x, (int) y, width, height, u, v, sourceWidth, sourceHeight, (int) textureWidth, (int) textureHeight);
+        if (info == null || (info.getIcon().getBase().getU() == -1 && info.getIcon().getBase().getV() == -1)) {
+            drawRectWithTexture(pose, x, y, 0, 0, width, height, 14, 14, 224, 224);
+            return;
+        }
+        RenderSystem.enableBlend();
+        var glyphs = new AppInfo.Icon.Glyph[]{info.getIcon().getBase(), info.getIcon().getOverlay0(), info.getIcon().getOverlay1()};
+        for (AppInfo.Icon.Glyph glyph : glyphs) {
+            if (glyph.getU() == -1 || glyph.getV() == -1) continue;
+            var col = new Color(info.getTint(glyph.getType()));
+            int[] tint = new int[]{col.getRed(), col.getGreen(), col.getBlue()};
+            RenderSystem.setShaderColor(tint[0]/255f, tint[1]/255f, tint[2]/255f, 1f);
+            drawRectWithTexture(pose, x, y, glyph.getU(), glyph.getV(), width, height, 14, 14, 224, 224);
+            //image.init(layout);
+        }
+        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
     }
 
     public static void drawRectWithTexture(PoseStack pose, double x, double y, float u, float v, int width, int height, float textureWidth, float textureHeight) {
@@ -52,55 +75,56 @@ public class RenderUtil {
     public static void drawRectWithTexture(PoseStack pose, double x, double y, double z, float u, float v, int width, int height, float textureWidth, float textureHeight) {
         //Gui.blit(pose, (int) x, (int) y, width, height, u, v, width, height, (int) textureWidth, (int) textureHeight);
         float scale = 0.00390625f;
+        var e = pose.last().pose();
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         BufferBuilder buffer = Tesselator.getInstance().getBuilder();
         try {
             buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        } catch (IllegalStateException e) {
+        } catch (IllegalStateException e_) {
             buffer.end();
             buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
         }
-        buffer.vertex(x, y + height, z).uv(u * scale, (v + textureHeight) * scale).endVertex();
-        buffer.vertex(x + width, y + height, z).uv((u + textureWidth) * scale, (v + textureHeight) * scale).endVertex();
-        buffer.vertex(x + width, y, z).uv((u + textureWidth) * scale, v * scale).endVertex();
-        buffer.vertex(x, y, z).uv(u * scale, v * scale).endVertex();
-        buffer.end();
-        BufferUploader.end(buffer);
+        buffer.vertex(e, (float) x, (float) (y + height), (float) z).uv(u * scale, (v + textureHeight) * scale).endVertex();
+        buffer.vertex(e, (float) (x + width), (float) (y + height), (float) z).uv((u + textureWidth) * scale, (v + textureHeight) * scale).endVertex();
+        buffer.vertex(e, (float) (x + width), (float) y, (float) z).uv((u + textureWidth) * scale, v * scale).endVertex();
+        buffer.vertex(e, (float) x, (float) y, (float) z).uv(u * scale, v * scale).endVertex();
+        BufferUploader.drawWithShader(buffer.end());
     }
 
     public static void drawRectWithFullTexture(PoseStack pose, double x, double y, float u, float v, int width, int height) {
         // Gui.blit(pose, (int) x, (int) y, width, height, u, v, width, height, 256, 256);
+        var e = pose.last().pose();
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         BufferBuilder buffer = Tesselator.getInstance().getBuilder();
         buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        buffer.vertex(x, y + height, 0).uv(0, 1).endVertex();
-        buffer.vertex(x + width, y + height, 0).uv(1, 1).endVertex();
-        buffer.vertex(x + width, y, 0).uv(1, 0).endVertex();
-        buffer.vertex(x, y, 0).uv(0, 0).endVertex();
-        buffer.end();
-        BufferUploader.end(buffer);
+        buffer.vertex(e, (float) x, (float) (y + height), 0).uv(0, 1).endVertex();
+        buffer.vertex(e, (float) (x + width), (float) (y + height), 0).uv(1, 1).endVertex();
+        buffer.vertex(e, (float) (x + width), (float) y, 0).uv(1, 0).endVertex();
+        buffer.vertex(e, (float) x, (float) y, 0).uv(0, 0).endVertex();
+        BufferUploader.drawWithShader(buffer.end());
     }
 
     public static void drawRectWithTexture(PoseStack pose, double x, double y, float u, float v, int width, int height, float textureWidth, float textureHeight, int sourceWidth, int sourceHeight) {
         //Gui.blit(pose, (int) x, (int) y, width, height, u, v, sourceWidth, sourceHeight, (int) textureWidth, (int) textureHeight);
         float scaleWidth = 1f / sourceWidth;
         float scaleHeight = 1f / sourceHeight;
+        var e = pose.last().pose();
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         BufferBuilder buffer = Tesselator.getInstance().getBuilder();
         buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        buffer.vertex(x, y + height, 0).uv(u * scaleWidth, (v + textureHeight) * scaleHeight).endVertex();
-        buffer.vertex(x + width, y + height, 0).uv((u + textureWidth) * scaleWidth, (v + textureHeight) * scaleHeight).endVertex();
-        buffer.vertex(x + width, y, 0).uv((u + textureWidth) * scaleWidth, v * scaleHeight).endVertex();
-        buffer.vertex(x, y, 0).uv(u * scaleWidth, v * scaleHeight).endVertex();
-        buffer.end();
-        BufferUploader.end(buffer);
+        buffer.vertex(e, (float) x, (float) (y + height), 0).uv(u * scaleWidth, (v + textureHeight) * scaleHeight).endVertex();
+        buffer.vertex(e, (float) (x + width), (float) (y + height), 0).uv((u + textureWidth) * scaleWidth, (v + textureHeight) * scaleHeight).endVertex();
+        buffer.vertex(e, (float) (x + width), (float) y, 0).uv((u + textureWidth) * scaleWidth, v * scaleHeight).endVertex();
+        buffer.vertex(e, (float) x, (float) y, 0).uv(u * scaleWidth, v * scaleHeight).endVertex();
+        BufferUploader.drawWithShader(buffer.end());
     }
 
     public static void drawApplicationIcon(PoseStack pose, @Nullable AppInfo info, double x, double y) {
         //TODO: Reset color GlStateManager.color(1f, 1f, 1f);
         RenderSystem.setShaderTexture(0, Laptop.ICON_TEXTURES);
         if (info != null) {
-            drawRectWithTexture(pose, x, y, info.getIconU(), info.getIconV(), 14, 14, 14, 14, 224, 224);
+            drawIcon(pose, x, y, info, 14, 14);
+          //  drawRectWithTexture(pose, x, y, info.getIconU(), info.getIconV(), 14, 14, 14, 14, 224, 224);
         } else {
             drawRectWithTexture(pose, x, y, 0, 0, 14, 14, 14, 14, 224, 224);
         }

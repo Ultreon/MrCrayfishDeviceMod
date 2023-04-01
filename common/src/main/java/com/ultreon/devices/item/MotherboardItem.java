@@ -4,7 +4,7 @@ import com.ultreon.devices.util.KeyboardHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
@@ -25,16 +25,16 @@ public class MotherboardItem extends ComponentItem {
     public void appendHoverText(ItemStack stack, @Nullable Level level, @NotNull List<net.minecraft.network.chat.Component> tooltip, @NotNull TooltipFlag isAdvanced) {
         CompoundTag tag = stack.getTag();
         if (!KeyboardHelper.isShiftDown()) {
-            tooltip.add(new TextComponent("CPU: " + getComponentStatus(tag, "cpu")));
-            tooltip.add(new TextComponent("RAM: " + getComponentStatus(tag, "ram")));
-            tooltip.add(new TextComponent("GPU: " + getComponentStatus(tag, "gpu")));
-            tooltip.add(new TextComponent("WIFI: " + getComponentStatus(tag, "wifi")));
-            tooltip.add(new TextComponent(ChatFormatting.YELLOW + "Hold shift for help"));
+            tooltip.add(net.minecraft.network.chat.Component.literal("CPU: " + getComponentStatus(tag, "cpu")));
+            tooltip.add(net.minecraft.network.chat.Component.literal("RAM: " + getComponentStatus(tag, "ram")));
+            tooltip.add(net.minecraft.network.chat.Component.literal("GPU: " + getComponentStatus(tag, "gpu")));
+            tooltip.add(net.minecraft.network.chat.Component.literal("WIFI: " + getComponentStatus(tag, "wifi")));
+            tooltip.add(net.minecraft.network.chat.Component.literal(ChatFormatting.YELLOW + "Hold shift for help"));
         } else {
-            tooltip.add(new TextComponent("To add the required components"));
-            tooltip.add(new TextComponent("place the motherboard and the"));
-            tooltip.add(new TextComponent("corresponding component into a"));
-            tooltip.add(new TextComponent("crafting table to combine them."));
+            tooltip.add(net.minecraft.network.chat.Component.literal("To add the required components"));
+            tooltip.add(net.minecraft.network.chat.Component.literal("place the motherboard and the"));
+            tooltip.add(net.minecraft.network.chat.Component.literal("corresponding component into a"));
+            tooltip.add(net.minecraft.network.chat.Component.literal("crafting table to combine them."));
         }
     }
 

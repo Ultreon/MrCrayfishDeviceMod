@@ -1,6 +1,6 @@
 package com.ultreon.devices.block;
 
-import com.ultreon.devices.DeviceType;
+import com.ultreon.devices.ModDeviceTypes;
 import com.ultreon.devices.block.entity.RouterBlockEntity;
 import com.ultreon.devices.network.PacketHandler;
 import com.ultreon.devices.network.task.SyncBlockPacket;
@@ -59,7 +59,7 @@ public class RouterBlock extends DeviceBlock.Colored {
     };
 
     public RouterBlock(DyeColor color) {
-        super(Properties.of(Material.HEAVY_METAL).strength(6f).sound(SoundType.METAL), color, DeviceType.ROUTER);
+        super(Properties.of(Material.HEAVY_METAL).strength(6f).sound(SoundType.METAL), color, ModDeviceTypes.ROUTER);
         this.registerDefaultState(this.getStateDefinition().any().setValue(FACING, Direction.NORTH).setValue(VERTICAL, false));
     }
 

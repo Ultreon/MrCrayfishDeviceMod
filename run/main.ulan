@@ -1,0 +1,14 @@
+program Main;
+
+var startX: integer;
+var startY: integer;
+startX = 10;
+startY = 20;
+
+function PrintHelloWorld() {
+    print("Hello World");
+};
+
+PrintHelloWorld();
+
+print("Hello World! Number: " + randInt(startX, startY));

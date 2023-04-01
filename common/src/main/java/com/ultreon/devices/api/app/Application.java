@@ -200,10 +200,11 @@ public abstract class Application extends Wrappable implements DataHandler {
      *
      * @param mouseX    the x position of the mouse
      * @param mouseY    the y position of the mouse
+     * @param delta
      * @param direction the direction of the scroll. true is up, false is down
      */
     @Override
-    public void handleMouseScroll(int mouseX, int mouseY, boolean direction) {
+    public void handleMouseScroll(int mouseX, int mouseY, double delta, boolean direction) {
         currentLayout.handleMouseScroll(mouseX, mouseY, direction);
     }
 

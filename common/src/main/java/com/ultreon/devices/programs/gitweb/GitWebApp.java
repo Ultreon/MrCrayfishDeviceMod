@@ -8,6 +8,7 @@ import com.ultreon.devices.api.app.component.TextField;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.programs.gitweb.component.GitWebFrame;
 import com.ultreon.devices.programs.gitweb.layout.TextLayout;
+import com.ultreon.devices.programs.system.SettingsApp;
 import com.ultreon.devices.programs.system.layout.StandardLayout;
 import com.ultreon.devices.util.DataHandler;
 import net.minecraft.client.gui.Gui;
@@ -42,13 +43,14 @@ public class GitWebApp extends Application implements SystemAccessor, DataHandle
 
     @Override
     public void init(@Nullable CompoundTag intent) {
-        layoutBrowser = new StandardLayout("GitWeb", 362, 240, this, null);
+        layoutBrowser = new StandardLayout(null, 362, 240, this, null);
         layoutBrowser.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
             Color color = new Color(Laptop.getSystem().getSettings().getColorScheme().getItemBackgroundColor());
-            Gui.fill(pose, x, y + 21, x + width, y + 164, Color.GRAY.getRGB());
+            Gui.fill(pose, x, y + 21, x + width, y + 164, color.getRGB());
         });
 
-        layoutPref = new Layout(200, 120);
+        layoutPref = new SettingsApp.Menu("Preferences");
+        setUpPreferences();
 
         textFieldAddress = new TextField(2, 2, 304);
         textFieldAddress.setPlaceholder("Enter Address");
@@ -97,6 +99,18 @@ public class GitWebApp extends Application implements SystemAccessor, DataHandle
         layoutBrowser.addComponent(webFrame);
 
         this.setCurrentLayout(layoutBrowser);
+    }
+
+    private void setUpPreferences() {
+        var backBtn = new Button(2, 2, Icons.ARROW_LEFT);
+        backBtn.setVisible(true);
+        backBtn.setClickListener((mouseX, mouseY, mouseButton) ->
+        {
+            if (mouseButton == 0) {
+                this.setCurrentLayout(layoutBrowser);
+            }
+        });
+        layoutPref.addComponent(backBtn);
     }
 
     @Override

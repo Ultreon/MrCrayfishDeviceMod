@@ -9,6 +9,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.chunk.LevelChunk;
 
 /**
  * @author MrCrayfish
@@ -35,11 +36,11 @@ public class TaskConnect extends Task {
 
     @Override
     public void processRequest(CompoundTag tag, Level level, Player player) {
-        BlockEntity tileEntity = level.getBlockEntity(BlockPos.of(tag.getLong("routerPos")));
+        BlockEntity tileEntity = level.getChunkAt(BlockPos.of(tag.getLong("routerPos"))).getBlockEntity(BlockPos.of(tag.getLong("routerPos")), LevelChunk.EntityCreationType.IMMEDIATE);
         if (tileEntity instanceof RouterBlockEntity tileEntityRouter) {
             Router router = tileEntityRouter.getRouter();
 
-            BlockEntity tileEntity1 = level.getBlockEntity(BlockPos.of(tag.getLong("devicePos")));
+            BlockEntity tileEntity1 = level.getChunkAt(BlockPos.of(tag.getLong("devicePos"))).getBlockEntity(BlockPos.of(tag.getLong("devicePos")), LevelChunk.EntityCreationType.IMMEDIATE);
             if (tileEntity1 instanceof NetworkDeviceBlockEntity tileEntityNetworkDevice) {
                 if (router.addDevice(tileEntityNetworkDevice)) {
                     tileEntityNetworkDevice.connect(router);

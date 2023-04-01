@@ -1,5 +1,6 @@
 package com.ultreon.devices.core;
 
+import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.programs.system.object.ColorScheme;
 import net.minecraft.nbt.CompoundTag;
 
@@ -27,7 +28,16 @@ public class Settings {
         CompoundTag tag = new CompoundTag();
         tag.putBoolean("showAllApps", showAllApps);
         tag.put("colorScheme", colorScheme.toTag());
+        tag.put("tints", appTintInfo());
         return tag;
+    }
+
+    private CompoundTag appTintInfo() {
+        var ct = new CompoundTag();
+        for (AppInfo installedApplication : Laptop.getSystem().getInstalledApplications()) {
+            ct.put(installedApplication.getId().toString(), installedApplication.getTintProvider().toTag());
+        }
+        return ct;
     }
 
     public static Settings fromTag(CompoundTag tag) {

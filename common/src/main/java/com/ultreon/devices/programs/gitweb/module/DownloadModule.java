@@ -15,6 +15,7 @@ import com.ultreon.devices.programs.gitweb.component.GitWebFrame;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
+import net.minecraft.resources.ResourceLocation;
 
 import java.awt.*;
 import java.util.Map;
@@ -41,7 +42,7 @@ public class DownloadModule extends Module {
     @Override
     public void generate(GitWebFrame frame, Layout layout, int width, Map<String, String> data) {
         int height = calculateHeight(data, width) - 5;
-        AppInfo info = ApplicationManager.getApplication(data.get("file-app"));
+        AppInfo info = ApplicationManager.getApplication(ResourceLocation.tryParse(data.get("file-app")));
         layout.setBackground((pose, gui, mc, x, y, width1, height1, mouseX, mouseY, windowActive) -> {
             int section = layout.width / 6;
             int subWidth = section * 4;
@@ -51,13 +52,15 @@ public class DownloadModule extends Module {
             Gui.fill(pose, posX + 1, posY + 1, posX + subWidth - 1, posY + height - 5 - 1, Color.DARK_GRAY.getRGB());
 
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-            RenderSystem.setShaderTexture(0, Laptop.ICON_TEXTURES);
-            int iconU = 0, iconV = 0;
-            if (info != null) {
-                iconU = info.getIconU();
-                iconV = info.getIconV();
-            }
-            RenderUtil.drawRectWithTexture(pose, posX + 5, posY + 3, iconU, iconV, 28, 28, 14, 14, 224, 224);
+//            int iconU = 0, iconV = 0;
+//            if (info != null) {
+//                iconU = info.getIconU();
+//                iconV = info.getIconV();
+//            }
+
+            RenderUtil.drawIcon(pose, posX + 5, posY + 3, info, 28, 28);
+
+      //      RenderUtil.drawRectWithTexture(pose, posX + 5, posY + 3, iconU, iconV, 28, 28, 14, 14, 224, 224);
 
             int textWidth = subWidth - 70 - 10 - 30 - 5;
             RenderUtil.drawStringClipped(pose, data.getOrDefault("file-name", "File"), posX + 37, posY + 7, textWidth, Color.ORANGE.getRGB(), true);

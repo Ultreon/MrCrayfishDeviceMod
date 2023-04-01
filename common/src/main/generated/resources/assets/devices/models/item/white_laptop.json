@@ -1,3 +1,3 @@
 {
-    "parent": "devices:block/white_laptop"
+  "parent": "devices:block/white_laptop_flitem"
 }

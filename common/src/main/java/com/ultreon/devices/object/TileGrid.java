@@ -12,7 +12,6 @@ import com.ultreon.devices.api.app.listener.ClickListener;
 import com.ultreon.devices.api.utils.RenderUtil;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.object.tiles.Tile;
-import com.ultreon.devices.object.tiles.Tile.Category;
 import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.client.Minecraft;
 
@@ -51,7 +50,7 @@ public class TileGrid extends Component
 			@Override
 			public void onClick(int mouseX, int mouseY, int mouseButton)
 			{
-				if(currentCategory < Category.values().length - 1)
+				if(currentCategory < Tile.Category.values().length - 1)
 				{
 					currentCategory++;
 					updateTiles();
@@ -140,7 +139,7 @@ public class TileGrid extends Component
 	{
 		tabTiles.clear();
 		
-		Category category = Category.values()[currentCategory];
+		Tile.Category category = Tile.Category.values()[currentCategory];
 		labelCurrentCategory.setText(category.name);
 		
 		for(Tile tile : Game.getRegisteredtiles().values())

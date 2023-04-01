@@ -14,7 +14,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 
@@ -197,11 +196,11 @@ public class Button extends Component {
     }
 
     public static int getTextWidth(String text) {
-        boolean flag = Minecraft.getInstance().options.forceUnicodeFont;
-        Minecraft.getInstance().options.forceUnicodeFont = false;
+        boolean flag = Minecraft.getInstance().options.forceUnicodeFont().get();
+        Minecraft.getInstance().options.forceUnicodeFont().set(false);
         Font fontRenderer = Minecraft.getInstance().font;
         int width = fontRenderer.width(text);
-        Minecraft.getInstance().options.forceUnicodeFont = flag;
+        Minecraft.getInstance().options.forceUnicodeFont().set(flag);
         return width;
     }
 
@@ -265,7 +264,13 @@ public class Button extends Component {
     @Override
     public void renderOverlay(PoseStack pose, Laptop laptop, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
         if (this.hovered && this.toolTip != null && toolTipTick >= TOOLTIP_DELAY) {
-            laptop.renderComponentTooltip(pose, Arrays.asList(new TextComponent(this.toolTipTitle).withStyle(ChatFormatting.GOLD), new TextComponent(this.toolTip)), mouseX, mouseY);
+            laptop.renderComponentTooltip(pose, Arrays.asList(net.minecraft.network.chat.Component.literal(this.toolTipTitle).withStyle(ChatFormatting.GOLD), net.minecraft.network.chat.Component.literal(this.toolTip)), mouseX, mouseY);
+        }
+    }
+
+    public void forceClick(int mouseX, int mouseY, int mouseButton) {
+        if (clickListener != null) {
+            clickListener.onClick(mouseX, mouseY, mouseButton);
         }
     }
 

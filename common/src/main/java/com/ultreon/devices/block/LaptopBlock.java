@@ -1,11 +1,11 @@
 package com.ultreon.devices.block;
 
-import com.ultreon.devices.DeviceType;
+import com.ultreon.devices.ModDeviceTypes;
 import com.ultreon.devices.block.entity.LaptopBlockEntity;
-import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.item.FlashDriveItem;
 import com.ultreon.devices.util.BlockEntityUtil;
-import net.minecraft.client.Minecraft;
+import dev.architectury.utils.Env;
+import dev.architectury.utils.EnvExecutor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -49,7 +49,7 @@ public class LaptopBlock extends DeviceBlock.Colored {
     private static final VoxelShape SHAPE_CLOSED_WEST = Block.box(1, 0, 1, 13, 2, 15);
 
     public LaptopBlock(DyeColor color) {
-        super(Properties.of(Material.HEAVY_METAL, color).strength(6f).sound(SoundType.METAL), color, DeviceType.LAPTOP);
+        super(Properties.of(Material.HEAVY_METAL, color).strength(6f).sound(SoundType.METAL), color, ModDeviceTypes.LAPTOP);
         registerDefaultState(this.getStateDefinition().any().setValue(TYPE, Type.BASE).setValue(OPEN, false));
     }
 
@@ -79,7 +79,7 @@ public class LaptopBlock extends DeviceBlock.Colored {
         if (blockEntity instanceof LaptopBlockEntity laptop) {
             if (player.isCrouching()) {
                 if (!level.isClientSide) {
-                    laptop.openClose();
+                    laptop.openClose(player);
                 }
                 return InteractionResult.SUCCESS;
             } else {
@@ -108,9 +108,13 @@ public class LaptopBlock extends DeviceBlock.Colored {
                     return InteractionResult.SUCCESS;
                 }
 
-                if (laptop.isOpen() && level.isClientSide) {
-                    Minecraft.getInstance().setScreen(new Laptop(laptop));
-                    return InteractionResult.SUCCESS;
+                if (laptop.isOpen()) {
+                    if (level.isClientSide) {
+                        EnvExecutor.runInEnv(Env.CLIENT, () -> () -> {
+                            ClientLaptopWrapper.execute(laptop);
+                        });
+                    }
+                    return InteractionResult.sidedSuccess(level.isClientSide);
                 }
             }
         }

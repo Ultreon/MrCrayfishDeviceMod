@@ -25,7 +25,7 @@ public class HeaderModule extends Module {
     @Override
     public int calculateHeight(Map<String, String> data, int width) {
         if (data.containsKey("scale")) {
-            return Integer.parseInt(data.get("scale")) * Laptop.getFont().lineHeight + 10;
+            return (int) (Double.parseDouble(data.get("scale")) * Laptop.getFont().lineHeight + (data.containsKey("padding") ? Integer.parseInt(data.get("padding")) : 5) * 2);
         }
         return Laptop.getFont().lineHeight + (data.containsKey("padding") ? Integer.parseInt(data.get("padding")) : 5) * 2;
     }
@@ -37,9 +37,9 @@ public class HeaderModule extends Module {
         Label label = new Label(s, width / 2, padding);
         label.setAlignment(Component.ALIGN_CENTER);
 
-        int scale = 1;
+        double scale = 1;
         if (data.containsKey("scale")) {
-            scale = Integer.parseInt(data.get("scale"));
+            scale = Double.parseDouble(data.get("scale"));
         }
         label.setScale(scale);
 

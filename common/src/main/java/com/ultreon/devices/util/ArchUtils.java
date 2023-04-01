@@ -1,10 +1,11 @@
 package com.ultreon.devices.util;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
+import dev.architectury.platform.Platform;
 
 public class ArchUtils {
-    @ExpectPlatform
+    @Deprecated
     public static boolean isProduction() {
-        throw new AssertionError();
+        return Platform.isDevelopmentEnvironment();
     }
 }

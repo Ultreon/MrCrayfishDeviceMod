@@ -6,6 +6,7 @@ import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.component.Image;
+import com.ultreon.devices.api.app.component.Label;
 import com.ultreon.devices.api.utils.RenderUtil;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.object.AppInfo;
@@ -106,7 +107,7 @@ public class AppGrid extends Component {
     }
 
     private AppEntry adjustEntry(AppEntry entry) {
-        AppInfo info = ApplicationManager.getApplication(entry.id());
+        AppInfo info = ApplicationManager.getApplication(ResourceLocation.tryParse(entry.id()));
         if (info != null) {
             return new LocalEntry(info);
         }
@@ -118,34 +119,35 @@ public class AppGrid extends Component {
 
         int iconOffset = (itemWidth - 14 * 3) / 2;
         if (entry instanceof LocalEntry localEntry) {
-            Image image = new Image(iconOffset, padding, 14 * 3, 14 * 3, localEntry.info().getIconU(), localEntry.info().getIconV(), 14, 14, 224, 224, Laptop.ICON_TEXTURES);
-            layout.addComponent(image);
+            Image.AppImage appImage = new Image.AppImage(iconOffset, padding, 14*3, 14*3, localEntry.info());
+         //   com.ultreon.devices.api.app.component.Image image = new com.ultreon.devices.api.app.component.Image(iconOffset, padding, 14 * 3, 14 * 3, localEntry.info().getIconU(), localEntry.info().getIconV(), 14, 14, 224, 224, Laptop.ICON_TEXTURES);
+            layout.addComponent(appImage);
         } else if (entry instanceof RemoteEntry remoteEntry) {
             ResourceLocation resource = new ResourceLocation(remoteEntry.id);
-            Image image = new Image(iconOffset, padding, 14 * 3, 14 * 3, AppStore.CERTIFICATES_BASE_URL + "/assets/" + resource.getNamespace() + "/" + resource.getPath() + "/icon.png");
+            com.ultreon.devices.api.app.component.Image image = new com.ultreon.devices.api.app.component.Image(iconOffset, padding, 14 * 3, 14 * 3, AppStore.CERTIFICATES_BASE_URL + "/assets/" + resource.getNamespace() + "/" + resource.getPath() + "/icon.png");
             layout.addComponent(image);
         }
 
         String clippedName = RenderUtil.clipStringToWidth(entry.name(), itemWidth - padding * 2);
-        com.ultreon.devices.api.app.component.Label labelName = new com.ultreon.devices.api.app.component.Label(clippedName, itemWidth / 2, 50);
+        Label labelName = new Label(clippedName, itemWidth / 2, 50);
         labelName.setAlignment(Component.ALIGN_CENTER);
         layout.addComponent(labelName);
 
         String clippedAuthor = RenderUtil.clipStringToWidth(entry.author(), itemWidth - padding * 2);
-        com.ultreon.devices.api.app.component.Label labelAuthor = new com.ultreon.devices.api.app.component.Label(clippedAuthor, itemWidth / 2, 62);
+        Label labelAuthor = new Label(clippedAuthor, itemWidth / 2, 62);
         labelAuthor.setAlignment(Component.ALIGN_CENTER);
         labelAuthor.setShadow(false);
         layout.addComponent(labelAuthor);
 
         if (store.certifiedApps.contains(entry)) {
-            Image certifiedIcon = new Image(15, 38, Icons.VERIFIED);
+            com.ultreon.devices.api.app.component.Image certifiedIcon = new com.ultreon.devices.api.app.component.Image(15, 38, Icons.VERIFIED);
             layout.addComponent(certifiedIcon);
         }
 
         if (entry instanceof LocalEntry) {
             AppInfo info = ((LocalEntry) entry).info();
             if (Laptop.getSystem().getInstalledApplications().contains(info)) {
-                Image installedIcon = new Image(itemWidth - 10 - 15, 38, Icons.CHECK);
+                com.ultreon.devices.api.app.component.Image installedIcon = new com.ultreon.devices.api.app.component.Image(itemWidth - 10 - 15, 38, Icons.CHECK);
                 layout.addComponent(installedIcon);
             }
         }
@@ -162,8 +164,8 @@ public class AppGrid extends Component {
         layout.components.forEach(component -> {
             if (component instanceof Layout) {
                 reloadIcons((Layout) component);
-            } else if (component instanceof Image) {
-                ((Image) component).reload();
+            } else if (component instanceof com.ultreon.devices.api.app.component.Image) {
+                ((com.ultreon.devices.api.app.component.Image) component).reload();
             }
         });
     }

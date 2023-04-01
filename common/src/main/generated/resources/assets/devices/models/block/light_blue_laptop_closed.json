@@ -1,6 +1,6 @@
 {
-    "parent": "devices:block/laptop_closed",
-    "textures": {
-        "2": "minecraft:block/light_blue_wool"
-    }
+  "parent": "devices:block/laptop_screen",
+  "textures": {
+    "2": "minecraft:block/light_blue_wool"
+  }
 }

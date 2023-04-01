@@ -1,6 +1,9 @@
 package com.ultreon.devices.programs.system.object;
 
+import com.ultreon.devices.object.AppInfo;
+
 import javax.annotation.Nullable;
+import java.util.Arrays;
 
 /**
  * @author MrCrayfish
@@ -10,7 +13,16 @@ public interface AppEntry {
 
     String name();
 
-    String author();
+    @Deprecated
+    default String author() {
+        StringBuilder a = new StringBuilder();
+        Arrays.stream(authors()).forEach((str -> a.append(str).append(", ")));
+        a.deleteCharAt(a.length()-1);
+        a.deleteCharAt(a.length()-1);
+        return a.toString();
+    }
+
+    String[] authors();
 
     String description();
 
@@ -18,7 +30,7 @@ public interface AppEntry {
     String version();
 
     @Nullable
-    String icon();
+    AppInfo.Icon icon();
 
     @Nullable
     String[] screenshots();

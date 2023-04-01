@@ -1,9 +1,11 @@
 package com.ultreon.devices.programs.gitweb.module;
 
+import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.component.Image;
 import com.ultreon.devices.api.app.component.Text;
 import com.ultreon.devices.programs.gitweb.component.GitWebFrame;
+import com.ultreon.devices.programs.gitweb.layout.ModuleLayout;
 
 import java.util.Map;
 
@@ -43,6 +45,31 @@ public class ParagraphModule extends Module {
             width -= (size + 5);
         }
         layout.addComponent(make(data, width));
+    }
+
+    @Override
+    public void modify(GitWebFrame frame, ModuleLayout layout, int width, Map<String, String> data) {
+        for (Component component : layout.components) {
+
+            if (component instanceof Image image && data.containsKey("image")) {
+                int size = width / 4;
+                int padding = data.containsKey("padding") ? Integer.parseInt(data.get("padding")) : 5;
+                image.left = width - size - padding;
+                image.top = padding;
+                image.componentWidth = size;
+                image.componentHeight = size;
+                image.setImage(data.get("image"));
+                width -= (size + 5);
+            }
+
+
+            if (component instanceof Text text) {
+                text.setText(GitWebFrame.parseFormatting(data.get("text")));
+                text.width = width;
+                int padding = data.containsKey("padding") ? Integer.parseInt(data.get("padding")) : 5;
+                text.setPadding(padding);
+            }
+        }
     }
 
     private Text make(Map<String, String> data, int width) {

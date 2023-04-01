@@ -4,7 +4,7 @@
         "particle": "block/anvil",
         "0": "block/anvil",
         "1": "block/cyan_terracotta",
-        "2": "block/wool_colored_red",
+        "2": "block/red_wool",
         "3": "block/stone"
     },
     "display": {

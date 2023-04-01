@@ -22,7 +22,7 @@ public class TaskGetMainDrive extends Task {
 
     private AbstractDrive mainDrive;
 
-    private TaskGetMainDrive() {
+    public TaskGetMainDrive() {
         super("get_main_drive");
     }
 

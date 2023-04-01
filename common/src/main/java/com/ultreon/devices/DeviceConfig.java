@@ -1,30 +1,31 @@
 package com.ultreon.devices;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
-import dev.architectury.injectables.annotations.PlatformOnly;
+import dev.architectury.platform.Platform;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraftforge.api.ModLoadingContext;
-import net.minecraftforge.api.fml.event.config.ModConfigEvent;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class DeviceConfig {
-    private static final String CATEGORY_LAPTOP = "laptop-settings";
+    private static final String CATEGORY_LAPTOP = "laptopSettings";
     public static final ForgeConfigSpec.IntValue PING_RATE;
 
-    private static final String CATEGORY_ROUTER = "router-settings";
+    private static final String CATEGORY_ROUTER = "routerSettings";
     public static final ForgeConfigSpec.IntValue SIGNAL_RANGE;
     public static final ForgeConfigSpec.IntValue BEACON_INTERVAL;
     public static final ForgeConfigSpec.IntValue MAX_DEVICES;
 
-    private static final String CATEGORY_PRINTING = "printer-settings";
+    private static final String CATEGORY_PRINTING = "printerSettings";
     public static final ForgeConfigSpec.BooleanValue OVERRIDE_PRINT_SPEED;
     public static final ForgeConfigSpec.IntValue CUSTOM_PRINT_SPEED;
     public static final ForgeConfigSpec.IntValue MAX_PAPER_COUNT;
 
-    private static final String CATEGORY_PIXEL_PAINTER = "pixel-painter";
+    private static final String CATEGORY_PIXEL_PAINTER = "pixelPainter";
     public static final ForgeConfigSpec.BooleanValue PIXEL_PAINTER_ENABLE;
     public static final ForgeConfigSpec.BooleanValue RENDER_PRINTED_3D;
+
+    public static final String CATEGORY_DEBUG = "debug";
+    public static final ForgeConfigSpec.BooleanValue DEBUG_BUTTON;
 
     public static final ForgeConfigSpec CONFIG;
 
@@ -50,7 +51,10 @@ public class DeviceConfig {
         PIXEL_PAINTER_ENABLE = builder.comment("Enable or disable the Pixel Painter app.")
                 .define(CATEGORY_PIXEL_PAINTER + ".enabled", true);
         RENDER_PRINTED_3D = builder.comment("Should the pixels on printed pictures be render in 3D? Warning, this will decrease the performance of the game. You shouldn't enable it if you have a slow computer.")
-                .define(CATEGORY_PIXEL_PAINTER + ".render-printed-in-3d", false);
+                .define(CATEGORY_PIXEL_PAINTER + ".renderPrintedIn3d", false);
+
+        DEBUG_BUTTON = builder.comment("Display a button to access a worldless laptop")
+                .define(CATEGORY_DEBUG + ".debugButton", Platform.isDevelopmentEnvironment());
 
         CONFIG = builder.build();
     }
