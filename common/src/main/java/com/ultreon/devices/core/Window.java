@@ -19,6 +19,8 @@ public class Window<T extends Wrappable> {
 
     public static final int Color_WINDOW_DARK = new Color(0f, 0f, 0f, 0.25f).getRGB();
     final Laptop laptop;
+    double dragFromX;
+    double dragFromY;
     protected GuiButtonClose btnClose;
     T content;
     int width, height;
@@ -169,10 +171,7 @@ public class Window<T extends Wrappable> {
         content.handleKeyReleased(keyCode, scanCode, modifiers);
     }
 
-    public void handleWindowMove(int screenStartX, int screenStartY, int mouseDX, int mouseDY) {
-        int newX = offsetX + mouseDX;
-        int newY = offsetY + mouseDY;
-
+    public void handleWindowMove(int screenStartX, int screenStartY, int newX, int newY) {
         if (newX >= 0 && newX <= Laptop.SCREEN_WIDTH - width) {
             this.offsetX = newX;
         } else if (newX < 0) {

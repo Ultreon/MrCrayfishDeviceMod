@@ -158,6 +158,8 @@ void setupRepositories(RepositoryHandler repositories) {
 }
 
 mergeJars.mustRunAfter build
+mergeJars.mustRunAfter ":merge-fabric:build"
+mergeJars.mustRunAfter ":merge-forge:build"
 
 if (Objects.equals(System.getenv("CIRCLE_CI"), "true")) {
     def copyToArtifacts = tasks.register("copyToArtifacts", Copy) {
