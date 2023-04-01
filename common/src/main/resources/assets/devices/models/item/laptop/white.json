@@ -1,6 +1,6 @@
 {
     "parent": "devices:item/laptop",
     "textures": {
-        "2": "block/wool_colored_white"
+        "2": "block/white_wool"
     }
 }

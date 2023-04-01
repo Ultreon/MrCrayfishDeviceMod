@@ -29,82 +29,82 @@
         "color": {
             "white": {
                 "textures": {
-                    "chair_color": "block/wool_colored_white"
+                    "chair_color": "block/white_wool"
                 }
             },
             "orange": {
                 "textures": {
-                    "chair_color": "block/wool_colored_orange"
+                    "chair_color": "block/orange_wool"
                 }
             },
             "magenta": {
                 "textures": {
-                    "chair_color": "block/wool_colored_magenta"
+                    "chair_color": "block/magenta_wool"
                 }
             },
             "light_blue": {
                 "textures": {
-                    "chair_color": "block/wool_colored_light_blue"
+                    "chair_color": "block/light_blue_wool"
                 }
             },
             "yellow": {
                 "textures": {
-                    "chair_color": "block/wool_colored_yellow"
+                    "chair_color": "block/yellow_wool"
                 }
             },
             "lime": {
                 "textures": {
-                    "chair_color": "block/wool_colored_lime"
+                    "chair_color": "block/lime_wool"
                 }
             },
             "pink": {
                 "textures": {
-                    "chair_color": "block/wool_colored_pink"
+                    "chair_color": "block/pink_wool"
                 }
             },
             "gray": {
                 "textures": {
-                    "chair_color": "block/wool_colored_gray"
+                    "chair_color": "block/gray_wool"
                 }
             },
             "silver": {
                 "textures": {
-                    "chair_color": "block/wool_colored_silver"
+                    "chair_color": "block/silver_wool"
                 }
             },
             "cyan": {
                 "textures": {
-                    "chair_color": "block/wool_colored_cyan"
+                    "chair_color": "block/cyan_wool"
                 }
             },
             "purple": {
                 "textures": {
-                    "chair_color": "block/wool_colored_purple"
+                    "chair_color": "block/purple_wool"
                 }
             },
             "blue": {
                 "textures": {
-                    "chair_color": "block/wool_colored_blue"
+                    "chair_color": "block/blue_wool"
                 }
             },
             "brown": {
                 "textures": {
-                    "chair_color": "block/wool_colored_brown"
+                    "chair_color": "block/brown_wool"
                 }
             },
             "green": {
                 "textures": {
-                    "chair_color": "block/wool_colored_green"
+                    "chair_color": "block/green_wool"
                 }
             },
             "red": {
                 "textures": {
-                    "chair_color": "block/wool_colored_red"
+                    "chair_color": "block/red_wool"
                 }
             },
             "black": {
                 "textures": {
-                    "chair_color": "block/wool_colored_black"
+                    "chair_color": "block/black_wool"
                 }
             }
         }

@@ -35,3 +35,10 @@ mandatory = true
 versionRange = "[${minecraftVersion},1.19.4)"
 ordering = "NONE"
 side = "BOTH"
+
+[[dependencies.devices]]
+modId = "architectury"
+mandatory = true
+versionRange = "[7.1,8)"
+ordering = "NONE"
+side = "BOTH"

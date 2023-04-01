@@ -1,6 +1,6 @@
 {
     "parent": "devices:item/office_chair",
     "textures": {
-        "chair_color": "block/wool_colored_silver"
+        "chair_color": "block/light_gray_wool"
     }
 }
