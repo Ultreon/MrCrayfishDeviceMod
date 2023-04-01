@@ -76,6 +76,8 @@ public class Laptop extends Screen implements System {
     private UUID license = null;
     private int retryActivate = seconds2ticks(ACTIVATE_RETRY);
     private Application registerApp;
+    private Double dragWindowFromX;
+    private Double dragWindowFromY;
 
     @PlatformOnly("fabric")
     public static List<Application> getApplicationsForFabric() {
@@ -579,6 +581,7 @@ public class Laptop extends Screen implements System {
     private boolean isMouseInside(int mouseX, int mouseY, int startX, int startY, int endX, int endY) {
         return mouseX >= startX && mouseX <= endX && mouseY >= startY && mouseY <= endY;
     }
+
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
         try {
@@ -657,11 +660,15 @@ public class Laptop extends Screen implements System {
                         windows.get(0).handleMouseClick(this, posX, posY, (int) mouseX, (int) mouseY, mouseButton);
 
                         if (isMouseWithinWindowBar((int) mouseX, (int) mouseY, dialogWindow)) {
+                            dragWindowFromX = mouseX - dialogWindow.offsetX;
+                            dragWindowFromY = mouseY - dialogWindow.offsetY;
                             this.dragging = true;
                             return false;
                         }
 
                         if (isMouseWithinWindowBar((int) mouseX, (int) mouseY, window) && dialogWindow == null) {
+                            dragWindowFromX = mouseX - window.offsetX;
+                            dragWindowFromY = mouseY - window.offsetY;
                             this.dragging = true;
                             return false;
                         }
@@ -692,6 +699,8 @@ public class Laptop extends Screen implements System {
     public boolean mouseReleased(double mouseX, double mouseY, int state) {
         super.mouseReleased(mouseX, mouseY, state);
         this.dragging = false;
+        dragWindowFromX = null;
+        dragWindowFromY = null;
         try {
             if (this.context != null) {
                 int dropdownX = context.xPosition;
@@ -802,8 +811,8 @@ public class Laptop extends Screen implements System {
                 Window<Application> window = (Window<Application>) windows.get(0);
                 Window<Dialog> dialogWindow = window.getContent().getActiveDialog();
                 if (dragging) {
-                    if (isMouseOnScreen((int) mouseX, (int) mouseY)) {
-                        Objects.requireNonNullElse(dialogWindow, window).handleWindowMove(posX, posY, (int) -(lastMouseX - mouseX), (int) -(lastMouseY - mouseY));
+                    if (isMouseOnScreen((int) mouseX, (int) mouseY) && dragWindowFromX != null && dragWindowFromY != null) {
+                        Objects.requireNonNullElse(dialogWindow, window).handleWindowMove(posX, posY, (int) ((dragX + mouseX) - dragWindowFromX), (int) ((dragY + mouseY) - dragWindowFromY));
                     } else {
                         dragging = false;
                     }
