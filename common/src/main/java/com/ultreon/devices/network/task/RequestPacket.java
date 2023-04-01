@@ -43,8 +43,9 @@ public class RequestPacket extends Packet<RequestPacket> {
     public boolean onMessage(Supplier<NetworkManager.PacketContext> ctx) {
         //System.out.println("RECEIVED from " + ctx.get().getPlayer().getUUID());
         request.processRequest(tag, Objects.requireNonNull(ctx.get().getPlayer()).level, ctx.get().getPlayer());
-        if (ctx.get().getPlayer() instanceof ServerPlayer player)
-        PacketHandler.sendToClient(new ResponsePacket(id, request), player);
+        if (ctx.get().getPlayer() instanceof ServerPlayer player) {
+            PacketHandler.sendToClient(new ResponsePacket(id, request), player);
+        }
         return true;
     }
 

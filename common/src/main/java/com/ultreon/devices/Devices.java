@@ -37,6 +37,7 @@ import com.ultreon.devices.programs.debug.TextAreaApp;
 import com.ultreon.devices.programs.email.task.*;
 import com.ultreon.devices.programs.example.ExampleApp;
 import com.ultreon.devices.programs.example.task.TaskNotificationTest;
+import com.ultreon.devices.programs.activation.TaskActivateMineOS;
 import com.ultreon.devices.programs.system.SystemApp;
 import com.ultreon.devices.programs.system.task.*;
 import com.ultreon.devices.util.SiteRegistration;
@@ -332,6 +333,9 @@ public class Devices {
         TaskManager.registerTask(TaskAddAuction::new);
         TaskManager.registerTask(TaskGetAuctions::new);
         TaskManager.registerTask(TaskBuyItem::new);
+
+        // Activation Stuff
+        TaskManager.registerTask(TaskActivateMineOS::new);
 
         if (DEVELOPER_MODE) {
             // Applications (Developers)

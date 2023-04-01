@@ -45,8 +45,9 @@ public final class TaskManager {
 
         int requestId = manager.currentId++;
         manager.requests.put(requestId, task);
-        if(Minecraft.getInstance().getConnection() != null)
-        PacketHandler.INSTANCE.sendToServer(new RequestPacket(requestId, task));
+        if(Minecraft.getInstance().getConnection() != null) {
+            PacketHandler.INSTANCE.sendToServer(new RequestPacket(requestId, task));
+        }
     }
 
     public static Task getTask(String name) {

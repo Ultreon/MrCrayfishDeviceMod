@@ -7,6 +7,7 @@ import com.ultreon.devices.programs.PixelPainterApp;
 import com.ultreon.devices.programs.auction.MineBayApp;
 import com.ultreon.devices.programs.email.EmailApp;
 import com.ultreon.devices.programs.gitweb.GitWebApp;
+import com.ultreon.devices.programs.activation.ActivationApp;
 import com.ultreon.devices.programs.snake.SnakeApp;
 import com.ultreon.devices.programs.system.*;
 import com.ultreon.devices.programs.themes.ThemesApp;
@@ -16,6 +17,7 @@ public class BuiltinApps {
     public static void registerBuiltinApps() {
         ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "diagnostics"), () -> DiagnosticsApp::new, true);
         ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "settings"), () -> SettingsApp::new, true);
+        ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "activation"), () -> ActivationApp::new, true);
         ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "bank"), () -> BankApp::new, false);
         ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "file_browser"), () -> FileBrowserApp::new, true);
         ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "gitweb"), () -> GitWebApp::new, false);

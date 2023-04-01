@@ -18,6 +18,7 @@ import com.ultreon.devices.api.utils.OnlineRequest;
 import com.ultreon.devices.block.entity.LaptopBlockEntity;
 import com.ultreon.devices.core.task.TaskInstallApp;
 import com.ultreon.devices.object.AppInfo;
+import com.ultreon.devices.programs.activation.ActivationApp;
 import com.ultreon.devices.programs.system.DiagnosticsApp;
 import com.ultreon.devices.programs.system.SystemApp;
 import com.ultreon.devices.programs.system.component.FileBrowser;
@@ -65,11 +66,16 @@ public class Laptop extends Screen implements System {
     public static final ResourceLocation ICON_TEXTURES = new ResourceLocation(Devices.MOD_ID, "textures/atlas/app_icons.png");
     public static final int ICON_SIZE = 14;
     private static final ResourceLocation LAPTOP_FONT = Devices.res("laptop");
+    private static final int ACTIVATE_RETRY = 60;
     private static Font font;
     private static final ResourceLocation LAPTOP_GUI = new ResourceLocation(Devices.MOD_ID, "textures/gui/laptop.png");
     private static final List<Application> APPLICATIONS = new ArrayList<>();
     private static boolean worldLess;
     private static Laptop instance;
+    private boolean registered;
+    private UUID license = null;
+    private int retryActivate = seconds2ticks(ACTIVATE_RETRY);
+    private Application registerApp;
 
     @PlatformOnly("fabric")
     public static List<Application> getApplicationsForFabric() {
@@ -102,7 +108,7 @@ public class Laptop extends Screen implements System {
     private int lastMouseX, lastMouseY;
     private boolean dragging = false;
     private final IntArraySet pressed = new IntArraySet();
-    private final com.ultreon.devices.api.app.component.Image wallpaper;
+    private final Image wallpaper;
     private final Layout wallpaperLayout;
     private BSOD bsod;
 
@@ -136,6 +142,10 @@ public class Laptop extends Screen implements System {
         this.appData = laptop.getApplicationData();
         this.systemData = laptop.getSystemData();
 
+        if (this.systemData.contains("License")) {
+            license = this.systemData.getUUID("License");
+        }
+
         // Windows
         this.windows = new CopyOnWriteArrayList<>() {
             @Override
@@ -168,7 +178,7 @@ public class Laptop extends Screen implements System {
         Laptop.system = this;
         Laptop.pos = laptop.getBlockPos();
         this.wallpaperLayout = new Layout(SCREEN_WIDTH, SCREEN_HEIGHT);
-        this.wallpaper = new com.ultreon.devices.api.app.component.Image(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+        this.wallpaper = new Image(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
         if (currentWallpaper.isBuiltIn()) {
             wallpaper.setImage(WALLPAPERS.get(currentWallpaper.location));
         } else {
@@ -337,10 +347,42 @@ public class Laptop extends Screen implements System {
                 }
             }
 
+            if (!isActivated()) {
+                if (retryActivate >= seconds2ticks(ACTIVATE_RETRY)) {
+                    retryActivate = 0;
+                    AppInfo info = ApplicationManager.getApplication(Devices.id("activation"));
+                    Devices.LOGGER.info("System isn't activated, showing activate window.");
+                    if (info != null) {
+                        registerApp = Laptop.getSystem().openApplication(info);
+                    }
+                    if (registerApp == null) {
+                        bsod(new RuntimeException("Registration Check Failed"));
+                        return;
+                    }
+                } else if (registerApp == null) {
+                    retryActivate++;
+                }
+            }
+
             FileBrowser.refreshList = false;
         } catch (Exception e) {
             bsod(e);
         }
+    }
+
+    public void showActivateWindow() {
+        AppInfo info = ApplicationManager.getApplication(Devices.id("registration"));
+        Devices.LOGGER.info("System isn't activated, showing activate window.");
+        if (info != null) {
+            registerApp = Laptop.getSystem().openApplication(info);
+            if (registerApp != null) {
+                retryActivate = 0;
+            }
+        }
+    }
+
+    private int seconds2ticks(int seconds) {
+        return seconds * 20;
     }
 
     @Override
@@ -537,7 +579,6 @@ public class Laptop extends Screen implements System {
     private boolean isMouseInside(int mouseX, int mouseY, int startX, int startY, int endX, int endY) {
         return mouseX >= startX && mouseX <= endX && mouseY >= startY && mouseY <= endY;
     }
-
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
         try {
@@ -549,10 +590,32 @@ public class Laptop extends Screen implements System {
         }
         return super.mouseClicked(mouseX, mouseY, mouseButton);
     }
+
     private void bsod(Throwable e) {
         this.bsod = new BSOD(e);
         e.printStackTrace();
     }
+
+    public boolean isActivated() {
+        return license != null && isValidLicense(license);
+    }
+
+    private boolean isValidLicense(UUID license) {
+        return (license.getMostSignificantBits() % 69420) == 0 && (license.getLeastSignificantBits() % 4_01_2023) == 0;
+    }
+
+    public Application getRegisterApp() {
+        return registerApp;
+    }
+
+    public boolean activate(UUID license) {
+        if (!isValidLicense(license)) {
+            return false;
+        }
+        this.license = license;
+        return true;
+    }
+
     private static final class BSOD {
         private final Throwable throwable;
         public BSOD(Throwable e) {
@@ -919,6 +982,9 @@ public class Laptop extends Screen implements System {
 
                     window.handleClose();
                     windows.remove(i);
+                    if (app instanceof ActivationApp) {
+                        registerApp = null;
+                    }
                     return;
                 }
             }

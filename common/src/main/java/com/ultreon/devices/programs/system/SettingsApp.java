@@ -18,8 +18,11 @@ import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.core.Settings;
 import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.object.TrayItem;
+import com.ultreon.devices.programs.activation.LicenseManager;
 import com.ultreon.devices.programs.system.component.Palette;
 import com.ultreon.devices.programs.system.object.ColorScheme;
+import dev.architectury.utils.Env;
+import dev.architectury.utils.EnvExecutor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiComponent;
@@ -120,6 +123,19 @@ public class SettingsApp extends SystemApp {
         buttonColorScheme.setToolTip("Personalise", "Change the wallpaper, UI colors, and more!");
         buttonColorScheme.setClickListener((mouseX, mouseY, mouseButton) ->
         {
+            if (!LicenseManager.isActivated()) {
+                Dialog.Confirmation confirmation = new Dialog.Confirmation("You need to buy a license before using this.\nDo you want to activate now?");
+                openDialog(confirmation);
+                confirmation.setPositiveListener((mouseX1, mouseY1, mouseButton1) -> {
+                    EnvExecutor.runInEnv(Env.CLIENT, () -> () -> {
+                        Laptop laptop = getLaptop();
+                        if (laptop != null) {
+                            laptop.showActivateWindow();
+                        }
+                    });
+                });
+                return;
+            }
             if (mouseButton == 0) {
                 showMenu(layoutPersonalise);
             }
