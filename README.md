@@ -1,13 +1,14 @@
 # Ultreon Devices Mod [![CircleCI](https://dl.circleci.com/status-badge/img/gh/Ultreon/devices-mod/tree/1.19.3-development.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/Ultreon/devices-mod/tree/1.19.3-development)
 **Language:** Java  
-**Minecraft Version:** `1.18.2`  
+**Minecraft Version:** `1.19.3`  
 **Mod Loader:** [Forge](https://files.minecraftforge.net/) & [Fabric](https://fabricmc.net/)
 
 *Fork of [MrCrayfish's Device Mod](https://github.com/MrCrayfish/MrCrayfishDeviceMod)*
 
 ## License Notes
 Some code is used from other projects with other licenses.
-* [`BlockEntityUtil.sendUpdate(...)`](common/src/main/java/com/ultreon/devices/util/BlockEntityUtil.java)[[Ultreon API License]](licenses/ultreon-api-1.0.txt) from [Machinizing (closed source until release)](https://gitlab.com/ultreon/machinizing)
+* The package `com.jab125` and all it's subpackages are licensed under All Rights Reserved.
+* Everything in [updater/](updater) also is licensed under All Rights Reserved.
 
 [@MrCrayfish](https://github.com/MrCrayfish) has said on his discord server that we can use his code and even the assets for this port.
 

@@ -1,6 +1,6 @@
 {
     "parent": "devices:item/laptop",
     "textures": {
-        "2": "block/wool_colored_pink"
+        "2": "block/pink_wool"
     }
 }
