@@ -18,7 +18,7 @@ import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.core.Settings;
 import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.object.TrayItem;
-import com.ultreon.devices.programs.activation.LicenseManager;
+import com.ultreon.devices.programs.system.activation.LicenseManager;
 import com.ultreon.devices.programs.system.component.Palette;
 import com.ultreon.devices.programs.system.object.ColorScheme;
 import dev.architectury.utils.Env;

@@ -1,4 +1,4 @@
-package com.ultreon.devices.programs.activation;
+package com.ultreon.devices.programs.system.activation;
 
 import com.ultreon.devices.core.Laptop;
 import dev.architectury.utils.EnvExecutor;

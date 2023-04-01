@@ -16,9 +16,10 @@ import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.api.task.TaskManager;
 import com.ultreon.devices.api.utils.OnlineRequest;
 import com.ultreon.devices.block.entity.LaptopBlockEntity;
+import com.ultreon.devices.core.exceptions.SecurityCheckException;
 import com.ultreon.devices.core.task.TaskInstallApp;
 import com.ultreon.devices.object.AppInfo;
-import com.ultreon.devices.programs.activation.ActivationApp;
+import com.ultreon.devices.programs.system.ActivationApp;
 import com.ultreon.devices.programs.system.DiagnosticsApp;
 import com.ultreon.devices.programs.system.SystemApp;
 import com.ultreon.devices.programs.system.component.FileBrowser;
@@ -353,12 +354,14 @@ public class Laptop extends Screen implements System {
                 if (retryActivate >= seconds2ticks(ACTIVATE_RETRY)) {
                     retryActivate = 0;
                     AppInfo info = ApplicationManager.getApplication(Devices.id("activation"));
-                    Devices.LOGGER.info("System isn't activated, showing activate window.");
                     if (info != null) {
+                        Devices.LOGGER.warn("System isn't activated, showing activate window.");
                         registerApp = Laptop.getSystem().openApplication(info);
+                    } else {
+                        Devices.LOGGER.error("Activation app not found.");
                     }
                     if (registerApp == null) {
-                        bsod(new RuntimeException("Registration Check Failed"));
+                        bsod(new SecurityCheckException("License check failed"));
                         return;
                     }
                 } else if (registerApp == null) {
@@ -596,7 +599,7 @@ public class Laptop extends Screen implements System {
 
     private void bsod(Throwable e) {
         this.bsod = new BSOD(e);
-        e.printStackTrace();
+        Devices.LOGGER.error("Laptop crash occurred, dumping stack trace:", e);
     }
 
     public boolean isActivated() {
@@ -604,6 +607,7 @@ public class Laptop extends Screen implements System {
     }
 
     private boolean isValidLicense(UUID license) {
+        if (license.getMostSignificantBits() == 0L || license.getLeastSignificantBits() == 0L) return false;
         return (license.getMostSignificantBits() % 69420) == 0 && (license.getLeastSignificantBits() % 4_01_2023) == 0;
     }
 
@@ -885,23 +889,40 @@ public class Laptop extends Screen implements System {
     public Application openApplication(AppInfo info, CompoundTag intentTag) {
         Optional<Application> optional = APPLICATIONS.stream().filter(app -> app.getInfo() == info).findFirst();
         Application[] a = new Application[]{null};
+        if (optional.isEmpty()) {
+            Devices.LOGGER.error("App is not present: {}", info.getId());
+        }
         optional.ifPresent(application -> a[0] = openApplication(application, intentTag));
+        java.lang.System.out.println(a[0]);
         return a[0];
     }
 
     private Application openApplication(Application app, CompoundTag intent) {
-        if (!(app instanceof DiagnosticsApp)) {
-            if (isApplicationNotInstalled(app.getInfo()))
-                return null;
-
-            if (isInvalidApplication(app.getInfo()))
-                return null;
+        if (app == null) {
+            Devices.LOGGER.error("Trying to open an unidentified application");
+            return null;
         }
+
+        java.lang.System.out.println("app.getInfo().isSystemApp() = " + app.getInfo().isSystemApp());
+        if (!(app instanceof DiagnosticsApp)) {
+            if (isApplicationNotInstalled(app.getInfo())) {
+                Devices.LOGGER.warn("Trying to open an application that wasn't installed: {}", app.getInfo().getId());
+                return null;
+            }
+
+            if (isInvalidApplication(app.getInfo())) {
+                Devices.LOGGER.error("Trying to open an invalid application: {}", app.getInfo().getId());
+                return null;
+            }
+        }
+
 
         try {
             var q = sendApplicationToFront(app.getInfo());
-            if (q.right())
+            if (q.right()) {
+                Devices.LOGGER.info("Sending application to front.");
                 return q.left();
+            }
 
             if (app instanceof SystemApp) {
                 ((SystemApp) app).setLaptop(this);

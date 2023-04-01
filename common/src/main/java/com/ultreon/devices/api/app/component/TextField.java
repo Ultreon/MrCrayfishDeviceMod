@@ -4,13 +4,17 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.app.IIcon;
 import com.ultreon.devices.core.Laptop;
+import net.minecraft.CharPredicate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 
 import java.awt.*;
 
+import static net.minecraft.client.gui.screens.Screen.isPaste;
+
 public class TextField extends TextArea {
     private IIcon icon;
+    private int maxLength = Integer.MAX_VALUE;
 
     /**
      * Default text field constructor
@@ -22,7 +26,12 @@ public class TextField extends TextArea {
     public TextField(int left, int top, int width) {
         super(left, top, width, 16);
         this.setScrollBarVisible(false);
-        this.setMaxLines(1);
+        super.setMaxLines(1);
+    }
+
+    @Override
+    public void setMaxLines(int maxLines) {
+
     }
 
     @Override
@@ -35,6 +44,20 @@ public class TextField extends TextArea {
             icon.draw(pose, mc, x + 3, y + 3);
         }
         super.render(pose, laptop, mc, x + (icon != null ? 15 : 0), y, mouseX, mouseY, windowActive, partialTicks);
+    }
+
+    @Override
+    public void handleCharTyped(char codePoint, int modifiers) {
+        if (getText().length() == maxLength) return;
+        super.handleCharTyped(codePoint, modifiers);
+    }
+
+    @Override
+    public void handleKeyPressed(int keyCode, int scanCode, int modifiers) {
+        if (isPaste(keyCode) && getText().length() == maxLength) return;
+        super.handleKeyPressed(keyCode, scanCode, modifiers);
+
+        setText(getText().substring(0, Math.min(maxLength, getText().length())));
     }
 
     @Override
@@ -59,5 +82,9 @@ public class TextField extends TextArea {
             width += 15;
         }
         this.icon = icon;
+    }
+
+    public void setMaxLength(int maxLength) {
+        this.maxLength = maxLength;
     }
 }

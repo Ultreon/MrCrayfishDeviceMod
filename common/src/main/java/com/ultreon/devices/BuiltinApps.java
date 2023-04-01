@@ -7,7 +7,7 @@ import com.ultreon.devices.programs.PixelPainterApp;
 import com.ultreon.devices.programs.auction.MineBayApp;
 import com.ultreon.devices.programs.email.EmailApp;
 import com.ultreon.devices.programs.gitweb.GitWebApp;
-import com.ultreon.devices.programs.activation.ActivationApp;
+import com.ultreon.devices.programs.system.ActivationApp;
 import com.ultreon.devices.programs.snake.SnakeApp;
 import com.ultreon.devices.programs.system.*;
 import com.ultreon.devices.programs.themes.ThemesApp;

@@ -75,6 +75,7 @@ public class AppInfo {
     public AppInfo(ResourceLocation identifier, boolean isSystemApp) {
         this.APP_ID = identifier;
         this.systemApp = isSystemApp;
+        System.out.println("AppInfo -> identifier = " + identifier + ", isSystemApp = " + isSystemApp);
     }
 
     /**
@@ -232,6 +233,7 @@ public class AppInfo {
     }
 
     public boolean isSystemApp() {
+        System.out.println("AppInfo[" + getId() + "] -> isSystemApp -> systemApp = " + systemApp);
         return systemApp;
     }
 

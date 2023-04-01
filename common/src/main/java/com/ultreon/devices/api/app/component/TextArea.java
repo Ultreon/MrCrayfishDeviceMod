@@ -10,6 +10,7 @@ import com.ultreon.devices.api.utils.RenderUtil;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.util.GLHelper;
 import com.ultreon.devices.util.GuiHelper;
+import net.minecraft.CharPredicate;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -70,6 +71,7 @@ public class TextArea extends Component {
     private int maxLineWidth;
     private IHighlight highlight = null;
     private KeyListener keyListener = null;
+    private CharPredicate filter;
 
     /**
      * Default text area constructor
@@ -243,6 +245,8 @@ public class TextArea extends Component {
     @Override
     public void handleCharTyped(char codePoint, int modifiers) {
         if (!this.visible || !this.enabled || !this.isFocused || !this.editable) return;
+
+        if (!filter.test(codePoint)) return;
 
         System.out.println("TextArea.handleCharTyped: codePoint = " + codePoint + ", modifiers = " + modifiers);
 
@@ -500,7 +504,7 @@ public class TextArea extends Component {
     private void prependToLine(int lineIndex, String text) {
         if (lineIndex == lines.size()) lines.add("");
 
-        if (text.length() <= 0) return;
+        if (text.length() == 0) return;
 
         if (lineIndex < lines.size()) {
             if (text.charAt(Math.max(0, text.length() - 1)) == '\n') {
@@ -775,6 +779,10 @@ public class TextArea extends Component {
      */
     public void setText(String text) {
         lines.clear();
+        if (text.isEmpty()) {
+            lines.add("");
+            return;
+        }
         String[] splitText = text.replace("\r", "").split("\n");
         for (int i = 0; i < splitText.length - 1; i++) {
             lines.add(splitText[i] + "\n");
@@ -910,6 +918,10 @@ public class TextArea extends Component {
 
     public void setKeyListener(KeyListener keyListener) {
         this.keyListener = keyListener;
+    }
+
+    public void setFilter(CharPredicate filter) {
+        this.filter = filter;
     }
 
     private enum ScrollBar {

@@ -37,6 +37,7 @@ public final class ApplicationManager {
     @Nullable
     public static Application registerApplication(ResourceLocation identifier, Supplier<Supplier<Application>> app, boolean isSystem) {
         Devices.LOGGER.debug(MARKER, "Registering application {}", identifier);
+        System.out.println("isSystem = " + isSystem);
         @SuppressWarnings("deprecation")
         Application application = Devices.registerApplication(identifier, new Devices.ApplicationSupplier() {
             @Override
@@ -46,6 +47,7 @@ public final class ApplicationManager {
 
             @Override
             public boolean isSystem() {
+                System.out.println("Is System: " + identifier + " == " + isSystem);
                 return isSystem;
             }
         });
