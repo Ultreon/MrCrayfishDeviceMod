@@ -104,15 +104,22 @@ public class LaptopBlock extends ComputerBlock.Colored {
                 }
 
                 if (laptop.isOpen() && level.isClientSide) {
-                    EnvExecutor.runInEnv(Env.CLIENT, () -> () -> {
-                        ClientLaptopWrapper.execute(laptop);
-                    });
+                    if (level.isClientSide) {
+                        EnvExecutor.runInEnv(Env.CLIENT, () -> () -> {
+                            ClientLaptopWrapper.execute(laptop);
+                        });
+                    }
                     return InteractionResult.SUCCESS;
                 }
             }
         }
 
         return InteractionResult.PASS;
+    }
+
+    @Override
+    public boolean isDesktopPC() {
+        return false;
     }
 
     @Override

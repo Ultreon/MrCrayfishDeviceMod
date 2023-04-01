@@ -1,7 +1,7 @@
 package com.ultreon.devices.block;
 
 import com.ultreon.devices.ModDeviceTypes;
-import com.ultreon.devices.block.entity.ComputerBlockEntity;
+import com.ultreon.devices.block.entity.LaptopBlockEntity;
 import com.ultreon.devices.item.FlashDriveItem;
 import com.ultreon.devices.util.BlockEntityUtil;
 import com.ultreon.devices.util.Colorable;
@@ -45,17 +45,15 @@ public abstract class ComputerBlock extends DeviceBlock {
     @Override
     @SuppressWarnings("deprecation")
     public InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
+
         BlockEntity blockEntity = level.getBlockEntity(pos);
-        if (blockEntity instanceof ComputerBlockEntity laptop) {
-            if (!isDesktopPC() && player.isCrouching()) {
+        if (blockEntity instanceof LaptopBlockEntity laptop) {
+            if (player.isCrouching()) {
                 if (!level.isClientSide) {
                     laptop.openClose(player);
                 }
                 return InteractionResult.SUCCESS;
             } else {
-                if (isDesktopPC() && !laptop.isOpen()) {
-                    laptop.openClose(player);
-                }
                 if (hit.getDirection() == state.getValue(FACING).getCounterClockWise(Direction.Axis.Y)) {
                     ItemStack heldItem = player.getItemInHand(hand);
                     if (!heldItem.isEmpty() && heldItem.getItem() instanceof FlashDriveItem) {
@@ -81,11 +79,13 @@ public abstract class ComputerBlock extends DeviceBlock {
                     return InteractionResult.SUCCESS;
                 }
 
-                if (laptop.isOpen() && level.isClientSide) {
-                    EnvExecutor.runInEnv(Env.CLIENT, () -> () -> {
-                        ClientLaptopWrapper.execute(laptop);
-                    });
-                    return InteractionResult.SUCCESS;
+                if (laptop.isOpen()) {
+                    if (level.isClientSide) {
+                        EnvExecutor.runInEnv(Env.CLIENT, () -> () -> {
+                            ClientLaptopWrapper.execute(laptop);
+                        });
+                    }
+                    return InteractionResult.sidedSuccess(level.isClientSide);
                 }
             }
         }
