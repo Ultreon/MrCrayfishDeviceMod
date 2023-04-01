@@ -1,4 +1,4 @@
-package generateddsfsklf34uetrdfkjhk4yeruikh;
+package generated_dQw4w9WgXcQ;
 
 import net.minecraftforge.fml.common.Mod;
 
