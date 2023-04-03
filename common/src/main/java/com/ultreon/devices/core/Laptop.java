@@ -306,7 +306,9 @@ public class Laptop extends Screen implements System {
         systemData.put("CurrentWallpaper", currentWallpaper.serialize());
         systemData.put("Settings", settings.toTag());
         systemData.put("TaskBar", bar.serialize());
-        systemData.putUUID("License", license);
+        if (license != null) {
+            systemData.putUUID("License", license);
+        }
 
         ListTag tagListApps = new ListTag();
         installedApps.forEach(info -> tagListApps.add(StringTag.valueOf(info.getFormattedId())));
