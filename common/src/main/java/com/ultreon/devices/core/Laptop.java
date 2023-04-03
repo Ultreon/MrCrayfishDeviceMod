@@ -551,9 +551,9 @@ public class Laptop extends Screen implements System {
         }
         return super.mouseClicked(mouseX, mouseY, mouseButton);
     }
-    private void bsod(Throwable e) {
-        this.bsod = new BSOD(e);
-        e.printStackTrace();
+    private void bsod(Throwable t) {
+        this.bsod = new BSOD(t);
+        Devices.LOGGER.error("Device has crashed:", t);
     }
     private static final class BSOD {
         private final Throwable throwable;
