@@ -108,11 +108,13 @@ public class LaptopBlock extends DeviceBlock.Colored {
                     return InteractionResult.SUCCESS;
                 }
 
-                if (laptop.isOpen() && level.isClientSide) {
-                    EnvExecutor.runInEnv(Env.CLIENT, () -> () -> {
-                        ClientLaptopWrapper.execute(laptop);
-                    });
-                    return InteractionResult.SUCCESS;
+                if (laptop.isOpen()) {
+                    if (level.isClientSide) {
+                        EnvExecutor.runInEnv(Env.CLIENT, () -> () -> {
+                            ClientLaptopWrapper.execute(laptop);
+                        });
+                    }
+                    return InteractionResult.sidedSuccess(level.isClientSide);
                 }
             }
         }

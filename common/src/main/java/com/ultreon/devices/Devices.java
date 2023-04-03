@@ -6,6 +6,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mojang.serialization.Lifecycle;
 import com.ultreon.devices.api.ApplicationManager;
 import com.ultreon.devices.api.app.Application;
 import com.ultreon.devices.api.print.IPrint;
@@ -21,11 +22,11 @@ import com.ultreon.devices.core.network.task.TaskGetDevices;
 import com.ultreon.devices.core.network.task.TaskPing;
 import com.ultreon.devices.core.print.task.TaskPrint;
 import com.ultreon.devices.core.task.TaskInstallApp;
-import com.ultreon.devices.init.DeviceItems;
 import com.ultreon.devices.network.PacketHandler;
 import com.ultreon.devices.network.task.SyncApplicationPacket;
 import com.ultreon.devices.network.task.SyncConfigPacket;
 import com.ultreon.devices.object.AppInfo;
+import com.ultreon.devices.object.TrayItem;
 import com.ultreon.devices.programs.IconsApp;
 import com.ultreon.devices.programs.PixelPainterApp;
 import com.ultreon.devices.programs.TestApp;
@@ -40,13 +41,6 @@ import com.ultreon.devices.programs.system.SystemApp;
 import com.ultreon.devices.programs.system.task.*;
 import com.ultreon.devices.util.SiteRegistration;
 import com.ultreon.devices.util.Vulnerability;
-import com.ultreon.ultranlang.*;
-import com.ultreon.ultranlang.ast.Program;
-import com.ultreon.ultranlang.error.LexerException;
-import com.ultreon.ultranlang.error.ParserException;
-import com.ultreon.ultranlang.error.SemanticException;
-import com.ultreon.ultranlang.func.NativeCalls;
-import com.ultreon.ultranlang.symbol.BuiltinTypeSymbol;
 import dev.architectury.event.EventResult;
 import dev.architectury.event.events.client.ClientPlayerEvent;
 import dev.architectury.event.events.common.InteractionEvent;
@@ -56,15 +50,14 @@ import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.architectury.injectables.targets.ArchitecturyTarget;
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.CreativeTabRegistry;
-import dev.architectury.registry.registries.Registries;
+import dev.architectury.registry.registries.RegistrarManager;
 import dev.architectury.utils.Env;
 import dev.architectury.utils.EnvExecutor;
+import net.minecraft.core.MappedRegistry;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
@@ -73,7 +66,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
@@ -81,20 +73,26 @@ import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 public class Devices {
-    public static final String MOD_ID = "devices";
-    public static final CreativeModeTab TAB_DEVICE = CreativeTabRegistry.create(Devices.id("devices_mod_tab"), () -> DeviceItems.LAPTOPS.of(DyeColor.RED).get().getDefaultInstance());
-    public static final Supplier<Registries> REGISTRIES = Suppliers.memoize(() -> Registries.get(MOD_ID));
-    public static final List<SiteRegistration> SITE_REGISTRATIONS = new ProtectedArrayList<>();
-    public static final Logger LOGGER = LoggerFactory.getLogger("Devices Mod");
     public static final boolean DEVELOPER_MODE = false;
+    public static final String MOD_ID = "devices";
+    public static final Logger LOGGER = LoggerFactory.getLogger("Devices Mod");
+
+    public static final CreativeTabRegistry.TabSupplier TAB_DEVICE = DeviceTab.create();
+    public static final Supplier<RegistrarManager> REGISTRIES = Suppliers.memoize(() -> RegistrarManager.get(MOD_ID));
+    public static final List<SiteRegistration> SITE_REGISTRATIONS = new ProtectedArrayList<>();
     private static final Pattern DEV_PREVIEW_PATTERN = Pattern.compile("\\d+\\.\\d+\\.\\d+-dev\\d+");
     private static final boolean IS_DEV_PREVIEW = DEV_PREVIEW_PATTERN.matcher(Reference.VERSION).matches();
     private static final String GITWEB_REGISTER_URL = "https://ultreon.gitlab.io/gitweb/site_register.json";
     public static final String VULNERABILITIES_URL = "https://jab125.com/gitweb/vulnerabilities.php";
     private static final boolean PROTECT_FROM_LAUNCH = false;
-    private static final Logger ULTRAN_LANG_LOGGER = LoggerFactory.getLogger("UltranLang");
+//    private static final Logger ULTRAN_LANG_LOGGER = LoggerFactory.getLogger("UltranLang");
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private static final SiteRegisterStack SITE_REGISTER_STACK = new SiteRegisterStack();
+
+    //---- Registry : Start ----//
+    public static MappedRegistry<TrayItem> trayItemRegistry = new MappedRegistry<>(ResourceKey.createRegistryKey(id("tray_item")), Lifecycle.stable());
+    //---- Registry : End ----//
+
     static List<AppInfo> allowedApps;
     private static List<Vulnerability> vulnerabilities;
     public static List<Vulnerability> getVulnerabilities() {
@@ -108,7 +106,7 @@ public class Devices {
             preInit();
             serverSetup();
         }
-   //     BlockEntityUtil.sendUpdate(null, null, null);
+        //     BlockEntityUtil.sendUpdate(null, null, null);
 
         // STOPSHIP: 3/11/2022 should be moved to dedicated testmod
         final var property = System.getProperty("ultreon.devices.tests");
@@ -140,127 +138,127 @@ public class Devices {
             loadComplete();
         }
 
-        ultranLang:
-        {
-            if (!tests.isEnabled("ultran_lang")) break ultranLang;
-            SpiKt.setShouldLogInternalErrors(false);
-            SpiKt.setShouldLogScope(false);
-            SpiKt.setShouldLogStack(false);
-            SpiKt.setShouldLogTokens(false);
-
-            String text = """
-                    program Main;
-                                        
-                    function Alpha(a: integer; b: integer) {
-                        function Beta(a: integer; b: integer) {
-                            var x: integer;
-                            x = a * 10 + b * 2;
-                        };
-                        var x: integer;
-                        x = (a + b ) * 2;
-                        Beta(5, 10);      [ function call ]
-                    };
-                                        
-                    Alpha(3 + 5, 7);  [ function call ]
-                    var x: integer;
-                    x = 300;
-                    var startX: integer;
-                    var startY: integer;
-                    startX = 10;
-                    startY = 20;
-                                        
-                    function PrintHelloWorld() {
-                        log("info", "Hello World from an UltranLang script.");
-                    };
-                                        
-                    PrintHelloWorld();
-                                        
-                    log("info", "Hello World! Number: " + randInt(startX, startY));
-                    """;
-
-            NativeCalls calls = new NativeCalls();
-            registerNativeFunctions(calls);
-
-            var lexer = new Lexer(text);
-            Program tree;
-            try {
-                var parser = new Parser(lexer);
-                tree = parser.parse();
-            } catch (LexerException | ParserException e) {
-                if (SpiKt.getShouldLogInternalErrors()) e.printStackTrace();
-                LOGGER.error("Error parsing file: {}", e.getMessage());
-                break ultranLang;
-            } catch (RuntimeException e) {
-                var cause = e.getCause();
-                while (cause instanceof InvocationTargetException || cause instanceof RuntimeException) {
-                    cause = cause.getCause();
-                }
-                if (cause instanceof LexerException) {
-                    if (SpiKt.getShouldLogInternalErrors()) cause.printStackTrace();
-                    LOGGER.error("Error parsing file: {}", cause.getMessage());
-                } else if (cause instanceof ParserException) {
-                    if (SpiKt.getShouldLogInternalErrors()) cause.printStackTrace();
-                    LOGGER.error("Error parsing file: {}", cause.getMessage());
-                } else {
-                    throw e;
-                }
-                break ultranLang;
-            }
-
-            var semanticAnalyzer = new SemanticAnalyzer(calls);
-
-            try {
-                semanticAnalyzer.visit(tree);
-            } catch (SemanticException e) {
-                if (SpiKt.getShouldLogInternalErrors()) e.printStackTrace();
-                LOGGER.error("Error analyzing file: {}", e.getMessage());
-                break ultranLang;
-            } catch (RuntimeException e) {
-                var cause = e.getCause();
-                while (cause instanceof InvocationTargetException || cause instanceof RuntimeException) {
-                    cause = cause.getCause();
-                }
-                if (cause instanceof SemanticException) {
-                    if (SpiKt.getShouldLogInternalErrors()) cause.printStackTrace();
-                    ULTRAN_LANG_LOGGER.error("Error analyzing file: {}", cause.getMessage());
-                } else {
-                    throw e;
-                }
-                break ultranLang;
-            }
-
-            try {
-                var interpreter = new Interpreter(tree);
-                interpreter.interpret();
-            } catch (Exception e) {
-                if (SpiKt.getShouldLogInternalErrors()) e.printStackTrace();
-                LOGGER.error("Error interpreting file: {}", e.getMessage());
-            }
-        }
+//        ultranLang:
+//        {
+//            if (!tests.isEnabled("ultran_lang")) break ultranLang;
+//            SpiKt.setShouldLogInternalErrors(false);
+//            SpiKt.setShouldLogScope(false);
+//            SpiKt.setShouldLogStack(false);
+//            SpiKt.setShouldLogTokens(false);
+//
+//            String text = """
+//                    program Main;
+//
+//                    function Alpha(a: integer; b: integer) {
+//                        function Beta(a: integer; b: integer) {
+//                            var x: integer;
+//                            x = a * 10 + b * 2;
+//                        };
+//                        var x: integer;
+//                        x = (a + b ) * 2;
+//                        Beta(5, 10);      [ function call ]
+//                    };
+//
+//                    Alpha(3 + 5, 7);  [ function call ]
+//                    var x: integer;
+//                    x = 300;
+//                    var startX: integer;
+//                    var startY: integer;
+//                    startX = 10;
+//                    startY = 20;
+//
+//                    function PrintHelloWorld() {
+//                        log("info", "Hello World from an UltranLang script.");
+//                    };
+//
+//                    PrintHelloWorld();
+//
+//                    log("info", "Hello World! Number: " + randInt(startX, startY));
+//                    """;
+//
+//            NativeCalls calls = new NativeCalls();
+//            registerNativeFunctions(calls);
+//
+//            var lexer = new Lexer(text);
+//            Program tree;
+//            try {
+//                var parser = new Parser(lexer);
+//                tree = parser.parse();
+//            } catch (LexerException | ParserException e) {
+//                if (SpiKt.getShouldLogInternalErrors()) e.printStackTrace();
+//                LOGGER.error("Error parsing file: {}", e.getMessage());
+//                break ultranLang;
+//            } catch (RuntimeException e) {
+//                var cause = e.getCause();
+//                while (cause instanceof InvocationTargetException || cause instanceof RuntimeException) {
+//                    cause = cause.getCause();
+//                }
+//                if (cause instanceof LexerException) {
+//                    if (SpiKt.getShouldLogInternalErrors()) cause.printStackTrace();
+//                    LOGGER.error("Error parsing file: {}", cause.getMessage());
+//                } else if (cause instanceof ParserException) {
+//                    if (SpiKt.getShouldLogInternalErrors()) cause.printStackTrace();
+//                    LOGGER.error("Error parsing file: {}", cause.getMessage());
+//                } else {
+//                    throw e;
+//                }
+//                break ultranLang;
+//            }
+//
+//            var semanticAnalyzer = new SemanticAnalyzer(calls);
+//
+//            try {
+//                semanticAnalyzer.visit(tree);
+//            } catch (SemanticException e) {
+//                if (SpiKt.getShouldLogInternalErrors()) e.printStackTrace();
+//                LOGGER.error("Error analyzing file: {}", e.getMessage());
+//                break ultranLang;
+//            } catch (RuntimeException e) {
+//                var cause = e.getCause();
+//                while (cause instanceof InvocationTargetException || cause instanceof RuntimeException) {
+//                    cause = cause.getCause();
+//                }
+//                if (cause instanceof SemanticException) {
+//                    if (SpiKt.getShouldLogInternalErrors()) cause.printStackTrace();
+//                    ULTRAN_LANG_LOGGER.error("Error analyzing file: {}", cause.getMessage());
+//                } else {
+//                    throw e;
+//                }
+//                break ultranLang;
+//            }
+//
+//            try {
+//                var interpreter = new Interpreter(tree);
+//                interpreter.interpret();
+//            } catch (Exception e) {
+//                if (SpiKt.getShouldLogInternalErrors()) e.printStackTrace();
+//                LOGGER.error("Error interpreting file: {}", e.getMessage());
+//            }
+//        }
     }
 
-    private static void registerNativeFunctions(NativeCalls calls) {
-        calls.register("log", SpiKt.params()
-                .add("level", BuiltinTypeSymbol.STRING)
-                .add("message", BuiltinTypeSymbol.STRING), ar -> {
-            Object level = ar.get("level");
-            if (level instanceof String levelName) {
-                Object message = ar.get("message");
-                if (message == null) message = "null";
-
-                switch (levelName.toLowerCase(Locale.ROOT)) {
-                    case "warn" -> ULTRAN_LANG_LOGGER.warn(message.toString());
-                    case "error" -> ULTRAN_LANG_LOGGER.error(message.toString());
-                    case "debug" -> ULTRAN_LANG_LOGGER.debug(message.toString());
-                    case "trace" -> ULTRAN_LANG_LOGGER.trace(message.toString());
-                    default -> ULTRAN_LANG_LOGGER.info(message.toString());
-                }
-            } else {
-                throw new IllegalArgumentException("Invalid level of type " + (level == null ? "null" : level.getClass().getName()));
-            }
-            return null;
-        });
-    }
+//    private static void registerNativeFunctions(NativeCalls calls) {
+//        calls.register("log", SpiKt.params()
+//                .add("level", BuiltinTypeSymbol.STRING)
+//                .add("message", BuiltinTypeSymbol.STRING), ar -> {
+//            Object level = ar.get("level");
+//            if (level instanceof String levelName) {
+//                Object message = ar.get("message");
+//                if (message == null) message = "null";
+//
+//                switch (levelName.toLowerCase(Locale.ROOT)) {
+//                    case "warn" -> ULTRAN_LANG_LOGGER.warn(message.toString());
+//                    case "error" -> ULTRAN_LANG_LOGGER.error(message.toString());
+//                    case "debug" -> ULTRAN_LANG_LOGGER.debug(message.toString());
+//                    case "trace" -> ULTRAN_LANG_LOGGER.trace(message.toString());
+//                    default -> ULTRAN_LANG_LOGGER.info(message.toString());
+//                }
+//            } else {
+//                throw new IllegalArgumentException("Invalid level of type " + (level == null ? "null" : level.getClass().getName()));
+//            }
+//            return null;
+//        });
+//    }
 
     public static void preInit() {
         if (DEVELOPER_MODE && !Platform.isDevelopmentEnvironment() && PROTECT_FROM_LAUNCH) {
@@ -360,6 +358,10 @@ public class Devices {
 
     public static void setAllowedApps(List<AppInfo> allowedApps) {
         Devices.allowedApps = allowedApps;
+    }
+
+    public static String getModVersion() {
+        return Platform.getMod(MOD_ID).getVersion();
     }
 
     public interface ApplicationSupplier {
@@ -535,16 +537,20 @@ public class Devices {
     private static void checkForVulnerabilities() {
         OnlineRequest.getInstance().make(VULNERABILITIES_URL, ((success, response) -> {
             if (!success) {
-                System.out.println("Could not access vulnerabilities!");
+                LOGGER.error("Could not access vulnerabilities!");
                 vulnerabilities = ImmutableList.of();
                 return;
             }
 
             JsonArray array = JsonParser.parseString(response).getAsJsonArray();
             vulnerabilities = Vulnerability.parseArray(array);
-            System.out.println(array);
-            System.out.println(Arrays.toString(Reference.getVerInfo()));
-            System.out.println("Vulnerabilities:" + vulnerabilities);
+            vulnerabilities.forEach(vul -> {
+                String s = vul.toPrettyString();
+                s.lines().toList().forEach(line -> {
+                    LOGGER.debug("[VulChecker] {}", line);
+                });
+                LOGGER.debug("[VulChecker]");
+            });
         }));
     }
 

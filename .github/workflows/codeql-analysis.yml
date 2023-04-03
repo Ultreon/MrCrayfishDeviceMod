@@ -13,10 +13,10 @@ name: "CodeQL"
 
 on:
   push:
-    branches: [ "1.18", "1.18-development", "1.19-development" ]
+    branches: [ "1.18", "1.18-development", "1.19-development", "1.19.3-development" ]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [ "1.18", "1.18-development", "1.19-development" ]
+    branches: [ "1.18", "1.18-development", "1.19-development", "1.19.3-development" ]
   schedule:
     - cron: '27 14 * * 1'
 
@@ -63,7 +63,7 @@ jobs:
         java-version: ${{ matrix.java }}
         cache: 'gradle'
     - name: build
-      run: ./gradlew build mergeJars
+      run: ./gradlew build # mergeJars
 
     # ℹ️ Command-line programs to run using the OS shell.
     # 📚 See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsrun

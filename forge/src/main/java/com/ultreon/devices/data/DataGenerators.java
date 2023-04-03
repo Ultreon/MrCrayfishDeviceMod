@@ -2,10 +2,6 @@ package com.ultreon.devices.data;
 
 import com.ultreon.devices.Reference;
 import com.ultreon.devices.data.client.ModBlockStateProvider;
-import com.ultreon.devices.data.client.ModItemModelProvider;
-import com.ultreon.devices.data.loot.ModLootTableProvider;
-import com.ultreon.devices.data.tags.ModBlockTagsProvider;
-import com.ultreon.devices.data.tags.ModItemTagsProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
@@ -23,7 +19,7 @@ public final class DataGenerators {
         DataGenerator gen = event.getGenerator();
         ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
 
-        gen.addProvider(true, new ModBlockStateProvider(gen, existingFileHelper));
+        gen.addProvider(true, new ModBlockStateProvider(gen.getPackOutput(), existingFileHelper));
         //gen.addProvider(new ModItemModelProvider(gen, existingFileHelper));
         //gen.addProvider(new ModRecipesProvider(gen));
         //gen.addProvider(new ModLootTableProvider(gen));

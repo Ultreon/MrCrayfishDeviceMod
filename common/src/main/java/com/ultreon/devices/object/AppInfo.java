@@ -6,13 +6,16 @@ import com.ultreon.devices.Devices;
 import com.ultreon.devices.Reference;
 import com.ultreon.devices.core.Laptop;
 import dev.architectury.injectables.annotations.PlatformOnly;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.awt.*;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -241,17 +244,22 @@ public class AppInfo {
 
     public void reload() {
         resetInfo();
-        InputStream stream = Devices.class.getResourceAsStream("/assets/" + APP_ID.getNamespace() + "/apps/" + APP_ID.getPath() + ".json");
+        if (Minecraft.getInstance().getResourceManager() == null) return;
+        // TODO "Check if the resource manager can be used on client side."
+        Resource resource = Minecraft.getInstance().getResourceManager().getResource(new ResourceLocation(APP_ID.getNamespace(), "/apps/" + APP_ID.getPath() + ".json")).orElse(null);
 
-        if (stream == null)
+        if (resource == null)
             throw new RuntimeException("Missing app info json for '" + APP_ID + "'");
 
-        Reader reader = new InputStreamReader(stream);
-        JsonElement obj = JsonParser.parseReader(reader);
-        GsonBuilder builder = new GsonBuilder();
-        builder.registerTypeAdapter(AppInfo.class, new Deserializer(this));
-        Gson gson = builder.create();
-        gson.fromJson(obj, AppInfo.class);
+        try (Reader reader = resource.openAsReader()) {
+            JsonElement obj = JsonParser.parseReader(reader);
+            GsonBuilder builder = new GsonBuilder();
+            builder.registerTypeAdapter(AppInfo.class, new Deserializer(this));
+            Gson gson = builder.create();
+            gson.fromJson(obj, AppInfo.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void resetInfo() {

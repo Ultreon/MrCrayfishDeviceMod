@@ -1,6 +1,6 @@
 //file:noinspection GradlePackageUpdate
 architectury {
-    common()
+    common("fabric", "forge")
 }
 
 loom {
@@ -20,7 +20,7 @@ dependencies {
 
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.10")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10")
-    modApi("com.ultreon:ultranlang:0.1.0+6")
+//    modApi("com.ultreon:ultranlang:0.1.0+6")
     modApi("com.jab125:apoint:1.0.0")
 
     modCompileOnly "curse.maven:forgeapiportfabric-547434:3671141"
@@ -52,4 +52,5 @@ publishing {
     repositories {
         // Add repositories to publish to here.
     }
+    rootProject.setupRepositories(repositories)
 }

@@ -1,7 +1,7 @@
 package com.ultreon.devices.init;
 
 import com.ultreon.devices.Devices;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -17,7 +17,7 @@ public final class ModTags {
         public static final TagKey<Item> ROUTERS = createTag("routers");
 
         private static TagKey<Item> createTag(String name) {
-            return TagKey.create(Registry.ITEM_REGISTRY, Devices.id(name));
+            return TagKey.create(Registries.ITEM, Devices.id(name));
         }
     }
 
@@ -27,7 +27,7 @@ public final class ModTags {
         public static final TagKey<Block> ROUTERS = createTag("routers");
 
         private static TagKey<Block> createTag(String name) {
-            return TagKey.create(Registry.BLOCK_REGISTRY, Devices.id(name));
+            return TagKey.create(Registries.BLOCK, Devices.id(name));
         }
     }
 }

@@ -5,7 +5,7 @@ import com.ultreon.devices.block.*;
 import com.ultreon.devices.util.DyeableRegistration;
 import dev.architectury.registry.registries.Registrar;
 import dev.architectury.registry.registries.RegistrySupplier;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 
@@ -13,8 +13,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class DeviceBlocks {
-    private static final Registrar<Block> REGISTER = Devices.REGISTRIES.get().get(Registry.BLOCK_REGISTRY);
-
+    private static final Registrar<Block> REGISTER = Devices.REGISTRIES.get().get(Registries.BLOCK);
 
     public static void register() {
     }

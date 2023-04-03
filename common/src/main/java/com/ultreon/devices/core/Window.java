@@ -19,6 +19,8 @@ public class Window<T extends Wrappable> {
 
     public static final int Color_WINDOW_DARK = new Color(0f, 0f, 0f, 0.25f).getRGB();
     final Laptop laptop;
+    double dragFromX;
+    double dragFromY;
     protected GuiButtonClose btnClose;
     T content;
     int width, height;
@@ -169,10 +171,7 @@ public class Window<T extends Wrappable> {
         content.handleKeyReleased(keyCode, scanCode, modifiers);
     }
 
-    public void handleWindowMove(int screenStartX, int screenStartY, int mouseDX, int mouseDY) {
-        int newX = offsetX + mouseDX;
-        int newY = offsetY + mouseDY;
-
+    public void handleWindowMove(int screenStartX, int screenStartY, int newX, int newY) {
         if (newX >= 0 && newX <= Laptop.SCREEN_WIDTH - width) {
             this.offsetX = newX;
         } else if (newX < 0) {
@@ -192,6 +191,7 @@ public class Window<T extends Wrappable> {
         updateComponents(screenStartX, screenStartY);
     }
 
+    @SuppressWarnings("unused")
     void handleMouseClick(Laptop gui, int x, int y, int mouseX, int mouseY, int mouseButton) {
         if (btnClose.isHovered()) {
             if (content instanceof Application) {
@@ -228,12 +228,12 @@ public class Window<T extends Wrappable> {
         content.handleMouseRelease(mouseX, mouseY, mouseButton);
     }
 
-    void handleMouseScroll(int mouseX, int mouseY, boolean direction) {
+    void handleMouseScroll(int mouseX, int mouseY, double delta, boolean direction) {
         if (dialogWindow != null) {
-            dialogWindow.handleMouseScroll(mouseX, mouseY, direction);
+            dialogWindow.handleMouseScroll(mouseX, mouseY, delta, direction);
             return;
         }
-        content.handleMouseScroll(mouseX, mouseY, direction);
+        content.handleMouseScroll(mouseX, mouseY, delta, direction);
     }
 
     public void handleClose() {
@@ -242,15 +242,15 @@ public class Window<T extends Wrappable> {
 
     private void updateComponents(int x, int y) {
         content.updateComponents(x + offsetX + 1, y + offsetY + 13);
-        btnClose.x = x + offsetX + width - 12;
-        btnClose.y = y + offsetY + 1;
+        btnClose.setX(x + offsetX + width - 12);
+        btnClose.setY(y + offsetY + 1);
     }
 
     public void openDialog(Dialog dialog) {
         if (dialogWindow != null) {
             dialogWindow.openDialog(dialog);
         } else {
-            dialogWindow = new Window(dialog, null);
+            dialogWindow = new Window<>(dialog, null);
             dialogWindow.init(0, 0, null);
             dialogWindow.setParent(this);
         }
@@ -278,11 +278,11 @@ public class Window<T extends Wrappable> {
         }
     }
 
-    public Window getParent() {
+    public Window<?> getParent() {
         return parent;
     }
 
-    public void setParent(Window parent) {
+    public void setParent(Window<?> parent) {
         this.parent = parent;
     }
 

@@ -1,42 +1,33 @@
 package com.ultreon.devices.datagen;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.ultreon.devices.init.DeviceItems;
-import dev.architectury.registry.registries.RegistrySupplier;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.language.ClientLanguage;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.client.resources.language.LanguageManager;
-import net.minecraft.locale.Language;
-import net.minecraft.util.StringUtil;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.Item;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class DevicesLanguageGenerator extends FabricLanguageProvider {
     private final String languageCode;
-    protected DevicesLanguageGenerator(FabricDataGenerator dataGenerator) {
+    public DevicesLanguageGenerator(FabricDataOutput dataGenerator) {
         super(dataGenerator);
         this.languageCode = "en_us";
-        l = new LanguageManager(this.languageCode);
     }
 
-    protected DevicesLanguageGenerator(FabricDataGenerator dataGenerator, String languageCode) {
+    public DevicesLanguageGenerator(FabricDataOutput dataGenerator, String languageCode) {
         super(dataGenerator, languageCode);
         this.languageCode = languageCode;
-        l = new LanguageManager(this.languageCode);
     }
-    private final LanguageManager l;
 
     @Override
     public void generateTranslations(TranslationBuilder translationBuilder) {
@@ -45,7 +36,7 @@ public class DevicesLanguageGenerator extends FabricLanguageProvider {
         } else if (this.languageCode.startsWith("en_")) { // engurishu
             createTranslationsForEnglish(translationBuilder);
         } else if (this.languageCode.startsWith("nl_")) { // dutch
-            //createTranslationsForDutch(translationBuilder);
+            createTranslationsForDutch(translationBuilder);
         } else if (this.languageCode.equals("lol_us")) { // lolcat
             createTranslationsForLOLCAT(translationBuilder);
         } else if (this.languageCode.startsWith("ja_")) {
@@ -66,7 +57,7 @@ public class DevicesLanguageGenerator extends FabricLanguageProvider {
             FileInputStream d = new FileInputStream(path.toFile());
             var json = new Gson().fromJson(IOUtils.toString(d, StandardCharsets.UTF_8), JsonObject.class);
             if (!path.endsWith("en.json")) {
-                var eng = getJSON(dataGenerator.getModContainer().findPath("translations/en.json").get());
+                var eng = getJSON(dataOutput.getModContainer().findPath("translations/en.json").orElseThrow());
                 for (String s : eng.keySet()) {
                     if (!json.has(s)) {
                         eng.add(s, eng.get(s));
@@ -81,7 +72,7 @@ public class DevicesLanguageGenerator extends FabricLanguageProvider {
 
     private void createTranslationsFromTemplate(TranslationBuilder translationBuilder, String file) {
         @NotNull
-        var pathode = getJSON(dataGenerator.getModContainer().findPath("translations/" + file + ".json").get());
+        var pathode = getJSON(dataOutput.getModContainer().findPath("translations/" + file + ".json").orElseThrow());
 
         DeviceItems.LAPTOPS.getMap().forEach((dye, item) -> {
             var laptop = pathode.get("laptop").getAsString();
@@ -119,31 +110,13 @@ public class DevicesLanguageGenerator extends FabricLanguageProvider {
     }
 
     private void createTranslationsForDutch(TranslationBuilder translationBuilder) { // TODO: @Qboi123
-        DeviceItems.LAPTOPS.getMap().forEach((dye, item) -> {
-            translationBuilder.add(item.get().getDescriptionId(), get(dye) + " Laptop");
-        });
-
-        DeviceItems.PRINTERS.getMap().forEach((dye, item) -> {
-            translationBuilder.add(item.get().getDescriptionId(), get(dye) + " Printer");
-        });
-
-        DeviceItems.FLASH_DRIVE.getMap().forEach((dye, item) -> {
-            translationBuilder.add(item.get().getDescriptionId(), get(dye) + " Flash Drive");
-        });
-
-        DeviceItems.ROUTERS.getMap().forEach((dye, item) -> {
-            translationBuilder.add(item.get().getDescriptionId(), get(dye) + " Router");
-        });
-
-        DeviceItems.OFFICE_CHAIRS.getMap().forEach((dye, item) -> {
-            translationBuilder.add(item.get().getDescriptionId(), get(dye) + " Office Chair");
-        });
+        createTranslationsFromTemplate(translationBuilder, "nl");
     }
 
     private void createTranslationsForEnglish(TranslationBuilder translationBuilder) {
         //System.out.println(dataGenerator.getModContainer().getRootPaths());
         try {
-            translationBuilder.add(dataGenerator.getModContainer().findPath("en_us_existing.json").orElseThrow());
+            translationBuilder.add(dataOutput.getModContainer().findPath("en_us_existing.json").orElseThrow());
         } catch (Exception e) {e.printStackTrace();}
         createTranslationsFromTemplate(translationBuilder, "en");
     }

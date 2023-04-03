@@ -4,13 +4,13 @@ import com.ultreon.devices.Devices;
 import com.ultreon.devices.block.entity.*;
 import dev.architectury.registry.registries.Registrar;
 import dev.architectury.registry.registries.RegistrySupplier;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 @SuppressWarnings("ConstantConditions")
 public class DeviceBlockEntities {
-    private static final Registrar<BlockEntityType<?>> REGISTER = Devices.REGISTRIES.get().get(Registry.BLOCK_ENTITY_TYPE_REGISTRY);
+    private static final Registrar<BlockEntityType<?>> REGISTER = Devices.REGISTRIES.get().get(Registries.BLOCK_ENTITY_TYPE);
 
     public static final RegistrySupplier<BlockEntityType<PaperBlockEntity>> PAPER = REGISTER.register(Devices.id("paper"), () -> BlockEntityType.Builder.of(PaperBlockEntity::new, DeviceBlocks.PAPER.get()).build(null));
     public static final RegistrySupplier<BlockEntityType<LaptopBlockEntity>> LAPTOP = REGISTER.register(Devices.id("laptop"), () -> BlockEntityType.Builder.of(LaptopBlockEntity::new, DeviceBlocks.getAllLaptops().toArray(new Block[]{})).build(null));

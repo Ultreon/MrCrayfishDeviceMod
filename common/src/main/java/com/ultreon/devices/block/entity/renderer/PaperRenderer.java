@@ -2,8 +2,6 @@ package com.ultreon.devices.block.entity.renderer;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Quaternion;
 import com.ultreon.devices.DeviceConfig;
 import com.ultreon.devices.Devices;
 import com.ultreon.devices.api.print.IPrint;
@@ -24,6 +22,8 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 
 import java.awt.*;
 import java.util.Objects;
@@ -101,7 +101,7 @@ public record PaperRenderer(
             pose.translate(blockEntity.getBlockPos().getX(), blockEntity.getBlockPos().getY(), blockEntity.getBlockPos().getZ());
             pose.translate(0.5, 0.5, 0.5);
             pose.mulPose(state.getValue(PaperBlock.FACING).getRotation());
-            pose.mulPose(new Quaternion(0, 0, 1, -blockEntity.getRotation()));
+            pose.mulPose(new Quaternionf(0, 0, 1, -blockEntity.getRotation()));
             pose.translate(-0.5, -0.5, -0.5);
 
             IPrint print = blockEntity.getPrint();

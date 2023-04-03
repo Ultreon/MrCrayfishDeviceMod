@@ -1,22 +1,29 @@
 package com.ultreon.devices;
 
-import com.ultreon.devices.block.entity.renderer.*;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.ultreon.devices.api.ApplicationManager;
+import com.ultreon.devices.block.entity.renderer.*;
 import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.debug.DebugFlags;
+import com.ultreon.devices.debug.DebugUtils;
+import com.ultreon.devices.debug.DumpType;
 import com.ultreon.devices.init.DeviceBlockEntities;
 import com.ultreon.devices.init.DeviceBlocks;
 import com.ultreon.devices.object.AppInfo;
 import dev.architectury.injectables.annotations.ExpectPlatform;
+import dev.architectury.platform.Platform;
+import dev.architectury.registry.ReloadListenerRegistry;
 import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
 import dev.architectury.registry.client.rendering.RenderTypeRegistry;
-import dev.architectury.registry.registries.Registries;
+import dev.architectury.registry.registries.RegistrarManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
+import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.block.Block;
@@ -28,12 +35,7 @@ import org.slf4j.MarkerFactory;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Paths;
-import java.util.Objects;
+import java.io.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
@@ -67,7 +69,10 @@ public class ClientModEvents {
         registerRenderLayers();
         registerRenderers();
         registerLayerDefinitions();
-        generateIconAtlas();
+        if (!Platform.isDevelopmentEnvironment()) { // FIXME: ended up with this wonky piece of code, may need to see an alternative option.
+            generateIconAtlas();
+        }
+        ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, new ReloaderListener());
     }
 
     public static class ReloaderListener implements PreparableReloadListener {
@@ -79,82 +84,109 @@ public class ClientModEvents {
             return CompletableFuture.runAsync(() -> {
                 if (ApplicationManager.getAllApplications().size() > 0) {
                     ApplicationManager.getAllApplications().forEach(AppInfo::reload);
-                    generateIconAtlas();
+                    generateIconAtlas(resourceManager); // FIXME: Broken resource reloading, can't find image resource while definitely exists.
                 }
-            }, gameExecutor);
+
+            }, gameExecutor).thenCompose(preparationBarrier::wait);
         }
     }
 
     private static void registerRenderLayers() {
         if (true) return;
         DeviceBlocks.getAllLaptops().forEach(block -> {
-            LOGGER.debug(SETUP, "Setting render layer for laptop {}", Registries.getId(block, Registry.BLOCK_REGISTRY));
+            LOGGER.debug(SETUP, "Setting render layer for laptop {}", RegistrarManager.getId(block, Registries.BLOCK));
             RenderTypeRegistry.register(RenderType.cutout(), block);
         });
 
         DeviceBlocks.getAllPrinters().forEach(block -> {
-            LOGGER.debug(SETUP, "Setting render layer for printer {}", Registries.getId(block, Registry.BLOCK_REGISTRY));
+            LOGGER.debug(SETUP, "Setting render layer for printer {}", RegistrarManager.getId(block, Registries.BLOCK));
             RenderTypeRegistry.register(RenderType.cutout(), block);
         });
 
         DeviceBlocks.getAllRouters().forEach(block -> {
-            LOGGER.debug(SETUP, "Setting render layer for router {}", Registries.getId(block, Registry.BLOCK_REGISTRY));
+            LOGGER.debug(SETUP, "Setting render layer for router {}", RegistrarManager.getId(block, Registries.BLOCK));
             RenderTypeRegistry.register(RenderType.cutout(), block);
         });
 
-        LOGGER.debug(SETUP, "Setting render layer for paper {}", Registries.getId(DeviceBlocks.PAPER.get(), Registry.BLOCK_REGISTRY));
+        LOGGER.debug(SETUP, "Setting render layer for paper {}", RegistrarManager.getId(DeviceBlocks.PAPER.get(), Registries.BLOCK));
         RenderTypeRegistry.register(RenderType.cutout(), DeviceBlocks.PAPER.get());
     }
 
-    private static void generateIconAtlas() {
+    public static void generateIconAtlas() {
+        generateIconAtlas(Minecraft.getInstance().getResourceManager());
+    }
+
+    public static void generateIconAtlas(ResourceManager resourceManager) {
         final int ICON_SIZE = 14;
         var imageWriter = new Object() {
             final BufferedImage atlas = new BufferedImage(ICON_SIZE * 16, ICON_SIZE * 16, BufferedImage.TYPE_INT_ARGB);
             final Graphics g = atlas.createGraphics();
             int index = 0;
             int mode = 0;
+            ResourceManager rm = resourceManager;
 
             public boolean writeImage(AppInfo info, ResourceLocation location) {
                 String path = "/assets/" + location.getNamespace() + "/" + location.getPath();
                 try {
-                    InputStream input = Devices.class.getResourceAsStream(path);
-                    if (input != null) {
-                        BufferedImage icon = ImageIO.read(input);
-                        if (icon.getWidth() != ICON_SIZE || icon.getHeight() != ICON_SIZE) {
-                            Devices.LOGGER.error("Incorrect icon size for " + (info == null ? null : info.getId()) + " (Must be 14 by 14 pixels)");
-                            return false;
+                    if (rm == null) {
+                        rm = Minecraft.getInstance().getResourceManager();
+                    }
+                    InputStream input = getClass().getClassLoader().getResourceAsStream(path);
+                    if (input == null) {
+                        input = getClass().getResourceAsStream(path);
+                        if (input == null) {
+                            Resource resource = rm.getResource(location).orElse(null);
+                            if (resource == null)
+                                throw new FileNotFoundException("Resource for " + location + " wasn't found");
+                            input = resource.open();
                         }
-                        int iconU = (index % 16) * ICON_SIZE;
-                        int iconV = (index / 16) * ICON_SIZE;
-                        g.drawImage(icon, iconU, iconV, ICON_SIZE, ICON_SIZE, null);
-                        if (info != null) {
-                            AppInfo.Icon.Glyph glyph = switch (mode) {
-                                case 0 -> info.getIcon().getBase();
-                                case 1 -> info.getIcon().getOverlay0();
-                                case 2 -> info.getIcon().getOverlay1();
-                                default -> throw new IllegalStateException("Unexpected value: " + mode);
-                            };
-                            glyph.setU(iconU);
-                            glyph.setV(iconV);
-                        }
-                        index++;
-                    } else {
-                        Devices.LOGGER.error("Icon for application '" + (info == null ? null : info.getId()) + "' could not be found at '" + path + "'");
+                    }
+                    BufferedImage icon = ImageIO.read(input);
+                    if (icon.getWidth() != ICON_SIZE || icon.getHeight() != ICON_SIZE) {
+                        Devices.LOGGER.error("Incorrect icon size for " + (info == null ? null : info.getId()) + " (Must be 14 by 14 pixels)");
+                        return false;
+                    }
+                    int iconU = (index % 16) * ICON_SIZE;
+                    int iconV = (index / 16) * ICON_SIZE;
+                    g.drawImage(icon, iconU, iconV, ICON_SIZE, ICON_SIZE, null);
+                    if (info != null) {
+                        AppInfo.Icon.Glyph glyph = switch (mode) {
+                            case 0 -> info.getIcon().getBase();
+                            case 1 -> info.getIcon().getOverlay0();
+                            case 2 -> info.getIcon().getOverlay1();
+                            default -> throw new IllegalStateException("Unexpected value: " + mode);
+                        };
+                        glyph.setU(iconU);
+                        glyph.setV(iconV);
+                    }
+                    index++;
+                    if (DebugFlags.LOG_APP_ICON_STITCHES) {
+                        Devices.LOGGER.info("Stitching texture: " + location);
+                    }
+                    return true;
+                } catch (FileNotFoundException e) {
+                    Devices.LOGGER.error("Unable to load icon for '" + (info == null ? null : info.getId()) + "': " + e.getMessage());
+                    if (DebugFlags.PRINT_MISSING_APP_ICONS_STACK_TRACES) {
+                        e.printStackTrace();
                     }
                 } catch (Exception e) {
                     Devices.LOGGER.error("Unable to load icon for " + (info == null ? null : info.getId()));
+                    if (DebugFlags.PRINT_APP_ICONS_STACK_TRACES) {
+                        e.printStackTrace();
+                    }
                 }
                 return false;
             }
 
             public void finish() {
                 g.dispose();
-                try {
-                    ImageIO.write(atlas, "png", Paths.get("it.png").toFile());
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                } finally {
-                 //   System.exit(-1);
+
+                if (DebugFlags.DUMP_APP_ICON_ATLAS) {
+                    try {
+                        DebugUtils.dump(DumpType.ATLAS, Laptop.ICON_TEXTURES, (stream) -> ImageIO.write(atlas, "png", stream));
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                 }
 
                 ByteArrayOutputStream output = new ByteArrayOutputStream();

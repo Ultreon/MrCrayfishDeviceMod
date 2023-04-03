@@ -12,10 +12,10 @@ repositories {
 architectury {
     minecraft = rootProject.minecraft_version
 }
-version = "${mod_version}-${System.getenv("GITHUB_BUILD_NUMBER") == null ? "local" : System.getenv("GITHUB_BUILD_NUMBER")}"
+version = "${mod_version}"//-${System.getenv("GITHUB_BUILD_NUMBER") == null ? "local" : System.getenv("GITHUB_BUILD_NUMBER")}"
 
 Object getIngame_version() {
-    return "${mod_version}+${System.getenv("GITHUB_BUILD_NUMBER") == null ? "local" : System.getenv("GITHUB_BUILD_NUMBER")}"
+    return "${mod_version}"//+${System.getenv("GITHUB_BUILD_NUMBER") == null ? "local" : System.getenv("GITHUB_BUILD_NUMBER")}"
 }
 
 Object getModDescription() {
@@ -42,7 +42,7 @@ forgix {
     }
 }
 
-println "forgix.outputDir = $forgix.outputDir"
+//println "forgix.outputDir = $forgix.outputDir"
 
 subprojects {
     apply plugin: "dev.architectury.loom"
@@ -63,6 +63,16 @@ subprojects {
         // The following line declares the yarn mappings you may select this one as well.
         // mappings "net.fabricmc:yarn:@YARN_MAPPINGS@:v2"
     }
+
+    if (Objects.equals(System.getenv("CIRCLE_CI"), "true")) {
+        def copyToArtifacts = tasks.register("copyToArtifacts", Copy) {
+            it.mustRunAfter(build)
+            it.from files("$buildDir/libs/merged/*.jar")
+            it.into file("/tmp/artifacts/")
+        }
+        remapJar.finalizedBy copyToArtifacts
+        remapSourcesJar.finalizedBy copyToArtifacts
+    }
 }
 
 allprojects {
@@ -80,11 +90,9 @@ allprojects {
         // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
         // See https://docs.gradle.org/current/userguide/declaring_repositories.html
         // for more information about repositories.
-        maven { url = "https://maven.parchmentmc.org" }
-
-        flatDir {
-            dir "${rootProject.projectDir}/libs"
-        }
+        maven { url "https://maven.parchmentmc.org" }
+        maven { url "https://maven.jab125.dev" }
+        flatDir { dir "${rootProject.projectDir}/libs/" }
     }
 
     tasks.withType(JavaCompile) {
@@ -97,5 +105,32 @@ allprojects {
     }
 }
 
+void setupRepositories(RepositoryHandler repositories) {
+    //repositories.mavenLocal() // uncomment for testing
+    def ENV = System.getenv()
+    if (ENV.MAVEN_URL) {
+        repositories.maven {
+            url ENV.MAVEN_URL
+            credentials {
+                username ENV.MAVEN_USERNAME
+                password ENV.MAVEN_PASSWORD
+            }
+        }
+    }
+}
+
 mergeJars.mustRunAfter build
+mergeJars.mustRunAfter ":merge-fabric:build"
+mergeJars.mustRunAfter ":merge-forge:build"
+
+if (Objects.equals(System.getenv("CIRCLE_CI"), "true")) {
+    def copyToArtifacts = tasks.register("copyToArtifacts", Copy) {
+        it.mustRunAfter(mergeJars)
+        it.from files("$buildDir/libs/merged/*.jar")
+        it.into file("/tmp/artifacts/")
+    }
+    mergeJars.finalizedBy(copyToArtifacts)
+}
+
+
 //build.dependsOn mergeJars

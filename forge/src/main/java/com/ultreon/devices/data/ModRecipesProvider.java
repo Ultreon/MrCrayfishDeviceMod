@@ -5,8 +5,9 @@ import com.ultreon.devices.block.RouterBlock;
 import com.ultreon.devices.init.DeviceBlocks;
 import com.ultreon.devices.init.DeviceItems;
 import com.ultreon.devices.item.FlashDriveItem;
-import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.item.DyeColor;
@@ -17,24 +18,18 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Consumer;
 
 public class ModRecipesProvider extends RecipeProvider {
-    public ModRecipesProvider(DataGenerator pGenerator) {
-        super(pGenerator);
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "Devices Mod - Recipes";
+    public ModRecipesProvider(PackOutput output) {
+        super(output);
     }
 
     @Override
-    protected void buildCraftingRecipes(@NotNull Consumer<FinishedRecipe> consumer) {
+    protected void buildRecipes(@NotNull Consumer<FinishedRecipe> consumer) {
         //***********************//
         //      Flash Drives     //
         //***********************//
         for (FlashDriveItem flashDrive : DeviceItems.getAllFlashDrives()) {
             DyeColor color = flashDrive.getColor();
-            new ShapedRecipeBuilder(flashDrive, 1)
+            new ShapedRecipeBuilder(RecipeCategory.TOOLS, flashDrive, 1)
                     .pattern("did")
                     .pattern("pfp")
                     .pattern("pcp")
@@ -51,7 +46,7 @@ public class ModRecipesProvider extends RecipeProvider {
         //     Printers     //
         //******************//
         for (PrinterBlock printer : DeviceBlocks.getAllPrinters()) {
-            new ShapedRecipeBuilder(printer, 1)
+            new ShapedRecipeBuilder(RecipeCategory.TOOLS, printer, 1)
                     .pattern("psp")
                     .pattern("mcb")
                     .pattern("pdp")
@@ -69,7 +64,7 @@ public class ModRecipesProvider extends RecipeProvider {
         //     Routers     //
         //*****************//
         for (RouterBlock router : DeviceBlocks.getAllRouters()) {
-            new ShapedRecipeBuilder(router, 1)
+            new ShapedRecipeBuilder(RecipeCategory.TOOLS, router, 1)
                     .pattern("rdr")
                     .pattern("ppp")
                     .pattern("wcb")

@@ -2,13 +2,15 @@ package com.ultreon.devices.util;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.ultreon.devices.init.DeviceItems;
 import dev.architectury.registry.registries.Registrar;
 import dev.architectury.registry.registries.RegistrySupplier;
 import net.minecraft.world.item.DyeColor;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 public abstract class DyeableRegistration<T> implements Iterable<RegistrySupplier<T>> {
     private final HashMap<DyeColor, RegistrySupplier<T>> map = new HashMap<>();
@@ -21,7 +23,6 @@ public abstract class DyeableRegistration<T> implements Iterable<RegistrySupplie
     }
     public static <T> void register(Registrar<T> registrar, DyeableRegistration<T> dyeableRegistration) {
         for (DyeColor dye : getDyes()) {
-            System.out.println("registering for " + dye);
             var dg = dyeableRegistration.register(registrar, dye);
             dyeableRegistration.l.add(dg);
             dyeableRegistration.map.put(dye, dg);

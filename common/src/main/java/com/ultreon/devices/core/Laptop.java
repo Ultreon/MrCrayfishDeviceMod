@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.Devices;
-import com.ultreon.devices.Reference;
 import com.ultreon.devices.api.ApplicationManager;
 import com.ultreon.devices.api.app.Dialog;
 import com.ultreon.devices.api.app.System;
@@ -15,6 +14,7 @@ import com.ultreon.devices.api.io.File;
 import com.ultreon.devices.api.task.Callback;
 import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.api.task.TaskManager;
+import com.ultreon.devices.api.utils.OnlineRequest;
 import com.ultreon.devices.block.entity.LaptopBlockEntity;
 import com.ultreon.devices.core.task.TaskInstallApp;
 import com.ultreon.devices.object.AppInfo;
@@ -25,6 +25,7 @@ import com.ultreon.devices.programs.system.task.TaskUpdateApplicationData;
 import com.ultreon.devices.programs.system.task.TaskUpdateSystemData;
 import com.ultreon.devices.util.GLHelper;
 import dev.architectury.injectables.annotations.PlatformOnly;
+import dev.architectury.platform.Mod;
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.ints.IntArraySet;
 import net.minecraft.client.Minecraft;
@@ -61,14 +62,16 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class Laptop extends Screen implements System {
     public static final int ID = 1;
-    public static final ResourceLocation ICON_TEXTURES = new ResourceLocation(Reference.MOD_ID, "textures/atlas/app_icons.png");
+    public static final ResourceLocation ICON_TEXTURES = new ResourceLocation(Devices.MOD_ID, "textures/atlas/app_icons.png");
     public static final int ICON_SIZE = 14;
     private static final ResourceLocation LAPTOP_FONT = Devices.res("laptop");
     private static Font font;
-    private static final ResourceLocation LAPTOP_GUI = new ResourceLocation(Reference.MOD_ID, "textures/gui/laptop.png");
+    private static final ResourceLocation LAPTOP_GUI = new ResourceLocation(Devices.MOD_ID, "textures/gui/laptop.png");
     private static final List<Application> APPLICATIONS = new ArrayList<>();
     private static boolean worldLess;
     private static Laptop instance;
+    private Double dragWindowFromX;
+    private Double dragWindowFromY;
 
     @PlatformOnly("fabric")
     public static List<Application> getApplicationsForFabric() {
@@ -92,7 +95,7 @@ public class Laptop extends Screen implements System {
     private static Drive mainDrive;
     private final Settings settings;
     private final TaskBar bar;
-    final ArrayList<Window<?>> windows;
+    final CopyOnWriteArrayList<Window<?>> windows;
     private final CompoundTag appData;
     private final CompoundTag systemData;
     protected List<AppInfo> installedApps = new ArrayList<>();
@@ -136,7 +139,7 @@ public class Laptop extends Screen implements System {
         this.systemData = laptop.getSystemData();
 
         // Windows
-        this.windows = new ArrayList<>() {
+        this.windows = new CopyOnWriteArrayList<>() {
             @Override
             public Window<?> get(int index) {
                 try {
@@ -157,7 +160,9 @@ public class Laptop extends Screen implements System {
         this.settings = Settings.fromTag(systemData.getCompound("Settings"));
 
         // GUI Components
-        this.bar = new TaskBar(this);
+        CompoundTag taskBarTag = systemData.getCompound("TaskBar");
+        systemData.put("TaskBar", taskBarTag);
+        this.bar = new TaskBar(this, taskBarTag);
 
         // Wallpaper stuff
         this.currentWallpaper = systemData.contains("CurrentWallpaper", 10) ? new Wallpaper(systemData.getCompound("CurrentWallpaper")) : null;
@@ -176,6 +181,22 @@ public class Laptop extends Screen implements System {
 
         // World-less flag.
         Laptop.worldLess = worldLess;
+    }
+
+    public static Laptop getInstance() {
+        return instance;
+    }
+
+    public CompoundTag getModSystemTag(Mod mod) {
+        return getModSystemTag(mod.getModId());
+    }
+
+    public CompoundTag getModSystemTag(String modId) {
+        CompoundTag mods = systemData.getCompound("Mods");
+        systemData.put("Mods", mods);
+        CompoundTag mod = mods.getCompound(modId);
+        mods.put(modId, mod);
+        return mod;
     }
 
     public static boolean isWorldLess() {
@@ -233,7 +254,6 @@ public class Laptop extends Screen implements System {
      */
     @Override
     public void init() {
-        Minecraft.getInstance().keyboardHandler.setSendRepeatsToGui(true);
         int posX = (width - DEVICE_WIDTH) / 2;
         int posY = (height - DEVICE_HEIGHT) / 2;
         bar.init(posX + BORDER, posY + DEVICE_HEIGHT - 28);
@@ -254,8 +274,6 @@ public class Laptop extends Screen implements System {
 
     @Override
     public void removed() {
-        Minecraft.getInstance().keyboardHandler.setSendRepeatsToGui(false);
-
         /* Close all windows and sendTask application data */
         for (int i = 0; i < windows.size(); i++) {
             Window<?> window = windows.get(i);
@@ -276,6 +294,7 @@ public class Laptop extends Screen implements System {
     private void updateSystemData() {
         systemData.put("CurrentWallpaper", currentWallpaper.serialize());
         systemData.put("Settings", settings.toTag());
+        systemData.put("TaskBar", bar.serialize());
 
         ListTag tagListApps = new ListTag();
         installedApps.forEach(info -> tagListApps.add(StringTag.valueOf(info.getFormattedId())));
@@ -309,15 +328,14 @@ public class Laptop extends Screen implements System {
         try {
             bar.onTick();
 
-            for (int i = 0; i < windows.size(); i++) {
-                Window<?> window = windows.get(i);
+            for (Window<?> window : windows) {
                 if (window != null) {
                     window.onTick();
-                    if (window.removed) {
-                //        java.lang.System.out.println("REMOVED " + window);
-                   //     windows.remove(window);
-                    //    i--;
-                    }
+//                    if (window.removed) {
+//                        java.lang.System.out.println("REMOVED " + window);
+//                        windows.remove(window);
+//                        i--;
+//                    }
                 }
             }
 
@@ -578,11 +596,15 @@ public class Laptop extends Screen implements System {
                         windows.get(0).handleMouseClick(this, posX, posY, (int) mouseX, (int) mouseY, mouseButton);
 
                         if (isMouseWithinWindowBar((int) mouseX, (int) mouseY, dialogWindow)) {
+                            dragWindowFromX = mouseX - dialogWindow.offsetX;
+                            dragWindowFromY = mouseY - dialogWindow.offsetY;
                             this.dragging = true;
                             return false;
                         }
 
                         if (isMouseWithinWindowBar((int) mouseX, (int) mouseY, window) && dialogWindow == null) {
+                            dragWindowFromX = mouseX - window.offsetX;
+                            dragWindowFromY = mouseY - window.offsetY;
                             this.dragging = true;
                             return false;
                         }
@@ -613,6 +635,8 @@ public class Laptop extends Screen implements System {
     public boolean mouseReleased(double mouseX, double mouseY, int state) {
         super.mouseReleased(mouseX, mouseY, state);
         this.dragging = false;
+        dragWindowFromX = null;
+        dragWindowFromY = null;
         try {
             if (this.context != null) {
                 int dropdownX = context.xPosition;
@@ -723,8 +747,8 @@ public class Laptop extends Screen implements System {
                 Window<Application> window = (Window<Application>) windows.get(0);
                 Window<Dialog> dialogWindow = window.getContent().getActiveDialog();
                 if (dragging) {
-                    if (isMouseOnScreen((int) mouseX, (int) mouseY)) {
-                        Objects.requireNonNullElse(dialogWindow, window).handleWindowMove(posX, posY, (int) -(lastMouseX - mouseX), (int) -(lastMouseY - mouseY));
+                    if (isMouseOnScreen((int) mouseX, (int) mouseY) && dragWindowFromX != null && dragWindowFromY != null) {
+                        Objects.requireNonNullElse(dialogWindow, window).handleWindowMove(posX, posY, (int) ((dragX + mouseX) - dragWindowFromX), (int) ((dragY + mouseY) - dragWindowFromY));
                     } else {
                         dragging = false;
                     }
@@ -755,7 +779,7 @@ public class Laptop extends Screen implements System {
         if (delta != 0) {
             try {
                 if (windows.get(0) != null) {
-                    windows.get(0).handleMouseScroll((int) mouseX, (int) mouseY, delta >= 0);
+                    windows.get(0).handleMouseScroll((int) mouseX, (int) mouseY, delta, delta >= 0);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -772,6 +796,7 @@ public class Laptop extends Screen implements System {
         super.renderComponentTooltip(pose, tooltips, x, y);
     }
 
+    @SuppressWarnings("ReassignedVariable")
     public Pair<Application, Boolean> sendApplicationToFront(AppInfo info) {
         int i = 0;
         for (; i < windows.size(); i++) {
@@ -1125,14 +1150,20 @@ public class Laptop extends Screen implements System {
         }
 
         private Wallpaper(CompoundTag tag) {
-            var a = tag.getString("url");
-            var b = tag.getInt("location");
+            var url = tag.getString("url");
+            var location = tag.getInt("location");
             if (tag.contains("url", 8)) {
-                this.url = a;
-                this.location = -87;
+                if (!OnlineRequest.isSafeAddress(url)) {
+                    // Reset to default wallpaper.
+                    this.url = null;
+                    this.location = 0;
+                } else {
+                    this.url = url;
+                    this.location = -87;
+                }
             } else {
                 this.url = null;
-                this.location = b;
+                this.location = location;
             }
         }
         private Wallpaper(String url) {

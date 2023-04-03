@@ -50,7 +50,7 @@ dependencies {
 
 //    include(implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.10"))
 //    include(implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10"))
-    include(implementation("com.ultreon:ultranlang:0.1.0+6"))
+//    include(implementation("com.ultreon:ultranlang:0.1.0+6"))
     include(implementation("com.jab125:apoint:1.0.0"))
 
     //shadowCommon "org.jetbrains.kotlin:kotlin-reflect:1.7.10"
@@ -63,11 +63,11 @@ dependencies {
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 
-    modImplementation "com.terraformersmc:modmenu:4.0.6", {
+    modCompileOnly "com.terraformersmc:modmenu:4.0.6", {
         exclude module: "fabric-api"
     }
 
-    modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:9.1.568"
+    modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:10.0.586"
 }
 
 processResources {
@@ -90,6 +90,7 @@ shadowJar {
 
 remapJar {
     injectAccessWidener = true
+    //noinspection GrDeprecatedAPIUsage
     input.set shadowJar.archiveFile
     dependsOn shadowJar
     classifier null
@@ -114,7 +115,9 @@ components.java {
 publishing {
     publications {
         mavenFabric(MavenPublication) {
-            artifactId = rootProject.archives_base_name + "-" + project.name
+            System.out.println(artifactId)
+            artifactId = rootProject.archivesBaseName + "-fabric"
+            //artifactId = rootProject.archives_base_name + "-fabric" + //project.name
             from components.java
         }
     }
@@ -123,4 +126,5 @@ publishing {
     repositories {
         // Add repositories to publish to here.
     }
+    rootProject.setupRepositories(repositories)
 }
