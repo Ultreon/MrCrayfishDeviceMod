@@ -12,6 +12,8 @@ import com.ultreon.devices.programs.gitweb.layout.ModuleLayout;
 import com.ultreon.devices.programs.gitweb.module.Module;
 import com.ultreon.devices.programs.gitweb.module.*;
 import com.ultreon.devices.util.SiteRegistration;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 
 import java.io.BufferedWriter;
@@ -30,6 +32,7 @@ import java.util.regex.Pattern;
  * @author MrCrayfish
  */
 @SuppressWarnings("unused")
+@Environment(EnvType.CLIENT)
 public class GitWebFrame extends Component {
     public static final Pattern PATTERN_LINK = Pattern.compile("(?<domain>[a-zA-Z0-9\\p{sc=Han}\\p{InHiragana}\\p{InKatakana}\\-]+)\\.(?<extension>[a-zA-Z0-9\\p{sc=Han}\\p{InHiragana}\\p{InKatakana}]+)(?<directory>(/[a-zA-Z0-9\\p{sc=Han}\\p{InHiragana}\\p{InKatakana}\\-]+)*)(/)?");
     private static final Map<String, Module> MODULES = new HashMap<>();

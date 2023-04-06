@@ -4,11 +4,14 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.app.IIcon;
 import com.ultreon.devices.core.Laptop;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 
 import java.awt.*;
 
+@Environment(EnvType.CLIENT)
 public class TextField extends TextArea {
     private IIcon icon;
 

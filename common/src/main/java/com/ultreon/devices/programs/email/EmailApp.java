@@ -22,6 +22,8 @@ import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.programs.email.object.Contact;
 import com.ultreon.devices.programs.email.object.Email;
 import com.ultreon.devices.programs.email.task.*;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -47,75 +49,129 @@ public class EmailApp extends Application {
     private final Color COLOR_EMAIL_CONTENT_BACKGROUND = new Color(160, 160, 160);
 
     /* Loading Layout */
+    @Environment(EnvType.CLIENT)
     private Layout layoutInit;
+    @Environment(EnvType.CLIENT)
     private Spinner spinnerInit;
+    @Environment(EnvType.CLIENT)
     private Label labelLoading;
 
     /* Main Menu Layout */
+    @Environment(EnvType.CLIENT)
     private Layout layoutMainMenu;
+    @Environment(EnvType.CLIENT)
     private Image.AppImage logo;
+    @Environment(EnvType.CLIENT)
     private Label labelLogo;
+    @Environment(EnvType.CLIENT)
     private Button btnRegisterAccount;
 
     /* Register Account Layout */
+    @Environment(EnvType.CLIENT)
     private Layout layoutRegisterAccount;
+    @Environment(EnvType.CLIENT)
     private Label labelEmail;
+    @Environment(EnvType.CLIENT)
     private TextField fieldEmail;
+    @Environment(EnvType.CLIENT)
     private Label labelDomain;
+    @Environment(EnvType.CLIENT)
     private Button btnRegister;
 
     /* Inbox Layout */
+    @Environment(EnvType.CLIENT)
     private Layout layoutInbox;
+    @Environment(EnvType.CLIENT)
     private ItemList<Email> listEmails;
+    @Environment(EnvType.CLIENT)
     private Button btnViewEmail;
+    @Environment(EnvType.CLIENT)
     private Button btnNewEmail;
+    @Environment(EnvType.CLIENT)
     private Button btnReplyEmail;
+    @Environment(EnvType.CLIENT)
     private Button btnDeleteEmail;
+    @Environment(EnvType.CLIENT)
     private Button btnRefresh;
 
     /* New Email Layout */
+    @Environment(EnvType.CLIENT)
     private Layout layoutNewEmail;
+    @Environment(EnvType.CLIENT)
     private TextField fieldRecipient;
+    @Environment(EnvType.CLIENT)
     private TextField fieldSubject;
+    @Environment(EnvType.CLIENT)
     private TextArea textAreaMessage;
+    @Environment(EnvType.CLIENT)
     private Button btnSendEmail;
+    @Environment(EnvType.CLIENT)
     private Button btnCancelEmail;
+    @Environment(EnvType.CLIENT)
     private Button btnAttachedFile;
+    @Environment(EnvType.CLIENT)
     private Button btnRemoveAttachedFile;
+    @Environment(EnvType.CLIENT)
     private Label labelAttachedFile;
 
     /* View Email Layout */
+    @Environment(EnvType.CLIENT)
     private Layout layoutViewEmail;
+    @Environment(EnvType.CLIENT)
     private Label labelViewSubject;
+    @Environment(EnvType.CLIENT)
     private Label labelSender; // TODO unused
+    @Environment(EnvType.CLIENT)
     private Label labelFrom;
+    @Environment(EnvType.CLIENT)
     private Label labelViewSubjectContent; // TODO unused
+    @Environment(EnvType.CLIENT)
     private Label labelViewMessage; // TODO unused
+    @Environment(EnvType.CLIENT)
     private Text textMessage;
+    @Environment(EnvType.CLIENT)
     private Button btnCancelViewEmail;
+    @Environment(EnvType.CLIENT)
     private Button btnSaveAttachment;
+    @Environment(EnvType.CLIENT)
     private Label labelAttachmentName;
 
     /* Contacts Layout */
+    @Environment(EnvType.CLIENT)
     private Layout layoutContacts; // TODO unused
+    @Environment(EnvType.CLIENT)
     private ItemList<Contact> listContacts; // TODO unused
+    @Environment(EnvType.CLIENT)
     private Button btnAddContact; // TODO unused
+    @Environment(EnvType.CLIENT)
     private Button btnDeleteContact; // TODO unused
+    @Environment(EnvType.CLIENT)
     private Button btnCancelContact; // TODO unused
 
     /* Add Contact Layout */
+    @Environment(EnvType.CLIENT)
     private Layout layoutAddContact; // TODO unused
+    @Environment(EnvType.CLIENT)
     private Label labelContactNickname; // TODO unused
+    @Environment(EnvType.CLIENT)
     private TextField fieldContactNickname; // TODO unused
+    @Environment(EnvType.CLIENT)
     private Label labelContactEmail; // TODO unused
+    @Environment(EnvType.CLIENT)
     private TextField fieldContactEmail; // TODO unused
+    @Environment(EnvType.CLIENT)
     private Button btnSaveContact; // TODO unused
+    @Environment(EnvType.CLIENT)
     private Button btnCancelAddContact; // TODO unused
 
     /* Insert Contact Layout */
+    @Environment(EnvType.CLIENT)
     private Layout layoutInsertContact; // TODO unused
+    @Environment(EnvType.CLIENT)
     private ItemList<Contact> listContacts2; // TODO unused
+    @Environment(EnvType.CLIENT)
     private Button btnInsertContact; // TODO unused
+    @Environment(EnvType.CLIENT)
     private Button btnCancelInsertContact; // TODO unused
 
     private String currentName;
@@ -123,6 +179,7 @@ public class EmailApp extends Application {
 
     private List<Contact> contacts; // TODO unused
 
+    @Environment(EnvType.CLIENT)
     @Override
     public void init(@Nullable CompoundTag intent) {
         /* Loading Layout */

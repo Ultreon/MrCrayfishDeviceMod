@@ -17,6 +17,8 @@ import com.ultreon.devices.programs.system.object.AppEntry;
 import com.ultreon.devices.programs.system.object.LocalEntry;
 import com.ultreon.devices.programs.system.object.RemoteEntry;
 import com.ultreon.devices.util.GuiHelper;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -29,6 +31,7 @@ import java.awt.*;
 /**
  * @author MrCrayfish
  */
+@Environment(EnvType.CLIENT)
 public class LayoutAppPage extends Layout {
     private final Laptop laptop;
     private final AppEntry entry;

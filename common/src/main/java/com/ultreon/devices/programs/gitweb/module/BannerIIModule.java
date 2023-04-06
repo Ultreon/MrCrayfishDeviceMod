@@ -9,6 +9,8 @@ import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.programs.gitweb.component.GitWebFrame;
 import com.ultreon.devices.programs.gitweb.component.container.ContainerBox;
 import com.ultreon.devices.programs.gitweb.component.container.LoomBox;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.ModelPart;
@@ -55,6 +57,7 @@ public class BannerIIModule extends Module {
         return new LoomBox(getItem(data, "banner"), Boolean.parseBoolean(data.get("waving")));
     }
 
+    @Environment(EnvType.CLIENT)
     public static class LoomBox extends Component {
         public static final int HEIGHT = 84;
         private final ItemStack banner;

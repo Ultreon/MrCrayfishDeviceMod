@@ -15,6 +15,10 @@ import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.object.TrayItem;
 import com.ultreon.devices.programs.system.component.Palette;
 import com.ultreon.devices.programs.system.object.ColorScheme;
+import dev.architectury.utils.Env;
+import dev.architectury.utils.EnvExecutor;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiComponent;
@@ -27,22 +31,38 @@ import java.util.Stack;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class SettingsApp extends SystemApp {
+    @Environment(EnvType.CLIENT)
     private Button backBtn;
 
+    @Environment(EnvType.CLIENT)
     private Layout layoutMain;
+    @Environment(EnvType.CLIENT)
     private Layout layoutGeneral;
+    @Environment(EnvType.CLIENT)
     private CheckBox checkBoxShowApps;
 
+    @Environment(EnvType.CLIENT)
     private Layout layoutPersonalise;
+    @Environment(EnvType.CLIENT)
     private Layout layoutWallpaper;
+    @Environment(EnvType.CLIENT)
     private Button prevWallpaperBtn;
+    @Environment(EnvType.CLIENT)
     private Button nextWallpaperBtn;
+    @Environment(EnvType.CLIENT)
     private Button urlWallpaperBtn;
 
+    @Environment(EnvType.CLIENT)
     private Layout layoutColorScheme;
+    @Environment(EnvType.CLIENT)
     private Button buttonColorSchemeApply;
 
-    private final Stack<Layout> predecessor = new Stack<>();
+    @Environment(EnvType.CLIENT)
+    private Stack<Layout> predecessor;
+
+    public SettingsApp() {
+        EnvExecutor.runInEnv(Env.CLIENT, () -> () -> predecessor = new Stack<>());
+    }
 
     private void resetColorSchemeClick(int mouseX, int mouseY, int mouseButton) {
         if (mouseButton == 0) {
@@ -50,6 +70,7 @@ public class SettingsApp extends SystemApp {
         }
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     public void init(@Nullable CompoundTag intent) {
         backBtn = new Button(2, 2, Icons.ARROW_LEFT);
@@ -75,6 +96,7 @@ public class SettingsApp extends SystemApp {
      *
      * @return the main layout.
      */
+    @Environment(EnvType.CLIENT)
     private Menu addMainLayout() {
         Menu layoutMain = new Menu("Home");
 
@@ -107,6 +129,7 @@ public class SettingsApp extends SystemApp {
      *
      * @return the menu layout.
      */
+    @Environment(EnvType.CLIENT)
     private Layout createPersonaliseLayout() {
         Layout layoutPersonalise = new Menu("Personalise");
         layoutPersonalise.addComponent(backBtn);
@@ -150,6 +173,7 @@ public class SettingsApp extends SystemApp {
      *
      * @return the layout.
      */
+    @Environment(EnvType.CLIENT)
     private Layout createColorSchemeLayout() {
         final Layout layoutColorScheme = new Menu("UI Colors");
         layoutColorScheme.addComponent(backBtn);
@@ -209,6 +233,7 @@ public class SettingsApp extends SystemApp {
      *
      * @return the layout.
      */
+    @Environment(EnvType.CLIENT)
     private Layout addWallpaperLayout() {
         // Create layout.
         Layout wallpaperLayout = new Menu("Wallpaper");
@@ -314,18 +339,21 @@ public class SettingsApp extends SystemApp {
         predecessor.clear();
     }
 
+    @Environment(EnvType.CLIENT)
     private void wallpaperClick(int mouseX, int mouseY, int mouseButton) {
         if (mouseButton == 0) {
             showMenu(layoutWallpaper);
         }
     }
 
+    @Environment(EnvType.CLIENT)
     private void colorSchemeClick(int mouseX, int mouseY, int mouseButton) {
         if (mouseButton == 0) {
             showMenu(layoutColorScheme);
         }
     }
 
+    @Environment(EnvType.CLIENT)
     private void showAllAppsClick(int mouseX, int mouseY, int mouseButton) {
         Settings.setShowAllApps(checkBoxShowApps.isSelected());
         Laptop laptop = getLaptop();
@@ -333,6 +361,7 @@ public class SettingsApp extends SystemApp {
         laptop.getTaskBar().setupApplications(laptop.getApplications());
     }
 
+    @Environment(EnvType.CLIENT)
     public static class Menu extends Layout {
         private final String title;
 
@@ -351,6 +380,7 @@ public class SettingsApp extends SystemApp {
         }
     }
 
+    @Environment(EnvType.CLIENT)
     public ComboBox.Custom<Integer> createColorPicker(int left, int top) {
         ComboBox.Custom<Integer> colorPicker = new ComboBox.Custom<>(left, top, 50, 100, 100);
         colorPicker.setValue(Color.RED.getRGB());

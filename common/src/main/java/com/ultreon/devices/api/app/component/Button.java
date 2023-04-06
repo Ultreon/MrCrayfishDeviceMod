@@ -8,6 +8,8 @@ import com.ultreon.devices.api.app.listener.ClickListener;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.util.GuiHelper;
 import com.ultreon.devices.util.StringUtils;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -22,6 +24,7 @@ import java.awt.*;
 import java.util.Arrays;
 
 @SuppressWarnings("unused")
+@Environment(EnvType.CLIENT)
 public class Button extends Component {
     protected static final ResourceLocation BUTTON_TEXTURES = new ResourceLocation("textures/gui/widgets.png");
 

@@ -13,19 +13,30 @@ import com.ultreon.devices.exception.WorldLessException;
 import com.ultreon.devices.object.Game;
 import com.ultreon.devices.object.TileGrid;
 import com.ultreon.devices.object.tiles.Tile;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.nbt.CompoundTag;
 
 import javax.annotation.Nullable;
 
 public class BoatRacersApp extends Application {
+    @Environment(EnvType.CLIENT)
     private Layout layoutLevelEditor;
+    @Environment(EnvType.CLIENT)
     private Game game;
+    @Environment(EnvType.CLIENT)
     private TileGrid tileGrid;
+    @Environment(EnvType.CLIENT)
     private Label labelLayer;
+    @Environment(EnvType.CLIENT)
     private Button btnNextLayer;
+    @Environment(EnvType.CLIENT)
     private Button btnPrevLayer;
+    @Environment(EnvType.CLIENT)
     private CheckBox checkBoxForeground;
+    @Environment(EnvType.CLIENT)
     private CheckBox checkBoxBackground;
+    @Environment(EnvType.CLIENT)
     private CheckBox checkBoxPlayer;
 
     public BoatRacersApp() {
@@ -34,6 +45,7 @@ public class BoatRacersApp extends Application {
         this.setDefaultHeight(160);
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     public void init(@Nullable CompoundTag intent) {
         layoutLevelEditor = new Layout(364, 178);

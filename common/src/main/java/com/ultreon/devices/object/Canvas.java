@@ -9,10 +9,13 @@ import com.ultreon.devices.object.tools.ToolEraser;
 import com.ultreon.devices.object.tools.ToolEyeDropper;
 import com.ultreon.devices.object.tools.ToolPencil;
 import com.ultreon.devices.util.GuiHelper;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 
 import java.awt.*;
 
+@Environment(EnvType.CLIENT)
 public class Canvas extends Component {
     public static final Tool PENCIL = new ToolPencil();
     public static final Tool BUCKET = new ToolBucket();

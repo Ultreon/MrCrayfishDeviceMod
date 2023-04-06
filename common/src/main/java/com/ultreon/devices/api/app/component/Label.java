@@ -3,11 +3,14 @@ package com.ultreon.devices.api.app.component;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.core.Laptop;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 
 import java.awt.*;
 
 @SuppressWarnings("unused")
+@Environment(EnvType.CLIENT)
 public class Label extends Component {
 
     protected String text;

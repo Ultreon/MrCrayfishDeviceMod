@@ -21,6 +21,8 @@ import com.ultreon.devices.core.print.task.TaskPrint;
 import com.ultreon.devices.programs.system.component.FileBrowser;
 import com.ultreon.devices.programs.system.object.ColorScheme;
 import com.ultreon.devices.util.GLHelper;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -50,6 +52,7 @@ public abstract class Dialog extends Wrappable {
         this.defaultLayout = new Layout(150, 40);
     }
 
+    @Environment(EnvType.CLIENT)
     protected final void addComponent(com.ultreon.devices.api.app.Component c) {
         if (c != null) {
             defaultLayout.addComponent(c);
@@ -57,6 +60,7 @@ public abstract class Dialog extends Wrappable {
         }
     }
 
+    @Environment(EnvType.CLIENT)
     protected final void setLayout(Layout layout) {
         this.customLayout = layout;
         this.width = layout.width;
@@ -65,6 +69,7 @@ public abstract class Dialog extends Wrappable {
         this.customLayout.handleLoad();
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     public void init(@Nullable CompoundTag intent) {
         this.defaultLayout.clear();
@@ -80,6 +85,7 @@ public abstract class Dialog extends Wrappable {
     }
 
     @Override
+    @Environment(EnvType.CLIENT)
     public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
         GLHelper.pushScissor(x, y, width, height);
         customLayout.render(pose, laptop, mc, x, y, mouseX, mouseY, active, partialTicks);

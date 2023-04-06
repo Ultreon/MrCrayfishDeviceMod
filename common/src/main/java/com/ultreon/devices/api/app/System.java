@@ -4,6 +4,8 @@ import com.ultreon.devices.api.io.File;
 import com.ultreon.devices.core.Settings;
 import com.ultreon.devices.object.AppInfo;
 import it.unimi.dsi.fastutil.Pair;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.nbt.CompoundTag;
 
 import java.util.Collection;
@@ -11,10 +13,12 @@ import java.util.Collection;
 /**
  * @author MrCrayfish
  */
+@Environment(EnvType.CLIENT)
 public interface System {
     /**
      * Open a context on the screen
      */
+    @Environment(EnvType.CLIENT)
     void openContext(Layout layout, int x, int y);
 
     /**

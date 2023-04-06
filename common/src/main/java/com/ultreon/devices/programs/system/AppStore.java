@@ -22,6 +22,8 @@ import com.ultreon.devices.programs.system.layout.LayoutAppPage;
 import com.ultreon.devices.programs.system.layout.LayoutSearchApps;
 import com.ultreon.devices.programs.system.object.AppEntry;
 import com.ultreon.devices.programs.system.object.RemoteEntry;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -39,11 +41,16 @@ public class AppStore extends SystemApp {
 
     public static final int LAYOUT_WIDTH = 250;
     public static final int LAYOUT_HEIGHT = 150;
+    @Environment(EnvType.CLIENT)
     public List<AppEntry> certifiedApps = new ArrayList<>();
+    @Environment(EnvType.CLIENT)
     public List<AppEntry> localAppList = new ArrayList<>();
+    @Environment(EnvType.CLIENT)
     private Layout layoutMain;
+    @Environment(EnvType.CLIENT)
     private AppInfo queuedApp;
 
+    @Environment(EnvType.CLIENT)
     @Override
     public void init(@Nullable CompoundTag intent) {
         layoutMain = new Layout(LAYOUT_WIDTH, LAYOUT_HEIGHT);

@@ -3,6 +3,8 @@ package com.ultreon.devices.programs.system.task;
 import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.api.utils.BankUtil;
 import com.ultreon.devices.programs.system.object.Account;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -31,6 +33,7 @@ public class TaskWithdraw extends Task {
     }
 
     @Override
+    @Environment(EnvType.CLIENT)
     public void processRequest(CompoundTag tag, Level level, Player player) {
         int amount = tag.getInt("amount");
         Account account = BankUtil.INSTANCE.getAccount(player);

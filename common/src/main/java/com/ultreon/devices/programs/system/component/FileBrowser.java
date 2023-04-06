@@ -27,6 +27,8 @@ import com.ultreon.devices.core.io.task.TaskGetStructure;
 import com.ultreon.devices.core.io.task.TaskSetupFileBrowser;
 import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.programs.system.SystemApp;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -50,6 +52,7 @@ import java.util.stream.Collectors;
  * Created by Casey on 20-Jun-17.
  */
 @SuppressWarnings("FieldCanBeLocal")
+@Environment(EnvType.CLIENT)
 public class FileBrowser extends Component {
     private static final ResourceLocation ASSETS = new ResourceLocation("devices:textures/gui/file_browser.png");
 

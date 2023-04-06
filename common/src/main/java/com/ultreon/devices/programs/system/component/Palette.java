@@ -11,6 +11,8 @@ import com.ultreon.devices.api.app.component.Slider;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.util.GLHelper;
 import com.ultreon.devices.util.GuiHelper;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GameRenderer;
@@ -20,6 +22,7 @@ import java.awt.*;
 /**
  * @author MrCrayfish
  */
+@Environment(EnvType.CLIENT)
 public class Palette extends Component {
     private final ComboBox.Custom<Integer> colorPicker;
 

@@ -4,6 +4,8 @@ import com.ultreon.devices.api.app.Application;
 import com.ultreon.devices.api.app.Dialog;
 import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.component.Button;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.nbt.CompoundTag;
 
 import javax.annotation.Nullable;
@@ -12,6 +14,7 @@ import javax.annotation.Nullable;
  * @author MrCrayfish
  */
 public class TestApp extends Application {
+    @Environment(EnvType.CLIENT)
     @Override
     public void init(@Nullable CompoundTag intent) {
         Button button = new Button(5, 5, Icons.PRINTER);

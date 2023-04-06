@@ -3,10 +3,13 @@ package com.ultreon.devices.api.app;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.programs.system.object.ColorScheme;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.resources.ResourceLocation;
 
+@Environment(EnvType.CLIENT)
 public abstract class Component extends GuiComponent {
     /**
      * The default components textures

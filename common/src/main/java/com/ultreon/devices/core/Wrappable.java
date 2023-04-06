@@ -187,7 +187,7 @@ public abstract class Wrappable {
      *
      * @return the window
      */
-    public final Window getWindow() {
+    public final Window<?> getWindow() {
         return window;
     }
 

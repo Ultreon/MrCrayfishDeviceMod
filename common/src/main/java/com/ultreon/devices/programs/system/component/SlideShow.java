@@ -8,6 +8,8 @@ import com.ultreon.devices.api.app.component.Image;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.programs.system.object.ImageEntry;
 import com.ultreon.devices.util.GuiHelper;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.core.NonNullList;
@@ -18,6 +20,7 @@ import net.minecraft.resources.ResourceLocation;
  * @author MrCrayfish
  */
 @SuppressWarnings("unused")
+@Environment(EnvType.CLIENT)
 public class SlideShow extends Component {
     private static final java.awt.Color OVERLAY = new java.awt.Color(0f, 0f, 0f, 0.15f);
     private static final java.awt.Color OVERLAY_HOVER = new java.awt.Color(0.35f, 0.35f, 0.35f, 0.15f);

@@ -7,6 +7,8 @@ import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.component.*;
 import com.ultreon.devices.api.io.File;
 import com.ultreon.devices.core.io.FileSystem;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import org.slf4j.Marker;
@@ -25,29 +27,43 @@ public class NoteStashApp extends Application {
     private static final Marker MARKER = MarkerFactory.getMarker("Note Stash App");
 
     /* Main */
+    @Environment(EnvType.CLIENT)
     private Layout layoutMain;
     private ItemList<Note> notes;
+    @Environment(EnvType.CLIENT)
     private Button btnNew;
+    @Environment(EnvType.CLIENT)
     private Button btnView;
+    @Environment(EnvType.CLIENT)
     private Button btnDelete;
 
     /* Add Note */
+    @Environment(EnvType.CLIENT)
     private Layout layoutAddNote;
+    @Environment(EnvType.CLIENT)
     private TextField title;
+    @Environment(EnvType.CLIENT)
     private TextArea textArea;
+    @Environment(EnvType.CLIENT)
     private Button btnSave;
+    @Environment(EnvType.CLIENT)
     private Button btnCancel;
 
     /* View Note */
+    @Environment(EnvType.CLIENT)
     private Layout layoutViewNote;
+    @Environment(EnvType.CLIENT)
     private Label noteTitle;
+    @Environment(EnvType.CLIENT)
     private Text noteContent;
+    @Environment(EnvType.CLIENT)
     private Button btnBack;
 
     public NoteStashApp() {
         //super("note_stash", "Note Stash");
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     public void init(@Nullable CompoundTag intent) {
         /* Main */

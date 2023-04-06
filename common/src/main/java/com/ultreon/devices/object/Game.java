@@ -8,6 +8,8 @@ import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.exception.WorldLessException;
 import com.ultreon.devices.object.tiles.Tile;
 import com.ultreon.devices.util.GuiHelper;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 
@@ -15,6 +17,7 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
+@Environment(EnvType.CLIENT)
 public class Game extends Component {
     public static final ResourceLocation ICONS = new ResourceLocation("devices:textures/gui/mine_racer.png");
 

@@ -4,6 +4,8 @@ import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.component.Button;
 import com.ultreon.devices.programs.gitweb.component.GitWebFrame;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.Gui;
 
 import javax.annotation.Nullable;
@@ -15,6 +17,7 @@ import java.util.Map;
 /**
  * @author MrCrayfish
  */
+@Environment(EnvType.CLIENT)
 public class NavigationModule extends Module {
     @Override
     public String[] getRequiredData() {

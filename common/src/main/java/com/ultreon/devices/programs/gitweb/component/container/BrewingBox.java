@@ -3,6 +3,8 @@ package com.ultreon.devices.programs.gitweb.component.container;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.core.Laptop;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -10,6 +12,7 @@ import net.minecraft.world.item.Items;
 /**
  * @author MrCrayfish
  */
+@Environment(EnvType.CLIENT)
 public class BrewingBox extends ContainerBox {
     public static final int HEIGHT = 73;
     //Copied from GuiBrewingStand. Why do they store the length in an array?

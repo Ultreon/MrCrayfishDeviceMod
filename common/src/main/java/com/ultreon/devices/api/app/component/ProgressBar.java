@@ -3,10 +3,13 @@ package com.ultreon.devices.api.app.component;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.core.Laptop;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 
 import java.awt.*;
 
+@Environment(EnvType.CLIENT)
 public class ProgressBar extends Component {
     protected int width, height;
     protected int progress = 0;

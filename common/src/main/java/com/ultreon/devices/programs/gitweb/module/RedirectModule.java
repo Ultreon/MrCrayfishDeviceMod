@@ -3,11 +3,14 @@ package com.ultreon.devices.programs.gitweb.module;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.programs.gitweb.component.GitWebFrame;
 import com.ultreon.devices.programs.gitweb.layout.ModuleLayout;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Environment(EnvType.CLIENT)
 public class RedirectModule extends Module {
     @Override
     public String[] getRequiredData() {

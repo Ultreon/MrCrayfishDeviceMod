@@ -7,10 +7,13 @@ import com.ultreon.devices.api.app.listener.ReleaseListener;
 import com.ultreon.devices.api.app.listener.SlideListener;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.util.GuiHelper;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 
 import java.awt.*;
 
+@Environment(EnvType.CLIENT)
 public class Slider extends Component {
     protected boolean dragging = false;
     protected int clickX;

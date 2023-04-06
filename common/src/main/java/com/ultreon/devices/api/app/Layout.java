@@ -6,6 +6,8 @@ import com.ultreon.devices.api.app.listener.InitListener;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.core.Wrappable;
 import com.ultreon.devices.util.GLHelper;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.nbt.CompoundTag;
@@ -29,6 +31,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  *
  * @author MrCrayfish
  */
+@Environment(EnvType.CLIENT)
 @SuppressWarnings("unused")
 public class Layout extends com.ultreon.devices.api.app.Component {
     /**

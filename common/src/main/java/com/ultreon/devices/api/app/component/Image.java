@@ -11,6 +11,8 @@ import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.utils.RenderUtil;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.object.AppInfo;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.AbstractTexture;
@@ -36,7 +38,9 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 @SuppressWarnings("unused")
+@Environment(EnvType.CLIENT)
 public class Image extends Component {
+    @Environment(EnvType.CLIENT)
     public static class AppImage extends Layout {
         private final AppInfo appInfo;
         private AppInfo.Icon.Glyph[] glyphs;

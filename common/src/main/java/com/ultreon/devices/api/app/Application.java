@@ -11,6 +11,10 @@ import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.util.DataHandler;
 import com.ultreon.devices.util.GLHelper;
+import dev.architectury.utils.Env;
+import dev.architectury.utils.EnvExecutor;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -34,7 +38,9 @@ public abstract class Application extends Wrappable implements DataHandler {
         }
         throw new IllegalStateException();
     }
-    private final Layout defaultLayout = new Layout();
+    @Environment(EnvType.CLIENT)
+    private Layout defaultLayout = null;
+
     private BlockPos laptopPositon;
     private int width, height;
     private Layout currentLayout;
@@ -49,6 +55,10 @@ public abstract class Application extends Wrappable implements DataHandler {
      */
     private boolean pendingLayoutUpdate = false;
 
+    public Application() {
+        EnvExecutor.runInEnv(Env.CLIENT, () -> () -> defaultLayout = new Layout());
+    }
+
     public AppInfo getInfo() {
         return info;
     }
@@ -61,6 +71,7 @@ public abstract class Application extends Wrappable implements DataHandler {
      *
      * @param c the component to add to the default layout
      */
+    @Environment(EnvType.CLIENT)
     protected final void addComponent(Component c) {
         if (c != null) {
             defaultLayout.addComponent(c);
@@ -81,6 +92,7 @@ public abstract class Application extends Wrappable implements DataHandler {
      *
      * @param layout the layout to set
      */
+    @Environment(EnvType.CLIENT)
     public final void setCurrentLayout(Layout layout) {
         if (currentLayout != null) {
             currentLayout.handleUnload();
@@ -314,7 +326,7 @@ public abstract class Application extends Wrappable implements DataHandler {
 
     /**
      * Marks that data in this application has changed and needs to be saved.
-     * You must call this otherwise your data wont be saved!
+     * You must call this otherwise your data won't be saved!
      */
     protected void markDirty() {
         needsDataUpdate = true;
@@ -413,7 +425,7 @@ public abstract class Application extends Wrappable implements DataHandler {
                 dialogWindow = dialogWindow.getDialogWindow();
             }
         }
-        return dialogWindow;
+        return null;
     }
 
     /**

@@ -6,6 +6,8 @@ import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.programs.gitweb.component.GitWebFrame;
 import com.ultreon.devices.programs.gitweb.layout.ModuleLayout;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +29,7 @@ public class ScriptModule extends Module {
     }
 
     @Override
+    @Environment(EnvType.CLIENT)
     public void generate(GitWebFrame frame, Layout layout, int width, Map<String, String> data) {
         var script = data.get("script").replaceAll("scriptModule:newLine", "\n").replaceAll("scriptModule:equals", "=");
         if (data.get("runtime").equals("apoint")) {
@@ -48,6 +51,7 @@ public class ScriptModule extends Module {
         System.out.println(script.replaceAll("\n", "scriptModule:newLine").replaceAll("=", "scriptModule:equals"));
     }
 
+    @Environment(EnvType.CLIENT)
     private void initAPointRuntime(GitWebFrame frame) {
         if (frame.aPointRuntime == null) {
             APointRuntime runtime = APoint.createRuntime();
@@ -90,11 +94,13 @@ public class ScriptModule extends Module {
     }
 
     @Override
+    @Environment(EnvType.CLIENT)
     public void tick(GitWebFrame frame, Layout layout, int width, Map<String, String> data) {
 
     }
 
     @Override
+    @Environment(EnvType.CLIENT)
     public void modify(GitWebFrame frame, ModuleLayout layout, int width, Map<String, String> data) {
         this.generate(frame, layout, width, data);
     }

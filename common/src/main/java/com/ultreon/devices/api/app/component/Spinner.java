@@ -4,10 +4,13 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.core.Laptop;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 
 import java.awt.*;
 
+@Environment(EnvType.CLIENT)
 public class Spinner extends Component {
     protected final int MAX_PROGRESS = 31;
     protected int currentProgress = 0;

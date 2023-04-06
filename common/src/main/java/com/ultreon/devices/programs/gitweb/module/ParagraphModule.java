@@ -6,12 +6,15 @@ import com.ultreon.devices.api.app.component.Image;
 import com.ultreon.devices.api.app.component.Text;
 import com.ultreon.devices.programs.gitweb.component.GitWebFrame;
 import com.ultreon.devices.programs.gitweb.layout.ModuleLayout;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import java.util.Map;
 
 /**
  * @author MrCrayfish
  */
+@Environment(EnvType.CLIENT)
 public class ParagraphModule extends Module {
     @Override
     public String[] getRequiredData() {

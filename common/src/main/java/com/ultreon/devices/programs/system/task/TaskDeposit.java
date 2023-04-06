@@ -4,6 +4,8 @@ import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.api.utils.BankUtil;
 import com.ultreon.devices.programs.system.object.Account;
 import com.ultreon.devices.util.InventoryUtil;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
@@ -30,6 +32,7 @@ public class TaskDeposit extends Task {
     }
 
     @Override
+    @Environment(EnvType.CLIENT)
     public void processRequest(CompoundTag tag, Level level, Player player) {
         Account account = BankUtil.INSTANCE.getAccount(player);
         int amount = tag.getInt("amount");

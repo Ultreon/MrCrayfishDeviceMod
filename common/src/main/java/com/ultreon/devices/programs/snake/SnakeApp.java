@@ -7,13 +7,18 @@ import com.ultreon.devices.api.app.component.Button;
 import com.ultreon.devices.api.app.component.Label;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.programs.snake.layout.SnakeLayout;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.Nullable;
 
 public class SnakeApp extends Application {
+    @Environment(EnvType.CLIENT)
     public Layout titleScreen;
+    @Environment(EnvType.CLIENT)
     public SnakeLayout gameLayout;
+    @Environment(EnvType.CLIENT)
     @Override
     public void init(@Nullable CompoundTag intent) {
         this.titleScreen = new Layout(200, 100);
@@ -31,6 +36,7 @@ public class SnakeApp extends Application {
     }
 
     @Override
+    @Environment(EnvType.CLIENT)
     public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
         super.render(pose, laptop, mc, x, y, mouseX, mouseY, active, partialTicks);
 //        for (Component component : this.titleScreen.components) {

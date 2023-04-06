@@ -13,6 +13,8 @@ import com.ultreon.devices.api.utils.RenderUtil;
 import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.programs.system.AppStore;
 import com.ultreon.devices.programs.system.object.LocalEntry;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -28,6 +30,7 @@ import java.util.stream.Collectors;
 /**
  * @author MrCrayfish
  */
+@Environment(EnvType.CLIENT)
 public class LayoutSearchApps extends StandardLayout {
     private static final Color ITEM_BACKGROUND = Color.decode("0x9E9E9E");
     private static final Color ITEM_SELECTED = Color.decode("0x757575");

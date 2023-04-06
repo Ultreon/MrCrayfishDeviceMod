@@ -3,7 +3,10 @@ package com.ultreon.devices.programs.gitweb.layout;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.programs.gitweb.component.GitWebFrame;
 import com.ultreon.devices.programs.gitweb.module.ModuleEntry;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
+@Environment(EnvType.CLIENT)
 public class ModuleLayout extends Layout {
     public ModuleEntry entry;
     private final GitWebFrame frame;

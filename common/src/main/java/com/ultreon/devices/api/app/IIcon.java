@@ -2,6 +2,8 @@ package com.ultreon.devices.api.app;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -35,6 +37,7 @@ public interface IIcon {
 
     int getOrdinal();
 
+    @Environment(EnvType.CLIENT)
     default void draw(PoseStack pose, Minecraft mc, int x, int y) {
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
         RenderSystem.setShaderTexture(0, getIconAsset());

@@ -1,10 +1,13 @@
 package com.ultreon.devices.api.app.component;
 
 import com.ultreon.devices.api.app.IIcon;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 
 @SuppressWarnings("unused")
+@Environment(EnvType.CLIENT)
 public class ButtonToggle extends Button implements RadioGroup.Item {
     protected boolean toggle = false;
     protected RadioGroup group = null;

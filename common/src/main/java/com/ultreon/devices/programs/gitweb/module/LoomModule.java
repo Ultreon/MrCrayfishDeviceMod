@@ -2,9 +2,12 @@ package com.ultreon.devices.programs.gitweb.module;
 
 import com.ultreon.devices.programs.gitweb.component.container.ContainerBox;
 import com.ultreon.devices.programs.gitweb.component.container.LoomBox;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import java.util.Map;
 
+@Environment(EnvType.CLIENT)
 public class LoomModule extends ContainerModule {
     @Override
     public String[] getRequiredData() {

@@ -8,6 +8,8 @@ import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.api.utils.RenderUtil;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.util.GuiHelper;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.resources.ResourceLocation;
@@ -23,6 +25,7 @@ import java.awt.*;
  *
  * @author MrCrayfish
  */
+@Environment(EnvType.CLIENT)
 public class Inventory extends Component {
     protected static final ResourceLocation CHEST_GUI_TEXTURE = new ResourceLocation("textures/gui/container/generic_54.png");
 

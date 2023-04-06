@@ -5,6 +5,8 @@ import com.ultreon.devices.api.app.component.Text;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.util.GLHelper;
 import com.ultreon.devices.util.GuiHelper;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
 
@@ -13,6 +15,7 @@ import java.awt.*;
 /**
  * @author MrCrayfish
  */
+@Environment(EnvType.CLIENT)
 public class ScrollableLayout extends Layout {
     protected int placeholderColor = new Color(1f, 1f, 1f, 0.35f).getRGB();
 

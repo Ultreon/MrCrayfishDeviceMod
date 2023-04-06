@@ -9,6 +9,8 @@ import com.ultreon.devices.api.app.renderer.ItemRenderer;
 import com.ultreon.devices.api.app.renderer.ListItemRenderer;
 import com.ultreon.devices.api.utils.RenderUtil;
 import com.ultreon.devices.core.Laptop;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 
@@ -20,6 +22,7 @@ import java.awt.*;
  * Created by Casey on 06-Aug-17.
  */
 @SuppressWarnings("unused")
+@Environment(EnvType.CLIENT)
 public abstract class ComboBox<T> extends Component {
     protected T value;
     protected boolean hovered;

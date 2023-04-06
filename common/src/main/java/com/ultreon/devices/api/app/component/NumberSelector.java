@@ -4,10 +4,13 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.core.Laptop;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 
 import java.text.DecimalFormat;
 
+@Environment(EnvType.CLIENT)
 public class NumberSelector extends Component {
     protected DecimalFormat format = new DecimalFormat("0");
 

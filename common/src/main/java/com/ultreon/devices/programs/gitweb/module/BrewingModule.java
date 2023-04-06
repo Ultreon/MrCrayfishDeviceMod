@@ -2,6 +2,8 @@ package com.ultreon.devices.programs.gitweb.module;
 
 import com.ultreon.devices.programs.gitweb.component.container.BrewingBox;
 import com.ultreon.devices.programs.gitweb.component.container.ContainerBox;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
@@ -12,6 +14,7 @@ import java.util.Map;
 /**
  * @author MrCrayfish
  */
+@Environment(EnvType.CLIENT)
 public class BrewingModule extends ContainerModule {
     @Override
     public String[] getOptionalData() {

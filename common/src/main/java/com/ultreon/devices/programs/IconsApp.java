@@ -4,6 +4,8 @@ import com.ultreon.devices.api.app.*;
 import com.ultreon.devices.api.app.component.Button;
 import com.ultreon.devices.api.app.component.ComboBox;
 import com.ultreon.devices.programs.system.layout.StandardLayout;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 
@@ -15,8 +17,11 @@ import javax.annotation.Nullable;
 public class IconsApp extends Application {
     private int offset;
 
+    @Environment(EnvType.CLIENT)
     private StandardLayout layoutMain;
+    @Environment(EnvType.CLIENT)
     private Layout layoutContainer;
+    @Environment(EnvType.CLIENT)
     private ComboBox.List<IconSet> iconSetComboBox;
 
     public IconsApp() {
@@ -24,6 +29,7 @@ public class IconsApp extends Application {
         this.setDefaultHeight(150);
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     public void init(@Nullable CompoundTag intent) {
         layoutMain = new StandardLayout(ChatFormatting.BOLD + "Icons", 330, 153, this, null);

@@ -5,28 +5,47 @@ import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.component.*;
 import com.ultreon.devices.api.task.TaskManager;
 import com.ultreon.devices.programs.example.task.TaskNotificationTest;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.nbt.CompoundTag;
 
 import javax.annotation.Nullable;
 
 @SuppressWarnings({"FieldCanBeLocal", "SpellCheckingInspection"})
 public class ExampleApp extends Application {
+    @Environment(EnvType.CLIENT)
     private Label label;
+    @Environment(EnvType.CLIENT)
     private Button button;
+    @Environment(EnvType.CLIENT)
     private Button leftButton;
+    @Environment(EnvType.CLIENT)
     private Button upButton;
+    @Environment(EnvType.CLIENT)
     private Button rightButton;
+    @Environment(EnvType.CLIENT)
     private Button downButton;
+    @Environment(EnvType.CLIENT)
     private ItemList<String> itemList;
+    @Environment(EnvType.CLIENT)
     private CheckBox checkBoxOn;
+    @Environment(EnvType.CLIENT)
     private CheckBox checkBoxOff;
+    @Environment(EnvType.CLIENT)
     private ProgressBar progressBar;
+    @Environment(EnvType.CLIENT)
     private Slider slider;
+    @Environment(EnvType.CLIENT)
     private Spinner spinner;
+    @Environment(EnvType.CLIENT)
     private TextField textField;
+    @Environment(EnvType.CLIENT)
     private TextArea textArea;
+    @Environment(EnvType.CLIENT)
     private Text text;
+    @Environment(EnvType.CLIENT)
     private Image image;
+    @Environment(EnvType.CLIENT)
 
     public ExampleApp() {
         //super("example", "UI Components");
@@ -34,6 +53,7 @@ public class ExampleApp extends Application {
         this.setDefaultHeight(140);
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     public void init(@Nullable CompoundTag intent) {
         label = new Label("Label", 5, 5);

@@ -23,6 +23,8 @@ import com.ultreon.devices.object.Canvas;
 import com.ultreon.devices.object.ColorGrid;
 import com.ultreon.devices.object.Picture;
 import com.ultreon.devices.programs.system.layout.StandardLayout;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiComponent;
@@ -43,44 +45,77 @@ public class PixelPainterApp extends Application {
     private static final Color AUTHOR_TEXT = new Color(114, 120, 138);
 
     /* Main Menu */
+    @Environment(EnvType.CLIENT)
     private StandardLayout layoutMainMenu;
+    @Environment(EnvType.CLIENT)
     private Label labelLogo;
+    @Environment(EnvType.CLIENT)
     private Button btnNewPicture;
+    @Environment(EnvType.CLIENT)
     private Button btnLoadPicture;
 
     /* New Picture */
+    @Environment(EnvType.CLIENT)
     private Layout layoutNewPicture;
+    @Environment(EnvType.CLIENT)
     private Label labelName;
+    @Environment(EnvType.CLIENT)
     private TextField fieldName;
+    @Environment(EnvType.CLIENT)
     private Label labelAuthor;
+    @Environment(EnvType.CLIENT)
     private TextField fieldAuthor;
+    @Environment(EnvType.CLIENT)
     private Label labelSize;
+    @Environment(EnvType.CLIENT)
     private CheckBox checkBox16x;
+    @Environment(EnvType.CLIENT)
     private CheckBox checkBox32x;
+    @Environment(EnvType.CLIENT)
     private Button btnCreatePicture;
 
     /* Load Picture */
+    @Environment(EnvType.CLIENT)
     private Layout layoutLoadPicture;
+    @Environment(EnvType.CLIENT)
     private ItemList<Picture> listPictures;
+    @Environment(EnvType.CLIENT)
     private Button btnLoadSavedPicture;
+    @Environment(EnvType.CLIENT)
     private Button btnBrowseSavedPicture;
+    @Environment(EnvType.CLIENT)
     private Button btnDeleteSavedPicture;
+    @Environment(EnvType.CLIENT)
     private Button btnBackSavedPicture;
 
     /* Drawing */
+    @Environment(EnvType.CLIENT)
     private Layout layoutDraw;
+    @Environment(EnvType.CLIENT)
     private com.ultreon.devices.object.Canvas canvas;
+    @Environment(EnvType.CLIENT)
     private ButtonToggle btnPencil;
+    @Environment(EnvType.CLIENT)
     private ButtonToggle btnBucket;
+    @Environment(EnvType.CLIENT)
     private ButtonToggle btnEraser;
+    @Environment(EnvType.CLIENT)
     private ButtonToggle btnEyeDropper;
+    @Environment(EnvType.CLIENT)
     private Button btnCancel;
+    @Environment(EnvType.CLIENT)
     private Button btnSave;
+    @Environment(EnvType.CLIENT)
     private Slider redSlider;
+    @Environment(EnvType.CLIENT)
     private Slider greenSlider;
+    @Environment(EnvType.CLIENT)
     private Slider blueSlider;
+    @Environment(EnvType.CLIENT)
     private Component colorDisplay;
+    @Environment(EnvType.CLIENT)
     private ColorGrid colorGrid;
+    @Environment(EnvType.CLIENT)
     private CheckBox displayGrid;
 
     public PixelPainterApp() {
@@ -88,6 +123,7 @@ public class PixelPainterApp extends Application {
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
+    @Environment(EnvType.CLIENT)
     @Override
     public void init(@Nullable CompoundTag intent) {
         /* Main Menu */

@@ -10,6 +10,8 @@ import com.ultreon.devices.api.utils.RenderUtil;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.util.GLHelper;
 import com.ultreon.devices.util.GuiHelper;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -24,6 +26,7 @@ import java.util.List;
 import java.util.StringJoiner;
 
 @SuppressWarnings("unused")
+@Environment(EnvType.CLIENT)
 public class TextArea extends Component {
     private static final String UNFORMATTED_SPLIT = "(?<=%1$s)|(?=%1$s)";
     private static final String[] DELIMITERS = {"(\\s|$)(?=(([^\"]*\"){2})*[^\"]*$)", "[\\p{Punct}&&[^@\"]]", "\\p{Digit}+"};

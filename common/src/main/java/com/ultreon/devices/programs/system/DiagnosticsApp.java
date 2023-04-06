@@ -6,6 +6,8 @@ import com.ultreon.devices.api.app.component.Button;
 import com.ultreon.devices.api.app.component.Text;
 import com.ultreon.devices.api.app.listener.ClickListener;
 import com.ultreon.devices.object.AppInfo;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.nbt.CompoundTag;
@@ -58,6 +60,7 @@ public final class DiagnosticsApp extends SystemApp {
         this.application = app;
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     public void init(@Nullable CompoundTag intent) {
         String applicationName = null;

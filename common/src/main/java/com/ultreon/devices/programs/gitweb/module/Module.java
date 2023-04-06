@@ -3,12 +3,15 @@ package com.ultreon.devices.programs.gitweb.module;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.programs.gitweb.component.GitWebFrame;
 import com.ultreon.devices.programs.gitweb.layout.ModuleLayout;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import java.util.Map;
 
 /**
  * @author MrCrayfish
  */
+@Environment(EnvType.CLIENT)
 public abstract class Module {
 
     public abstract String[] getRequiredData();

@@ -7,6 +7,8 @@ import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.component.Button;
 import com.ultreon.devices.core.Laptop;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 
@@ -16,6 +18,7 @@ import java.awt.*;
 /**
  * @author MrCrayfish
  */
+@Environment(EnvType.CLIENT)
 public class StandardLayout extends Layout {
     protected Application app;
     private final String title;

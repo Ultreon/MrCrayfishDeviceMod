@@ -5,12 +5,15 @@ import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.component.Label;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.programs.gitweb.component.GitWebFrame;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import java.util.Map;
 
 /**
  * @author MrCrayfish
  */
+@Environment(EnvType.CLIENT)
 public class HeaderModule extends Module {
     @Override
     public String[] getRequiredData() {

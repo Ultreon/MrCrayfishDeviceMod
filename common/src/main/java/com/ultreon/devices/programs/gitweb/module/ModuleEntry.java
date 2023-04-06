@@ -1,10 +1,14 @@
 package com.ultreon.devices.programs.gitweb.module;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 import java.util.Map;
 
 /**
  * @author MrCrayfish
  */
+@Environment(EnvType.CLIENT)
 public class ModuleEntry {
     private final Module module;
     private Map<String, String> data;

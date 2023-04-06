@@ -7,6 +7,8 @@ import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.utils.RenderUtil;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.util.GuiHelper;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -19,6 +21,7 @@ import java.util.Optional;
 /**
  * @author MrCrayfish
  */
+@Environment(EnvType.CLIENT)
 public abstract class ContainerBox extends Component {
     public static final int WIDTH = 128;
     protected static final ResourceLocation CONTAINER_BOXES_TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/gui/container_boxes.png");

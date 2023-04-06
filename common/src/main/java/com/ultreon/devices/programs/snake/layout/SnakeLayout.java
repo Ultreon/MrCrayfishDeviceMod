@@ -8,6 +8,8 @@ import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.component.Button;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.programs.snake.SnakeApp;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 
@@ -17,6 +19,7 @@ import java.util.ArrayList;
 /**
  * layout shoult be 15x15, background green 0x0A7A0A
  */
+@Environment(EnvType.CLIENT)
 public class SnakeLayout extends Layout {
     public SnakeLayout(SnakeApp app) {
         super(150, 150);
@@ -42,6 +45,7 @@ public class SnakeLayout extends Layout {
         super.handleLoad();
     }
 
+    @Environment(EnvType.CLIENT)
     public static class Grid extends Component {
         private ArrayList<Pos2d> snakePos = new ArrayList<>() {
             @Override

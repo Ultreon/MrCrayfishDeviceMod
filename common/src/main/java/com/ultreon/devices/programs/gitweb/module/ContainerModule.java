@@ -7,6 +7,8 @@ import com.ultreon.devices.api.app.component.Text;
 import com.ultreon.devices.programs.gitweb.component.GitWebFrame;
 import com.ultreon.devices.programs.gitweb.component.container.ContainerBox;
 import com.ultreon.devices.programs.gitweb.component.container.CraftingBox;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.world.item.ItemStack;
@@ -16,6 +18,7 @@ import java.util.Map;
 /**
  * @author MrCrayfish
  */
+@Environment(EnvType.CLIENT)
 public abstract class ContainerModule extends Module {
     @Override
     public String[] getRequiredData() {

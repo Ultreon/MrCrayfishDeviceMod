@@ -6,11 +6,14 @@ import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.listener.ClickListener;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.util.GuiHelper;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 
 import java.awt.*;
 
 @SuppressWarnings("unused")
+@Environment(EnvType.CLIENT)
 public class CheckBox extends Component implements RadioGroup.Item {
     protected String name;
     protected boolean checked = false;

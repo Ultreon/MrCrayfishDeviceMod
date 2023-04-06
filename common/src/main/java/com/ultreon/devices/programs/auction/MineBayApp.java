@@ -18,6 +18,10 @@ import com.ultreon.devices.programs.auction.task.TaskBuyItem;
 import com.ultreon.devices.programs.auction.task.TaskGetAuctions;
 import com.ultreon.devices.programs.system.layout.StandardLayout;
 import com.ultreon.devices.util.TimeUtil;
+import dev.architectury.utils.Env;
+import dev.architectury.utils.EnvExecutor;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -42,35 +46,59 @@ public class MineBayApp extends Application {
 
     private final String[] categories = {"Building", "Combat", "Tools", "Food", "Materials", "Redstone", "Alchemy", "Rare", "Misc"};
 
+    @Environment(EnvType.CLIENT)
     private Layout layoutMyAuctions;
+    @Environment(EnvType.CLIENT)
     private ItemList<AuctionItem> items;
 
     /* Add Item Layout */
+    @Environment(EnvType.CLIENT)
     private Layout layoutSelectItem;
+    @Environment(EnvType.CLIENT)
     private Inventory inventory;
+    @Environment(EnvType.CLIENT)
     private Button buttonAddCancel;
+    @Environment(EnvType.CLIENT)
     private Button buttonAddNext;
 
     /* Set Amount and Price Layout */
+    @Environment(EnvType.CLIENT)
     private Layout layoutAmountAndPrice;
+    @Environment(EnvType.CLIENT)
     private Label labelAmount;
+    @Environment(EnvType.CLIENT)
     private NumberSelector selectorAmount;
+    @Environment(EnvType.CLIENT)
     private Label labelPrice;
+    @Environment(EnvType.CLIENT)
     private NumberSelector selectorPrice;
+    @Environment(EnvType.CLIENT)
     private Button buttonAmountAndPriceBack;
+    @Environment(EnvType.CLIENT)
     private Button buttonAmountAndPriceCancel;
+    @Environment(EnvType.CLIENT)
     private Button buttonAmountAndPriceNext;
 
     /* Set Duration Layout */
+    @Environment(EnvType.CLIENT)
     private Layout layoutDuration;
+    @Environment(EnvType.CLIENT)
     private Label labelHours;
+    @Environment(EnvType.CLIENT)
     private Label labelMinutes;
+    @Environment(EnvType.CLIENT)
     private Label labelSeconds;
+    @Environment(EnvType.CLIENT)
     private NumberSelector selectorHours;
+    @Environment(EnvType.CLIENT)
     private NumberSelector selectorMinutes;
+    @Environment(EnvType.CLIENT)
     private NumberSelector selectorSeconds;
+    @Environment(EnvType.CLIENT)
     private Button buttonDurationBack;
+    @Environment(EnvType.CLIENT)
     private Button buttonDurationCancel;
+    @Environment(EnvType.CLIENT)
     private Button buttonDurationAdd;
 
     public MineBayApp() {
@@ -83,6 +111,7 @@ public class MineBayApp extends Application {
         AuctionManager.INSTANCE.tick();
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     public void init(@Nullable CompoundTag intent) {
         var layoutMain = new StandardLayout(ChatFormatting.BOLD + "Icons", 330, 153, this, null);
@@ -345,7 +374,9 @@ public class MineBayApp extends Application {
                 });
                 TaskManager.sendTask(task);
                 dialog.close();
-                init(intent);
+                EnvExecutor.runInEnv(Env.CLIENT, () -> () -> {
+                    init(intent);
+                });
             });
             openDialog(dialog);
         });

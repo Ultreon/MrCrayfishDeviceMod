@@ -2,6 +2,8 @@ package com.ultreon.devices.programs.gitweb.module;
 
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.programs.gitweb.component.GitWebFrame;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.Gui;
 
 import java.util.Map;
@@ -9,6 +11,7 @@ import java.util.Map;
 /**
  * @author MrCrayfish
  */
+@Environment(EnvType.CLIENT)
 public class DividerModule extends Module {
     @Override
     public String[] getRequiredData() {

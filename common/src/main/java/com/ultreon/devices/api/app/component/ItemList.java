@@ -8,6 +8,8 @@ import com.ultreon.devices.api.app.listener.ItemClickListener;
 import com.ultreon.devices.api.app.renderer.ListItemRenderer;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.util.GuiHelper;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.core.NonNullList;
@@ -21,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 
 
+@Environment(EnvType.CLIENT)
 public class ItemList<E> extends Component implements Iterable<E> {
     private static final int LOADING_BACKGROUND = new Color(0f, 0f, 0f, 0.5f).getRGB();
     protected int width;

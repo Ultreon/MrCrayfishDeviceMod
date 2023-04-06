@@ -27,6 +27,8 @@ import com.ultreon.devices.util.GLHelper;
 import dev.architectury.injectables.annotations.PlatformOnly;
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.ints.IntArraySet;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
@@ -60,6 +62,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  *
  * @author MrCrayfish, Qboi123
  */
+@Environment(EnvType.CLIENT)
 public class Laptop extends Screen implements System {
     public static final int ID = 1;
     public static final ResourceLocation ICON_TEXTURES = new ResourceLocation(Reference.MOD_ID, "textures/atlas/app_icons.png");

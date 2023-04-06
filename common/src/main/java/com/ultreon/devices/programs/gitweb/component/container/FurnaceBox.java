@@ -4,6 +4,8 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.core.Laptop;
 import dev.architectury.injectables.annotations.ExpectPlatform;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -12,6 +14,7 @@ import net.minecraft.world.level.block.Blocks;
 /**
  * @author MrCrayfish
  */
+@Environment(EnvType.CLIENT)
 public class FurnaceBox extends ContainerBox {
     public static final int HEIGHT = 68;
 

@@ -6,6 +6,8 @@ import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.component.ButtonToggle;
 import com.ultreon.devices.api.app.component.TextArea;
 import com.ultreon.devices.api.app.interfaces.IHighlight;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 
@@ -36,6 +38,7 @@ public class TextAreaApp extends Application {
         return t;
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     public void init(@Nullable CompoundTag intent) {
         Layout layout = new Layout(250, 150);

@@ -11,6 +11,8 @@ import com.ultreon.devices.programs.gitweb.layout.TextLayout;
 import com.ultreon.devices.programs.system.SettingsApp;
 import com.ultreon.devices.programs.system.layout.StandardLayout;
 import com.ultreon.devices.util.DataHandler;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.nbt.CompoundTag;
 
@@ -23,16 +25,25 @@ import java.util.Optional;
  * Licensed under GPL 3d
  */
 public class GitWebApp extends Application implements SystemAccessor, DataHandler {
+    @Environment(EnvType.CLIENT)
     private Layout layoutBrowser;
+    @Environment(EnvType.CLIENT)
     private Layout layoutPref;
 
+    @Environment(EnvType.CLIENT)
     private Button btnSearch;
+    @Environment(EnvType.CLIENT)
     private Button btnHome;
+    @Environment(EnvType.CLIENT)
     private Button btnSettings;
 
+    @Environment(EnvType.CLIENT)
     private GitWebFrame webFrame;
+    @Environment(EnvType.CLIENT)
     private TextField textFieldAddress;
+    @Environment(EnvType.CLIENT)
     private Spinner spinnerLoading;
+    @Environment(EnvType.CLIENT)
     private TextLayout scrollable;
 
     private System system;
@@ -41,6 +52,7 @@ public class GitWebApp extends Application implements SystemAccessor, DataHandle
         return Optional.ofNullable(system);
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     public void init(@Nullable CompoundTag intent) {
         layoutBrowser = new StandardLayout(null, 362, 240, this, null);

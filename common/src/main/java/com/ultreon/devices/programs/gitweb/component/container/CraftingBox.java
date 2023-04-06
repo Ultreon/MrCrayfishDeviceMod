@@ -1,11 +1,14 @@
 package com.ultreon.devices.programs.gitweb.component.container;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 
 /**
  * @author MrCrayfish
  */
+@Environment(EnvType.CLIENT)
 public class CraftingBox extends ContainerBox {
     public static final int HEIGHT = 68;
 

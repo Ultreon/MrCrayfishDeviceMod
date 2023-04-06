@@ -15,6 +15,8 @@ import com.ultreon.devices.programs.system.object.AppEntry;
 import com.ultreon.devices.programs.system.object.LocalEntry;
 import com.ultreon.devices.programs.system.object.RemoteEntry;
 import com.ultreon.devices.util.GuiHelper;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.resources.ResourceLocation;
@@ -26,6 +28,7 @@ import java.util.List;
 /**
  * @author MrCrayfish
  */
+@Environment(EnvType.CLIENT)
 public class AppGrid extends Component {
     private final int padding = 5;
     private final int horizontalItems;

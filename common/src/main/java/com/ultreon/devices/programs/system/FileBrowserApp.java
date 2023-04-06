@@ -8,11 +8,14 @@ import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.object.TrayItem;
 import com.ultreon.devices.programs.system.component.FileBrowser;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.nbt.CompoundTag;
 
 import javax.annotation.Nullable;
 
 public class FileBrowserApp extends SystemApp {
+    @Environment(EnvType.CLIENT)
     private FileBrowser browser;
 
     public FileBrowserApp() {
@@ -20,6 +23,7 @@ public class FileBrowserApp extends SystemApp {
         this.setDefaultHeight(145);
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     public void init(@Nullable CompoundTag intent) {
         browser = new FileBrowser(0, 0, this, FileBrowser.Mode.FULL);

@@ -5,10 +5,13 @@ import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.component.Slider;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.util.GuiHelper;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 
 import java.awt.*;
 
+@Environment(EnvType.CLIENT)
 public class ColorGrid extends Component {
     private static final Color[] colors = {Color.BLACK, Color.GRAY, Color.LIGHT_GRAY, Color.WHITE, Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN, new Color(0, 150, 0), new Color(0, 255, 255), new Color(0, 148, 255), Color.BLUE, new Color(72, 0, 255), Color.MAGENTA, new Color(255, 0, 110)};
 

@@ -8,9 +8,12 @@ import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.programs.gitweb.GitWebApp;
 import com.ultreon.devices.programs.gitweb.component.GitWebFrame;
 import com.ultreon.devices.programs.system.AppStore;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import java.util.Map;
 
+@Environment(EnvType.CLIENT)
 public class AppLinkModule extends Module {
     @Override
     public String[] getRequiredData() {
