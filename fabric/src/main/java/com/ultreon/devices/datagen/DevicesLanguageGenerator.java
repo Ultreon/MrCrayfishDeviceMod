@@ -114,7 +114,6 @@ public class DevicesLanguageGenerator extends FabricLanguageProvider {
     }
 
     private void createTranslationsForEnglish(TranslationBuilder translationBuilder) {
-        //System.out.println(dataGenerator.getModContainer().getRootPaths());
         try {
             translationBuilder.add(dataOutput.getModContainer().findPath("en_us_existing.json").orElseThrow());
         } catch (Exception e) {e.printStackTrace();}
