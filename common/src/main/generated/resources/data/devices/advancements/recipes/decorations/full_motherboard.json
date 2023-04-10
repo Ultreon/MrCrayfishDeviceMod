@@ -1,36 +1,48 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_beacon": {
+    "has_cpu": {
       "conditions": {
         "items": [
           {
             "items": [
-              "minecraft:beacon"
+              "devices:cpu"
             ]
           }
         ]
       },
       "trigger": "minecraft:inventory_changed"
     },
-    "has_netherite_ingot": {
+    "has_gpu": {
       "conditions": {
         "items": [
           {
             "items": [
-              "minecraft:netherite_ingot"
+              "devices:gpu"
             ]
           }
         ]
       },
       "trigger": "minecraft:inventory_changed"
     },
-    "has_quartz": {
+    "has_motherboard": {
       "conditions": {
         "items": [
           {
             "items": [
-              "minecraft:quartz"
+              "devices:motherboard"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_ram": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "devices:ram"
             ]
           }
         ]
@@ -39,22 +51,36 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "devices:pink_laptop"
+        "recipe": "devices:full_motherboard"
       },
       "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_wifi": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "devices:wifi"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
     }
   },
   "requirements": [
     [
-      "has_netherite_ingot",
-      "has_quartz",
-      "has_beacon",
+      "has_motherboard",
+      "has_cpu",
+      "has_gpu",
+      "has_ram",
+      "has_wifi",
       "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
-      "devices:pink_laptop"
+      "devices:full_motherboard"
     ]
   }
 }

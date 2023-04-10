@@ -1,13 +1,35 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_beacon": {
+    "has_battery": {
       "conditions": {
         "items": [
           {
             "items": [
-              "minecraft:beacon"
+              "devices:battery"
             ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_full_motherboard": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "devices:full_motherboard"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_hard_drive": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "devices:internal_storage"
           }
         ]
       },
@@ -25,21 +47,9 @@
       },
       "trigger": "minecraft:inventory_changed"
     },
-    "has_quartz": {
-      "conditions": {
-        "items": [
-          {
-            "items": [
-              "minecraft:quartz"
-            ]
-          }
-        ]
-      },
-      "trigger": "minecraft:inventory_changed"
-    },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "devices:orange_laptop"
+        "recipe": "devices:gray_laptop"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -47,14 +57,15 @@
   "requirements": [
     [
       "has_netherite_ingot",
-      "has_quartz",
-      "has_beacon",
+      "has_full_motherboard",
+      "has_battery",
+      "has_hard_drive",
       "has_the_recipe"
     ]
   ],
   "rewards": {
     "recipes": [
-      "devices:orange_laptop"
+      "devices:gray_laptop"
     ]
   }
 }
