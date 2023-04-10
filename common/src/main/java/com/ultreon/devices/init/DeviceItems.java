@@ -92,6 +92,7 @@ public class DeviceItems {
 
     public static final RegistrySupplier<ComponentItem> COMPONENT_CIRCUIT_BOARD = REGISTER.register(Devices.id("circuit_board"), () -> new ComponentItem(new Item.Properties()));
     public static final RegistrySupplier<ComponentItem> COMPONENT_MOTHERBOARD = REGISTER.register(Devices.id("motherboard"), () -> new MotherboardItem(new Item.Properties()));
+    public static final RegistrySupplier<ComponentItem> COMPONENT_FULL_MOTHERBOARD = REGISTER.register(Devices.id("full_motherboard"), () -> new ComponentItem(new Item.Properties()));
     public static final RegistrySupplier<ComponentItem> COMPONENT_CPU = REGISTER.register(Devices.id("cpu"), () -> new MotherboardItem.Component(new Item.Properties()));
     public static final RegistrySupplier<ComponentItem> COMPONENT_RAM = REGISTER.register(Devices.id("ram"), () -> new MotherboardItem.Component(new Item.Properties()));
     public static final RegistrySupplier<ComponentItem> COMPONENT_GPU = REGISTER.register(Devices.id("gpu"), () -> new MotherboardItem.Component(new Item.Properties()));
