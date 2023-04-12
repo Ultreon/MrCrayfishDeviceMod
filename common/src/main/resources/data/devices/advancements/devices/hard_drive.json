@@ -1,0 +1,35 @@
+{
+  "parent": "devices:devices/root",
+  "criteria": {
+    "get_hard_drive": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "devices:hard_drive"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.devices.hard_drive.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "devices:hard_drive"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.devices.hard_drive.title"
+    }
+  },
+  "requirements": [
+    [
+      "get_hard_drive"
+    ]
+  ]
+}

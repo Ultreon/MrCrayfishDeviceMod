@@ -1,3 +1,7 @@
+import org.apache.commons.io.filefilter.DirectoryFileFilter
+
+import java.io.File
+
 plugins {
     id "architectury-plugin" version "3.4-SNAPSHOT"
     id "dev.architectury.loom" version "0.12.0-SNAPSHOT" apply false
@@ -132,5 +136,18 @@ if (Objects.equals(System.getenv("CIRCLE_CI"), "true")) {
     mergeJars.finalizedBy(copyToArtifacts)
 }
 
+def packFeatures = tasks.register('packFeatures') {
+    group "packs"
+}.get()
+
+for (File file : project.file("packs/featuretoggles").listFiles(new DirectoryFileFilter() as FileFilter)) {
+    packFeatures.dependsOn(tasks.register("packFeature" + file.getName()[0].toUpperCase() + file.getName().substring(1), Zip) {
+        from(fileTree(file))
+        archiveFileName = "devices-featuretoggle-${file.name}.zip"
+        group "packs"
+    }.get())
+}
+
+build.finalizedBy packFeatures
 
 //build.dependsOn mergeJars

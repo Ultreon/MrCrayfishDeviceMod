@@ -1,0 +1,37 @@
+{
+  "criteria": {
+    "crafting_table": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:crafting_table"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "background": "devices:textures/gui/advancements/backgrounds/matrix.png",
+    "description": {
+      "translate": "advancements.devices.root.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "devices:gray_laptop"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.devices.root.title"
+    }
+  },
+  "requirements": [
+    [
+      "crafting_table"
+    ]
+  ]
+}

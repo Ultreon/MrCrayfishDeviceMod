@@ -4,6 +4,7 @@
   "package": "com.ultreon.devices.mixin.fabric",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+
   ],
   "client": [
   ],

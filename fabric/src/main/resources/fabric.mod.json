@@ -42,6 +42,9 @@
     ],
     "fabric-datagen": [
       "com.ultreon.devices.datagen.DevicesDataGenerator"
+    ],
+    "preLaunch": [
+      "com.ultreon.devices.fabric.DevicesPreLaunchFabric"
     ]
   },
   "mixins": [

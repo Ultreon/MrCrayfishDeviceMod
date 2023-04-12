@@ -4,11 +4,8 @@ import com.ultreon.devices.ModDeviceTypes;
 import com.ultreon.devices.block.entity.OfficeChairBlockEntity;
 import com.ultreon.devices.entity.SeatEntity;
 import com.ultreon.devices.util.SeatUtil;
-import net.minecraft.Util;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -33,16 +30,14 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
-public class OfficeChairBlock extends DeviceBlock.Colored
-{
+public class OfficeChairBlock extends DeviceBlock.Colored {
     public static final EnumProperty<Type> TYPE = EnumProperty.create("type", Type.class);
 
     private static final VoxelShape EMPTY_BOX = Shapes.box(0, 0, 0, 0, 0, 0);
     private static final VoxelShape SELECTION_BOX = Shapes.box(0.0625f, 0, 0.0625f, 0.9375f, /*1.6875f*/0.625f, 0.9375f);
     private static final VoxelShape SEAT_BOUNDING_BOX = Shapes.box(0.0625f, 0, 0.0625f, 0.9375f, 0.625f, 0.9375f);
 
-    public OfficeChairBlock(DyeColor color)
-    {
+    public OfficeChairBlock(DyeColor color) {
         super(BlockBehaviour.Properties.of(Material.STONE, color.getMaterialColor()), color, ModDeviceTypes.SEAT);
         //this.setUnlocalizedName("office_chair");
         //this.setRegistryName("office_chair");
@@ -56,8 +51,7 @@ public class OfficeChairBlock extends DeviceBlock.Colored
 //    }
 
     @Override
-    public boolean canSurvive(BlockState state, LevelReader reader, BlockPos pos)
-    {
+    public boolean canSurvive(BlockState state, LevelReader reader, BlockPos pos) {
         return false || true;
     }
 
@@ -82,12 +76,8 @@ public class OfficeChairBlock extends DeviceBlock.Colored
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit)
-    {
-        //System.out.println(DeviceEntities.SEAT.get().create(level).toString());
-        System.out.println("OKOKJRTKFD");
-        if(!level.isClientSide)
-        {
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (!level.isClientSide) {
             SeatUtil.createSeatAndSit(level, pos, player, -1);
         }
         return InteractionResult.SUCCESS;
@@ -95,25 +85,21 @@ public class OfficeChairBlock extends DeviceBlock.Colored
 
     @Nullable
     @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state)
-    {
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new OfficeChairBlockEntity(pos, state);
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> pBuilder)
-    {
+    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> pBuilder) {
         super.createBlockStateDefinition(pBuilder);
         pBuilder.add(TYPE);
     }
 
-    public enum Type implements StringRepresentable
-    {
+    public enum Type implements StringRepresentable {
         LEGS, SEAT, FULL;
 
         @Override
-        public String getSerializedName()
-        {
+        public String getSerializedName() {
             return name().toLowerCase();
         }
     }

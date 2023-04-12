@@ -21,6 +21,8 @@ public class PacketHandler {
 
     public static void init() {
         INSTANCE.register(RequestPacket.class, RequestPacket::toBytes, RequestPacket::new, RequestPacket::onMessage);
+        INSTANCE.register(LaptopStartUsePacket.class, LaptopStartUsePacket::toBytes, LaptopStartUsePacket::new, LaptopStartUsePacket::onMessage);
+        INSTANCE.register(LaptopStopUsePacket.class, LaptopStopUsePacket::toBytes, LaptopStopUsePacket::new, LaptopStopUsePacket::onMessage);
         INSTANCE.register(ResponsePacket.class, Packet::toBytes, ResponsePacket::new, ResponsePacket::onMessage);
         INSTANCE.register(SyncApplicationPacket.class, Packet::toBytes, SyncApplicationPacket::new, SyncApplicationPacket::onMessage);
         INSTANCE.register(SyncConfigPacket.class, Packet::toBytes, SyncConfigPacket::new, SyncConfigPacket::onMessage);

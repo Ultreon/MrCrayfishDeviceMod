@@ -1,0 +1,35 @@
+{
+  "parent": "devices:devices/hard_drive",
+  "criteria": {
+    "get_solid_state_drive": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "devices:solid_state_drive"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.devices.solid_state_drive.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "devices:solid_state_drive"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.devices.solid_state_drive.title"
+    }
+  },
+  "requirements": [
+    [
+      "get_solid_state_drive"
+    ]
+  ]
+}

@@ -1,5 +1,6 @@
 package com.ultreon.devices.programs.gitweb.module;
 
+import com.ultreon.devices.Devices;
 import com.ultreon.devices.api.ApplicationManager;
 import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Layout;
@@ -39,11 +40,14 @@ public class AppLinkModule extends Module {
         button.setSize(70, height - 15);
         button.setClickListener((mouseX, mouseY, mouseButton) -> {
             if (frame.getApp() instanceof GitWebApp gitWeb) {
-                System.out.println("FRAME");
                 gitWeb.getSystem().ifPresent(a -> {
-                    System.out.println("OPENING APP");
+                    if (info != null) {
+                        Devices.LOGGER.debug(GitWebApp.MARKER, "Opening app page in application market for: " + info.getId());
+                    } else {
+                        Devices.LOGGER.warn(GitWebApp.MARKER, "Trying to open app page in application market for a 'null' app.");
+                    }
                     var b = a.openApplication(ApplicationManager.getApplication(ResourceLocation.tryParse("devices:app_store")));
-                    if (b != null && b instanceof AppStore store) {
+                    if (b instanceof AppStore store) {
                         store.queueOpen(info);
                     }
                 });

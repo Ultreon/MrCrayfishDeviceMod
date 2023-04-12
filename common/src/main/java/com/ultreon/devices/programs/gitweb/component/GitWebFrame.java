@@ -204,15 +204,9 @@ public class GitWebFrame extends Component {
 
     @Override
     protected void handleTick() {
-        //System.out.println("TICK TOCK");
         for (Component component : this.layout.components) {
-            //System.out.println("A");
             if (component instanceof ModuleLayout layout) {
-             //   System.out.println("AAAA");
                 layout._tick();
-               // layout.entry.getModule()
-            } else {
-                System.out.println(component);
             }
         }
         if (pendingWebsite != null) {

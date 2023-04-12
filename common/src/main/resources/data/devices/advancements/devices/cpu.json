@@ -1,0 +1,35 @@
+{
+  "parent": "devices:devices/motherboard",
+  "criteria": {
+    "get_cpu": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "devices:cpu"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.devices.cpu.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "devices:cpu"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.devices.cpu.title"
+    }
+  },
+  "requirements": [
+    [
+      "get_cpu"
+    ]
+  ]
+}

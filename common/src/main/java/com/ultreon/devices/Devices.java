@@ -22,6 +22,7 @@ import com.ultreon.devices.core.network.task.TaskGetDevices;
 import com.ultreon.devices.core.network.task.TaskPing;
 import com.ultreon.devices.core.print.task.TaskPrint;
 import com.ultreon.devices.core.task.TaskInstallApp;
+import com.ultreon.devices.init.DeviceCriterionTriggers;
 import com.ultreon.devices.network.PacketHandler;
 import com.ultreon.devices.network.task.SyncApplicationPacket;
 import com.ultreon.devices.network.task.SyncConfigPacket;
@@ -39,6 +40,7 @@ import com.ultreon.devices.programs.example.ExampleApp;
 import com.ultreon.devices.programs.example.task.TaskNotificationTest;
 import com.ultreon.devices.programs.system.SystemApp;
 import com.ultreon.devices.programs.system.task.*;
+import com.ultreon.devices.util.LaptopUses;
 import com.ultreon.devices.util.SiteRegistration;
 import com.ultreon.devices.util.Vulnerability;
 import dev.architectury.event.EventResult;
@@ -46,6 +48,7 @@ import dev.architectury.event.events.client.ClientPlayerEvent;
 import dev.architectury.event.events.common.InteractionEvent;
 import dev.architectury.event.events.common.LifecycleEvent;
 import dev.architectury.event.events.common.PlayerEvent;
+import dev.architectury.event.events.common.TickEvent;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.architectury.injectables.targets.ArchitecturyTarget;
 import dev.architectury.platform.Platform;
@@ -58,6 +61,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
@@ -106,7 +110,6 @@ public class Devices {
             preInit();
             serverSetup();
         }
-        //     BlockEntityUtil.sendUpdate(null, null, null);
 
         // STOPSHIP: 3/11/2022 should be moved to dedicated testmod
         final var property = System.getProperty("ultreon.devices.tests");
@@ -528,6 +531,12 @@ public class Devices {
             }
             PacketHandler.sendToClient(new SyncConfigPacket(), player);
         }));
+        PlayerEvent.PLAYER_QUIT.register(LaptopUses::stopUsing);
+        TickEvent.PLAYER_PRE.register(player -> {
+            if (player instanceof ServerPlayer serverPlayer) {
+                LaptopUses.tick(serverPlayer, value -> DeviceCriterionTriggers.LAPTOP_USE.trigger(serverPlayer, value));
+            }
+        });
     }
 
     private static void setupSiteRegistrations() {

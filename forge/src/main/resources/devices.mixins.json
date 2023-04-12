@@ -1,9 +1,10 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "com.ultreon.devices.devices.mixin.forge",
+  "package": "com.ultreon.devices.mixin.forge",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+
   ],
   "client": [
   ],

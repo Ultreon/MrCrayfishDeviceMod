@@ -1,5 +1,6 @@
 package com.ultreon.devices.api.io;
 
+import com.ultreon.devices.Devices;
 import com.ultreon.devices.api.task.Callback;
 import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.api.task.TaskManager;
@@ -71,7 +72,7 @@ public class Folder extends File {
 
     /**
      * Adds a file to the folder. The folder must be in the file system before you can add files to
-     * it. If the file with the same name exists, it will not overridden. This method does not
+     * it. If the file with the same name exists, it will not be overridden. This method does not
      * verify if the file was added successfully. See {@link #add(File, Callback)} to determine if
      * it was successful or not.
      *
@@ -83,7 +84,7 @@ public class Folder extends File {
 
     /**
      * Adds a file to the folder. The folder must be in the file system before you can add files to
-     * it. If the file with the same name exists, it will not overridden. This method allows the
+     * it. If the file with the same name exists, it will not be overridden. This method allows the
      * specification of a {@link Callback}, and will return a
      * {@link FileSystem.Response} indicating if the file was
      * successfully added to the folder or an error occurred.
@@ -103,7 +104,7 @@ public class Folder extends File {
      * successfully added to the folder or an error occurred.
      *
      * @param file     the file to add
-     * @param override if should override existing file
+     * @param override whether to override existing file
      * @param callback the response callback
      */
     public void add(File file, boolean override, @Nullable Callback<FileSystem.Response> callback) {
@@ -111,59 +112,49 @@ public class Folder extends File {
             throw new IllegalStateException("Folder must be added to the system before you can add files to it");
 
         if (file == null) {
-            System.out.println("File is null");
+            Devices.LOGGER.warn("File is null", new RuntimeException());
             if (callback != null) {
-                System.out.println("Callback is not null");
                 callback.execute(FileSystem.createResponse(FileSystem.Status.FILE_INVALID, "Illegal file"), false);
             }
             return;
         }
 
-        System.out.println("Adding file " + file.name + " to folder " + name);
-
         if (!FileSystem.PATTERN_FILE_NAME.matcher(file.name).matches()) {
-            System.out.println("File name is invalid");
+            Devices.LOGGER.error("File name is invalid", new RuntimeException());
             if (callback != null) {
-                System.out.println("Callback is not null");
                 callback.execute(FileSystem.createResponse(FileSystem.Status.FILE_INVALID_NAME, "Invalid file name"), true);
             }
             return;
         }
 
         if (hasFile(file.name)) {
-            System.out.println("File already exists");
             if (!override) {
-                System.out.println("File already exists and override is false");
+                Devices.LOGGER.warn("File already exists but there was no override flag set", new RuntimeException());
                 if (callback != null) {
-                    System.out.println("Callback is not null");
                     callback.execute(FileSystem.createResponse(FileSystem.Status.FILE_EXISTS, "A file with that name already exists"), true);
                 }
                 return;
             } else if (Objects.requireNonNull(getFile(file.name)).isProtected()) {
-                System.out.println("File already exists and override is true and file is protected");
+                Devices.LOGGER.error("Tried to override a protected file", new RuntimeException());
                 if (callback != null) {
-                    System.out.println("Callback is not null");
                     callback.execute(FileSystem.createResponse(FileSystem.Status.FILE_IS_PROTECTED, "Unable to override protected files"), true);
                 }
                 return;
             }
         }
 
-        System.out.println("File is valid");
-
         FileSystem.sendAction(drive, FileAction.Factory.makeNew(this, file, override), (response, success) -> {
-            System.out.println("Received response");
             if (success) {
-                System.out.println("File added successfully");
                 if (override) files.remove(getFile(file.name));
                 file.setDrive(drive);
                 file.valid = true;
                 file.parent = this;
                 files.add(file);
                 FileBrowser.refreshList = true;
+            } else {
+                Devices.LOGGER.warn("Failed to create new file: " + file.getPath());
             }
             if (callback != null) {
-                System.out.println("Callback is not null");
                 callback.execute(response, success);
             }
         });
@@ -434,7 +425,7 @@ public class Folder extends File {
     }
 
     /**
-     * Do not use! Syncs files from the file system
+     * Do not use! This synchronizes files from the file system
      *
      * @param list the tag list to read from
      */

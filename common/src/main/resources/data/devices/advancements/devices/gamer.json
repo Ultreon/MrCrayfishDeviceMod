@@ -1,0 +1,31 @@
+{
+  "parent": "devices:devices/complete_motherboard",
+  "criteria": {
+    "gamer_usage": {
+      "conditions": {
+        "minutes": 20
+      },
+      "trigger": "devices:gamer_usage"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.devices.gamer.description"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "item": "minecraft:red_office_chair"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.devices.gamer.title"
+    }
+  },
+  "requirements": [
+    [
+      "gamer_usage"
+    ]
+  ]
+}

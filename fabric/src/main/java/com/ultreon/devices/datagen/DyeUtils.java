@@ -31,6 +31,31 @@ public class DyeUtils {
             this.dyeColor = dyeColor;
         }
     }
+    private enum CarpetColor {
+        WHITE_CARPET("white_carpet", DyeColor.WHITE),
+        ORANGE_CARPET("orange_carpet", DyeColor.ORANGE),
+        MAGENTA_CARPET("magenta_carpet", DyeColor.MAGENTA),
+        LIGHT_BLUE_CARPET("light_blue_carpet", DyeColor.LIGHT_BLUE),
+        YELLOW_CARPET("yellow_carpet", DyeColor.YELLOW),
+        LIME_CARPET("lime_carpet", DyeColor.LIME),
+        PINK_CARPET("pink_carpet", DyeColor.PINK),
+        GRAY_CARPET("gray_carpet", DyeColor.GRAY),
+        LIGHT_GRAY_CARPET("light_gray_carpet", DyeColor.LIGHT_GRAY),
+        CYAN_CARPET("cyan_carpet", DyeColor.CYAN),
+        PURPLE_CARPET("purple_carpet", DyeColor.PURPLE),
+        BLUE_CARPET("blue_carpet", DyeColor.BLUE),
+        BROWN_CARPET("brown_carpet", DyeColor.BROWN),
+        GREEN_CARPET("green_carpet", DyeColor.GREEN),
+        RED_CARPET("red_carpet", DyeColor.RED),
+        BLACK_CARPET("black_carpet", DyeColor.BLACK);
+
+        final Block block;
+        final DyeColor dyeColor;
+        CarpetColor(String block, DyeColor dyeColor) {
+            this.block = BuiltInRegistries.BLOCK.get(new ResourceLocation(block)); // accessing registry directly is fine as this class isn't used with forge at all
+            this.dyeColor = dyeColor;
+        }
+    }
     public static Block getWoolFromDye(DyeColor color) {
         for (WoolColor value : WoolColor.values()) {
             if (value.dyeColor.equals(color)) {
@@ -38,5 +63,13 @@ public class DyeUtils {
             }
         }
         return WoolColor.WHITE_WOOL.block;
+    }
+    public static Block getCarpetFromDye(DyeColor color) {
+        for (CarpetColor value : CarpetColor.values()) {
+            if (value.dyeColor.equals(color)) {
+                return value.block;
+            }
+        }
+        return CarpetColor.WHITE_CARPET.block;
     }
 }

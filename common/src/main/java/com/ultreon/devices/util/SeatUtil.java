@@ -33,7 +33,6 @@ public class SeatUtil
             assert seat != null;
             seat.setYOffset(yOffset);
             seat.setViaYOffset(pos);
-            System.out.println(seat);
             worldIn.addFreshEntity(seat);
             playerIn.startRiding(seat);
         }

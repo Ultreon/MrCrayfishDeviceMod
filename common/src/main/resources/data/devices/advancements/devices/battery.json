@@ -1,0 +1,35 @@
+{
+  "parent": "devices:devices/root",
+  "criteria": {
+    "get_battery": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "devices:battery"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.devices.battery.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "devices:battery"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.devices.battery.title"
+    }
+  },
+  "requirements": [
+    [
+      "get_battery"
+    ]
+  ]
+}

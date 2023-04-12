@@ -41,7 +41,6 @@ public class Text extends Component {
 
     @Override
     public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
-//        System.out.println(lines.size() + ", " + rawText + ", " + lines);
         if (this.visible) {
             for (int i = 0; i < lines.size(); i++) {
                 String text = lines.get(i);

@@ -1,0 +1,35 @@
+{
+  "parent": "devices:devices/root",
+  "criteria": {
+    "get_screen": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "devices:screen"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.devices.screen.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "devices:screen"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.devices.screen.title"
+    }
+  },
+  "requirements": [
+    [
+      "get_screen"
+    ]
+  ]
+}

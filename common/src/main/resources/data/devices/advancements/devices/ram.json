@@ -1,0 +1,35 @@
+{
+  "parent": "devices:devices/motherboard",
+  "criteria": {
+    "get_ram": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "devices:ram"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.devices.ram.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "devices:ram"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.devices.ram.title"
+    }
+  },
+  "requirements": [
+    [
+      "get_ram"
+    ]
+  ]
+}

@@ -9,6 +9,7 @@ import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 public class MixinPlugin implements IMixinConfigPlugin {
@@ -24,7 +25,7 @@ public class MixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        return true;
+        return !targetClassName.equals("com.ultreon.devices.api.utils.OnlineRequest");
     }
 
     @Override

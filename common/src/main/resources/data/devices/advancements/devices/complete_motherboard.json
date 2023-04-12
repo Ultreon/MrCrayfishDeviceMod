@@ -1,0 +1,35 @@
+{
+  "parent": "devices:devices/motherboard",
+  "criteria": {
+    "get_full_motherboard": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "devices:full_motherboard"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.devices.complete_motherboard.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "devices:full_motherboard"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.devices.complete_motherboard.title"
+    }
+  },
+  "requirements": [
+    [
+      "get_full_motherboard"
+    ]
+  ]
+}

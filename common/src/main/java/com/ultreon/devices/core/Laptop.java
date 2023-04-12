@@ -17,6 +17,9 @@ import com.ultreon.devices.api.task.TaskManager;
 import com.ultreon.devices.api.utils.OnlineRequest;
 import com.ultreon.devices.block.entity.LaptopBlockEntity;
 import com.ultreon.devices.core.task.TaskInstallApp;
+import com.ultreon.devices.network.LaptopStartUsePacket;
+import com.ultreon.devices.network.LaptopStopUsePacket;
+import com.ultreon.devices.network.PacketHandler;
 import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.programs.system.DiagnosticsApp;
 import com.ultreon.devices.programs.system.SystemApp;
@@ -270,6 +273,10 @@ public class Laptop extends Screen implements System {
         if (Minecraft.getInstance().getConnection() == null) {
             installedApps.addAll(ApplicationManager.getAvailableApplications());
         }
+
+        if (!worldLess) {
+            PacketHandler.sendToServer(new LaptopStartUsePacket());
+        }
     }
 
     @Override
@@ -331,11 +338,6 @@ public class Laptop extends Screen implements System {
             for (Window<?> window : windows) {
                 if (window != null) {
                     window.onTick();
-//                    if (window.removed) {
-//                        java.lang.System.out.println("REMOVED " + window);
-//                        windows.remove(window);
-//                        i--;
-//                    }
                 }
             }
 
@@ -654,6 +656,14 @@ public class Laptop extends Screen implements System {
             windows.get(0).openDialog(message);
         }
         return true;
+    }
+
+    @Override
+    public void onClose() {
+        if (!worldLess) {
+            PacketHandler.sendToServer(new LaptopStopUsePacket());
+        }
+        super.onClose();
     }
 
     @Override

@@ -1,0 +1,35 @@
+{
+  "parent": "devices:devices/motherboard",
+  "criteria": {
+    "get_gpu": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "devices:gpu"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.devices.gpu.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "devices:gpu"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.devices.gpu.title"
+    }
+  },
+  "requirements": [
+    [
+      "get_gpu"
+    ]
+  ]
+}

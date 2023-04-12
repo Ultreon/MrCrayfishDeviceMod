@@ -13,6 +13,8 @@ import com.ultreon.devices.programs.system.layout.StandardLayout;
 import com.ultreon.devices.util.DataHandler;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.nbt.CompoundTag;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import javax.annotation.Nullable;
 import java.awt.*;
@@ -23,6 +25,7 @@ import java.util.Optional;
  * Licensed under GPL 3d
  */
 public class GitWebApp extends Application implements SystemAccessor, DataHandler {
+    public static final Marker MARKER = MarkerFactory.getMarker("GitWeb");
     private Layout layoutBrowser;
     private Layout layoutPref;
 

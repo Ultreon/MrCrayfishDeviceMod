@@ -2,6 +2,7 @@ package com.ultreon.devices.programs.system.layout;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.ultreon.devices.Devices;
 import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.ScrollableLayout;
@@ -139,7 +140,7 @@ public class LayoutAppPage extends Layout {
                     } else {
                         laptop.installApplication(info, (o, success) ->
                         {
-                            System.out.println("Installation Succeeded: " + success);
+                            Devices.LOGGER.debug("Installation Succeeded: " + success);
                             btnInstall.setText("Delete");
                             btnInstall.setIcon(Icons.CROSS);
                             installed = true;

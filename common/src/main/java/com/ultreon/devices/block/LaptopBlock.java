@@ -74,7 +74,6 @@ public class LaptopBlock extends DeviceBlock.Colored {
     @Override
     @SuppressWarnings("deprecation")
     public InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
-
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof LaptopBlockEntity laptop) {
             if (player.isCrouching()) {
@@ -89,15 +88,13 @@ public class LaptopBlock extends DeviceBlock.Colored {
                         if (!level.isClientSide) {
                             if (laptop.getFileSystem().setAttachedDrive(heldItem.copy())) {
                                 heldItem.shrink(1);
-                                return InteractionResult.CONSUME;
+                                return InteractionResult.sidedSuccess(false);
                             } else {
                                 return InteractionResult.FAIL;
                             }
                         }
-                        return InteractionResult.PASS;
-                    }
-
-                    if (!level.isClientSide) {
+                        return InteractionResult.sidedSuccess(true);
+                    } else if (!level.isClientSide) {
                         ItemStack stack = laptop.getFileSystem().removeAttachedDrive();
                         if (stack != null) {
                             BlockPos summonPos = pos.relative(state.getValue(FACING).getCounterClockWise(Direction.Axis.Y));
@@ -105,14 +102,12 @@ public class LaptopBlock extends DeviceBlock.Colored {
                             BlockEntityUtil.markBlockForUpdate(level, pos);
                         }
                     }
-                    return InteractionResult.SUCCESS;
+                    return InteractionResult.sidedSuccess(level.isClientSide);
                 }
 
                 if (laptop.isOpen()) {
                     if (level.isClientSide) {
-                        EnvExecutor.runInEnv(Env.CLIENT, () -> () -> {
-                            ClientLaptopWrapper.execute(laptop);
-                        });
+                        EnvExecutor.runInEnv(Env.CLIENT, () -> () -> ClientLaptopWrapper.execute(laptop));
                     }
                     return InteractionResult.sidedSuccess(level.isClientSide);
                 }

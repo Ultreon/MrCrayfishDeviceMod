@@ -1,0 +1,35 @@
+{
+  "parent": "devices:devices/motherboard",
+  "criteria": {
+    "get_wifi": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "devices:wifi"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.devices.wifi.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "devices:wifi"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.devices.wifi.title"
+    }
+  },
+  "requirements": [
+    [
+      "get_wifi"
+    ]
+  ]
+}

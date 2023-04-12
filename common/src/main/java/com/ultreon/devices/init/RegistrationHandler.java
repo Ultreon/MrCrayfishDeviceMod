@@ -9,6 +9,7 @@ import net.fabricmc.api.EnvType;
 public class RegistrationHandler {
     public static void register() {
         DeviceEntities.register();
+        DeviceCriterionTriggers.register();
         DeviceBlockEntities.register();
         DeviceBlocks.register();
         DeviceTags.register();

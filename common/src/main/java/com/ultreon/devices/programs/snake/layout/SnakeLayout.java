@@ -169,22 +169,18 @@ public class SnakeLayout extends Layout {
         }
 
         private void up() {
-            System.out.println("UP");
             this.direction2d = Direction2d.UP;
         }
 
         private void down() {
-            System.out.println("DOWN");
             this.direction2d = Direction2d.DOWN;
         }
 
         private void left() {
-            System.out.println("LEFT");
             this.direction2d = Direction2d.LEFT;
         }
 
         private void right() {
-            System.out.println("RIGHT");
             this.direction2d = Direction2d.RIGHT;
         }
 

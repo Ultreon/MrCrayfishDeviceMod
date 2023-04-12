@@ -1,0 +1,13 @@
+{
+  "features": {
+    "enabled": [
+      "devices:printer"
+    ]
+  },
+  "pack": {
+    "description": {
+      "translate": "dataPack.devices.printer.description"
+    },
+    "pack_format": 10
+  }
+}

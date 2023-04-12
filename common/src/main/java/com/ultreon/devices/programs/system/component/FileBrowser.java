@@ -408,10 +408,8 @@ public class FileBrowser extends Component {
     }
 
     private void openFolder(Folder folder, boolean push, Callback<Folder> callback) {
-        System.out.println("Opening Folder");
         if (!folder.isSynced()) {
             BlockPos pos = Laptop.getPos();
-            System.out.println("Open Folder: " + pos);
             if (pos == null) {
                 if (callback != null) {
                     callback.execute(null, false);

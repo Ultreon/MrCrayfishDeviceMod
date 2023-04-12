@@ -2,6 +2,7 @@ package com.ultreon.devices.programs.gitweb.module;
 
 import com.jab125.apoint.api.APoint;
 import com.jab125.apoint.api.APointRuntime;
+import com.ultreon.devices.Devices;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.programs.gitweb.component.GitWebFrame;
@@ -84,7 +85,7 @@ public class ScriptModule extends Module {
                 runnable.run();
             }
             catch (Exception e){
-                System.err.println(e);
+                Devices.LOGGER.warn("Failed to set timeout", e);
             }
         }).start();
     }

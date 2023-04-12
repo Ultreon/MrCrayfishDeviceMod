@@ -1,0 +1,35 @@
+{
+  "parent": "devices:devices/complete_motherboard",
+  "criteria": {
+    "get_laptop": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "devices:laptop"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.devices.laptop.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "devices:red_laptop"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.devices.laptop.title"
+    }
+  },
+  "requirements": [
+    [
+      "get_laptop"
+    ]
+  ]
+}

@@ -22,7 +22,6 @@ public class RequestPacket extends Packet<RequestPacket> {
         String name = buf.readUtf();
         this.request = TaskManager.getTask(name);
         this.tag = buf.readNbt();
-        //System.out.println("decoding");
     }
 
     public RequestPacket(int id, Task request) {

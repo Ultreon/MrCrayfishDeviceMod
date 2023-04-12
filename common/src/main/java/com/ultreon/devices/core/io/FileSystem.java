@@ -61,19 +61,16 @@ public class FileSystem {
     @Environment(EnvType.CLIENT)
     public static void sendAction(Drive drive, FileAction action, @Nullable Callback<Response> callback) {
         if (Laptop.getPos() != null) {
-            System.out.println("Sending action " + action + " to " + drive);
             Task task = new TaskSendAction(drive, action);
             task.setCallback((tag, success) -> {
-                System.out.println("Action " + action + " sent to " + drive + ": " + success);
                 if (callback != null) {
                     assert tag != null;
-                    System.out.println("Callback: " + tag.getString("response"));
                     callback.execute(Response.fromTag(tag.getCompound("response")), success);
                 }
             });
             TaskManager.sendTask(task);
         } else {
-            System.out.println("Sending action " + action + " to " + drive + " failed: Laptop not found");
+            Devices.LOGGER.error("Sending action " + action + " to " + drive + " failed: Laptop not found");
         }
     }
 
@@ -135,7 +132,7 @@ public class FileSystem {
                 });
             }
         } else {
-            System.out.println("Application data folder is not initialized");
+            Devices.LOGGER.warn("Application data folder is not initialized for app: " + app.getInfo().getId());
             callback.execute(null, false);
         }
     }

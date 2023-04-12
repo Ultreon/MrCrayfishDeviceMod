@@ -62,7 +62,6 @@ public class CustomClassLoader {
         var hm = new HashMap<String, byte[]>();
         for (JarEntry jarEntry : jar.stream().toList()) {
             if (!jarEntry.isDirectory() && jarEntry.getRealName().endsWith(".class")) {
-              //  System.out.println(jarEntry.getRealName());
                 var d = jar.getInputStream(jarEntry);
                 var bytes = d.readAllBytes();
                 var asmVer = FabricLoaderImpl.ASM_VERSION;

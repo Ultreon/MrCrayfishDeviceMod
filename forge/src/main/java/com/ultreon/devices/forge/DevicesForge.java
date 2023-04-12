@@ -6,11 +6,14 @@ import com.ultreon.devices.Devices;
 import com.ultreon.devices.LaunchException;
 import com.ultreon.devices.Reference;
 import com.ultreon.devices.event.WorldDataHandler;
+import com.ultreon.devices.event.forge.FeatureFlagRegisterEvent;
+import com.ultreon.devices.featuretoggle.DevicesFeatureFlags;
 import com.ultreon.devices.init.RegistrationHandler;
 import dev.architectury.platform.forge.EventBuses;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.data.loading.DatagenModLoader;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -72,6 +75,11 @@ public class DevicesForge {
         // Register ourselves for server and other game events we are interested in
         LOGGER.info("Registering mod class to forge events.");
         forgeEventBus.register(this);
+    }
+
+    @SubscribeEvent
+    public void registerFeatureFlags(FeatureFlagRegisterEvent event) {
+        DevicesFeatureFlags.register(event.builder);
     }
 
     private void commonSetup(FMLCommonSetupEvent t) {

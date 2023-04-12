@@ -23,6 +23,8 @@ public class DevicesRecipeProvider extends FabricRecipeProvider {
     @Override
     public void buildRecipes(Consumer<FinishedRecipe> exporter) {
         DeviceBlocks.LAPTOPS.getMap().forEach(((dyeColor, blockRegistrySupplier) -> laptop(exporter, blockRegistrySupplier.get(), dyeColor)));
+        DeviceBlocks.ROUTERS.getMap().forEach(((dyeColor, blockRegistrySupplier) -> router(exporter, blockRegistrySupplier.get(), dyeColor)));
+        DeviceItems.FLASH_DRIVE.getMap().forEach(((dyeColor, blockRegistrySupplier) -> flashDrive(exporter, blockRegistrySupplier.get(), dyeColor)));
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, DeviceItems.COMPONENT_FULL_MOTHERBOARD.get())
                 .requires(DeviceItems.COMPONENT_CPU.get())
@@ -53,6 +55,34 @@ public class DevicesRecipeProvider extends FabricRecipeProvider {
                 .unlockedBy(getHasName(DeviceItems.COMPONENT_FULL_MOTHERBOARD.get()), has(DeviceItems.COMPONENT_FULL_MOTHERBOARD.get()))
                 .unlockedBy(getHasName(DeviceItems.COMPONENT_BATTERY.get()), has(DeviceItems.COMPONENT_BATTERY.get()))
                 .unlockedBy(getHasName(DeviceItems.COMPONENT_HARD_DRIVE.get()), has(DeviceTags.Items.INTERNAL_STORAGE))
+                .save(exporter);
+    }
+
+    public static void router(Consumer<FinishedRecipe> exporter, ItemLike router, DyeColor color) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, router)
+                .define('+', DyeUtils.getWoolFromDye(color))
+                .define('/', Items.IRON_INGOT)
+                .define('.', DeviceItems.PLASTIC.get())
+                .define('$', DeviceItems.COMPONENT_CIRCUIT_BOARD.get())
+                .define('O', Items.ENDER_EYE)
+                .pattern("/ /")
+                .pattern("+O+")
+                .pattern(".$.").group("devices:router")
+                .unlockedBy(getHasName(Items.NETHERITE_INGOT), has(Items.NETHERITE_INGOT))
+                .unlockedBy(getHasName(Items.ENDER_EYE), has(Items.ENDER_EYE))
+                .unlockedBy(getHasName(DeviceItems.COMPONENT_CIRCUIT_BOARD.get()), has(DeviceItems.COMPONENT_CIRCUIT_BOARD.get()))
+                .save(exporter);
+    }
+
+    public static void flashDrive(Consumer<FinishedRecipe> exporter, ItemLike flashDrive, DyeColor color) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, flashDrive)
+                .define('+', DyeUtils.getCarpetFromDye(color))
+                .define('/', Items.IRON_INGOT)
+                .define('$', DeviceItems.COMPONENT_FLASH_CHIP.get())
+                .pattern("/$+").group("devices:flash_drive")
+                .unlockedBy(getHasName(Items.NETHERITE_INGOT), has(Items.NETHERITE_INGOT))
+                .unlockedBy(getHasName(Items.ENDER_EYE), has(Items.ENDER_EYE))
+                .unlockedBy(getHasName(DeviceItems.COMPONENT_CIRCUIT_BOARD.get()), has(DeviceItems.COMPONENT_CIRCUIT_BOARD.get()))
                 .save(exporter);
     }
 }
