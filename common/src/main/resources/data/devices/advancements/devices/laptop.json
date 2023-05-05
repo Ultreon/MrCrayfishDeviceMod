@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "devices:laptop"
+            "tag": ["devices:laptops"]
           }
         ]
       },

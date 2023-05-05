@@ -118,16 +118,6 @@ public class LaptopBlockEntity extends NetworkDeviceBlockEntity.Colored {
         return tag;
     }
 
-    // Todo: Port to 1.18.2 if possible
-//    @Override
-//    public double getMaxRenderDistanceSquared() {
-//        return 16384;
-//    }
-//
-//    public AxisAlignedBB getRenderBoundingBox() {
-//        return INFINITE_EXTENT_AABB;
-//    }
-
     public void openClose(@Nullable Entity entity) {
         Level level = this.level;
         if (level != null) {
@@ -201,5 +191,9 @@ public class LaptopBlockEntity extends NetworkDeviceBlockEntity.Colored {
     @Environment(EnvType.CLIENT)
     public DyeColor getExternalDriveColor() {
         return externalDriveColor;
+    }
+
+    public void setExternalDriveColor(DyeColor externalDriveColor) {
+        this.externalDriveColor = externalDriveColor;
     }
 }

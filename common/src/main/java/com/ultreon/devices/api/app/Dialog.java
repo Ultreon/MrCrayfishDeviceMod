@@ -30,9 +30,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.function.Predicate;
 
@@ -309,7 +308,7 @@ public abstract class Dialog extends Wrappable {
          * @param negativeText the text to set
          */
         @SuppressWarnings("ConstantConditions")
-        public void setNegativeText(@Nonnull String negativeText) {
+        public void setNegativeText(@NotNull String negativeText) {
             if (negativeText == null) {
                 throw new IllegalArgumentException("Text can't be null");
             }
@@ -407,7 +406,7 @@ public abstract class Dialog extends Wrappable {
          * @param inputText the text to set
          */
         @SuppressWarnings("ConstantConditions")
-        public void setInputText(@Nonnull String inputText) {
+        public void setInputText(@NotNull String inputText) {
             if (inputText == null) {
                 throw new IllegalArgumentException("Text can't be null");
             }
@@ -430,7 +429,7 @@ public abstract class Dialog extends Wrappable {
          * @param positiveText the text to set
          */
         @SuppressWarnings("ConstantConditions")
-        public void setPositiveText(@Nonnull String positiveText) {
+        public void setPositiveText(@NotNull String positiveText) {
             if (positiveText == null) {
                 throw new IllegalArgumentException("Text can't be null");
             }
@@ -443,7 +442,7 @@ public abstract class Dialog extends Wrappable {
          * @param negativeText the text to set
          */
         @SuppressWarnings("ConstantConditions")
-        public void setNegativeText(@Nonnull String negativeText) {
+        public void setNegativeText(@NotNull String negativeText) {
             if (negativeText == null) {
                 throw new IllegalArgumentException("Text can't be null");
             }
@@ -684,7 +683,7 @@ public abstract class Dialog extends Wrappable {
          * @param positiveText the text to set
          */
         @SuppressWarnings("ConstantConditions")
-        public void setPositiveText(@Nonnull String positiveText) {
+        public void setPositiveText(@NotNull String positiveText) {
             if (positiveText == null) {
                 throw new IllegalArgumentException("Text can't be null");
             }
@@ -697,7 +696,7 @@ public abstract class Dialog extends Wrappable {
          * @param negativeText the text to set
          */
         @SuppressWarnings("ConstantConditions")
-        public void setNegativeText(@Nonnull String negativeText) {
+        public void setNegativeText(@NotNull String negativeText) {
             if (negativeText == null) {
                 throw new IllegalArgumentException("Text can't be null");
             }

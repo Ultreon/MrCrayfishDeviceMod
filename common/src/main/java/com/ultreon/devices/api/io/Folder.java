@@ -15,8 +15,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -400,7 +400,7 @@ public class Folder extends File {
      * @param data the data to set
      */
     @Override
-    public void setData(@Nonnull CompoundTag data) {
+    public void setData(@NotNull CompoundTag data) {
 
     }
 
@@ -412,7 +412,7 @@ public class Folder extends File {
      * @param callback the response callback
      */
     @Override
-    public void setData(@Nonnull CompoundTag data, Callback<FileSystem.Response> callback) {
+    public void setData(@NotNull CompoundTag data, Callback<FileSystem.Response> callback) {
         if (callback != null) {
             callback.execute(FileSystem.createResponse(FileSystem.Status.FAILED, "Can not set data of a folder"), false);
         }

@@ -79,7 +79,7 @@ public class PrinterBlock extends DeviceBlock.Colored implements Colored {
             box(12, 3, 4, 16, 9.3, 12));
 
     public PrinterBlock(DyeColor color) {
-        super(Properties.of(Material.HEAVY_METAL, color).strength(6f).sound(SoundType.METAL).requiredFeatures(DevicesFeatureFlags.getPrinter()), color, ModDeviceTypes.PRINTER);
+        super(Properties.of(Material.HEAVY_METAL, color).strength(6f).sound(SoundType.METAL).requiredFeatures(DevicesFeatureFlags.getExperiments()), color, ModDeviceTypes.PRINTER);
         this.registerDefaultState(getStateDefinition().any().setValue(FACING, Direction.NORTH));
     }
 

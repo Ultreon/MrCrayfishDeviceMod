@@ -14,6 +14,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
 
 public class PacketHandler {
     public static final NetworkChannel INSTANCE = NetworkChannel.create(Devices.id("main_channel"));
@@ -99,11 +100,11 @@ public class PacketHandler {
 //    public static <T extends Packet<T>> void sendToServer(Packet<T> messageNotification) {
 //        INSTANCE.send(PacketDistributor.SERVER.noArg(), messageNotification);
 //    }
-//
-//    public static <T extends Packet<T>> void sendToAll(Packet<T> messageNotification) {
-//        INSTANCE.send(PacketDistributor.ALL.noArg(), messageNotification);
-//    }
-//
+
+    public static <T extends Packet<T>> void sendToAll(Packet<T> messageNotification) {
+        INSTANCE.sendToPlayers(Devices.getServer().getPlayerList().getPlayers(), messageNotification);
+    }
+
 //    public static <T extends Packet<T>> void sendToAllAround(Packet<T> messageNotification, ResourceKey<Level> level, double x, double y, double z, double radius) {
 //        INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(x, y, z, radius, level)), messageNotification);
 //    }

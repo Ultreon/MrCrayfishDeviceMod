@@ -12,8 +12,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.core.NonNullList;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.util.Collections;
 import java.util.Comparator;
@@ -264,7 +264,7 @@ public class ItemList<E> extends Component implements Iterable<E> {
      *
      * @param e the item
      */
-    public void addItem(@Nonnull E e) {
+    public void addItem(@NotNull E e) {
         items.add(e);
         sort();
         if (initialized) {

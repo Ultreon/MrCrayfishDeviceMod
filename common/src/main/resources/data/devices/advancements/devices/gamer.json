@@ -3,7 +3,7 @@
   "criteria": {
     "gamer_usage": {
       "conditions": {
-        "minutes": 20
+        "minutes": 1
       },
       "trigger": "devices:gamer_usage"
     }
@@ -16,7 +16,7 @@
     "frame": "challenge",
     "hidden": false,
     "icon": {
-      "item": "minecraft:red_office_chair"
+      "item": "devices:red_office_chair"
     },
     "show_toast": true,
     "title": {

@@ -21,6 +21,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -49,12 +50,10 @@ public class LaptopRenderer implements BlockEntityRenderer<LaptopBlockEntity> {
 
         RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
         poseStack.pushPose();
-
-        int x = blockEntity.getBlockPos().getX();
-        int y = blockEntity.getBlockPos().getY();
-        int z = blockEntity.getBlockPos().getZ();
-        //poseStack.pushPose();
         {
+            int x = blockEntity.getBlockPos().getX();
+            int y = blockEntity.getBlockPos().getY();
+            int z = blockEntity.getBlockPos().getZ();
             //poseStack.translate(x, y, z);
 
             if (blockEntity.isExternalDriveAttached()) {
@@ -104,5 +103,10 @@ public class LaptopRenderer implements BlockEntityRenderer<LaptopBlockEntity> {
             poseStack.popPose();
         }
         poseStack.popPose();
+    }
+
+    @Override
+    public int getViewDistance() {
+        return 16384;
     }
 }

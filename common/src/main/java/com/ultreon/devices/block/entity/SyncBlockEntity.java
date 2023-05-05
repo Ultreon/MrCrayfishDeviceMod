@@ -1,5 +1,6 @@
 package com.ultreon.devices.block.entity;
 
+import com.google.common.base.Preconditions;
 import com.ultreon.devices.annotations.PlatformOverride;
 import com.ultreon.devices.util.BlockEntityUtil;
 import dev.architectury.injectables.annotations.PlatformOnly;
@@ -9,12 +10,10 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.world.item.DebugStickItem;
-import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -33,6 +32,7 @@ public abstract class SyncBlockEntity extends BlockEntity {
     // from SignBlockEntity
     protected void markUpdated() {
         this.setChanged();
+        Preconditions.checkNotNull(this.level, "Can't mark the block updated while not being bound to a level.");
         this.level.sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), 3);
     }
 
@@ -43,7 +43,7 @@ public abstract class SyncBlockEntity extends BlockEntity {
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
+    public @NotNull CompoundTag getUpdateTag() {
         if (!pipeline.isEmpty()) {
             CompoundTag updateTag = pipeline;
             saveAdditional(updateTag);
@@ -57,9 +57,8 @@ public abstract class SyncBlockEntity extends BlockEntity {
 
     public abstract CompoundTag saveSyncTag();
 
-    @Nullable
     @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
+    public @NotNull Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this, BlockEntity::getUpdateTag);
     }
 

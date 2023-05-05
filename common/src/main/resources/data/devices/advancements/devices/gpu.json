@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "devices:gpu"
+            "items": ["devices:gpu"]
           }
         ]
       },

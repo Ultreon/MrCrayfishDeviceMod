@@ -16,7 +16,7 @@ import net.minecraft.nbt.CompoundTag;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.util.Optional;
 

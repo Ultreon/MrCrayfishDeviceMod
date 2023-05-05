@@ -16,6 +16,7 @@ import com.ultreon.devices.core.io.drive.InternalDrive;
 import com.ultreon.devices.core.io.task.TaskGetFiles;
 import com.ultreon.devices.core.io.task.TaskGetMainDrive;
 import com.ultreon.devices.core.io.task.TaskSendAction;
+import com.ultreon.devices.debug.Debugger;
 import com.ultreon.devices.init.DeviceItems;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -75,7 +76,7 @@ public class FileSystem {
     }
 
     public static void getApplicationFolder(Application app, Callback<Folder> callback) {
-        if (Devices.hasAllowedApplications()) { // in arch we do not do instances
+        if (Devices.hasAllowedApplications()) { // in arch, we do not do instances
             if (!Devices.getAllowedApplications().contains(app.getInfo())) {
                 callback.execute(null, false);
                 return;
@@ -228,10 +229,15 @@ public class FileSystem {
                 attachedDriveColor = DyeColor.byId(flashDriveTag.getByte("color"));
 
                 blockEntity.getPipeline().putByte("external_drive_color", (byte) attachedDriveColor.getId());
+                blockEntity.setExternalDriveColor(attachedDriveColor);
                 blockEntity.sync();
 
                 return true;
+            } else {
+                Debugger.log(Debugger.MARKER_FILE_SYSTEM, "Flash Drive doesn't have a file system.");
             }
+        } else {
+            Debugger.log(Debugger.MARKER_FILE_SYSTEM, "There's already an attached drive.");
         }
 
         return false;
@@ -253,6 +259,8 @@ public class FileSystem {
             stack.getOrCreateTag().put("drive", attachedDrive.toTag());
             attachedDrive = null;
             return stack;
+        } else {
+            Debugger.log(Debugger.MARKER_FILE_SYSTEM, "Attached drive is null.");
         }
         return null;
     }

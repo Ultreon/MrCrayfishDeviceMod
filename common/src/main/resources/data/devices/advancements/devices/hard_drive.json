@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "devices:hard_drive"
+            "items": ["devices:hard_drive"]
           }
         ]
       },

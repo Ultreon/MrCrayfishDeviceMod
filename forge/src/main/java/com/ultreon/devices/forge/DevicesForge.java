@@ -6,7 +6,6 @@ import com.ultreon.devices.Devices;
 import com.ultreon.devices.LaunchException;
 import com.ultreon.devices.Reference;
 import com.ultreon.devices.event.WorldDataHandler;
-import com.ultreon.devices.event.forge.FeatureFlagRegisterEvent;
 import com.ultreon.devices.featuretoggle.DevicesFeatureFlags;
 import com.ultreon.devices.init.RegistrationHandler;
 import dev.architectury.platform.forge.EventBuses;
@@ -77,10 +76,10 @@ public class DevicesForge {
         forgeEventBus.register(this);
     }
 
-    @SubscribeEvent
-    public void registerFeatureFlags(FeatureFlagRegisterEvent event) {
-        DevicesFeatureFlags.register(event.builder);
-    }
+//    @SubscribeEvent
+//    public void registerFeatureFlags(FeatureFlagRegisterEvent event) {
+//        DevicesFeatureFlags.register(event.builder);
+//    }
 
     private void commonSetup(FMLCommonSetupEvent t) {
         Devices.init();

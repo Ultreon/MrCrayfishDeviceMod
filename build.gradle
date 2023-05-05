@@ -4,7 +4,7 @@ import java.io.File
 
 plugins {
     id "architectury-plugin" version "3.4-SNAPSHOT"
-    id "dev.architectury.loom" version "0.12.0-SNAPSHOT" apply false
+    id "dev.architectury.loom" version "1.+" apply false
     id "io.github.pacifistmc.forgix" version "1.2.2"
     id "org.jetbrains.kotlin.jvm" version "1.7.10"
   //  id 'org.jetbrains.kotlin.jvm' version '1.7.1'

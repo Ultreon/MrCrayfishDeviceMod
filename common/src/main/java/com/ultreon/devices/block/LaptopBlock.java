@@ -1,7 +1,9 @@
 package com.ultreon.devices.block;
 
+import com.ultreon.devices.Devices;
 import com.ultreon.devices.ModDeviceTypes;
 import com.ultreon.devices.block.entity.LaptopBlockEntity;
+import com.ultreon.devices.debug.Debugger;
 import com.ultreon.devices.item.FlashDriveItem;
 import com.ultreon.devices.util.BlockEntityUtil;
 import dev.architectury.utils.Env;
@@ -84,8 +86,11 @@ public class LaptopBlock extends DeviceBlock.Colored {
             } else {
                 if (hit.getDirection() == state.getValue(FACING).getCounterClockWise(Direction.Axis.Y)) {
                     ItemStack heldItem = player.getItemInHand(hand);
+                    Debugger.log(Debugger.MARKER_BLOCK, "Using an item on laptop.");
                     if (!heldItem.isEmpty() && heldItem.getItem() instanceof FlashDriveItem) {
+                        Debugger.log(Debugger.MARKER_BLOCK, "Using flash drive on laptop.");
                         if (!level.isClientSide) {
+                            Debugger.log(Debugger.MARKER_BLOCK, "Attaching flash drive.");
                             if (laptop.getFileSystem().setAttachedDrive(heldItem.copy())) {
                                 heldItem.shrink(1);
                                 return InteractionResult.sidedSuccess(false);
@@ -95,6 +100,7 @@ public class LaptopBlock extends DeviceBlock.Colored {
                         }
                         return InteractionResult.sidedSuccess(true);
                     } else if (!level.isClientSide) {
+                        Debugger.log(Debugger.MARKER_BLOCK, "Removing attached flash drive on laptop.");
                         ItemStack stack = laptop.getFileSystem().removeAttachedDrive();
                         if (stack != null) {
                             BlockPos summonPos = pos.relative(state.getValue(FACING).getCounterClockWise(Direction.Axis.Y));
@@ -112,6 +118,8 @@ public class LaptopBlock extends DeviceBlock.Colored {
                     return InteractionResult.sidedSuccess(level.isClientSide);
                 }
             }
+        } else {
+            Devices.LOGGER.warn("Laptop at " + pos.toShortString() + " doesn't have the laptop block entity.");
         }
 
         return InteractionResult.PASS;

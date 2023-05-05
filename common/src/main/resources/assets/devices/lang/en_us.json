@@ -92,7 +92,7 @@
   "block.devices.yellow_office_chair": "Yellow Office Chair",
   "block.devices.yellow_printer": "Yellow Printer",
   "block.devices.yellow_router": "Yellow Router",
-  "dataPack.devices.printer.description": "Adds experimental printer to Devices Mod.",
+  "dataPack.devices.experiments.description": "Adds experimental printer to Devices Mod.",
   "item.devices.battery": "Battery",
   "item.devices.black_flash_drive": "Black Flash Drive",
   "item.devices.blue_flash_drive": "Blue Flash Drive",

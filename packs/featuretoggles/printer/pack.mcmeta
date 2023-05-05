@@ -1,12 +1,12 @@
 {
   "features": {
     "enabled": [
-      "devices:printer"
+      "devices:experiments"
     ]
   },
   "pack": {
     "description": {
-      "translate": "dataPack.devices.printer.description"
+      "translate": "dataPack.devices.experiments.description"
     },
     "pack_format": 10
   }

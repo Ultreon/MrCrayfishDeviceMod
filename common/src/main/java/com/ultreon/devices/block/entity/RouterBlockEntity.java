@@ -8,6 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
 public class RouterBlockEntity extends DeviceBlockEntity.Colored {
@@ -56,7 +57,7 @@ public class RouterBlockEntity extends DeviceBlockEntity.Colored {
     }
 
     @Override
-    public void saveAdditional(CompoundTag tag) {
+    public void saveAdditional(@NotNull CompoundTag tag) {
         super.saveAdditional(tag);
         if (tag.contains("router", Tag.TAG_COMPOUND)) {
             router = Router.fromTag(worldPosition, tag.getCompound("router"));
