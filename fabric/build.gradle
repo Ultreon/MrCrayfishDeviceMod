@@ -51,7 +51,8 @@ dependencies {
 //    include(implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.10"))
 //    include(implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10"))
 //    include(implementation("com.ultreon:ultranlang:0.1.0+6"))
-    include(implementation("com.jab125:apoint:1.0.0"))
+    include implementation("com.jab125:apoint:1.0.0")
+    include implementation("de.waldheinz:fat32-lib:0.6.5")
 
     //shadowCommon "org.jetbrains.kotlin:kotlin-reflect:1.7.10"
     //shadowCommon "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10"

@@ -26,6 +26,7 @@ dependencies {
     modCompileOnly "curse.maven:forgeapiportfabric-547434:3671141"
     modCompileOnly 'com.electronwill.night-config:core:3.6.3'
     modCompileOnly 'com.electronwill.night-config:toml:3.6.3'
+    implementation "de.waldheinz:fat32-lib:0.6.5"
 
 }
 

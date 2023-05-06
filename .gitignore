@@ -130,3 +130,5 @@ run/
 
 # Avoid ignoring libraries
 !libs/*
+/common/src/main/generated/resources/.cache/4335fe6db70431e98ede330f121e12527c58cd62
+/common/src/main/generated/resources/.cache/cf641a56d752640fc23fa46d709df40b2c3d3ead
