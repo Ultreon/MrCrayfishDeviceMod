@@ -161,10 +161,18 @@ public class SnakeLayout extends Layout {
         public void handleKeyPressed(int keyCode, int scanCode, int modifiers) {
             super.handleKeyPressed(keyCode, scanCode, modifiers);
             switch (keyCode) {
-                case InputConstants.KEY_W -> up();
-                case InputConstants.KEY_S -> down();
-                case InputConstants.KEY_A -> left();
-                case InputConstants.KEY_D -> right();
+                case InputConstants.KEY_W -> {
+                    if (direction2d != Direction2d.DOWN) up();
+                }
+                case InputConstants.KEY_S -> {
+                    if (direction2d != Direction2d.UP) down();
+                }
+                case InputConstants.KEY_A -> {
+                    if (direction2d != Direction2d.RIGHT) left();
+                }
+                case InputConstants.KEY_D -> {
+                    if (direction2d != Direction2d.LEFT) right();
+                }
             }
         }
 

@@ -5,10 +5,11 @@
   "name": "Devices Mod",
   "description": "${description}",
   "authors": [
-    "Qboi123",
-    "Jab125"
+    "Ultreon Team"
   ],
   "contributors": [
+    "Qboi123",
+    "Jab125",
     "MrCrayfish",
     "MinecraftDoodler",
     "Mastef Chief",
@@ -26,7 +27,7 @@
     "CreepergamingsMC"
   ],
   "contact": {
-    "website": "https://ultreon.github.io/web/",
+    "website": "https://ultreon.github.io",
     "repo": "https://github.com/Ultreon/devices-mod",
     "issues": "https://github.com/Ultreon/devices-mod/issues"
   },

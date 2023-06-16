@@ -93,8 +93,8 @@ public class Devices {
     public static MappedRegistry<TrayItem> trayItemRegistry = new MappedRegistry<>(ResourceKey.createRegistryKey(id("tray_item")), Lifecycle.stable());
     //---- Registry : End ----//
 
-    static List<AppInfo> allowedApps;
-    private static List<Vulnerability> vulnerabilities;
+    static List<AppInfo> allowedApps = new ArrayList<>();
+    private static List<Vulnerability> vulnerabilities = new ArrayList<>();
     public static List<Vulnerability> getVulnerabilities() {
         return vulnerabilities;
     }
