@@ -1,35 +1,13 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_battery": {
+    "has_motherboard_full": {
       "conditions": {
         "items": [
           {
             "items": [
-              "devices:battery"
+              "devices:motherboard_full"
             ]
-          }
-        ]
-      },
-      "trigger": "minecraft:inventory_changed"
-    },
-    "has_full_motherboard": {
-      "conditions": {
-        "items": [
-          {
-            "items": [
-              "devices:full_motherboard"
-            ]
-          }
-        ]
-      },
-      "trigger": "minecraft:inventory_changed"
-    },
-    "has_hard_drive": {
-      "conditions": {
-        "items": [
-          {
-            "tag": "devices:internal_storage"
           }
         ]
       },
@@ -57,9 +35,7 @@
   "requirements": [
     [
       "has_netherite_ingot",
-      "has_full_motherboard",
-      "has_battery",
-      "has_hard_drive",
+      "has_motherboard_full",
       "has_the_recipe"
     ]
   ],

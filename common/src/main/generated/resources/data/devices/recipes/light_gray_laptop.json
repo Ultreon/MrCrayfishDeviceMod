@@ -12,20 +12,23 @@
     "+": {
       "item": "minecraft:light_gray_wool"
     },
+    ".": {
+      "item": "minecraft:iron_nugget"
+    },
     "/": {
-      "item": "minecraft:netherite_ingot"
+      "item": "minecraft:iron_ingot"
+    },
+    "@": {
+      "item": "devices:motherboard_full"
     },
     "O": {
       "tag": "devices:internal_storage"
-    },
-    "|": {
-      "item": "minecraft:quartz"
     }
   },
   "pattern": [
     "+#+",
-    "/$/",
-    "|O|"
+    ".@$",
+    "/O/"
   ],
   "result": {
     "item": "devices:light_gray_laptop"
