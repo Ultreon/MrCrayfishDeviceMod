@@ -93,7 +93,7 @@ public class ModRecipesProvider extends RecipeProvider {
 //                .unlockedBy("has_laptop", has(ModTags.Items.LAPTOPS))
 //                .save(consumer);
 
-        new ShapelessRecipeBuilder(RecipeCategory.MISC, DeviceItems.COMPONENT_MOTHERBOARD_FULL, 1)
+        new ShapelessRecipeBuilder(RecipeCategory.MISC, DeviceItems.COMPONENT_MOTHERBOARD_FULL.get(), 1)
                 .requires(DeviceItems.COMPONENT_CPU.get(), 1)
                 .requires(DeviceItems.COMPONENT_GPU.get(), 1)
                 .requires(DeviceItems.COMPONENT_RAM.get(), 1)
