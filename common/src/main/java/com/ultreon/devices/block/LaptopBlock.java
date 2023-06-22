@@ -14,6 +14,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -26,6 +27,8 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -33,6 +36,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Locale;
 
 public class LaptopBlock extends DeviceBlock.Colored {
@@ -125,6 +129,23 @@ public class LaptopBlock extends DeviceBlock.Colored {
     @Override
     protected void removeTagsForDrop(CompoundTag tileEntityTag) {
         tileEntityTag.remove("open");
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public @NotNull List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
+        List<ItemStack> drops = super.getDrops(state, builder);
+        BlockEntity parameter = builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
+        if (parameter == null) return drops;
+        for (ItemStack drop : drops) {
+            if (drop.getItem() instanceof BlockItem blockItem) {
+                if (blockItem.getBlock() instanceof LaptopBlock) {
+                    parameter.saveToItem(drop);
+                }
+            }
+        }
+
+        return drops;
     }
 
     @Override
