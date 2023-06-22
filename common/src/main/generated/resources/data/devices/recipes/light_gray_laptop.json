@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "devices:laptop",
+  "key": {
+    "#": {
+      "item": "minecraft:netherite_ingot"
+    },
+    "$": {
+      "item": "minecraft:glass"
+    },
+    "+": {
+      "item": "minecraft:light_gray_wool"
+    },
+    "_": {
+      "item": "minecraft:beacon"
+    },
+    "|": {
+      "item": "minecraft:quartz"
+    }
+  },
+  "pattern": [
+    "#+#",
+    "$|$",
+    "_|_"
+  ],
+  "result": {
+    "item": "devices:light_gray_laptop"
+  }
+}

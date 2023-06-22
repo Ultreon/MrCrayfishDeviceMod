@@ -140,6 +140,16 @@ public class NoteStashApp extends Application {
             data.putString("title", title.getText());
             data.putString("content", textArea.getText());
 
+            FileSystem.getApplicationFolder(this, (folder, success) -> {
+                if (success) {
+                    assert folder != null;
+                    folder.search(file -> file.isForApplication(this)).forEach(file -> notes.addItem(Note.fromFile(file)));
+                } else {
+                    Devices.LOGGER.error(MARKER, "Failed to get application folder");
+                    //TODO error dialog
+                }
+            });
+
             Dialog.SaveFile dialog = new Dialog.SaveFile(NoteStashApp.this, data);
             dialog.setFolder(getApplicationFolderPath());
             dialog.setResponseHandler((success, file) -> {

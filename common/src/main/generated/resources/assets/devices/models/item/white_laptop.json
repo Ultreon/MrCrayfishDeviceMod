@@ -1,6 +1,3 @@
 {
-    "parent": "devices:item/laptop",
-    "textures": {
-        "2": "block/white_wool"
-    }
+  "parent": "devices:block/white_laptop_flitem"
 }

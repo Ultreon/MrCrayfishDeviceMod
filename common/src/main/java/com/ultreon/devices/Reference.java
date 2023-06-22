@@ -25,6 +25,9 @@ public class Reference {
           //  System.out.println(matcher.groupCount());
          //   var version = pattern.matcher(getVersion()).group(1);
          //   var build = pattern.matcher(getVersion()).group(7);
+            if (getVersion().split("\\+").length == 1) {
+                return verInfo = new String[]{getVersion(), "unknown"};
+            }
             var version = getVersion().split("\\+")[0];
             var build = getVersion().split("\\+")[1];
             verInfo = new String[]{version, build};

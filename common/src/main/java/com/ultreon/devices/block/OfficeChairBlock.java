@@ -50,15 +50,15 @@ public class OfficeChairBlock extends DeviceBlock.Colored
         this.registerDefaultState(this.getStateDefinition().any().setValue(FACING, Direction.NORTH).setValue(TYPE, Type.LEGS));
     }
 
-    @Override
-    public String getDescriptionId() {
-        return Util.makeDescriptionId("block", new ResourceLocation("devices", "office_chair"));
-    }
+//    @Override
+//    public String getDescriptionId() {
+//        return Util.makeDescriptionId("block", new ResourceLocation("devices", "office_chair"));
+//    }
 
     @Override
     public boolean canSurvive(BlockState state, LevelReader reader, BlockPos pos)
     {
-        return false;
+        return false || true;
     }
 
     @Override

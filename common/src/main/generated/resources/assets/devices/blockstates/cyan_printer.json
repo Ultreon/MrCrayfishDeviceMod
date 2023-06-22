@@ -1,5 +1,9 @@
 {
   "variants": {
+    "facing=east": {
+      "model": "devices:block/cyan_printer",
+      "y": 270
+    },
     "facing=north": {
       "model": "devices:block/cyan_printer",
       "y": 180
@@ -10,10 +14,6 @@
     "facing=west": {
       "model": "devices:block/cyan_printer",
       "y": 90
-    },
-    "facing=east": {
-      "model": "devices:block/cyan_printer",
-      "y": 270
     }
   }
 }
