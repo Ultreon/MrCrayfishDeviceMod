@@ -7,7 +7,7 @@ import com.ultreon.devices.programs.system.layout.StandardLayout;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author MrCrayfish

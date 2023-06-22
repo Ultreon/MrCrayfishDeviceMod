@@ -4,7 +4,7 @@ import com.ultreon.devices.api.io.File;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author MrCrayfish
