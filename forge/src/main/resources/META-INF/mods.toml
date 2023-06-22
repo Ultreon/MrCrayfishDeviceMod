@@ -16,9 +16,7 @@ displayURL = "https://github.com/Ultreon/devices-mod"
 logoFile="devices_mod.png"
 credits = "Thanks to MrCrayfish for the idea and the original mod that was made in 1.12.2. Thank you to MinecraftDoodler for helping with textures. Thank you to lizterzapzap for the Devices Mod icon. Cheers to these people for donating during the development: Mastef Chief, Haunted Corpse, Jake Crowley, fabbe50, PlayDashGaming, jack jook, Hunstagamez, Techyy YT, MinecraftDoodler, Norge100YT, Cyberman2208, CreepergamingsMC"
 authors = "Qboi123, Jab125"
-description = """
-${description}
-"""
+description = "${description}"
 itemIcon = "devices:red_laptop"
 
 # Dependencies for the main mod.
