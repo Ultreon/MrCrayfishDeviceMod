@@ -71,11 +71,11 @@ dependencies {
 }
 
 processResources {
-    inputs.property "version", rootProject.getIngame_version()
+    inputs.property "version", rootProject.getIngameVersion()
 
     filesMatching("fabric.mod.json") {
         HashMap<String, ?> p = new HashMap<>()
-        p.put("version", rootProject.getIngame_version())
+        p.put("version", rootProject.getIngameVersion())
         p.put("description", rootProject.getModDescription())
         p.put("loaderVersion", rootProject.fabric_loader_version)
         p.put("minecraftVersion", rootProject.architectury.minecraft)
@@ -85,7 +85,7 @@ processResources {
 
 shadowJar {
     configurations = [project.configurations.shadowCommon]
-    classifier "dev-shadow"
+    archiveClassifier = "dev-shadow"
 }
 
 remapJar {
@@ -93,11 +93,11 @@ remapJar {
     //noinspection GrDeprecatedAPIUsage
     input.set shadowJar.archiveFile
     dependsOn shadowJar
-    classifier null
+    archiveClassifier = null
 }
 
 jar {
-    classifier "dev"
+    archiveClassifier = "dev"
 }
 
 sourcesJar {
