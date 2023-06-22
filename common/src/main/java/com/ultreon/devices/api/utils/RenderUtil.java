@@ -9,10 +9,11 @@ import com.ultreon.devices.object.AppInfo;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.world.item.ItemStack;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 
 @SuppressWarnings("unused")
@@ -35,7 +36,7 @@ public class RenderUtil {
     public static void drawIcon(PoseStack pose, double x, double y, AppInfo info, int width, int height) {
         RenderSystem.setShaderTexture(0, Laptop.ICON_TEXTURES);
         //Gui.blit(pose, (int) x, (int) y, width, height, u, v, sourceWidth, sourceHeight, (int) textureWidth, (int) textureHeight);
-        if (info == null) {
+        if (info == null || (info.getIcon().getBase().getU() == -1 && info.getIcon().getBase().getV() == -1)) {
             drawRectWithTexture(pose, x, y, 0, 0, width, height, 14, 14, 224, 224);
             return;
         }
@@ -74,30 +75,32 @@ public class RenderUtil {
     public static void drawRectWithTexture(PoseStack pose, double x, double y, double z, float u, float v, int width, int height, float textureWidth, float textureHeight) {
         //Gui.blit(pose, (int) x, (int) y, width, height, u, v, width, height, (int) textureWidth, (int) textureHeight);
         float scale = 0.00390625f;
+        var e = pose.last().pose();
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         BufferBuilder buffer = Tesselator.getInstance().getBuilder();
         try {
             buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        } catch (IllegalStateException e) {
+        } catch (IllegalStateException e_) {
             buffer.end();
             buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
         }
-        buffer.vertex(x, y + height, z).uv(u * scale, (v + textureHeight) * scale).endVertex();
-        buffer.vertex(x + width, y + height, z).uv((u + textureWidth) * scale, (v + textureHeight) * scale).endVertex();
-        buffer.vertex(x + width, y, z).uv((u + textureWidth) * scale, v * scale).endVertex();
-        buffer.vertex(x, y, z).uv(u * scale, v * scale).endVertex();
+        buffer.vertex(e, (float) x, (float) (y + height), (float) z).uv(u * scale, (v + textureHeight) * scale).endVertex();
+        buffer.vertex(e, (float) (x + width), (float) (y + height), (float) z).uv((u + textureWidth) * scale, (v + textureHeight) * scale).endVertex();
+        buffer.vertex(e, (float) (x + width), (float) y, (float) z).uv((u + textureWidth) * scale, v * scale).endVertex();
+        buffer.vertex(e, (float) x, (float) y, (float) z).uv(u * scale, v * scale).endVertex();
         BufferUploader.drawWithShader(buffer.end());
     }
 
     public static void drawRectWithFullTexture(PoseStack pose, double x, double y, float u, float v, int width, int height) {
         // Gui.blit(pose, (int) x, (int) y, width, height, u, v, width, height, 256, 256);
+        var e = pose.last().pose();
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         BufferBuilder buffer = Tesselator.getInstance().getBuilder();
         buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        buffer.vertex(x, y + height, 0).uv(0, 1).endVertex();
-        buffer.vertex(x + width, y + height, 0).uv(1, 1).endVertex();
-        buffer.vertex(x + width, y, 0).uv(1, 0).endVertex();
-        buffer.vertex(x, y, 0).uv(0, 0).endVertex();
+        buffer.vertex(e, (float) x, (float) (y + height), 0).uv(0, 1).endVertex();
+        buffer.vertex(e, (float) (x + width), (float) (y + height), 0).uv(1, 1).endVertex();
+        buffer.vertex(e, (float) (x + width), (float) y, 0).uv(1, 0).endVertex();
+        buffer.vertex(e, (float) x, (float) y, 0).uv(0, 0).endVertex();
         BufferUploader.drawWithShader(buffer.end());
     }
 
@@ -105,13 +108,14 @@ public class RenderUtil {
         //Gui.blit(pose, (int) x, (int) y, width, height, u, v, sourceWidth, sourceHeight, (int) textureWidth, (int) textureHeight);
         float scaleWidth = 1f / sourceWidth;
         float scaleHeight = 1f / sourceHeight;
+        var e = pose.last().pose();
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         BufferBuilder buffer = Tesselator.getInstance().getBuilder();
         buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        buffer.vertex(x, y + height, 0).uv(u * scaleWidth, (v + textureHeight) * scaleHeight).endVertex();
-        buffer.vertex(x + width, y + height, 0).uv((u + textureWidth) * scaleWidth, (v + textureHeight) * scaleHeight).endVertex();
-        buffer.vertex(x + width, y, 0).uv((u + textureWidth) * scaleWidth, v * scaleHeight).endVertex();
-        buffer.vertex(x, y, 0).uv(u * scaleWidth, v * scaleHeight).endVertex();
+        buffer.vertex(e, (float) x, (float) (y + height), 0).uv(u * scaleWidth, (v + textureHeight) * scaleHeight).endVertex();
+        buffer.vertex(e, (float) (x + width), (float) (y + height), 0).uv((u + textureWidth) * scaleWidth, (v + textureHeight) * scaleHeight).endVertex();
+        buffer.vertex(e, (float) (x + width), (float) y, 0).uv((u + textureWidth) * scaleWidth, v * scaleHeight).endVertex();
+        buffer.vertex(e, (float) x, (float) y, 0).uv(u * scaleWidth, v * scaleHeight).endVertex();
         BufferUploader.drawWithShader(buffer.end());
     }
 

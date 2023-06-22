@@ -34,7 +34,7 @@ import java.util.List;
  */
 public class EthernetCableItem extends Item {
     public EthernetCableItem() {
-        super(new Properties().tab(Devices.TAB_DEVICE).stacksTo(1));
+        super(new Properties().arch$tab(Devices.TAB_DEVICE).stacksTo(1));
     }
 
     private static double getDistance(BlockPos source, BlockPos target) {

@@ -11,8 +11,6 @@ import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.util.DataHandler;
 import com.ultreon.devices.util.GLHelper;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -202,10 +200,11 @@ public abstract class Application extends Wrappable implements DataHandler {
      *
      * @param mouseX    the x position of the mouse
      * @param mouseY    the y position of the mouse
+     * @param delta
      * @param direction the direction of the scroll. true is up, false is down
      */
     @Override
-    public void handleMouseScroll(int mouseX, int mouseY, boolean direction) {
+    public void handleMouseScroll(int mouseX, int mouseY, double delta, boolean direction) {
         currentLayout.handleMouseScroll(mouseX, mouseY, direction);
     }
 

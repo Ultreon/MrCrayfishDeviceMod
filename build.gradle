@@ -1,48 +1,25 @@
 plugins {
     id "architectury-plugin" version "3.4-SNAPSHOT"
-    id "dev.architectury.loom" version "0.12.0-SNAPSHOT" apply false
-    id "io.github.pacifistmc.forgix" version "1.2.2"
+    id "dev.architectury.loom" version "1.2-SNAPSHOT" apply false
     id "org.jetbrains.kotlin.jvm" version "1.7.10"
-  //  id 'org.jetbrains.kotlin.jvm' version '1.7.1'
 }
 repositories {
     gradlePluginPortal()
 }
 
 architectury {
-    minecraft = rootProject.minecraft_version
+    minecraft = minecraft_version
 }
-version = "${mod_version}-${System.getenv("GITHUB_BUILD_NUMBER") == null ? "local" : System.getenv("GITHUB_BUILD_NUMBER")}"
 
-Object getIngame_version() {
-    return "${mod_version}+${System.getenv("GITHUB_BUILD_NUMBER") == null ? "local" : System.getenv("GITHUB_BUILD_NUMBER")}"
+version mod_version
+
+Object getIngameVersion() {
+    return mod_version
 }
 
 Object getModDescription() {
-    return "${mod_description}"
+    return mod_description
 }
-forgix {
-    group = "com.ultreon.mods"
-    mergedJarName = "devices-${version}.jar"
-    outputDir = "build/libs/merged"
-
-    forge {
-        projectName = "merge-forge"
-        jarLocation = "build/libs/devices-${version}.jar"
-       // additionalRelocate("com.ultreon.devices", "forge.com.ultreon.devices")
-
-    //    mixin "devices-common.mixins.json"
-   //     mixin "devices.mixins.json"
-    }
-
-    fabric {
-        projectName = "merge-fabric"
-        jarLocation = "build/libs/devices-${version}.jar"
-     //   additionalRelocate("com.ultreon.devices", "fabric.com.ultreon.devices")
-    }
-}
-
-println "forgix.outputDir = $forgix.outputDir"
 
 subprojects {
     apply plugin: "dev.architectury.loom"
@@ -80,16 +57,14 @@ allprojects {
         // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
         // See https://docs.gradle.org/current/userguide/declaring_repositories.html
         // for more information about repositories.
-        maven { url = "https://maven.parchmentmc.org" }
-
-        flatDir {
-            dir "${rootProject.projectDir}/libs"
-        }
+        maven { url "https://maven.parchmentmc.org" }
+        maven { url "https://maven.jab125.dev" }
+        flatDir { dir "$rootProject.projectDir/libs/" }
     }
 
-    tasks.withType(JavaCompile) {
+    tasks.withType(JavaCompile).configureEach {
         options.encoding = "UTF-8"
-        options.release = 17
+        options.release.set(17)
     }
 
     java {
@@ -97,5 +72,16 @@ allprojects {
     }
 }
 
-mergeJars.mustRunAfter build
-//build.dependsOn mergeJars
+void setupRepositories(RepositoryHandler repositories) {
+    //repositories.mavenLocal() // uncomment for testing
+    def ENV = System.getenv()
+    if (ENV.MAVEN_URL) {
+        repositories.maven {
+            url ENV.MAVEN_URL
+            credentials {
+                username ENV.MAVEN_USERNAME
+                password ENV.MAVEN_PASSWORD
+            }
+        }
+    }
+}

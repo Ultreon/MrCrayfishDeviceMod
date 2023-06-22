@@ -18,6 +18,8 @@ import com.ultreon.devices.util.Vulnerability;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Marker;
@@ -32,25 +34,47 @@ public class TaskBar {
     public static final ResourceLocation APP_BAR_GUI = new ResourceLocation("devices:textures/gui/application_bar.png");
     public static final int BAR_HEIGHT = 18;
     private static final int APPS_DISPLAYED = Devices.DEVELOPER_MODE ? 18 : 10;
+
+    private final CompoundTag tag;
+
     private final Laptop laptop;
 
     private final int offset = 0;
-    private final int pingTimer = 0;
 
     private final List<TrayItem> trayItems = new ArrayList<>();
     private static final Marker MARKER = MarkerFactory.getMarker("TaskBar");
 
+    /**
+     * @deprecated use {@link #TaskBar(Laptop, CompoundTag)} instead.
+     */
+    @Deprecated
     public TaskBar(Laptop laptop) {
-        this.laptop = laptop;
+        this(laptop, new CompoundTag());
+    }
 
-        this.trayItems.add(new Vulnerability.VulnerabilityTrayItem());
-        this.trayItems.add(new FileBrowserApp.FileBrowserTrayItem());
-        this.trayItems.add(new SettingsApp.SettingsTrayItem());
-        this.trayItems.add(new AppStore.StoreTrayItem());
-        this.trayItems.add(new TrayItemWifi());
+    public TaskBar(Laptop laptop, CompoundTag tag) {
+        this.laptop = laptop;
+        this.tag = tag;
+
+        var trayItemsTag = tag.getCompound("TrayItems");
+
+        addTrayItem(new Vulnerability.VulnerabilityTrayItem(), trayItemsTag);
+        addTrayItem(new FileBrowserApp.FileBrowserTrayItem(), trayItemsTag);
+        addTrayItem(new SettingsApp.SettingsTrayItem(), trayItemsTag);
+        addTrayItem(new AppStore.StoreTrayItem(), trayItemsTag);
+        addTrayItem(new TrayItemWifi(), trayItemsTag);
 
         TrayItemAdder trayItemAdder = new TrayItemAdder(this.trayItems);
         LaptopEvent.SETUP_TRAY_ITEMS.invoker().setupTrayItems(laptop, trayItemAdder);
+    }
+
+    public void addTrayItem(TrayItem trayItem, CompoundTag tag) {
+        this.trayItems.add(trayItem);
+        String strId = trayItem.getId().toString();
+        if (tag.contains(strId, Tag.TAG_COMPOUND)) {
+            CompoundTag trayTag = tag.getCompound(strId);
+            trayItem.deserialize(trayTag);
+        }
     }
 
     public void init() {
@@ -136,7 +160,6 @@ public class TaskBar {
         }
 
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-//        RenderHelper.disableStandardItemLighting();
     }
 
     public void handleClick(Laptop laptop, int x, int y, int mouseX, int mouseY, int mouseButton) {
@@ -173,5 +196,20 @@ public class TaskBar {
 
     public Laptop getLaptop() {
         return laptop;
+    }
+
+    public CompoundTag getTag() {
+        return tag;
+    }
+
+    public CompoundTag serialize() {
+        var tag = new CompoundTag();
+        CompoundTag trayItemsTag = new CompoundTag();
+        for (TrayItem trayItem : trayItems) {
+            trayItemsTag.put(trayItem.getId().toString(), trayItem.serialize());
+        }
+        tag.put("TrayItems", trayItemsTag);
+
+        return tag;
     }
 }

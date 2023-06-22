@@ -8,6 +8,6 @@ import net.minecraft.world.item.Item;
  */
 public class BasicItem extends Item {
     public BasicItem(Properties pProperties) {
-        super(pProperties.tab(Devices.TAB_DEVICE));
+        super(pProperties.arch$tab(Devices.TAB_DEVICE));
     }
 }

@@ -6,23 +6,21 @@ import com.ultreon.devices.block.OfficeChairBlock;
 import com.ultreon.devices.block.PrinterBlock;
 import com.ultreon.devices.block.RouterBlock;
 import com.ultreon.devices.init.DeviceBlocks;
-import dev.architectury.registry.registries.Registries;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
-import net.minecraft.data.DataGenerator;
+import dev.architectury.registry.registries.RegistrarManager;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProviderType;
-import net.minecraftforge.client.model.generators.*;
+import net.minecraftforge.client.model.generators.BlockStateProvider;
+import net.minecraftforge.client.model.generators.ConfiguredModel;
+import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
-import java.util.Random;
 
 public class ModBlockStateProvider extends BlockStateProvider {
-    public ModBlockStateProvider(DataGenerator gen, ExistingFileHelper exFileHelper) {
+    public ModBlockStateProvider(PackOutput gen, ExistingFileHelper exFileHelper) {
         super(gen, Reference.MOD_ID, exFileHelper);
     }
 
@@ -55,14 +53,14 @@ public class ModBlockStateProvider extends BlockStateProvider {
         try {
             super.simpleBlock(block);
         } catch (IllegalArgumentException e) {
-            String name = Objects.requireNonNull(Registries.getId(block, Registry.BLOCK_REGISTRY)).getPath();
+            String name = Objects.requireNonNull(RegistrarManager.getId(block, Registries.BLOCK)).getPath();
             super.simpleBlock(block, models().cubeAll(name, modLoc("wip")));
         }
     }
 
     private void laptop(LaptopBlock block) {
         getVariantBuilder(block).forAllStates(state -> {
-            String name = Objects.requireNonNull(Registries.getId(block, Registry.BLOCK_REGISTRY)).getPath();
+            String name = Objects.requireNonNull(RegistrarManager.getId(block, Registries.BLOCK)).getPath();
             var type = state.getValue(LaptopBlock.TYPE);
             var a = ConfiguredModel.builder();
             var q = a.modelFile(models().getBuilder(type == LaptopBlock.Type.BASE ? name : name + "_closed")
@@ -78,7 +76,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
     private void officeChair(OfficeChairBlock block) {
         getVariantBuilder(block).forAllStates(state -> {
-            String name = Objects.requireNonNull(Registries.getId(block, Registry.BLOCK_REGISTRY)).getPath();
+            String name = Objects.requireNonNull(RegistrarManager.getId(block, Registries.BLOCK)).getPath();
             var type = state.getValue(OfficeChairBlock.TYPE);
             var a = ConfiguredModel.builder();
             var q = a.modelFile(models().getBuilder(type == OfficeChairBlock.Type.SEAT ? name + "_seat" : type == OfficeChairBlock.Type.LEGS ? name + "_legs" : name + "_full")
@@ -94,7 +92,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
     private void printer(PrinterBlock block) {
         getVariantBuilder(block).forAllStates(state -> {
-            String name = Objects.requireNonNull(Registries.getId(block, Registry.BLOCK_REGISTRY)).getPath();
+            String name = Objects.requireNonNull(RegistrarManager.getId(block, Registries.BLOCK)).getPath();
             return ConfiguredModel.builder()
                     .modelFile(models()
                             .getBuilder(name).parent(new ModelFile.UncheckedModelFile(modLoc("block/printer")))
@@ -106,7 +104,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
     private void router(RouterBlock block) {
         getVariantBuilder(block).forAllStates(state -> {
-            String name = Objects.requireNonNull(Registries.getId(block, Registry.BLOCK_REGISTRY)).getPath();
+            String name = Objects.requireNonNull(RegistrarManager.getId(block, Registries.BLOCK)).getPath();
             return ConfiguredModel.builder()
                     .modelFile(models()
                             .getBuilder(name).parent(new ModelFile.UncheckedModelFile(modLoc("block/router")))
@@ -117,7 +115,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
     }
 
     public ResourceLocation blockTexture(Block block) {
-        ResourceLocation name = Registries.getId(block, Registry.BLOCK_REGISTRY);
+        ResourceLocation name = RegistrarManager.getId(block, Registries.BLOCK);
         return new ResourceLocation(Objects.requireNonNull(name).getNamespace(), "block/" + name.getPath());
     }
 }

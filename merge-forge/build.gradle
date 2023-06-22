@@ -1,3 +1,5 @@
+//file:noinspection GroovyAssignabilityCheck
+//file:noinspection GrDeprecatedAPIUsage
 plugins {
     id "com.github.johnrengelman.shadow" version "7.1.2"
 }
@@ -29,40 +31,29 @@ configurations {
 }
 
 dependencies {
-    forge "net.minecraftforge:forge:${rootProject.architectury.minecraft}-${rootProject.forge_version}"
-    forgeRuntimeLibrary project(":forge");
-     /*modRuntimeOnly*/ include(project(":forge"));
+    forge "net.minecraftforge:forge:${architectury.minecraft}-$forge_version"
+    include(project(path: ":forge", configuration: "namedElements"))
 }
 
 processResources {
-//    inputs.property "version", rootProject.getIngame_version()
-//
-//    filesMatching("META-INF/mods.toml") {
-//        expand "version": rootProject.getIngame_version()
-//    }
+
 }
 
 shadowJar {
     exclude "fabric.mod.json"
 
     configurations = [project.configurations.shadowCommon]
-    classifier "dev-shadow"
-
-//    relocate 'org.jetbrains.kotlin', "com.ultreon.devices.shadow.org.jetbrains.kotlin"
-//    relocate 'org.jetbrains.kotlinx', "com.ultreon.devices.shadow.org.jetbrains.kotlinx"
-//
-//    relocate 'kotlin', "com.ultreon.devices.shadow.kotlin"
-//    relocate 'kotlinx', "com.ultreon.devices.shadow.kotlinx"
+    archiveClassifier = "dev-shadow"
 }
 
 remapJar {
     input.set shadowJar.archiveFile
     dependsOn shadowJar
-    classifier null
+    archiveClassifier = null
 }
 
 jar {
-    classifier "dev"
+    archiveClassifier = "dev"
 }
 
 sourcesJar {

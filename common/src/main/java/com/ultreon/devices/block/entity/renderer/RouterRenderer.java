@@ -2,8 +2,6 @@ package com.ultreon.devices.block.entity.renderer;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
 import com.ultreon.devices.block.PrinterBlock;
 import com.ultreon.devices.block.RouterBlock;
 import com.ultreon.devices.block.entity.RouterBlockEntity;
@@ -17,6 +15,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -85,9 +85,9 @@ public record RouterRenderer(
         float lineZ = 0.5f;
 
         if (state.getValue(RouterBlock.VERTICAL)) {
-            Quaternion rotation = state.getValue(PrinterBlock.FACING).getRotation();
-            rotation.mul(new Quaternion((float) (14 * 0.0625), 0.5f, (float) (14 * 0.0625), 0.5f));
-            Vector3f fixedPosition = rotation.toXYZ();
+            Quaternionf rotation = state.getValue(PrinterBlock.FACING).getRotation();
+            rotation.mul(new Quaternionf((float) (14 * 0.0625), 0.5f, (float) (14 * 0.0625), 0.5f));
+            Vector3f fixedPosition = new Vector3f(rotation.x, rotation.y, rotation.z);
             lineX = fixedPosition.x();
             lineY = 0.35f;
             lineZ = fixedPosition.z();

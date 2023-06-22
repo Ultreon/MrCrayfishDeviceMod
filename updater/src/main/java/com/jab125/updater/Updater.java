@@ -31,7 +31,6 @@ public class Updater {
         var request = builder.build();
         try {
             var response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println(response.body());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

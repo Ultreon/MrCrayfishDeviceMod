@@ -4,8 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import com.ultreon.devices.Devices;
 import com.ultreon.devices.Reference;
 import com.ultreon.devices.block.PrinterBlock;
@@ -28,6 +27,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import java.awt.*;
 import java.util.Objects;
@@ -55,7 +56,7 @@ public record PrinterRenderer(
                 {
                     pose.translate(0.5, 0.5, 0.5);
                     pose.mulPose(state.getValue(PrinterBlock.FACING).getRotation());
-                    pose.mulPose(new Quaternion(1, 0, 0, 22.5f));
+                    pose.mulPose(new Quaternionf(1, 0, 0, 22.5f));
                     pose.translate(0, 0, 0.4);
                     pose.translate(-11 * 0.015625, -13 * 0.015625, -0.5 * 0.015625);
 
@@ -77,7 +78,7 @@ public record PrinterRenderer(
                 if (blockEntity.isLoading()) {
                     pose.translate(0.5, 0.5, 0.5);
                     pose.mulPose(state.getValue(PrinterBlock.FACING).getRotation());
-                    pose.mulPose(new Quaternion(1, 0, 0, 22.5f));
+                    pose.mulPose(new Quaternionf(1, 0, 0, 22.5f));
                     double progress = Math.max(-0.4, -0.4 + (0.4 * ((double) (blockEntity.getRemainingPrintTime() - 10) / 20)));
                     pose.translate(0, progress, 0.36875);
                     pose.translate(-11 * 0.015625, -13 * 0.015625, -0.5 * 0.015625);
@@ -94,7 +95,7 @@ public record PrinterRenderer(
                 } else if (blockEntity.isPrinting()) {
                     pose.translate(0.5, 0.078125, 0.5);
                     pose.mulPose(state.getValue(PrinterBlock.FACING).getRotation());
-                    pose.mulPose(new Quaternion(1, 0, 0, 90f));
+                    pose.mulPose(new Quaternionf(1, 0, 0, 90f));
                     double progress = -0.35 + (0.50 * ((double) (blockEntity.getRemainingPrintTime() - 20) / blockEntity.getTotalPrintTime()));
                     pose.translate(0, progress, 0);
                     pose.translate(-11 * 0.015625, -13 * 0.015625, -0.5 * 0.015625);
@@ -110,7 +111,7 @@ public record PrinterRenderer(
                     // BUFFER END
 
                     pose.translate(0.3225, 0.085, -0.001);
-                    pose.mulPose(new Quaternion(0, 1, 0, 180f));
+                    pose.mulPose(new Quaternionf(0, 1, 0, 180f));
                     pose.scale(0.3f, 0.3f, 0.3f);
 
              //       IPrint print = blockEntity.getPrint();
@@ -133,7 +134,7 @@ public record PrinterRenderer(
                 pose.translate(-6.5 * 0.0625, -3.5 * 0.0625, 3.01 * 0.0625);
               //  pose.translate(0, 3, 0);
                 pose.pushPose();
-                pose.mulPose(Quaternion.fromXYZDegrees(new Vector3f(22.5f, 180, 0)));
+                pose.mulPose(Axis.of(new Vector3f(22.5f, 180, 0)).rotationDegrees(0));
               //  pose.pushPose();
              //   pose.scale(0.1f, -0.1f, 0.1f);
                 pose.scale(0.010416667f, -0.010416667f, 0.010416667f);

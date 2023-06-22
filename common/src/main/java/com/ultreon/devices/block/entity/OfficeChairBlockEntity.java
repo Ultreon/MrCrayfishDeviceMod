@@ -86,6 +86,6 @@ public class OfficeChairBlockEntity extends SyncBlockEntity implements Colorable
             }
         }
         var direction = this.getBlockState().getValue(LaptopBlock.FACING).getClockWise().toYRot();
-        return direction + 180F;
+        return direction - 90F;
     }
 }

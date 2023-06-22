@@ -29,7 +29,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -190,7 +190,7 @@ public class AppStore extends SystemApp {
 
     public static class StoreTrayItem extends TrayItem {
         public StoreTrayItem() {
-            super(Icons.SHOP);
+            super(Icons.SHOP, Devices.id("app_store"));
         }
 
         @Override

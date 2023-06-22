@@ -3,8 +3,7 @@ package com.ultreon.devices.block.entity.renderer;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import com.ultreon.devices.block.LaptopBlock;
 import com.ultreon.devices.block.entity.LaptopBlockEntity;
 import com.ultreon.devices.core.laptop.client.ClientLaptop;
@@ -14,6 +13,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -21,6 +21,8 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 public class LaptopRenderer implements BlockEntityRenderer<LaptopBlockEntity> {
     private final BlockEntityRendererProvider.Context context;
@@ -75,13 +77,13 @@ public class LaptopRenderer implements BlockEntityRenderer<LaptopBlockEntity> {
             {
                 //System.out.println("RENDEEING");
                 poseStack.translate(0.5, 0, 0.5);//west/east +90 north/south -90
-                poseStack.mulPose(Vector3f.YP.rotationDegrees(blockEntity.getBlockState().getValue(LaptopBlock.FACING) == Direction.EAST || blockEntity.getBlockState().getValue(LaptopBlock.FACING) == Direction.WEST ? direction + 90 : direction - 90));
+                poseStack.mulPose(Axis.YP.rotationDegrees(blockEntity.getBlockState().getValue(LaptopBlock.FACING) == Direction.EAST || blockEntity.getBlockState().getValue(LaptopBlock.FACING) == Direction.WEST ? direction + 90 : direction - 90));
                 poseStack.translate(-0.5, 0, -0.5);
                 poseStack.translate(0, 0.0625, 0.25);
-                poseStack.mulPose(Quaternion.fromXYZDegrees(new Vector3f(blockEntity.getScreenAngle(partialTick) + 180, 0, 0)));
+                poseStack.mulPose(Axis.XP.rotationDegrees(blockEntity.getScreenAngle(partialTick) + 180));
                 //poseStack.mulPose(Vector3f.YP.rotationDegrees(180));
-                poseStack.mulPose(Vector3f.XP.rotationDegrees(180));
-                Lighting.setupForFlatItems();
+                poseStack.mulPose(Axis.XP.rotationDegrees(180));
+               // Lighting.setupForFlatItems();
                 //      Tesselator tessellator = Tesselator.getInstance();
                 //BufferBuilder buffer = tessellator.getBuilder();
                 //buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
@@ -98,7 +100,7 @@ public class LaptopRenderer implements BlockEntityRenderer<LaptopBlockEntity> {
                 poseStack.popPose();
                 //poseStack.popPose();
                 //    tessellator.end();
-                Lighting.setupFor3DItems();
+             //   Lighting.setupFor3DItems();
             }
             poseStack.popPose();
         }

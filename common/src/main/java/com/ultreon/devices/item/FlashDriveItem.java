@@ -1,14 +1,14 @@
 package com.ultreon.devices.item;
 
-import com.ultreon.devices.ModDeviceTypes;
 import com.ultreon.devices.Devices;
 import com.ultreon.devices.IDeviceType;
+import com.ultreon.devices.ModDeviceTypes;
 import com.ultreon.devices.Reference;
 import com.ultreon.devices.util.Colored;
-import dev.architectury.registry.registries.Registries;
+import dev.architectury.registry.registries.RegistrarManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.*;
@@ -25,7 +25,7 @@ public class FlashDriveItem extends Item implements Colored, SubItems, IDeviceTy
     private final DyeColor color;
 
     public FlashDriveItem(DyeColor color) {
-        super(new Properties().tab(Devices.TAB_DEVICE).rarity(Rarity.UNCOMMON).stacksTo(1));
+        super(new Properties().arch$tab(Devices.TAB_DEVICE).rarity(Rarity.UNCOMMON).stacksTo(1));
         this.color = color;
     }
 
@@ -60,7 +60,7 @@ public class FlashDriveItem extends Item implements Colored, SubItems, IDeviceTy
     public NonNullList<ResourceLocation> getModels() {
         NonNullList<ResourceLocation> modelLocations = NonNullList.create();
         for (DyeColor color : DyeColor.values())
-            modelLocations.add(new ResourceLocation(Reference.MOD_ID, Objects.requireNonNull(Registries.getId(this, Registry.ITEM_REGISTRY)).getPath().substring(5) + "/" + color.getName()));
+            modelLocations.add(new ResourceLocation(Reference.MOD_ID, Objects.requireNonNull(RegistrarManager.getId(this, Registries.ITEM)).getPath().substring(5) + "/" + color.getName()));
         return modelLocations;
     }
 
