@@ -29,65 +29,28 @@ configurations {
 }
 
 dependencies {
-    forge "net.minecraftforge:forge:${rootProject.architectury.minecraft}-$forge_version"
+    forge "net.minecraftforge:forge:$minecraft_version-$forge_version"
     // Remove the next line if you don't want to depend on the API
-    modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
+    modApi "dev.architectury:architectury-forge:$architectury_version"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive false }
 
-    forgeRuntimeLibrary "org.jetbrains.kotlin:kotlin-stdlib:1.7.10"
-    forgeRuntimeLibrary "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10"
-    forgeRuntimeLibrary "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.10"
-    forgeRuntimeLibrary "org.jetbrains.kotlin:kotlin-reflect:1.7.10"
-
-    forgeRuntimeLibrary "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
-    forgeRuntimeLibrary "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.6.4"
-    forgeRuntimeLibrary "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.4"
-    forgeRuntimeLibrary "org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.3.3"
-    forgeRuntimeLibrary "org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.3.3"
-    forgeRuntimeLibrary "org.jetbrains.kotlinx:kotlinx-serialization-cbor-jvm:1.3.3"
-    forgeRuntimeLibrary 'org.jetbrains.kotlinx:atomicfu-jvm:0.18.3'
-    forgeRuntimeLibrary "org.jetbrains.kotlinx:kotlinx-datetime-jvm:0.4.0"
-
-    forgeRuntimeLibrary "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.10"
-    forgeRuntimeLibrary "org.jetbrains.kotlin:kotlin-stdlib:1.7.10"
-    //forgeRuntimeLibrary "com.ultreon:ultranlang:0.1.0+6"
+//    forgeRuntimeLibrary "com.ultreon:ultranlang:0.1.0+6"
     forgeRuntimeLibrary "com.jab125:apoint:1.0.0"
-
-//    include("org.jetbrains.kotlin:kotlin-stdlib:1.7.10")
-//    implementation include("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10")
-//    include("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.10")
-//    implementation include("org.jetbrains.kotlin:kotlin-reflect:1.7.10")
-//
-//    include("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-//    include("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.6.4")
-//    include("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.4")
-//    include("org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.3.3")
-//    include("org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.3.3")
-//    include("org.jetbrains.kotlinx:kotlinx-serialization-cbor-jvm:1.3.3")
-//    include('org.jetbrains.kotlinx:atomicfu-jvm:0.18.3')
-//    include("org.jetbrains.kotlinx:kotlinx-datetime-jvm:0.4.0")
-
-//    include("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.10")
-//    include("org.jetbrains.kotlin:kotlin-stdlib:1.7.10")
 
 //    implementation include("com.ultreon:ultranlang:0.1.0+6")
     implementation include("com.jab125:apoint:1.0.0")
-
-   // shadowCommon "org.jetbrains.kotlin:kotlin-reflect:1.7.10"
-    //shadowCommon "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10"
-   // shadowCommon "com.jab125:apoint:1.0.0"
 }
 
 processResources {
-    inputs.property "version", rootProject.getIngame_version()
+    inputs.property "version", rootProject.getIngameVersion()
     inputs.property "description", rootProject.getModDescription()
     System.out.println(inputs.getProperties())
 
     filesMatching("META-INF/mods.toml") {
         HashMap<String, ?> p = new HashMap<>()
-        p.put("version", rootProject.getIngame_version())
+        p.put("version", rootProject.getIngameVersion())
         p.put("description", rootProject.getModDescription())
         //noinspection GroovyAssignabilityCheck
         p.put("loaderVersion", rootProject.forge_version.split("\\.")[0])
@@ -102,7 +65,7 @@ shadowJar {
     exclude "architectury.common.json"
 
     configurations = [project.configurations.shadowCommon]
-    classifier "dev-shadow"
+    archiveClassifier = "dev-shadow"
 
 //    relocate 'org.jetbrains.kotlin', "com.ultreon.devices.shadow.org.jetbrains.kotlin"
 //    relocate 'org.jetbrains.kotlinx', "com.ultreon.devices.shadow.org.jetbrains.kotlinx"
@@ -114,11 +77,11 @@ shadowJar {
 remapJar {
     input.set shadowJar.archiveFile
     dependsOn shadowJar
-    classifier null
+    archiveClassifier = null
 }
 
 jar {
-    classifier "dev"
+    archiveClassifier = "dev"
 }
 
 sourcesJar {

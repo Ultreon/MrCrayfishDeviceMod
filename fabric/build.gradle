@@ -39,10 +39,10 @@ configurations {
 }
 
 dependencies {
-    modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
-    modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
+    modImplementation "net.fabricmc:fabric-loader:$fabric_loader_version"
+    modApi "net.fabricmc.fabric-api:fabric-api:$fabric_api_version"
     // Remove the next line if you don't want to depend on the API
-    modApi "dev.architectury:architectury-fabric:${rootProject.architectury_version}"
+    modApi "dev.architectury:architectury-fabric:$architectury_version"
 
     modImplementation "curse.maven:forgeapiportfabric-547434:3946675"
     modImplementation 'com.electronwill.night-config:core:3.6.5'
@@ -71,11 +71,11 @@ dependencies {
 }
 
 processResources {
-    inputs.property "version", rootProject.getIngame_version()
+    inputs.property "version", rootProject.getIngameVersion()
 
     filesMatching("fabric.mod.json") {
         HashMap<String, ?> p = new HashMap<>()
-        p.put("version", rootProject.getIngame_version())
+        p.put("version", rootProject.getIngameVersion())
         p.put("description", rootProject.getModDescription())
         p.put("loaderVersion", rootProject.fabric_loader_version)
         p.put("minecraftVersion", rootProject.architectury.minecraft)
@@ -85,7 +85,7 @@ processResources {
 
 shadowJar {
     configurations = [project.configurations.shadowCommon]
-    classifier "dev-shadow"
+    archiveClassifier = "dev-shadow"
 }
 
 remapJar {
@@ -93,11 +93,11 @@ remapJar {
     //noinspection GrDeprecatedAPIUsage
     input.set shadowJar.archiveFile
     dependsOn shadowJar
-    classifier null
+    archiveClassifier = null
 }
 
 jar {
-    classifier "dev"
+    archiveClassifier = "dev"
 }
 
 sourcesJar {
