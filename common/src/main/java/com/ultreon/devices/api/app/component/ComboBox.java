@@ -12,8 +12,8 @@ import com.ultreon.devices.core.Laptop;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 
 /**
@@ -260,7 +260,7 @@ public abstract class ComboBox<T> extends Component {
             return (Layout.Context) layout;
         }
 
-        public void setValue(@Nonnull T newVal) {
+        public void setValue(@NotNull T newVal) {
             updateValue(newVal);
         }
     }

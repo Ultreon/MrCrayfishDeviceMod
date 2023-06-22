@@ -4,7 +4,7 @@ import com.ultreon.devices.api.app.Application;
 import com.ultreon.devices.api.io.MimeType;
 import net.minecraft.nbt.CompoundTag;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.Comparator;
 
 /**
