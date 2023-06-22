@@ -1,27 +1,34 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "group": "devices:laptop",
   "key": {
     "#": {
-      "item": "minecraft:netherite_ingot"
+      "item": "devices:screen"
     },
     "$": {
-      "item": "minecraft:glass"
+      "item": "devices:battery"
     },
     "+": {
       "item": "minecraft:green_wool"
     },
-    "_": {
-      "item": "minecraft:beacon"
+    ".": {
+      "item": "minecraft:iron_nugget"
     },
-    "|": {
-      "item": "minecraft:quartz"
+    "/": {
+      "item": "minecraft:iron_ingot"
+    },
+    "@": {
+      "item": "devices:motherboard_full"
+    },
+    "O": {
+      "tag": "devices:internal_storage"
     }
   },
   "pattern": [
-    "#+#",
-    "$|$",
-    "_|_"
+    "+#+",
+    ".@$",
+    "/O/"
   ],
   "result": {
     "item": "devices:green_laptop"

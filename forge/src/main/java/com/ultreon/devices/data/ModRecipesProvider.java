@@ -1,15 +1,13 @@
 package com.ultreon.devices.data;
 
+import com.ultreon.devices.Devices;
 import com.ultreon.devices.block.PrinterBlock;
 import com.ultreon.devices.block.RouterBlock;
 import com.ultreon.devices.init.DeviceBlocks;
 import com.ultreon.devices.init.DeviceItems;
 import com.ultreon.devices.item.FlashDriveItem;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.data.recipes.RecipeCategory;
-import net.minecraft.data.recipes.RecipeProvider;
-import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.data.recipes.*;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.Items;
@@ -39,6 +37,7 @@ public class ModRecipesProvider extends RecipeProvider {
                     .define('f', DeviceItems.COMPONENT_FLASH_CHIP.get())
                     .define('c', DeviceItems.COMPONENT_CIRCUIT_BOARD.get())
                     .unlockedBy("has_flash_chip", has(DeviceItems.COMPONENT_FLASH_CHIP.get()))
+                    .group(Devices.MOD_ID + ":laptop")
                     .save(consumer);
         }
 
@@ -57,6 +56,7 @@ public class ModRecipesProvider extends RecipeProvider {
                     .define('c', DeviceItems.COMPONENT_CARRIAGE.get())
                     .define('b', DeviceItems.COMPONENT_CONTROLLER_UNIT.get())
                     .unlockedBy("has_carriage", has(DeviceItems.COMPONENT_CARRIAGE.get()))
+                    .group(Devices.MOD_ID + ":printer")
                     .save(consumer);
         }
 
@@ -75,6 +75,7 @@ public class ModRecipesProvider extends RecipeProvider {
                     .define('c', DeviceItems.COMPONENT_CIRCUIT_BOARD.get())
                     .define('b', DeviceItems.COMPONENT_BATTERY.get())
                     .unlockedBy("has_circuit_board", has(DeviceItems.COMPONENT_CIRCUIT_BOARD.get()))
+                    .group(Devices.MOD_ID + ":router")
                     .save(consumer);
         }
 
@@ -91,5 +92,13 @@ public class ModRecipesProvider extends RecipeProvider {
 //                .define('g', Items.GOLD_NUGGET)
 //                .unlockedBy("has_laptop", has(ModTags.Items.LAPTOPS))
 //                .save(consumer);
+
+        new ShapelessRecipeBuilder(RecipeCategory.MISC, DeviceItems.COMPONENT_MOTHERBOARD_FULL.get(), 1)
+                .requires(DeviceItems.COMPONENT_CPU.get(), 1)
+                .requires(DeviceItems.COMPONENT_GPU.get(), 1)
+                .requires(DeviceItems.COMPONENT_RAM.get(), 1)
+                .requires(DeviceItems.COMPONENT_MOTHERBOARD.get(), 1)
+                .unlockedBy("has_motherboard", has(DeviceItems.COMPONENT_MOTHERBOARD.get()))
+                .save(consumer);
     }
 }
