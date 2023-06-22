@@ -564,9 +564,12 @@ public class Devices {
         OnlineRequest.getInstance().make(url, (success, response) -> {
             if (success) {
                 //Minecraft.getInstance().doRunTask(() -> {
-                JsonArray array = JsonParser.parseString(response).getAsJsonArray();
-                for (JsonElement jsonElement : array) {
-                    JsonObject elem = jsonElement.getAsJsonObject();
+                JsonElement root = JsonParser.parseString(response);
+                System.out.println("root = " + root);
+                JsonArray rootArray = root.getAsJsonArray();
+                for (JsonElement rootRegister : rootArray) {
+                    System.out.println("rootRegister = " + rootRegister);
+                    JsonObject elem = rootRegister.getAsJsonObject();
                     var registrant = elem.get("registrant") != null ? elem.get("registrant").getAsString() : null;
                     var type = Type.REGISTRATION;
                     JsonElement typeElem;
