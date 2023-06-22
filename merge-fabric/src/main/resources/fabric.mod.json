@@ -3,7 +3,7 @@
   "id": "devices-fabric",
   "name": "(Wrapper) Devices Mod",
   "description": "Fabric wrapper for devices mod",
-  "version": "0.0.0-generated",
+  "version": "${version}-generated",
   "custom": {
     "modmenu": {
       "badges": [
