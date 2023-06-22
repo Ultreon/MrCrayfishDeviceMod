@@ -12,7 +12,7 @@ import net.minecraft.nbt.Tag;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.function.Predicate;
 
