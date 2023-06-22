@@ -2,67 +2,67 @@
   "replace": false,
   "values": [
     {
-      "id": "devices:gray_laptop",
+      "id": "devices:red_printer",
       "required": false
     },
     {
-      "id": "devices:lime_laptop",
+      "id": "devices:yellow_printer",
       "required": false
     },
     {
-      "id": "devices:red_laptop",
+      "id": "devices:light_blue_printer",
       "required": false
     },
     {
-      "id": "devices:light_blue_laptop",
+      "id": "devices:blue_printer",
       "required": false
     },
     {
-      "id": "devices:black_laptop",
+      "id": "devices:brown_printer",
       "required": false
     },
     {
-      "id": "devices:light_gray_laptop",
+      "id": "devices:magenta_printer",
       "required": false
     },
     {
-      "id": "devices:purple_laptop",
+      "id": "devices:light_gray_printer",
       "required": false
     },
     {
-      "id": "devices:green_laptop",
+      "id": "devices:black_printer",
       "required": false
     },
     {
-      "id": "devices:white_laptop",
+      "id": "devices:pink_printer",
       "required": false
     },
     {
-      "id": "devices:yellow_laptop",
+      "id": "devices:orange_printer",
       "required": false
     },
     {
-      "id": "devices:cyan_laptop",
+      "id": "devices:gray_printer",
       "required": false
     },
     {
-      "id": "devices:brown_laptop",
+      "id": "devices:purple_printer",
       "required": false
     },
     {
-      "id": "devices:orange_laptop",
+      "id": "devices:white_printer",
       "required": false
     },
     {
-      "id": "devices:magenta_laptop",
+      "id": "devices:green_printer",
       "required": false
     },
     {
-      "id": "devices:blue_laptop",
+      "id": "devices:lime_printer",
       "required": false
     },
     {
-      "id": "devices:pink_laptop",
+      "id": "devices:cyan_printer",
       "required": false
     }
   ]

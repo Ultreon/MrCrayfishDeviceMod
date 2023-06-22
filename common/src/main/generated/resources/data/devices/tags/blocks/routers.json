@@ -2,67 +2,67 @@
   "replace": false,
   "values": [
     {
-      "id": "devices:gray_laptop",
+      "id": "devices:yellow_router",
       "required": false
     },
     {
-      "id": "devices:lime_laptop",
+      "id": "devices:lime_router",
       "required": false
     },
     {
-      "id": "devices:red_laptop",
+      "id": "devices:cyan_router",
       "required": false
     },
     {
-      "id": "devices:light_blue_laptop",
+      "id": "devices:magenta_router",
       "required": false
     },
     {
-      "id": "devices:black_laptop",
+      "id": "devices:blue_router",
       "required": false
     },
     {
-      "id": "devices:light_gray_laptop",
+      "id": "devices:pink_router",
       "required": false
     },
     {
-      "id": "devices:purple_laptop",
+      "id": "devices:orange_router",
       "required": false
     },
     {
-      "id": "devices:green_laptop",
+      "id": "devices:light_gray_router",
       "required": false
     },
     {
-      "id": "devices:white_laptop",
+      "id": "devices:red_router",
       "required": false
     },
     {
-      "id": "devices:yellow_laptop",
+      "id": "devices:light_blue_router",
       "required": false
     },
     {
-      "id": "devices:cyan_laptop",
+      "id": "devices:black_router",
       "required": false
     },
     {
-      "id": "devices:brown_laptop",
+      "id": "devices:gray_router",
       "required": false
     },
     {
-      "id": "devices:orange_laptop",
+      "id": "devices:white_router",
       "required": false
     },
     {
-      "id": "devices:magenta_laptop",
+      "id": "devices:purple_router",
       "required": false
     },
     {
-      "id": "devices:blue_laptop",
+      "id": "devices:brown_router",
       "required": false
     },
     {
-      "id": "devices:pink_laptop",
+      "id": "devices:green_router",
       "required": false
     }
   ]
