@@ -46,7 +46,13 @@ public class LaptopBlockEntity extends NetworkDeviceBlockEntity.Colored {
     @Override
     public void tick() {
         super.tick();
-        assert level != null;
+        Level level = this.level;
+        if (level == null) return;
+
+        if (getBlockState().getValue(LaptopBlock.OPEN) != open) {
+            level.setBlock(getBlockPos(), this.getBlockState().setValue(LaptopBlock.OPEN, open), 2);
+        }
+
         if (level.isClientSide) {
             prevRotation = rotation;
             if (!open) {
@@ -66,7 +72,10 @@ public class LaptopBlockEntity extends NetworkDeviceBlockEntity.Colored {
         super.load(compound);
         if (compound.contains("open")) {
             this.open = compound.getBoolean("open");
-            this.getBlockState().setValue(LaptopBlock.OPEN, open);
+            Level level = getLevel();
+            if (level != null) {
+                level.setBlock(getBlockPos(), this.getBlockState().setValue(LaptopBlock.OPEN, open), 2);
+            }
         }
         if (compound.contains("system_data", Tag.TAG_COMPOUND)) {
             this.systemData = compound.getCompound("system_data");
