@@ -38,7 +38,7 @@ public final class ApplicationManager {
     public static Application registerApplication(ResourceLocation identifier, Supplier<Supplier<Application>> app, boolean isSystem) {
         Devices.LOGGER.debug(MARKER, "Registering application {}", identifier);
         @SuppressWarnings("deprecation")
-        Application application = Devices.registerApplication(identifier, new Devices.ApplicationSupplier() {
+        Application application = Devices.getInstance().registerApplication(identifier, new Devices.ApplicationSupplier() {
             @Override
             public Supplier<Application> get() {
                 return app.get();

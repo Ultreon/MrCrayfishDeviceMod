@@ -19,10 +19,12 @@ public class PrintingManager {
 
     @Environment(EnvType.CLIENT)
     private static Map<String, IPrint.Renderer> registeredRenders;
+
     @PlatformOnly("fabric")
     public static Map<String, IPrint.Renderer> getRegisteredRenders() {
         return registeredRenders;
     }
+
     @PlatformOnly("fabric")
     public static void setRegisteredRenders(Map<String, IPrint.Renderer> registeredRenders) {
         PrintingManager.registeredRenders = registeredRenders;
@@ -31,7 +33,7 @@ public class PrintingManager {
     public static void registerPrint(ResourceLocation identifier, Class<? extends IPrint> classPrint) {
         try {
             classPrint.getConstructor().newInstance();
-            if (Devices.registerPrint(identifier, classPrint)) {
+            if (Devices.getInstance().registerPrint(identifier, classPrint)) {
                 Devices.LOGGER.info("Registering print '" + classPrint.getName() + "'");
                 registeredPrints.put(identifier.toString(), classPrint);
             } else {
