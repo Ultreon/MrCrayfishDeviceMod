@@ -71,7 +71,7 @@ public class ClientModEvents {
         registerRenderLayers();
         registerRenderers();
         registerLayerDefinitions();
-        if (!Platform.isFabric() || !Platform.isDevelopmentEnvironment()) { // FIXME: ended up with this wonky piece of code, may need to see an alternative option.
+        if (Platform.isForge()) { // Note: Forge requires the icon atlas to be generator beforehand.
             generateIconAtlas();
         }
 
