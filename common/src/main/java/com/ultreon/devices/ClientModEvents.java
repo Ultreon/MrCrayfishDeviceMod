@@ -3,6 +3,7 @@ package com.ultreon.devices;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.ultreon.devices.api.ApplicationManager;
 import com.ultreon.devices.block.entity.renderer.*;
+import com.ultreon.devices.client.RenderRegistry;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.debug.DebugFlags;
 import com.ultreon.devices.debug.DebugUtils;
@@ -27,6 +28,7 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.block.Block;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
@@ -69,15 +71,18 @@ public class ClientModEvents {
         registerRenderLayers();
         registerRenderers();
         registerLayerDefinitions();
-        if (!Platform.isDevelopmentEnvironment()) { // FIXME: ended up with this wonky piece of code, may need to see an alternative option.
+        if (Platform.isForge()) { // Note: Forge requires the icon atlas to be generator beforehand.
             generateIconAtlas();
         }
+
         ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, new ReloaderListener());
     }
 
+    @ApiStatus.Internal
     public static class ReloaderListener implements PreparableReloadListener {
         @NotNull
         @Override
+        @ApiStatus.Internal
         public CompletableFuture<Void> reload(@NotNull PreparableReloadListener.PreparationBarrier preparationBarrier, @NotNull ResourceManager resourceManager, @NotNull ProfilerFiller preparationsProfiler, @NotNull ProfilerFiller reloadProfiler, @NotNull Executor backgroundExecutor, @NotNull Executor gameExecutor) {
             LOGGER.debug("Reloading resources from the Device Mod.");
 
@@ -233,9 +238,9 @@ public class ClientModEvents {
 ////        ObfuscationReflectionHelper.setPrivateValue(AppInfo.class, info, iconV, "iconV");
 //    }
 
-    @ExpectPlatform
     public static void setRenderLayer(Block block, RenderType type) {
-        throw new AssertionError();
+        RenderRegistry.register(block, type
+        );
     }
 
     public static void registerRenderers() {

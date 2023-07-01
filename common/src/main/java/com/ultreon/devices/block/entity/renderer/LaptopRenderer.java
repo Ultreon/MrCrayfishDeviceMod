@@ -90,13 +90,13 @@ public class LaptopRenderer implements BlockEntityRenderer<LaptopBlockEntity> {
                 //    poseStack.pushPose();
                 //poseStack.translate(-pos.getX(), -pos.getY(), -pos.getZ());
 
-                BlockRenderDispatcher blockrendererdispatcher = Minecraft.getInstance().getBlockRenderer();
+                BlockRenderDispatcher dispatcher = Minecraft.getInstance().getBlockRenderer();
                 BakedModel ibakedmodel = mc.getBlockRenderer().getBlockModel(state);
                 poseStack.pushPose();
                 //poseStack.mulPose(Vector3f.ZP.rotationDegrees(180));
                 //poseStack.mulPose(Vector3f.XP.rotationDegrees(180));
                 //poseStack.mulPose(Vector3f.ZP.rotationDegrees(180));
-                blockrendererdispatcher.renderSingleBlock(state, poseStack, bufferSource, packedLight, packedOverlay);//.renderModel(poseStack.last(), bufferSource.getBuffer(RenderType.cutout()), state, ibakedmodel, 1, 1, 1, packedLight, packedOverlay);
+                dispatcher.renderSingleBlock(state, poseStack, bufferSource, packedLight, packedOverlay);//.renderModel(poseStack.last(), bufferSource.getBuffer(RenderType.cutout()), state, ibakedmodel, 1, 1, 1, packedLight, packedOverlay);
                 poseStack.popPose();
                 //poseStack.popPose();
                 //    tessellator.end();
