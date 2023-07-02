@@ -1,10 +1,10 @@
 //file:noinspection GradlePackageUpdate
 architectury {
-    common("fabric", "forge")
+    common platforms.split(",")
 }
 
 loom {
-    accessWidenerPath = file("src/main/resources/devices.accesswidener")
+    accessWidenerPath = file "src/main/resources/devices.accesswidener"
 }
 
 repositories {
@@ -14,14 +14,14 @@ repositories {
 dependencies {
     // We depend on fabric loader here to use the fabric @Environment annotations and get the mixin dependencies
     // Do NOT use other classes from fabric loader
-    modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+    modImplementation "net.fabricmc:fabric-loader:$fabric_loader_version"
     // Remove the next line if you don't want to depend on the API
-    modApi "dev.architectury:architectury:${rootProject.architectury_version}"
+    modApi "dev.architectury:architectury:$architectury_version"
 
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.10")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10")
-//    modApi("com.ultreon:ultranlang:0.1.0+6")
-    modApi("com.jab125:apoint:1.0.0")
+    implementation "org.jetbrains.kotlin:kotlin-reflect:1.7.10"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10"
+//    modApi "com.ultreon:ultranlang:0.1.0+6"
+    modApi "com.jab125:apoint:1.0.0"
 
     modCompileOnly "curse.maven:forgeapiportfabric-547434:3671141"
     modCompileOnly 'com.electronwill.night-config:core:3.6.3'

@@ -29,27 +29,27 @@ dependencies {
 }
 
 processResources {
-//    inputs.property "version", rootProject.getIngame_version()
+//    inputs.property "version", rootProject.getIngameVersion()
 //
 //    filesMatching("fabric.mod.json") {
-//        expand "version": rootProject.getIngame_version()
+//        expand "version": rootProject.getIngameVersion()
 //    }
 }
 
 shadowJar {
     configurations = [project.configurations.shadowCommon]
-    classifier "dev-shadow"
+    archiveClassifier = "dev-shadow"
 }
 
 remapJar {
     injectAccessWidener = true
     input.set shadowJar.archiveFile
     dependsOn shadowJar
-    classifier null
+    archiveClassifier = null
 }
 
 jar {
-    classifier "dev"
+    archiveClassifier = "dev"
 }
 
 sourcesJar {

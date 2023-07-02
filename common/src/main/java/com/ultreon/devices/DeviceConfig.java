@@ -77,12 +77,6 @@ public class DeviceConfig {
         // NO-OP
     }
 
-    @ExpectPlatform
-    public static void register(Object context) {
-        throw new AssertionError();
-        //context.registerConfig(ModConfig.Type.CLIENT, CONFIG);
-    }
-
 //    @ExpectPlatform
 //    @PlatformOnly("fabric")
 //    public static void.json register(ModLoadingContext context) {

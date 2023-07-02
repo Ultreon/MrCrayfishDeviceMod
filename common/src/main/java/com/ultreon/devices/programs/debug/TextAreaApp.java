@@ -9,7 +9,7 @@ import com.ultreon.devices.api.app.interfaces.IHighlight;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author MrCrayfish

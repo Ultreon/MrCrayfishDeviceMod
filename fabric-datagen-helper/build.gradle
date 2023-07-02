@@ -26,42 +26,20 @@ configurations {
 
 dependencies {
     //include(project(":fabric"))
-    modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
-    modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
+    modImplementation "net.fabricmc:fabric-loader:$fabric_loader_version"
+    modApi "net.fabricmc.fabric-api:fabric-api:$fabric_api_version"
     modImplementation "com.terraformersmc:modmenu:4.0.6", {
         exclude module: "fabric-api"
     }
 }
 
 processResources {
-//    inputs.property "version", rootProject.getIngame_version()
-//
-//    filesMatching("fabric.mod.json") {
-//        expand "version": rootProject.getIngame_version()
-//    }
+
 }
-
-//shadowJar {
-//    configurations = [project.configurations.shadowCommon]
-//    classifier "dev-shadow"
-//}
-
-//remapJar {
-//    injectAccessWidener = true
-//    input.set shadowJar.archiveFile
-//    dependsOn shadowJar
-//    classifier null
-//}
 
 jar {
-    classifier "dev"
+    archiveClassifier = "dev"
 }
-
-//sourcesJar {
-//    def commonSources = project(":common").sourcesJar
-//    dependsOn commonSources
-//    from commonSources.archiveFile.map { zipTree(it) }
-//}
 
 components.java {
     withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {

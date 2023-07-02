@@ -8,7 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class TaskUpdateApplicationData extends Task {
     private int x, y, z;
@@ -19,7 +19,7 @@ public class TaskUpdateApplicationData extends Task {
         super("update_application_data");
     }
 
-    public TaskUpdateApplicationData(int x, int y, int z, @Nonnull String appId, @Nonnull CompoundTag data) {
+    public TaskUpdateApplicationData(int x, int y, int z, @NotNull String appId, @NotNull CompoundTag data) {
         this();
         this.x = x;
         this.y = y;
