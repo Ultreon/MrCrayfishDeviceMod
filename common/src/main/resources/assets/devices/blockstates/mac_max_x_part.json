@@ -1,0 +1,7 @@
+{
+    "variants": {
+        "": {
+            "model": "devices:block/void"
+        }
+    }
+}

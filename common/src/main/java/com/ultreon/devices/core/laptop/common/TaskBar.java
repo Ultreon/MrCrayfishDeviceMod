@@ -3,31 +3,15 @@ package com.ultreon.devices.core.laptop.common;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.Devices;
-import com.ultreon.devices.api.TrayItemAdder;
-import com.ultreon.devices.api.app.Application;
-import com.ultreon.devices.api.event.LaptopEvent;
-import com.ultreon.devices.api.utils.RenderUtil;
 import com.ultreon.devices.core.laptop.client.ClientLaptop;
-import com.ultreon.devices.core.network.TrayItemWifi;
-import com.ultreon.devices.object.AppInfo;
-import com.ultreon.devices.object.TrayItem;
-import com.ultreon.devices.programs.system.AppStore;
-import com.ultreon.devices.programs.system.FileBrowserApp;
-import com.ultreon.devices.programs.system.SettingsApp;
-import com.ultreon.devices.programs.system.SystemApp;
 import com.ultreon.devices.programs.system.object.ColorScheme;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Predicate;
 
 public class TaskBar {
     public static final ResourceLocation APP_BAR_GUI = new ResourceLocation("devices:textures/gui/application_bar.png");
@@ -44,15 +28,15 @@ public class TaskBar {
         this.laptop = laptop;
     }
 
-//    public void init() {
+//    public void.json init() {
 //        this.trayItems.forEach(TrayItem::init);
 //    }
 
-//    public void init(int posX, int posY) {
+//    public void.json init(int posX, int posY) {
 //        init();
 //    }
 //
-//    public void onTick() {
+//    public void.json onTick() {
 //        trayItems.forEach(TrayItem::tick);
 //    }
 

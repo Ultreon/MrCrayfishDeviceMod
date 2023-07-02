@@ -209,7 +209,7 @@ public class Player {
 //            this.bipedBodyWear.setRotationPoint(0f, 0f, 0f);
 //        }
 //
-//        public void render(Entity entityIn, float p_78088_2_, float p_78088_3_, float p_78088_4_, float p_78088_5_, float p_78088_6_, float scale) {
+//        public void.json render(Entity entityIn, float p_78088_2_, float p_78088_3_, float p_78088_4_, float p_78088_5_, float p_78088_6_, float scale) {
 //            this.setRotationAngles(p_78088_2_, p_78088_3_, p_78088_4_, p_78088_5_, p_78088_6_, scale, entityIn);
 //            GlStateManager.pushMatrix();
 //
@@ -229,7 +229,7 @@ public class Player {
 //            GlStateManager.popMatrix();
 //        }
 //
-//        public void setRotationAngles(float p_78087_1_, float p_78087_2_, float p_78087_3_, float p_78087_4_, float p_78087_5_, float p_78087_6_, Entity entityIn) {
+//        public void.json setRotationAngles(float p_78087_1_, float p_78087_2_, float p_78087_3_, float p_78087_4_, float p_78087_5_, float p_78087_6_, Entity entityIn) {
 //            super.setRotationAngles(p_78087_1_, p_78087_2_, p_78087_3_, p_78087_4_, p_78087_5_, p_78087_6_, entityIn);
 //            copyModelAngles(this.bipedLeftLeg, this.bipedLeftLegwear);
 //            copyModelAngles(this.bipedRightLeg, this.bipedRightLegwear);

@@ -2,7 +2,7 @@ package com.ultreon.devices.core.task;
 
 import com.ultreon.devices.Devices;
 import com.ultreon.devices.api.task.Task;
-import com.ultreon.devices.block.entity.LaptopBlockEntity;
+import com.ultreon.devices.block.entity.ComputerBlockEntity;
 import com.ultreon.devices.object.AppInfo;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -48,7 +48,7 @@ public class TaskInstallApp extends Task {
         System.out.println(level.getBlockState(BlockPos.of(tag.getLong("pos"))).getBlock());
         BlockEntity tileEntity = level.getChunkAt(BlockPos.of(tag.getLong("pos"))).getBlockEntity(BlockPos.of(tag.getLong("pos")), LevelChunk.EntityCreationType.IMMEDIATE);
         System.out.println(tileEntity);
-        if (tileEntity instanceof LaptopBlockEntity laptop) {
+        if (tileEntity instanceof ComputerBlockEntity laptop) {
             CompoundTag systemData = laptop.getSystemData();
             ListTag list = systemData.getList("InstalledApps", Tag.TAG_STRING);
 

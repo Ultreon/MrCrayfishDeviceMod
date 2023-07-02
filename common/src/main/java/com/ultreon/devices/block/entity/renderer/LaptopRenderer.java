@@ -1,19 +1,17 @@
 package com.ultreon.devices.block.entity.renderer;
 
-import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import com.ultreon.devices.block.ComputerBlock;
 import com.ultreon.devices.block.LaptopBlock;
 import com.ultreon.devices.block.entity.LaptopBlockEntity;
-import com.ultreon.devices.core.laptop.client.ClientLaptop;
 import com.ultreon.devices.init.DeviceItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -21,8 +19,6 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 public class LaptopRenderer implements BlockEntityRenderer<LaptopBlockEntity> {
     private final BlockEntityRendererProvider.Context context;
@@ -44,7 +40,7 @@ public class LaptopRenderer implements BlockEntityRenderer<LaptopBlockEntity> {
 //        poseStack.popPose();
         var direction = blockEntity.getBlockState().getValue(LaptopBlock.FACING).getClockWise().toYRot();
         ItemEntity entityItem = new ItemEntity(Minecraft.getInstance().level, 0D, 0D, 0D, ItemStack.EMPTY);
-        BlockState state = blockEntity.getBlock().defaultBlockState().setValue(LaptopBlock.TYPE, LaptopBlock.Type.SCREEN);
+        BlockState state = blockEntity.getBlock().defaultBlockState().setValue(ComputerBlock.TYPE, LaptopBlock.Type.SCREEN);
         BlockPos pos = blockEntity.getBlockPos();
 
         RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);

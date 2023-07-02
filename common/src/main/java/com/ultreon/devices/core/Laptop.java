@@ -15,7 +15,7 @@ import com.ultreon.devices.api.task.Callback;
 import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.api.task.TaskManager;
 import com.ultreon.devices.api.utils.OnlineRequest;
-import com.ultreon.devices.block.entity.LaptopBlockEntity;
+import com.ultreon.devices.block.entity.ComputerBlockEntity;
 import com.ultreon.devices.core.task.TaskInstallApp;
 import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.programs.system.DiagnosticsApp;
@@ -49,8 +49,10 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.*;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 //TODO Intro message (created by mrcrayfish, donate here)
@@ -120,7 +122,7 @@ public class Laptop extends Screen implements System {
      *
      * @param laptop the block entity of the laptop in-game, if the laptop is not in-game, the level passed to it should be null.
      */
-    public Laptop(LaptopBlockEntity laptop) {
+    public Laptop(ComputerBlockEntity laptop) {
         this(laptop, false);
     }
 
@@ -129,7 +131,7 @@ public class Laptop extends Screen implements System {
      *
      * @param laptop the block entity of the laptop in-game, if the laptop is not in-game, the level passed to it should be null.
      */
-    public Laptop(LaptopBlockEntity laptop, boolean worldLess) {
+    public Laptop(ComputerBlockEntity laptop, boolean worldLess) {
         super(Component.literal("Laptop"));
 
         instance = this;

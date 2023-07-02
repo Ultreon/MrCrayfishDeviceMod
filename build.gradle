@@ -28,6 +28,44 @@ subprojects {
         silentMojangMappingsLicense()
     }
 
+    repositories {
+        mavenCentral()
+
+        maven {
+            name = 'Sponge / Mixin'
+            url = 'https://repo.spongepowered.org/repository/maven-public/'
+        }
+
+        maven {
+            name = 'BlameJared Maven (CrT / Bookshelf)'
+            url = 'https://maven.blamejared.com'
+        }
+        maven {
+            name = 'ParchmentMC'
+            url = 'https://maven.parchmentmc.org'
+        }
+
+        maven {
+            name 'Quilt (Release)'
+            url 'https://maven.quiltmc.org/repository/release/'
+        }
+
+
+        maven {
+            url "https://cursemaven.com"
+            content {
+                includeGroup "curse.maven"
+            }
+        }
+        maven {
+            // location of the maven that hosts JEI files
+            name = "Progwml6 maven"
+            url = "https://dvs1.progwml6.com/files/maven/"
+        }
+        maven { url "https://maven.architectury.dev/" }
+        maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
+    }
+
     dependencies {
         minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
         // The following line declares the mojmap mappings, you may use other mappings as well

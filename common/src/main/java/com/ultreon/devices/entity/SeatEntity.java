@@ -81,7 +81,7 @@ public class SeatEntity extends Entity
     }
 
 //    @Override
-//    protected void init() {}
+//    protected void.json init() {}
 
     @Override
     protected void readAdditionalSaveData(CompoundTag compound) {}

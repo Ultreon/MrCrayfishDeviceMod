@@ -1,7 +1,7 @@
 package com.ultreon.devices.programs.system.task;
 
 import com.ultreon.devices.api.task.Task;
-import com.ultreon.devices.block.entity.LaptopBlockEntity;
+import com.ultreon.devices.block.entity.ComputerBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
@@ -40,7 +40,7 @@ public class TaskUpdateApplicationData extends Task {
     @Override
     public void processRequest(CompoundTag tag, Level level, Player player) {
         BlockEntity tileEntity = level.getBlockEntity(new BlockPos(tag.getInt("posX"), tag.getInt("posY"), tag.getInt("posZ")));
-        if (tileEntity instanceof LaptopBlockEntity laptop) {
+        if (tileEntity instanceof ComputerBlockEntity laptop) {
             laptop.setApplicationData(tag.getString("appId"), tag.getCompound("appData"));
         }
         this.setSuccessful();

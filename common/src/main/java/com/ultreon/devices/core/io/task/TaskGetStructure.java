@@ -2,7 +2,7 @@ package com.ultreon.devices.core.io.task;
 
 import com.ultreon.devices.api.io.Drive;
 import com.ultreon.devices.api.task.Task;
-import com.ultreon.devices.block.entity.LaptopBlockEntity;
+import com.ultreon.devices.block.entity.ComputerBlockEntity;
 import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.core.io.ServerFolder;
 import com.ultreon.devices.core.io.drive.AbstractDrive;
@@ -42,7 +42,7 @@ public class TaskGetStructure extends Task {
     @Override
     public void processRequest(CompoundTag tag, Level level, Player player) {
         BlockEntity tileEntity = level.getBlockEntity(BlockPos.of(tag.getLong("pos")));
-        if (tileEntity instanceof LaptopBlockEntity laptop) {
+        if (tileEntity instanceof ComputerBlockEntity laptop) {
             FileSystem fileSystem = laptop.getFileSystem();
             UUID uuid = UUID.fromString(tag.getString("uuid"));
             AbstractDrive serverDrive = fileSystem.getAvailableDrives(level, true).get(uuid);

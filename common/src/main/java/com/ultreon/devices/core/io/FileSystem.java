@@ -7,7 +7,7 @@ import com.ultreon.devices.api.io.Folder;
 import com.ultreon.devices.api.task.Callback;
 import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.api.task.TaskManager;
-import com.ultreon.devices.block.entity.LaptopBlockEntity;
+import com.ultreon.devices.block.entity.ComputerBlockEntity;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.core.io.action.FileAction;
 import com.ultreon.devices.core.io.drive.AbstractDrive;
@@ -50,9 +50,9 @@ public class FileSystem {
     private AbstractDrive attachedDrive = null;
     private DyeColor attachedDriveColor = DyeColor.RED;
 
-    private final LaptopBlockEntity blockEntity;
+    private final ComputerBlockEntity blockEntity;
 
-    public FileSystem(LaptopBlockEntity blockEntity, CompoundTag tag) {
+    public FileSystem(ComputerBlockEntity blockEntity, CompoundTag tag) {
         this.blockEntity = blockEntity;
 
         load(tag);

@@ -29,7 +29,7 @@ public class DigitalClockBlock{// extends Block {
 //    }
 //
 //
-////    public static void addInformation(ItemStack stack, @Nullable Level player, List<Compon> tooltip, TooltipFlag advanced)
+////    public static void.json addInformation(ItemStack stack, @Nullable Level player, List<Compon> tooltip, TooltipFlag advanced)
 ////    {
 ////        if(Screen.hasShiftDown())
 ////        {
@@ -42,7 +42,7 @@ public class DigitalClockBlock{// extends Block {
 ////    }
 //
 //    @Override
-//    public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean p_185477_7_)
+//    public void.json addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean p_185477_7_)
 //    {
 //        Block.addCollisionBoxToList(pos, entityBox, collidingBoxes, COLLISION_BOXES[state.getValue(FACING).getHorizontalIndex()]);
 //    }
@@ -66,7 +66,7 @@ public class DigitalClockBlock{// extends Block {
 //    }
 //
 //    @Override
-//    public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, @Nullable TileEntity tileEntity, ItemStack stack)
+//    public void.json harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, @Nullable TileEntity tileEntity, ItemStack stack)
 //    {
 //        if(tileEntity instanceof TileEntityDigitalClock)
 //        {
@@ -92,7 +92,7 @@ public class DigitalClockBlock{// extends Block {
 //    }
 //
 //    @Override
-//    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
+//    public void.json onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
 //    {
 //        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
 //        TileEntity tileEntity = worldIn.getTileEntity(pos);

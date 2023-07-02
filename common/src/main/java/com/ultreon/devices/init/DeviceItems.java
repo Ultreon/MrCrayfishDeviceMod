@@ -4,12 +4,17 @@ import com.ultreon.devices.Devices;
 import com.ultreon.devices.ModDeviceTypes;
 import com.ultreon.devices.item.*;
 import com.ultreon.devices.util.DyeableRegistration;
+import dev.architectury.platform.Platform;
 import dev.architectury.registry.registries.Registrar;
 import dev.architectury.registry.registries.RegistrySupplier;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -23,7 +28,7 @@ public class DeviceItems {
     public static final DyeableRegistration<Item> LAPTOPS = new DyeableRegistration<>() {
         @Override
         public RegistrySupplier<Item> register(Registrar<Item> registrar, DyeColor color) {
-            return registrar.register(Devices.id(color.getName() + "_laptop"), () -> new ColoredDeviceItem(DeviceBlocks.LAPTOPS.of(color).get(), new Item.Properties(), color, ModDeviceTypes.LAPTOP));
+            return registrar.register(Devices.id(color.getName() + "_laptop"), () -> new ColoredDeviceItem(DeviceBlocks.LAPTOPS.of(color).get(), new Item.Properties(), color, ModDeviceTypes.COMPUTER));
         }
 
         @Override
@@ -31,6 +36,25 @@ public class DeviceItems {
             return REGISTER;
         }
     };
+
+    // Custom Computers
+    public static final RegistrySupplier<BlockItem> MAC_MAX_X = REGISTER.register(Devices.id("mac_max_x"), () -> new DeviceItem(DeviceBlocks.MAC_MAX_X.get(), new Item.Properties(), ModDeviceTypes.COMPUTER) {
+        @NotNull
+        @Override
+        public Component getDescription() {
+            MutableComponent normalName = Component.translatable("block.devices.mac_max_x");
+            if (Platform.isModLoaded("emojiful")) {
+                return Component.translatable("block.devices.mac_max_x_emoji");
+            }
+            return normalName;
+        }
+
+        @NotNull
+        @Override
+        public Component getName(@NotNull ItemStack stack) {
+            return getDescription();
+        }
+    });
 
     // Printers
     public static final DyeableRegistration<Item> PRINTERS = new DyeableRegistration<>() {
@@ -77,6 +101,7 @@ public class DeviceItems {
         public RegistrySupplier<Item> register(Registrar<Item> registrar, DyeColor color) {
             return registrar.register(Devices.id(color.getName() + "_flash_drive"), () -> new FlashDriveItem(DyeColor.WHITE));
         }
+
         @Override
         protected Registrar<Item> autoInit() {
             return REGISTER;
@@ -132,7 +157,7 @@ public class DeviceItems {
         return getAllItems()
                 .filter(item -> item.asItem() instanceof ColoredDeviceItem)
                 .map(item -> (ColoredDeviceItem) item.asItem())
-                .filter(item -> item.getDeviceType() == ModDeviceTypes.LAPTOP)
+                .filter(item -> item.getDeviceType() == ModDeviceTypes.COMPUTER)
                 .toList();
     }
 

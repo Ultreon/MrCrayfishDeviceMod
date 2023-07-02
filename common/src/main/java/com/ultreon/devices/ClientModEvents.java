@@ -232,7 +232,7 @@ public class ClientModEvents {
     }
 
 //    @ExpectPlatform
-//    private static void updateIcon(AppInfo info, int iconU, int iconV) {
+//    private static void.json updateIcon(AppInfo info, int iconU, int iconV) {
 //        throw new AssertionError();
 ////        ObfuscationReflectionHelper.setPrivateValue(AppInfo.class, info, iconU, "iconU");
 ////        ObfuscationReflectionHelper.setPrivateValue(AppInfo.class, info, iconV, "iconV");
