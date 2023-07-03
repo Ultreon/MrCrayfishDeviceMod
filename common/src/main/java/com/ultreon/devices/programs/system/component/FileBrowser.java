@@ -25,6 +25,7 @@ import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.core.io.task.TaskGetFiles;
 import com.ultreon.devices.core.io.task.TaskGetStructure;
 import com.ultreon.devices.core.io.task.TaskSetupFileBrowser;
+import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.programs.system.SystemApp;
 import net.minecraft.ChatFormatting;
@@ -408,10 +409,10 @@ public class FileBrowser extends Component {
     }
 
     private void openFolder(Folder folder, boolean push, Callback<Folder> callback) {
-        System.out.println("Opening Folder");
+        DebugLog.log("Opening Folder");
         if (!folder.isSynced()) {
             BlockPos pos = Laptop.getPos();
-            System.out.println("Open Folder: " + pos);
+            DebugLog.log("Open Folder: " + pos);
             if (pos == null) {
                 if (callback != null) {
                     callback.execute(null, false);

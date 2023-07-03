@@ -1,6 +1,7 @@
 package com.ultreon.devices.api.task;
 
 import com.ultreon.devices.core.task.TaskInstallApp;
+import com.ultreon.devices.debug.DebugLog;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -58,7 +59,7 @@ public abstract class Task {
      * {@link #processRequest(CompoundTag, Level, Player)}
      */
     public final void setSuccessful() {
-        if (this instanceof TaskInstallApp) System.out.println("Setting successful...");
+        if (this instanceof TaskInstallApp) DebugLog.log("Setting successful...");
         this.success = true;
     }
 

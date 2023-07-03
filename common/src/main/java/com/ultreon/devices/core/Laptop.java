@@ -334,7 +334,7 @@ public class Laptop extends Screen implements System {
                 if (window != null) {
                     window.onTick();
 //                    if (window.removed) {
-//                        java.lang.System.out.println("REMOVED " + window);
+//                        java.lang.DebugLog.log("REMOVED " + window);
 //                        windows.remove(window);
 //                        i--;
 //                    }

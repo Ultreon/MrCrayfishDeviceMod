@@ -197,7 +197,7 @@ public class Game extends Component {
 
         pose.popPose();
 
-        //System.out.println("Rendered game in " + (System.currentTimeMillis() - start));
+        //DebugLog.log("Rendered game in " + (System.currentTimeMillis() - start));
     }
 
     public boolean placeTile(int x, int y, Tile tile) {

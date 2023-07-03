@@ -1,16 +1,12 @@
 package com.jab125.clientint;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import com.jab125.clientint.mixin.LanguageManagerAccessor;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.minecraft.client.resources.language.ClientLanguage;
 import net.minecraft.client.resources.language.LanguageInfo;
 import net.minecraft.client.resources.metadata.language.LanguageMetadataSection;
 import net.minecraft.resources.ResourceLocation;
@@ -19,21 +15,25 @@ import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.stream.Stream;
 
-//import static net.minecraft.client.resources.language.LanguageManager.DEFAULT_LANGUAGE;
-import static net.minecraft.client.resources.language.LanguageManager.DEFAULT_LANGUAGE_CODE;
-
 public class ClientInit implements ClientModInitializer {
+    private static final Logger LOGGER = LoggerFactory.getLogger("Devices Mod::DATA");
+
     @Override
     public void onInitializeClient() {
         var qq = new IdentifiableResourceReloadListener() {
@@ -53,7 +53,7 @@ public class ClientInit implements ClientModInitializer {
 //                    }
                     //this.languages.forEach(((s, languageInfo1) -> {
                         loadFrom(resourceManager, this.languages.values());
-                        System.out.println("loaded");
+                        LOGGER.info("Loaded!");
                   //  }));
                 }).thenCompose(preparationBarrier::wait);
             }
@@ -68,7 +68,7 @@ public class ClientInit implements ClientModInitializer {
 
     private void extractAllFrom(Map<String, LanguageInfo> languages, Stream<PackResources> packResourcesStream, ResourceManager resourceManager) {
         languages.forEach(((s, languageInfo) -> {
-            System.out.println(s + ", " + languageInfo);
+            LOGGER.info(s + ", " + languageInfo);
         }));
         var map = new HashMap<String, LanguageInfo>();
         packResourcesStream.forEach((packResources -> {
@@ -119,7 +119,7 @@ public class ClientInit implements ClientModInitializer {
                 FileWriter df;
                 (df = new FileWriter(Paths.get(string2).toFile())).write(gson.toJson(gg));
                 df.close();
-                System.out.println("written to" + Paths.get(string2).toFile());
+                LOGGER.info("written to" + Paths.get(string2).toFile());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -139,7 +139,7 @@ public class ClientInit implements ClientModInitializer {
                     }
                 }
             } catch (IOException | RuntimeException var5) {
-              //  System.out.println("Unable to parse language metadata section of resourcepack: {}", packResourcesx.getName(), var5);
+              //  DebugLog.log("Unable to parse language metadata section of resourcepack: {}", packResourcesx.getName(), var5);
             }
 
         });

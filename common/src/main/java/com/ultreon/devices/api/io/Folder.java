@@ -7,6 +7,7 @@ import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.core.io.action.FileAction;
 import com.ultreon.devices.core.io.task.TaskGetFiles;
+import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.programs.system.component.FileBrowser;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
@@ -111,50 +112,50 @@ public class Folder extends File {
             throw new IllegalStateException("Folder must be added to the system before you can add files to it");
 
         if (file == null) {
-            System.out.println("File is null");
+            DebugLog.log("File is null");
             if (callback != null) {
-                System.out.println("Callback is not null");
+                DebugLog.log("Callback is not null");
                 callback.execute(FileSystem.createResponse(FileSystem.Status.FILE_INVALID, "Illegal file"), false);
             }
             return;
         }
 
-        System.out.println("Adding file " + file.name + " to folder " + name);
+        DebugLog.log("Adding file " + file.name + " to folder " + name);
 
         if (!FileSystem.PATTERN_FILE_NAME.matcher(file.name).matches()) {
-            System.out.println("File name is invalid");
+            DebugLog.log("File name is invalid");
             if (callback != null) {
-                System.out.println("Callback is not null");
+                DebugLog.log("Callback is not null");
                 callback.execute(FileSystem.createResponse(FileSystem.Status.FILE_INVALID_NAME, "Invalid file name"), true);
             }
             return;
         }
 
         if (hasFile(file.name)) {
-            System.out.println("File already exists");
+            DebugLog.log("File already exists");
             if (!override) {
-                System.out.println("File already exists and override is false");
+                DebugLog.log("File already exists and override is false");
                 if (callback != null) {
-                    System.out.println("Callback is not null");
+                    DebugLog.log("Callback is not null");
                     callback.execute(FileSystem.createResponse(FileSystem.Status.FILE_EXISTS, "A file with that name already exists"), true);
                 }
                 return;
             } else if (Objects.requireNonNull(getFile(file.name)).isProtected()) {
-                System.out.println("File already exists and override is true and file is protected");
+                DebugLog.log("File already exists and override is true and file is protected");
                 if (callback != null) {
-                    System.out.println("Callback is not null");
+                    DebugLog.log("Callback is not null");
                     callback.execute(FileSystem.createResponse(FileSystem.Status.FILE_IS_PROTECTED, "Unable to override protected files"), true);
                 }
                 return;
             }
         }
 
-        System.out.println("File is valid");
+        DebugLog.log("File is valid");
 
         FileSystem.sendAction(drive, FileAction.Factory.makeNew(this, file, override), (response, success) -> {
-            System.out.println("Received response");
+            DebugLog.log("Received response");
             if (success) {
-                System.out.println("File added successfully");
+                DebugLog.log("File added successfully");
                 if (override) files.remove(getFile(file.name));
                 file.setDrive(drive);
                 file.valid = true;
@@ -163,7 +164,7 @@ public class Folder extends File {
                 FileBrowser.refreshList = true;
             }
             if (callback != null) {
-                System.out.println("Callback is not null");
+                DebugLog.log("Callback is not null");
                 callback.execute(response, success);
             }
         });

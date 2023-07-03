@@ -34,7 +34,7 @@ public class SnakeApp extends Application {
     public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
         super.render(pose, laptop, mc, x, y, mouseX, mouseY, active, partialTicks);
 //        for (Component component : this.titleScreen.components) {
-//            System.out.println(component + "lt: " + component.left + ", " + component.top);
+//            DebugLog.log(component + "lt: " + component.left + ", " + component.top);
 //        }
     }
 

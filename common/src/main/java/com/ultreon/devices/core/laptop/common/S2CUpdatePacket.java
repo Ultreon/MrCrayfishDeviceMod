@@ -2,6 +2,7 @@ package com.ultreon.devices.core.laptop.common;
 
 import com.ultreon.devices.core.laptop.client.ClientLaptop;
 import com.ultreon.devices.core.laptop.server.ServerLaptop;
+import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.network.Packet;
 import dev.architectury.networking.NetworkManager;
 import net.fabricmc.api.EnvType;
@@ -36,7 +37,7 @@ public class S2CUpdatePacket extends Packet<S2CUpdatePacket> {
     public boolean onMessage(Supplier<NetworkManager.PacketContext> ctx) {
         if (ctx.get().getEnv().equals(EnvType.CLIENT)) {
             ClientLaptop.laptops.get(this.nbt.getUUID("uuid")).handlePacket(this.nbt.getString("type"), this.nbt.getCompound("data"));
-            System.out.println("SQUARE: " + Arrays.toString(ClientLaptop.laptops.get(this.nbt.getUUID("uuid")).square));
+            DebugLog.log("SQUARE: " + Arrays.toString(ClientLaptop.laptops.get(this.nbt.getUUID("uuid")).square));
         }
         return false;
     }

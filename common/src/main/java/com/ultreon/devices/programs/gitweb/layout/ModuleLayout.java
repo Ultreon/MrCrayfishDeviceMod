@@ -26,7 +26,7 @@ public class ModuleLayout extends Layout {
     }
 
     public void _tick() {
-        //System.out.println("TICKING " + entry.getModule());
+        //DebugLog.log("TICKING " + entry.getModule());
         entry.getModule().tick(frame, this, width, entry.getData());
     }
 }

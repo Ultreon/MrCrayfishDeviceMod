@@ -6,6 +6,7 @@ import com.mojang.datafixers.util.Pair;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.programs.gitweb.component.GitWebFrame;
 import com.ultreon.devices.programs.gitweb.component.container.ContainerBox;
 import com.ultreon.devices.programs.gitweb.component.container.LoomBox;
@@ -90,7 +91,7 @@ public class BannerIIModule extends Module {
             float f = 0.6666667F;
             pose.scale(f, -f, -f);
             long l = System.currentTimeMillis()/50;
-            System.out.println(l);
+            DebugLog.log(l);
             float h = ((float)Math.floorMod(l, 100L) + partialTicks) / 100.0f;
 
             this.flag.yRot = (float) Math.toRadians(30);

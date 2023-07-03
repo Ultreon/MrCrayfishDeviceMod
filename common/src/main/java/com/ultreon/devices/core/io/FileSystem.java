@@ -16,6 +16,7 @@ import com.ultreon.devices.core.io.drive.InternalDrive;
 import com.ultreon.devices.core.io.task.TaskGetFiles;
 import com.ultreon.devices.core.io.task.TaskGetMainDrive;
 import com.ultreon.devices.core.io.task.TaskSendAction;
+import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.init.DeviceItems;
 import com.ultreon.devices.item.FlashDriveItem;
 import net.fabricmc.api.EnvType;
@@ -62,19 +63,19 @@ public class FileSystem {
     @Environment(EnvType.CLIENT)
     public static void sendAction(Drive drive, FileAction action, @Nullable Callback<Response> callback) {
         if (Laptop.getPos() != null) {
-            System.out.println("Sending action " + action + " to " + drive);
+            DebugLog.log("Sending action " + action + " to " + drive);
             Task task = new TaskSendAction(drive, action);
             task.setCallback((tag, success) -> {
-                System.out.println("Action " + action + " sent to " + drive + ": " + success);
+                DebugLog.log("Action " + action + " sent to " + drive + ": " + success);
                 if (callback != null) {
                     assert tag != null;
-                    System.out.println("Callback: " + tag.getString("response"));
+                    DebugLog.log("Callback: " + tag.getString("response"));
                     callback.execute(Response.fromTag(tag.getCompound("response")), success);
                 }
             });
             TaskManager.sendTask(task);
         } else {
-            System.out.println("Sending action " + action + " to " + drive + " failed: Laptop not found");
+            DebugLog.log("Sending action " + action + " to " + drive + " failed: Laptop not found");
         }
     }
 
@@ -136,7 +137,7 @@ public class FileSystem {
                 });
             }
         } else {
-            System.out.println("Application data folder is not initialized");
+            DebugLog.log("Application data folder is not initialized");
             callback.execute(null, false);
         }
     }

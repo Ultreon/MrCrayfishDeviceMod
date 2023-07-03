@@ -8,6 +8,7 @@ import com.ultreon.devices.api.app.interfaces.IHighlight;
 import com.ultreon.devices.api.app.listener.KeyListener;
 import com.ultreon.devices.api.utils.RenderUtil;
 import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.util.GLHelper;
 import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.ChatFormatting;
@@ -244,7 +245,7 @@ public class TextArea extends Component {
     public void handleCharTyped(char codePoint, int modifiers) {
         if (!this.visible || !this.enabled || !this.isFocused || !this.editable) return;
 
-        System.out.println("TextArea.handleCharTyped: codePoint = " + codePoint + ", modifiers = " + modifiers);
+        DebugLog.log("TextArea.handleCharTyped: codePoint = " + codePoint + ", modifiers = " + modifiers);
 
         if (codePoint == '\\') performBackspace();
         else if (Character.isDefined(codePoint)) writeText(codePoint);
@@ -259,7 +260,7 @@ public class TextArea extends Component {
     public void handleKeyPressed(int keyCode, int scanCode, int modifiers) {
         if (!this.visible || !this.enabled || !this.isFocused || !this.editable) return;
 
-        System.out.println("TextArea.handleKeyPressed: keyCode = " + keyCode + ", scanCode = " + scanCode + ", modifiers = " + modifiers);
+        DebugLog.log("TextArea.handleKeyPressed: keyCode = " + keyCode + ", scanCode = " + scanCode + ", modifiers = " + modifiers);
 
         if (Screen.isPaste(keyCode)) {
             String[] lines = Minecraft.getInstance().keyboardHandler.getClipboard().split("\n");
@@ -268,7 +269,7 @@ public class TextArea extends Component {
             }
             writeText(lines[lines.length - 1]);
         } else {
-            System.out.println("TextArea.handleKeyTypes: keyCode = " + keyCode);
+            DebugLog.log("TextArea.handleKeyTypes: keyCode = " + keyCode);
             switch (keyCode) {
                 case InputConstants.KEY_BACKSPACE -> performBackspace(); // TODO: Make delete actually work
                 case InputConstants.KEY_RETURN -> performReturn();

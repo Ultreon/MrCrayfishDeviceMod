@@ -3,6 +3,7 @@ package com.ultreon.devices.core.laptop.client;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.Reference;
+import com.ultreon.devices.debug.DebugLog;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -68,6 +69,6 @@ public class ClientLaptopScreen extends Screen {
         int posY = (height - ClientLaptop.DEVICE_HEIGHT) / 2 + BORDER;
         super.mouseMoved(mouseX, mouseY);
         laptop.mouseMoved(mouseX-posX, mouseY-posY);
-        System.out.println(Arrays.toString(laptop.square));
+        DebugLog.log(Arrays.toString(laptop.square));
     }
 }

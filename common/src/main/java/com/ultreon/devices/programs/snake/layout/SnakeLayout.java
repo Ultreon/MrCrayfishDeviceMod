@@ -7,6 +7,7 @@ import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.component.Button;
 import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.programs.snake.SnakeApp;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -105,7 +106,7 @@ public class SnakeLayout extends Layout {
             var intBlack = black.getRGB();
 //            for (var i = 0;i<15;i++) {
 //                for (var j=0;j<15;j++) {
-//                    //System.out.println(i +", " + (i+j)/2 + ", " + j);
+//                    //DebugLog.log(i +", " + (i+j)/2 + ", " + j);
 //                    intBlack = new Color(i*10, (i+j)/2*10, j*10, 127).getRGB();
 //                    //0, 0 -> 10, 10
 //                    // 10,10 -> 20, 20
@@ -177,22 +178,22 @@ public class SnakeLayout extends Layout {
         }
 
         private void up() {
-            System.out.println("UP");
+            DebugLog.log("UP");
             this.direction2d = Direction2d.UP;
         }
 
         private void down() {
-            System.out.println("DOWN");
+            DebugLog.log("DOWN");
             this.direction2d = Direction2d.DOWN;
         }
 
         private void left() {
-            System.out.println("LEFT");
+            DebugLog.log("LEFT");
             this.direction2d = Direction2d.LEFT;
         }
 
         private void right() {
-            System.out.println("RIGHT");
+            DebugLog.log("RIGHT");
             this.direction2d = Direction2d.RIGHT;
         }
 

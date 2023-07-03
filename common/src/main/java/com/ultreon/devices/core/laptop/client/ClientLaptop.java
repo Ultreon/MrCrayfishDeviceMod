@@ -7,6 +7,7 @@ import com.ultreon.devices.Reference;
 import com.ultreon.devices.core.laptop.common.C2SUpdatePacket;
 import com.ultreon.devices.core.laptop.common.TaskBar;
 import com.ultreon.devices.core.laptop.server.ServerLaptop;
+import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.network.PacketHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
@@ -54,11 +55,11 @@ public class ClientLaptop {
 
     public void handlePacket(String type, CompoundTag nbt) {
         if (type.equals("placeSquare")) {
-            System.out.println("moving square lol");
-            System.out.println(nbt);
+            DebugLog.log("moving square lol");
+            DebugLog.log(nbt);
             square[0] = nbt.getDouble("x");
             square[1] = nbt.getDouble("y");
-            System.out.println("SET");
+            DebugLog.log("SET");
         }
     }
 
@@ -87,7 +88,7 @@ public class ClientLaptop {
         Minecraft.getInstance().font.draw(pose, "New Laptop System 0.01% complete", 0, 0, 0xffffff);
         Gui.fill(pose, 0, 0, 10, 10, 0x2e2e2e);
         taskbar.render(pose, this, Minecraft.getInstance(), 0, SCREEN_HEIGHT-16, mouseX, mouseY, partialTicks);
-        System.out.println("x = " + square[0]);
+        DebugLog.log("x = " + square[0]);
         Gui.fill(pose, (int) square[0], (int) square[1], (int) square[0]+10, (int) square[1]+10, 0xffffff);
     }
 

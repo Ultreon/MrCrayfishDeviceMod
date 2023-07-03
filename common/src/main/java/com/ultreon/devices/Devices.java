@@ -22,6 +22,7 @@ import com.ultreon.devices.core.network.task.TaskGetDevices;
 import com.ultreon.devices.core.network.task.TaskPing;
 import com.ultreon.devices.core.print.task.TaskPrint;
 import com.ultreon.devices.core.task.TaskInstallApp;
+import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.network.PacketHandler;
 import com.ultreon.devices.network.task.SyncApplicationPacket;
 import com.ultreon.devices.network.task.SyncConfigPacket;
@@ -427,10 +428,10 @@ public abstract class Devices {
             if (success) {
                 //Minecraft.getInstance().doRunTask(() -> {
                 JsonElement root = JsonParser.parseString(response);
-                System.out.println("root = " + root);
+                DebugLog.log("root = " + root);
                 JsonArray rootArray = root.getAsJsonArray();
                 for (JsonElement rootRegister : rootArray) {
-                    System.out.println("rootRegister = " + rootRegister);
+                    DebugLog.log("rootRegister = " + rootRegister);
                     JsonObject elem = rootRegister.getAsJsonObject();
                     var registrant = elem.get("registrant") != null ? elem.get("registrant").getAsString() : null;
                     var type = Type.REGISTRATION;

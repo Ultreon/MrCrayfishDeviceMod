@@ -2,6 +2,7 @@ package com.ultreon.devices.block;
 
 import com.ultreon.devices.ModDeviceTypes;
 import com.ultreon.devices.block.entity.OfficeChairBlockEntity;
+import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.entity.SeatEntity;
 import com.ultreon.devices.util.SeatUtil;
 import net.minecraft.Util;
@@ -84,8 +85,8 @@ public class OfficeChairBlock extends DeviceBlock.Colored
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit)
     {
-        //System.out.println(DeviceEntities.SEAT.get().create(level).toString());
-        System.out.println("OKOKJRTKFD");
+        //DebugLog.log(DeviceEntities.SEAT.get().create(level).toString());
+        DebugLog.log("OKOKJRTKFD");
         if(!level.isClientSide)
         {
             SeatUtil.createSeatAndSit(level, pos, player, -1);

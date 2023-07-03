@@ -40,9 +40,9 @@ public interface IIcon {
         RenderSystem.setShaderTexture(0, getIconAsset());
         int size = getIconSize();
         int assetWidth = getGridWidth() * size;
-//        java.lang.System.out.println("assetWidth = " + assetWidth);
+//        java.lang.DebugLog.log("assetWidth = " + assetWidth);
         int assetHeight = getGridHeight() * size;
-//        java.lang.System.out.println("assetHeight = " + assetHeight);
+//        java.lang.DebugLog.log("assetHeight = " + assetHeight);
 //        GuiComponent.blit(pose, x + contentX, y + iconY, iconWidth, iconHeight, iconU, iconV, iconWidth, iconHeight, iconSourceWidth, iconSourceHeight);
         GuiComponent.blit(pose, x, y, size, size, getU(), getV(), size, size, assetWidth, assetHeight);
     }

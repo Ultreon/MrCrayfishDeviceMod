@@ -6,6 +6,7 @@ import com.ultreon.devices.block.entity.ComputerBlockEntity;
 import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.core.io.ServerFolder;
 import com.ultreon.devices.core.io.drive.AbstractDrive;
+import com.ultreon.devices.debug.DebugLog;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
@@ -41,14 +42,19 @@ public class TaskGetStructure extends Task {
 
     @Override
     public void processRequest(CompoundTag tag, Level level, Player player) {
-        BlockEntity tileEntity = level.getBlockEntity(BlockPos.of(tag.getLong("pos")));
-        System.out.println("tileEntity = " + tileEntity);
+        BlockPos pos1 = BlockPos.of(tag.getLong("pos"));
+        DebugLog.log("pos == " + pos1.toShortString());
+        DebugLog.log("block->registryName == " + level.getBlockState(pos1).getBlock().arch$registryName());
+        DebugLog.log("level->isClient == " + level.isClientSide());
+
+        BlockEntity tileEntity = level.getBlockEntity(pos1);
+        DebugLog.log("tileEntity == " + tileEntity);
         if (tileEntity instanceof ComputerBlockEntity laptop) {
             FileSystem fileSystem = laptop.getFileSystem();
             UUID uuid = UUID.fromString(tag.getString("uuid"));
             AbstractDrive serverDrive = fileSystem.getAvailableDrives(level, true).get(uuid);
-            System.out.println("uuid = " + uuid);
-            System.out.println("serverDrive = " + serverDrive);
+            DebugLog.log("uuid = " + uuid);
+            DebugLog.log("serverDrive = " + serverDrive);
             if (serverDrive != null) {
                 folder = serverDrive.getDriveStructure();
                 this.setSuccessful();
