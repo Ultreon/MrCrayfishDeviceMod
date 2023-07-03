@@ -19,6 +19,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import org.joml.Quaternionf;
 
 public class LaptopRenderer implements BlockEntityRenderer<LaptopBlockEntity> {
     private final BlockEntityRendererProvider.Context context;
@@ -40,13 +41,13 @@ public class LaptopRenderer implements BlockEntityRenderer<LaptopBlockEntity> {
 //        poseStack.popPose();
         var direction = blockEntity.getBlockState().getValue(LaptopBlock.FACING).getClockWise().toYRot();
 
-        BlockPos pos = blockEntity.getBlockPos();
         ItemEntity entityItem = new ItemEntity(Minecraft.getInstance().level, 0, 0, 0, ItemStack.EMPTY) {
             @Override
             public float getSpin(float partialTicks) {
                 return ((float)this.getAge() + partialTicks) / 20.0f + 0;
             }
         };
+
         entityItem.bobOffs = 0;
         entityItem.setYRot(0);
         BlockState state = blockEntity.getBlock().defaultBlockState().setValue(ComputerBlock.TYPE, LaptopBlock.Type.SCREEN);
@@ -54,30 +55,27 @@ public class LaptopRenderer implements BlockEntityRenderer<LaptopBlockEntity> {
         RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
         poseStack.pushPose();
         {
-
-            int x = pos.getX();
-            int y = pos.getY();
-            int z = pos.getZ();
-
             if (blockEntity.isExternalDriveAttached()) {
                 poseStack.pushPose();
                 {
                     poseStack.translate(0.5, 0, 0.5);
                     poseStack.mulPose(blockEntity.getBlockState().getValue(LaptopBlock.FACING).getRotation());
+                    poseStack.mulPose(new Quaternionf().rotateZ((float) Math.toRadians(-90)));
+                    poseStack.mulPose(new Quaternionf().rotateX((float) Math.toRadians(-90)));
                     poseStack.translate(-0.5, 0, -0.5);
                     poseStack.translate(0.595, -0.2075, -0.005);
+//                    poseStack.translate(0.1, 0, 0);
+
                     entityItem.flyDist = 0.0F;
                     assert DeviceItems.getFlashDriveByColor(blockEntity.getExternalDriveColor()) != null;
                     entityItem.setItem(new ItemStack(DeviceItems.getFlashDriveByColor(blockEntity.getExternalDriveColor()), 1/*, blockEntity.getExternalDriveColor().*/));
-                    Minecraft.getInstance().getEntityRenderDispatcher().render(entityItem, 0, 0, 0, 0, partialTick, poseStack, bufferSource, packedLight);
-                    poseStack.translate(0.1, 0, 0);
+                    Minecraft.getInstance().getEntityRenderDispatcher().render(entityItem, 0, 0, 0, 0, 0, poseStack, bufferSource, packedLight);
                 }
                 poseStack.popPose();
             }
 
             poseStack.pushPose();
             {
-                //System.out.println("RENDEEING");
                 poseStack.translate(0.5, 0, 0.5);//west/east +90 north/south -90
                 poseStack.mulPose(Axis.YP.rotationDegrees(blockEntity.getBlockState().getValue(LaptopBlock.FACING) == Direction.EAST || blockEntity.getBlockState().getValue(LaptopBlock.FACING) == Direction.WEST ? direction + 90 : direction - 90));
                 poseStack.translate(-0.5, 0, -0.5);
@@ -85,7 +83,7 @@ public class LaptopRenderer implements BlockEntityRenderer<LaptopBlockEntity> {
                 poseStack.mulPose(Axis.XP.rotationDegrees(blockEntity.getScreenAngle(partialTick) + 180));
                 //poseStack.mulPose(Vector3f.YP.rotationDegrees(180));
                 poseStack.mulPose(Axis.XP.rotationDegrees(180));
-               // Lighting.setupForFlatItems();
+                // Lighting.setupForFlatItems();
                 //      Tesselator tessellator = Tesselator.getInstance();
                 //BufferBuilder buffer = tessellator.getBuilder();
                 //buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
@@ -102,7 +100,7 @@ public class LaptopRenderer implements BlockEntityRenderer<LaptopBlockEntity> {
                 poseStack.popPose();
                 //poseStack.popPose();
                 //    tessellator.end();
-             //   Lighting.setupFor3DItems();
+                //   Lighting.setupFor3DItems();
             }
             poseStack.popPose();
         }
