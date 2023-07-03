@@ -68,6 +68,8 @@ public class TaskSetupFileBrowser extends Task {
 
             ListTag driveList = new ListTag();
             availableDrives.forEach((k, v) -> {
+                System.out.println("k = " + k);
+                System.out.println("v.getUuid() = " + v.getUuid());
                 CompoundTag driveTag = new CompoundTag();
                 driveTag.putString("name", v.getName());
                 driveTag.putString("uuid", v.getUuid().toString());

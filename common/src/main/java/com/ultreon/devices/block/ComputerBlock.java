@@ -2,6 +2,7 @@ package com.ultreon.devices.block;
 
 import com.ultreon.devices.ModDeviceTypes;
 import com.ultreon.devices.block.entity.LaptopBlockEntity;
+import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.item.FlashDriveItem;
 import com.ultreon.devices.util.BlockEntityUtil;
 import com.ultreon.devices.util.Colorable;
@@ -54,29 +55,33 @@ public abstract class ComputerBlock extends DeviceBlock {
                 }
                 return InteractionResult.SUCCESS;
             } else {
-                if (hit.getDirection() == state.getValue(FACING).getCounterClockWise(Direction.Axis.Y)) {
+                if (hit.getDirection() == state.getValue(FACING).getClockWise(Direction.Axis.Y)) {
                     ItemStack heldItem = player.getItemInHand(hand);
                     if (!heldItem.isEmpty() && heldItem.getItem() instanceof FlashDriveItem) {
-                        if (!level.isClientSide) {
-                            if (laptop.getFileSystem().setAttachedDrive(heldItem.copy())) {
+                        if (laptop.canChangeAttachment()) {
+                            if (laptop.getFileSystem().attachDrive(heldItem.copy())) {
+                                DebugLog.logTime(level.getGameTime(), "Attached Drive");
+                                laptop.setAttachmentCooldown(10);
                                 heldItem.shrink(1);
-                                return InteractionResult.CONSUME;
+                                return InteractionResult.sidedSuccess(level.isClientSide);
                             } else {
                                 return InteractionResult.FAIL;
                             }
                         }
-                        return InteractionResult.PASS;
                     }
 
-                    if (!level.isClientSide) {
-                        ItemStack stack = laptop.getFileSystem().removeAttachedDrive();
+                    if (laptop.canChangeAttachment()) {
+                        ItemStack stack = laptop.getFileSystem().detachDrive();
                         if (stack != null) {
-                            BlockPos summonPos = pos.relative(state.getValue(FACING).getCounterClockWise(Direction.Axis.Y));
+                            DebugLog.logTime(level.getGameTime(), "Detached Drive");
+                            laptop.setAttachmentCooldown(10);
+                            BlockPos summonPos = pos.relative(state.getValue(FACING).getClockWise(Direction.Axis.Y));
                             level.addFreshEntity(new ItemEntity(level, summonPos.getX() + 0.5, summonPos.getY(), summonPos.getZ() + 0.5, stack));
                             BlockEntityUtil.markBlockForUpdate(level, pos);
+                            return InteractionResult.sidedSuccess(level.isClientSide);
                         }
                     }
-                    return InteractionResult.SUCCESS;
+                    return InteractionResult.FAIL;
                 }
 
                 if (laptop.isOpen()) {

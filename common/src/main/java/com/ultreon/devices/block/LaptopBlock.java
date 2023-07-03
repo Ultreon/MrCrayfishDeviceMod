@@ -71,58 +71,6 @@ public class LaptopBlock extends ComputerBlock.Colored {
         };
     }
 
-    @NotNull
-    @Override
-    @SuppressWarnings("deprecation")
-    public InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
-
-        BlockEntity blockEntity = level.getBlockEntity(pos);
-        if (blockEntity instanceof LaptopBlockEntity laptop) {
-            if (player.isCrouching()) {
-                if (!level.isClientSide) {
-                    laptop.openClose(player);
-                }
-                return InteractionResult.SUCCESS;
-            } else {
-                if (hit.getDirection() == state.getValue(FACING).getCounterClockWise(Direction.Axis.Y)) {
-                    ItemStack heldItem = player.getItemInHand(hand);
-                    if (!heldItem.isEmpty() && heldItem.getItem() instanceof FlashDriveItem) {
-                        if (!level.isClientSide) {
-                            if (laptop.getFileSystem().setAttachedDrive(heldItem.copy())) {
-                                heldItem.shrink(1);
-                                return InteractionResult.CONSUME;
-                            } else {
-                                return InteractionResult.FAIL;
-                            }
-                        }
-                        return InteractionResult.PASS;
-                    }
-
-                    if (!level.isClientSide) {
-                        ItemStack stack = laptop.getFileSystem().removeAttachedDrive();
-                        if (stack != null) {
-                            BlockPos summonPos = pos.relative(state.getValue(FACING).getCounterClockWise(Direction.Axis.Y));
-                            level.addFreshEntity(new ItemEntity(level, summonPos.getX() + 0.5, summonPos.getY(), summonPos.getZ() + 0.5, stack));
-                            BlockEntityUtil.markBlockForUpdate(level, pos);
-                        }
-                    }
-                    return InteractionResult.SUCCESS;
-                }
-
-                if (laptop.isOpen() && level.isClientSide) {
-                    if (level.isClientSide) {
-                        EnvExecutor.runInEnv(Env.CLIENT, () -> () -> {
-                            ClientLaptopWrapper.execute(laptop);
-                        });
-                    }
-                    return InteractionResult.SUCCESS;
-                }
-            }
-        }
-
-        return InteractionResult.PASS;
-    }
-
     @Override
     public boolean isDesktopPC() {
         return false;

@@ -39,19 +39,25 @@ public class LaptopRenderer implements BlockEntityRenderer<LaptopBlockEntity> {
 //        RenderSystem.depthMask(true);
 //        poseStack.popPose();
         var direction = blockEntity.getBlockState().getValue(LaptopBlock.FACING).getClockWise().toYRot();
-        ItemEntity entityItem = new ItemEntity(Minecraft.getInstance().level, 0D, 0D, 0D, ItemStack.EMPTY);
-        BlockState state = blockEntity.getBlock().defaultBlockState().setValue(ComputerBlock.TYPE, LaptopBlock.Type.SCREEN);
+
         BlockPos pos = blockEntity.getBlockPos();
+        ItemEntity entityItem = new ItemEntity(Minecraft.getInstance().level, 0, 0, 0, ItemStack.EMPTY) {
+            @Override
+            public float getSpin(float partialTicks) {
+                return ((float)this.getAge() + partialTicks) / 20.0f + 0;
+            }
+        };
+        entityItem.bobOffs = 0;
+        entityItem.setYRot(0);
+        BlockState state = blockEntity.getBlock().defaultBlockState().setValue(ComputerBlock.TYPE, LaptopBlock.Type.SCREEN);
 
         RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
         poseStack.pushPose();
-
-        int x = blockEntity.getBlockPos().getX();
-        int y = blockEntity.getBlockPos().getY();
-        int z = blockEntity.getBlockPos().getZ();
-        //poseStack.pushPose();
         {
-            //poseStack.translate(x, y, z);
+
+            int x = pos.getX();
+            int y = pos.getY();
+            int z = pos.getZ();
 
             if (blockEntity.isExternalDriveAttached()) {
                 poseStack.pushPose();
@@ -63,7 +69,7 @@ public class LaptopRenderer implements BlockEntityRenderer<LaptopBlockEntity> {
                     entityItem.flyDist = 0.0F;
                     assert DeviceItems.getFlashDriveByColor(blockEntity.getExternalDriveColor()) != null;
                     entityItem.setItem(new ItemStack(DeviceItems.getFlashDriveByColor(blockEntity.getExternalDriveColor()), 1/*, blockEntity.getExternalDriveColor().*/));
-                    Minecraft.getInstance().levelRenderer.renderEntity(entityItem, 0.0D, 0.0D, 0.0D, 0.0F, poseStack, bufferSource/*, 0.0F, false*/);
+                    Minecraft.getInstance().getEntityRenderDispatcher().render(entityItem, 0, 0, 0, 0, partialTick, poseStack, bufferSource, packedLight);
                     poseStack.translate(0.1, 0, 0);
                 }
                 poseStack.popPose();

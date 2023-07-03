@@ -99,7 +99,7 @@ public class DeviceItems {
     public static final DyeableRegistration<Item> FLASH_DRIVE = new DyeableRegistration<>() {
         @Override
         public RegistrySupplier<Item> register(Registrar<Item> registrar, DyeColor color) {
-            return registrar.register(Devices.id(color.getName() + "_flash_drive"), () -> new FlashDriveItem(DyeColor.WHITE));
+            return registrar.register(Devices.id(color.getName() + "_flash_drive"), () -> new FlashDriveItem(color));
         }
 
         @Override
@@ -140,10 +140,7 @@ public class DeviceItems {
 
     @Nullable
     public static FlashDriveItem getFlashDriveByColor(DyeColor color) {
-        return getAllFlashDrives().stream()
-                .filter(item -> item.getColor() == color)
-                .findFirst()
-                .orElse(null);
+        return (FlashDriveItem) FLASH_DRIVE.of(color).get();
     }
 
     public static List<FlashDriveItem> getAllFlashDrives() {
