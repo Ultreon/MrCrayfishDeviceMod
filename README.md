@@ -1,7 +1,7 @@
 # Ultreon Devices Mod [![CircleCI](https://dl.circleci.com/status-badge/img/gh/Ultreon/devices-mod/tree/1.19.3-development.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/Ultreon/devices-mod/tree/1.19.3-development)
 **Language:** Java  
 **Minecraft Version:** `1.19.3`  
-**Mod Loader:** [NeoForged](https://neoforged.net/) & [Fabric](https://fabricmc.net/)
+**Mod Loader:** [Forge](https://files.minecraftforge.net/) & [Fabric](https://fabricmc.net/)
 
 *Fork of [MrCrayfish's Device Mod](https://github.com/MrCrayfish/MrCrayfishDeviceMod)*
 
