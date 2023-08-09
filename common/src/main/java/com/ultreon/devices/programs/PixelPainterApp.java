@@ -18,6 +18,7 @@ import com.ultreon.devices.api.print.IPrint;
 import com.ultreon.devices.api.utils.RenderUtil;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.core.io.FileSystem;
+import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.object.Canvas;
 import com.ultreon.devices.object.ColorGrid;
 import com.ultreon.devices.object.Picture;
@@ -32,6 +33,7 @@ import org.joml.Quaternionf;
 
 import org.jetbrains.annotations.Nullable;
 import java.awt.*;
+import java.lang.System;
 import java.util.Objects;
 
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
@@ -307,12 +309,13 @@ public class PixelPainterApp extends Application {
         Button button = new Button(138, 81, Icons.PRINTER);
         button.setClickListener((mouseX, mouseY, mouseButton) ->
         {
+            DebugLog.log("Print action triggered in pixel painter");
             if (mouseButton == 0) {
                 Dialog.Print dialog = new Dialog.Print(new PicturePrint(canvas.picture.getName(), canvas.getPixels(), canvas.picture.getWidth()));
                 openDialog(dialog);
             }
         });
-        button.setEnabled(false);
+//        button.setEnabled(false); // FIXME: WHY THE ACTUAL HELL IS THIS EVEN HERE :skull:
         layoutDraw.addComponent(button);
 
         btnCancel = new Button(138, 100, PIXEL_PAINTER_ICONS, 50, 0, 10, 10);

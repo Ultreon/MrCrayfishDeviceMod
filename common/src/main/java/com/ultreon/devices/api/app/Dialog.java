@@ -870,6 +870,9 @@ public abstract class Dialog extends Wrappable {
                         itemList.addItem(NetworkDevice.fromTag(list.getCompound(i)));
                     }
                     itemList.setLoading(false);
+                } else {
+                    String reason = tag == null ? "${null}" : tag.getString("reason");
+                    openDialog(new Message("Failed to load printers: " + reason));
                 }
             });
             TaskManager.sendTask(task);

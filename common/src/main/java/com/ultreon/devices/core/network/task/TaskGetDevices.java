@@ -22,6 +22,7 @@ public class TaskGetDevices extends Task {
     private Class<? extends NetworkDeviceBlockEntity> targetDeviceClass;
 
     private Collection<NetworkDevice> foundDevices;
+    private String reason;
 
     public TaskGetDevices() {
         super("get_network_devices");
@@ -58,22 +59,33 @@ public class TaskGetDevices extends Task {
             }
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+            return;
         }
 
         BlockEntity tileEntity = level.getChunkAt(devicePos).getBlockEntity(devicePos, LevelChunk.EntityCreationType.IMMEDIATE);
-        if (tileEntity instanceof NetworkDeviceBlockEntity tileEntityNetworkDevice) {
-            if (tileEntityNetworkDevice.isConnected()) {
-                Router router = tileEntityNetworkDevice.getRouter();
-                if (router != null) {
-                    if (targetDeviceClass != null) {
-                        foundDevices = router.getConnectedDevices(level, targetDeviceClass);
-                    } else {
-                        foundDevices = router.getConnectedDevices(level);
-                    }
-                    this.setSuccessful();
-                }
-            }
+
+        if (!(tileEntity instanceof NetworkDeviceBlockEntity tileEntityNetworkDevice)) {
+            this.reason = "No network driver found";
+            return;
         }
+
+        if (!tileEntityNetworkDevice.isConnected()) {
+            this.reason = "Not connected to router";
+            return;
+        }
+
+        Router router = tileEntityNetworkDevice.getRouter();
+        if (router == null) {
+            this.reason = "No internet access";
+            return;
+        }
+
+        if (targetDeviceClass != null) {
+            this.foundDevices = router.getConnectedDevices(level, targetDeviceClass);
+        } else {
+            this.foundDevices = router.getConnectedDevices(level);
+        }
+        this.setSuccessful();
     }
 
     @Override
@@ -82,6 +94,8 @@ public class TaskGetDevices extends Task {
             ListTag deviceList = new ListTag();
             foundDevices.forEach(device -> deviceList.add(device.toTag(true)));
             tag.put("network_devices", deviceList);
+        } else {
+            tag.putString("reason", this.reason);
         }
     }
 
