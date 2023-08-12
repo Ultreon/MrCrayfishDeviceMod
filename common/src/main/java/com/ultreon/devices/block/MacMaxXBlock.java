@@ -21,7 +21,6 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -85,7 +84,7 @@ public class MacMaxXBlock extends ComputerBlock {
     );
 
     public MacMaxXBlock() {
-        super(BlockBehaviour.Properties.of(Material.HEAVY_METAL, DyeColor.WHITE).strength(6f).sound(SoundType.METAL).noOcclusion().dynamicShape());
+        super(BlockBehaviour.Properties.of().mapColor(DyeColor.WHITE).strength(6f).sound(SoundType.METAL).noOcclusion().dynamicShape());
     }
 
     @Override

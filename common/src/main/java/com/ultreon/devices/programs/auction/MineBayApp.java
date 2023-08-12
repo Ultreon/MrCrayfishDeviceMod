@@ -21,7 +21,7 @@ import com.ultreon.devices.util.TimeUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -87,15 +87,15 @@ public class MineBayApp extends Application {
     public void init(@Nullable CompoundTag intent) {
         var layoutMain = new StandardLayout(ChatFormatting.BOLD + "Icons", 330, 153, this, null);
         setCurrentLayout(layoutMain);
-        getCurrentLayout().setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
-            Gui.fill(pose, x, y, x + width, y + 25, Color.GRAY.getRGB());
-            Gui.fill(pose, x, y + 24, x + width, y + 25, Color.DARK_GRAY.getRGB());
-            Gui.fill(pose, x, y + 25, x + 95, y + height, Color.LIGHT_GRAY.getRGB());
-            Gui.fill(pose, x + 94, y + 25, x + 95, y + height, Color.GRAY.getRGB());
+        getCurrentLayout().setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
+            graphics.fill(x, y, x + width, y + 25, Color.GRAY.getRGB());
+            graphics.fill(x, y + 24, x + width, y + 25, Color.DARK_GRAY.getRGB());
+            graphics.fill(x, y + 25, x + 95, y + height, Color.LIGHT_GRAY.getRGB());
+            graphics.fill(x + 94, y + 25, x + 95, y + height, Color.GRAY.getRGB());
 
             RenderSystem.setShaderTexture(0, MINEBAY_ASSETS);
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-            RenderUtil.drawRectWithTexture(pose, x + 5, y + 6, 0, 0, 61, 11, 61, 12);
+            RenderUtil.drawRectWithTexture(MINEBAY_ASSETS, graphics, x + 5, y + 6, 0, 0, 61, 11, 61, 12);
         });
 
         Button btnAddItem = new Button(70, 5, "Add Item");
@@ -145,26 +145,26 @@ public class MineBayApp extends Application {
         items = new ItemList<>(100, 40, 180, 4);
         items.setListItemRenderer(new ListItemRenderer<>(20) {
             @Override
-            public void render(PoseStack pose, AuctionItem e, GuiComponent gui, Minecraft mc, int x, int y, int width, int height, boolean selected) {
+            public void render(GuiGraphics graphics, AuctionItem e, Minecraft mc, int x, int y, int width, int height, boolean selected) {
                 if (selected) {
-                    Gui.fill(pose, x, y, x + width, y + height, Color.DARK_GRAY.getRGB());
+                    graphics.fill(x, y, x + width, y + height, Color.DARK_GRAY.getRGB());
                 } else {
-                    Gui.fill(pose, x, y, x + width, y + height, Color.GRAY.getRGB());
+                    graphics.fill(x, y, x + width, y + height, Color.GRAY.getRGB());
                 }
 
-                RenderUtil.renderItem(x + 2, y + 2, e.getStack(), true);
+                RenderUtil.renderItem(graphics, x + 2, y + 2, e.getStack(), true);
 
-                pose.pushPose();
+                graphics.pose().pushPose();
                 {
-                    pose.translate(x + 24, y + 4, 0);
-                    pose.scale(0.666f, 0.666f, 0);
-                    mc.font.draw(pose, e.getStack().getDisplayName(), 0, 0, Color.WHITE.getRGB());
-                    mc.font.draw(pose, TimeUtil.getTotalRealTime(e.getTimeLeft()), 0, 11, Color.LIGHT_GRAY.getRGB());
+                    graphics.pose().translate(x + 24, y + 4, 0);
+                    graphics.pose().scale(0.666f, 0.666f, 0);
+                    graphics.drawString(mc.font, e.getStack().getDisplayName(), 0, 0, Color.WHITE.getRGB());
+                    graphics.drawString(mc.font, TimeUtil.getTotalRealTime(e.getTimeLeft()), 0, 11, Color.LIGHT_GRAY.getRGB());
                 }
-                pose.popPose();
+                graphics.pose().popPose();
 
                 String price = "$" + e.getPrice();
-                mc.font.draw(pose, price, x - mc.font.width(price) + width - 5, y + 6, Color.YELLOW.getRGB());
+                graphics.drawString(mc.font, price, x - mc.font.width(price) + width - 5, y + 6, Color.YELLOW.getRGB());
             }
         });
         layoutMain.addComponent(items);
@@ -201,10 +201,10 @@ public class MineBayApp extends Application {
 
         layoutSelectItem = new Layout(172, 87);
         layoutSelectItem.setTitle("Add Item");
-        layoutSelectItem.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
-            Gui.fill(pose, x, y, x + width, y + 22, Color.LIGHT_GRAY.getRGB());
-            Gui.fill(pose, x, y + 22, x + width, y + 23, Color.DARK_GRAY.getRGB());
-            mc.font.drawShadow(pose, "Select an Item...", x + 5, y + 7, Color.WHITE.getRGB());
+        layoutSelectItem.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
+            graphics.fill(x, y, x + width, y + 22, Color.LIGHT_GRAY.getRGB());
+            graphics.fill(x, y + 22, x + width, y + 23, Color.DARK_GRAY.getRGB());
+            graphics.drawString(mc.font, "Select an Item...", x + 5, y + 7, Color.WHITE.getRGB());
         });
 
         inventory = new Inventory(5, 28);
@@ -245,41 +245,41 @@ public class MineBayApp extends Application {
 
         layoutAmountAndPrice = new Layout(172, 87);
         layoutAmountAndPrice.setTitle("Add Item");
-        layoutAmountAndPrice.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
-            Gui.fill(pose, x, y, x + width, y + 22, Color.LIGHT_GRAY.getRGB());
-            Gui.fill(pose, x, y + 22, x + width, y + 23, Color.DARK_GRAY.getRGB());
-            mc.font.drawShadow(pose, "Set amount and price...", x + 5, y + 7, Color.WHITE.getRGB());
+        layoutAmountAndPrice.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
+            graphics.fill(x, y, x + width, y + 22, Color.LIGHT_GRAY.getRGB());
+            graphics.fill(x, y + 22, x + width, y + 23, Color.DARK_GRAY.getRGB());
+            graphics.drawString(mc.font, "Set amount and price...", x + 5, y + 7, Color.WHITE.getRGB());
 
             int offsetX = 14;
             int offsetY = 40;
-            Gui.fill(pose, x + offsetX, y + offsetY, x + offsetX + 38, y + offsetY + 38, Color.BLACK.getRGB());
-            Gui.fill(pose, x + offsetX + 1, y + offsetY + 1, x + offsetX + 37, y + offsetY + 37, Color.DARK_GRAY.getRGB());
+            graphics.fill(x + offsetX, y + offsetY, x + offsetX + 38, y + offsetY + 38, Color.BLACK.getRGB());
+            graphics.fill(x + offsetX + 1, y + offsetY + 1, x + offsetX + 37, y + offsetY + 37, Color.DARK_GRAY.getRGB());
 
             offsetX = 90;
-            Gui.fill(pose, x + offsetX, y + offsetY, x + offsetX + 38, y + offsetY + 38, Color.BLACK.getRGB());
-            Gui.fill(pose, x + offsetX + 1, y + offsetY + 1, x + offsetX + 37, y + offsetY + 37, Color.DARK_GRAY.getRGB());
+            graphics.fill(x + offsetX, y + offsetY, x + offsetX + 38, y + offsetY + 38, Color.BLACK.getRGB());
+            graphics.fill(x + offsetX + 1, y + offsetY + 1, x + offsetX + 37, y + offsetY + 37, Color.DARK_GRAY.getRGB());
 
             if (inventory.getSelectedSlotIndex() != -1) {
                 assert mc.player != null;
                 ItemStack stack = mc.player.getInventory().getItem(inventory.getSelectedSlotIndex());
                 if (!stack.isEmpty()) {
-                    pose.pushPose();
+                    graphics.pose().pushPose();
                     {
-                        pose.translate(x + 17, y + 43, 0);
-                        pose.scale(2, 2, 0);
-                        RenderUtil.renderItem(0, 0, stack, false);
+                        graphics.pose().translate(x + 17, y + 43, 0);
+                        graphics.pose().scale(2, 2, 0);
+                        RenderUtil.renderItem(graphics, 0, 0, stack, false);
                     }
-                    pose.popPose();
+                    graphics.pose().popPose();
                 }
             }
 
-            pose.pushPose();
+            graphics.pose().pushPose();
             {
-                pose.translate(x + 92, y + 43, 0);
-                pose.scale(2, 2, 0);
-                RenderUtil.renderItem(0, 0, EMERALD, false);
+                graphics.pose().translate(x + 92, y + 43, 0);
+                graphics.pose().scale(2, 2, 0);
+                RenderUtil.renderItem(graphics, 0, 0, EMERALD, false);
             }
-            pose.popPose();
+            graphics.pose().popPose();
         });
 
         buttonAmountAndPriceBack = new Button(122, 4, MINEBAY_ASSETS, 8, 12, 8, 8);
@@ -312,10 +312,10 @@ public class MineBayApp extends Application {
         /* Duration Layout */
         layoutDuration = new Layout(172, 87);
         layoutDuration.setTitle("Add Item");
-        layoutDuration.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
-            Gui.fill(pose, x, y, x + width, y + 22, Color.LIGHT_GRAY.getRGB());
-            Gui.fill(pose, x, y + 22, x + width, y + 23, Color.DARK_GRAY.getRGB());
-            mc.font.drawShadow(pose, "Set duration...", x + 5, y + 7, Color.WHITE.getRGB());
+        layoutDuration.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
+            graphics.fill(x, y, x + width, y + 22, Color.LIGHT_GRAY.getRGB());
+            graphics.fill(x, y + 22, x + width, y + 23, Color.DARK_GRAY.getRGB());
+            graphics.drawString(mc.font, "Set duration...", x + 5, y + 7, Color.WHITE.getRGB());
         });
 
         buttonDurationBack = new Button(122, 4, MINEBAY_ASSETS, 8, 12, 8, 8);
