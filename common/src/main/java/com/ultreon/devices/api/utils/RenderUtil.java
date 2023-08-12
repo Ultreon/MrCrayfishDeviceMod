@@ -3,14 +3,14 @@ package com.ultreon.devices.api.utils;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import com.ultreon.devices.api.app.component.Image;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.object.AppInfo;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 import org.jetbrains.annotations.Nullable;
@@ -18,26 +18,25 @@ import java.awt.*;
 
 @SuppressWarnings("unused")
 public class RenderUtil {
-    public static void renderItem(int x, int y, ItemStack stack, boolean overlay) {
+    public static void renderItem(GuiGraphics graphics, int x, int y, ItemStack stack, boolean overlay) {
         RenderSystem.disableDepthTest();
         // Todo - Port to 1.18.2 if possible
 //        RenderSystem.enableLighting();
         Lighting.setupForFlatItems();
         //RenderSystem.setShader();
-        Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(stack, x, y);
+        graphics.renderItem(stack, x, y);
         if (overlay)
-            Minecraft.getInstance().getItemRenderer().renderGuiItemDecorations(Minecraft.getInstance().font, stack, x, y);
+            graphics.renderItemDecorations(Minecraft.getInstance().font, stack, x, y);
 
         // Todo - Port to 1.18.2 if possible
         //RenderSystem.enableAlpha();
         //Lighting.setupForFlatItems();
     }
 
-    public static void drawIcon(PoseStack pose, double x, double y, AppInfo info, int width, int height) {
-        RenderSystem.setShaderTexture(0, Laptop.ICON_TEXTURES);
+    public static void drawIcon(GuiGraphics graphics, double x, double y, AppInfo info, int width, int height) {
         //Gui.blit(pose, (int) x, (int) y, width, height, u, v, sourceWidth, sourceHeight, (int) textureWidth, (int) textureHeight);
         if (info == null || (info.getIcon().getBase().getU() == -1 && info.getIcon().getBase().getV() == -1)) {
-            drawRectWithTexture(pose, x, y, 0, 0, width, height, 14, 14, 224, 224);
+            drawRectWithTexture(Laptop.ICON_TEXTURES, graphics, x, y, 0, 0, width, height, 14, 14, 224, 224);
             return;
         }
         RenderSystem.enableBlend();
@@ -47,21 +46,21 @@ public class RenderUtil {
             var col = new Color(info.getTint(glyph.getType()));
             int[] tint = new int[]{col.getRed(), col.getGreen(), col.getBlue()};
             RenderSystem.setShaderColor(tint[0]/255f, tint[1]/255f, tint[2]/255f, 1f);
-            drawRectWithTexture(pose, x, y, glyph.getU(), glyph.getV(), width, height, 14, 14, 224, 224);
+            drawRectWithTexture(Laptop.ICON_TEXTURES, graphics, x, y, glyph.getU(), glyph.getV(), width, height, 14, 14, 224, 224);
             //image.init(layout);
         }
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
     }
 
-    public static void drawRectWithTexture(PoseStack pose, double x, double y, float u, float v, int width, int height, float textureWidth, float textureHeight) {
-        drawRectWithTexture(pose, x, y, 0, u, v, width, height, textureWidth, textureHeight);
+    public static void drawRectWithTexture(ResourceLocation location, GuiGraphics graphics, double x, double y, float u, float v, int width, int height, float textureWidth, float textureHeight) {
+        drawRectWithTexture(location, graphics, x, y, 0, u, v, width, height, textureWidth, textureHeight);
         // Gui.blit(pose, (int) x, (int) y, width, height, u, v, width, height, (int) textureWidth, (int) textureHeight);
     }
 
     /**
      * Texture size must be 256x256
      *
-     * @param pose          the pose stack to draw on
+     * @param graphics      gui graphics helper
      * @param x             the x position of the rectangle
      * @param y             the y position of the rectangle
      * @param z             the z position of the rectangle
@@ -72,10 +71,10 @@ public class RenderUtil {
      * @param textureWidth  the width of the texture
      * @param textureHeight the height of the texture
      */
-    public static void drawRectWithTexture(PoseStack pose, double x, double y, double z, float u, float v, int width, int height, float textureWidth, float textureHeight) {
+    public static void drawRectWithTexture(ResourceLocation location, GuiGraphics graphics, double x, double y, double z, float u, float v, int width, int height, float textureWidth, float textureHeight) {
         //Gui.blit(pose, (int) x, (int) y, width, height, u, v, width, height, (int) textureWidth, (int) textureHeight);
         float scale = 0.00390625f;
-        var e = pose.last().pose();
+        var e = graphics.pose().last().pose();
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         BufferBuilder buffer = Tesselator.getInstance().getBuilder();
         try {
@@ -91,9 +90,9 @@ public class RenderUtil {
         BufferUploader.drawWithShader(buffer.end());
     }
 
-    public static void drawRectWithFullTexture(PoseStack pose, double x, double y, float u, float v, int width, int height) {
+    public static void drawRectWithFullTexture(GuiGraphics graphics, double x, double y, float u, float v, int width, int height) {
         // Gui.blit(pose, (int) x, (int) y, width, height, u, v, width, height, 256, 256);
-        var e = pose.last().pose();
+        var e = graphics.pose().last().pose();
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         BufferBuilder buffer = Tesselator.getInstance().getBuilder();
         buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
@@ -104,11 +103,11 @@ public class RenderUtil {
         BufferUploader.drawWithShader(buffer.end());
     }
 
-    public static void drawRectWithTexture(PoseStack pose, double x, double y, float u, float v, int width, int height, float textureWidth, float textureHeight, int sourceWidth, int sourceHeight) {
+    public static void drawRectWithTexture(ResourceLocation location, GuiGraphics graphics, double x, double y, float u, float v, int width, int height, float textureWidth, float textureHeight, int sourceWidth, int sourceHeight) {
         //Gui.blit(pose, (int) x, (int) y, width, height, u, v, sourceWidth, sourceHeight, (int) textureWidth, (int) textureHeight);
         float scaleWidth = 1f / sourceWidth;
         float scaleHeight = 1f / sourceHeight;
-        var e = pose.last().pose();
+        var e = graphics.pose().last().pose();
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         BufferBuilder buffer = Tesselator.getInstance().getBuilder();
         buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
@@ -119,20 +118,20 @@ public class RenderUtil {
         BufferUploader.drawWithShader(buffer.end());
     }
 
-    public static void drawApplicationIcon(PoseStack pose, @Nullable AppInfo info, double x, double y) {
+    public static void drawApplicationIcon(GuiGraphics graphics, @Nullable AppInfo info, double x, double y) {
         //TODO: Reset color GlStateManager.color(1f, 1f, 1f);
         RenderSystem.setShaderTexture(0, Laptop.ICON_TEXTURES);
         if (info != null) {
-            drawIcon(pose, x, y, info, 14, 14);
+            drawIcon(graphics, x, y, info, 14, 14);
           //  drawRectWithTexture(pose, x, y, info.getIconU(), info.getIconV(), 14, 14, 14, 14, 224, 224);
         } else {
-            drawRectWithTexture(pose, x, y, 0, 0, 14, 14, 14, 14, 224, 224);
+            drawRectWithTexture(Laptop.ICON_TEXTURES, graphics, x, y, 0, 0, 14, 14, 14, 14, 224, 224);
         }
     }
 
-    public static void drawStringClipped(PoseStack pose, String text, int x, int y, int width, int color, boolean shadow) {
-        if (shadow) Laptop.getFont().drawShadow(pose, clipStringToWidth(text, width) + ChatFormatting.RESET, x, y, color);
-        else Laptop.getFont().draw(pose, Laptop.getFont().plainSubstrByWidth(text, width) + ChatFormatting.RESET, x, y, color);
+    public static void drawStringClipped(GuiGraphics graphics, String text, int x, int y, int width, int color, boolean shadow) {
+        if (shadow) graphics.drawString(Laptop.getFont(), clipStringToWidth(text, width) + ChatFormatting.RESET, x, y, color);
+        else graphics.drawString(Laptop.getFont(), Laptop.getFont().plainSubstrByWidth(text, width) + ChatFormatting.RESET, x, y, color, false);
     }
 
     public static String clipStringToWidth(String text, int width) {
