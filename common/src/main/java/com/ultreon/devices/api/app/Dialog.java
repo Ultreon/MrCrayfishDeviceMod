@@ -206,7 +206,7 @@ public abstract class Dialog extends Wrappable {
 
             super.init(intent);
 
-            defaultLayout.setBackground((graphics, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> graphics.fill(x, y, x + width, y + height, Color.LIGHT_GRAY.getRGB()));
+            defaultLayout.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> graphics.fill(x, y, x + width, y + height, Color.LIGHT_GRAY.getRGB()));
 
             Text message = new Text(messageText, 5, 5, getWidth() - 10);
             this.addComponent(message);
@@ -262,7 +262,7 @@ public abstract class Dialog extends Wrappable {
 
             super.init(intent);
 
-            defaultLayout.setBackground((graphics, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> graphics.fill(x, y, x + width, y + height, Color.LIGHT_GRAY.getRGB()));
+            defaultLayout.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> graphics.fill(x, y, x + width, y + height, Color.LIGHT_GRAY.getRGB()));
 
             Text message = new Text(messageText, 5, 5, getWidth() - 10);
             this.addComponent(message);
@@ -366,7 +366,7 @@ public abstract class Dialog extends Wrappable {
 
             super.init(intent);
 
-            defaultLayout.setBackground((graphics, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> graphics.fill(x, y, x + width, y + height, Color.LIGHT_GRAY.getRGB()));
+            defaultLayout.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> graphics.fill(x, y, x + width, y + height, Color.LIGHT_GRAY.getRGB()));
 
             if (messageText != null) {
                 Text message = new Text(messageText, 5, 5, getWidth() - 10);

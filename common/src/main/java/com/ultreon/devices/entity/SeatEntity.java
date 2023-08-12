@@ -6,14 +6,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityDimensions;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
-import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class SeatEntity extends Entity
@@ -61,18 +57,17 @@ public class SeatEntity extends Entity
     @Override
     public void tick()
     {
-        if(!this.level.isClientSide && (!this.hasExactlyOnePlayerPassenger() || this.level.isEmptyBlock(this.getOnPos())))
+        if(!this.level().isClientSide && (!this.hasExactlyOnePlayerPassenger() || this.level().isEmptyBlock(this.getOnPos())))
         {
             this.kill();
         }
     }
 
 
-    @Nullable
-    public Entity getControllingPassenger()
+    public LivingEntity getControllingPassenger()
     {
         List<Entity> list = this.getPassengers();
-        return list.isEmpty() ? null : list.get(0);
+        return list.isEmpty() ? null : list.get(0) instanceof LivingEntity livingEntity ? livingEntity : null;
     }
 
     @Override

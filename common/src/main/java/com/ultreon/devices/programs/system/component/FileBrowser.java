@@ -31,7 +31,7 @@ import com.ultreon.devices.programs.system.SystemApp;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -61,20 +61,20 @@ public class FileBrowser extends Component {
 
     private static final ListItemRenderer<File> ITEM_RENDERER = new ListItemRenderer<>(18) {
         @Override
-        public void render(PoseStack pose, File file, GuiComponent gui, Minecraft mc, int x, int y, int width, int height, boolean selected) {
+        public void render(GuiGraphics graphics, File file, Minecraft mc, int x, int y, int width, int height, boolean selected) {
             Color bgColor = new Color(Laptop.getSystem().getSettings().getColorScheme().getBackgroundColor());
-            Gui.fill(pose, x, y, x + width, y + height, selected ? bgColor.brighter().brighter().getRGB() : bgColor.brighter().getRGB());
+            graphics.fill(x, y, x + width, y + height, selected ? bgColor.brighter().brighter().getRGB() : bgColor.brighter().getRGB());
 
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
             RenderSystem.setShaderTexture(0, ASSETS);
             if (file.isFolder()) {
-                RenderUtil.drawRectWithTexture(pose, x + 3, y + 2, 0, 0, 14, 14, 14, 14);
+                RenderUtil.drawRectWithTexture(ASSETS, graphics, x + 3, y + 2, 0, 0, 14, 14, 14, 14);
             } else {
                 assert file.getOpeningApp() != null;
                 AppInfo info = ApplicationManager.getApplication(ResourceLocation.tryParse(file.getOpeningApp()));
-                RenderUtil.drawApplicationIcon(pose, info, x + 3, y + 2);
+                RenderUtil.drawApplicationIcon(graphics, info, x + 3, y + 2);
             }
-            drawString(pose, Minecraft.getInstance().font, file.getName(), x + 22, y + 5, file.isProtected() ? PROTECTED_FILE.getRGB() : Laptop.getSystem().getSettings().getColorScheme().getTextColor());
+            graphics.drawString(Minecraft.getInstance().font, file.getName(), x + 22, y + 5, file.isProtected() ? PROTECTED_FILE.getRGB() : Laptop.getSystem().getSettings().getColorScheme().getTextColor());
         }
     };
 
@@ -138,10 +138,10 @@ public class FileBrowser extends Component {
     @Override
     public void init(Layout layout) {
         layoutMain = new Layout(mode.getWidth(), mode.getHeight());
-        layoutMain.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
+        layoutMain.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
             Color color = new Color(Laptop.getSystem().getSettings().getColorScheme().getHeaderColor());
-            Gui.fill(pose, x, y, x + width, y + 20, color.getRGB());
-            Gui.fill(pose, x, y + 20, x + width, y + 21, color.darker().getRGB());
+            graphics.fill(x, y, x + width, y + 20, color.getRGB());
+            graphics.fill(x, y + 20, x + width, y + 21, color.darker().getRGB());
         });
 
         btnPreviousFolder = new Button(5, 2, Icons.ARROW_LEFT);
@@ -282,18 +282,18 @@ public class FileBrowser extends Component {
         comboBoxDrive.setChangeListener((oldValue, newValue) -> openDrive(newValue));
         comboBoxDrive.setListItemRenderer(new ListItemRenderer<>(12) {
             @Override
-            public void render(PoseStack pose, Drive drive, GuiComponent gui, Minecraft mc, int x, int y, int width, int height, boolean selected) {
+            public void render(GuiGraphics graphics, Drive drive, Minecraft mc, int x, int y, int width, int height, boolean selected) {
                 Color bgColor = new Color(getColorScheme().getBackgroundColor());
-                fill(pose, x, y, x + width, y + height, selected ? bgColor.brighter().brighter().getRGB() : bgColor.brighter().getRGB());
+                graphics.fill(x, y, x + width, y + height, selected ? bgColor.brighter().brighter().getRGB() : bgColor.brighter().getRGB());
                 RenderSystem.setShaderTexture(0, ASSETS);
                 RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-                RenderUtil.drawRectWithTexture(pose, x + 2, y + 2, drive.getType().ordinal() * 8, 30, 8, 8, 8, 8);
+                RenderUtil.drawRectWithTexture(ASSETS, graphics, x + 2, y + 2, drive.getType().ordinal() * 8, 30, 8, 8, 8, 8);
 
                 String text = drive.getName();
                 if (mc.font.width(text) > 87) {
                     text = mc.font.plainSubstrByWidth(drive.getName(), 78) + "...";
                 }
-                mc.font.drawShadow(pose, text, x + 13, y + 2, Color.WHITE.getRGB());
+                graphics.drawString(mc.font, text, x + 13, y + 2, Color.WHITE.getRGB());
             }
         });
         layoutMain.addComponent(comboBoxDrive);
@@ -303,7 +303,7 @@ public class FileBrowser extends Component {
         layout.addComponent(layoutMain);
 
         layoutLoading = new Layout(mode.getOffset(), 25, fileList.getWidth(), fileList.getHeight());
-        layoutLoading.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> Gui.fill(pose, x, y, x + width, y + height, Window.Color_WINDOW_DARK));
+        layoutLoading.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> graphics.fill(x, y, x + width, y + height, Window.Color_WINDOW_DARK));
         layoutLoading.setVisible(false);
 
         spinnerLoading = new Spinner((layoutLoading.width - 12) / 2, (layoutLoading.height - 12) / 2);

@@ -72,9 +72,13 @@ public class RenderUtil {
      * @param textureHeight the height of the texture
      */
     public static void drawRectWithTexture(ResourceLocation location, GuiGraphics graphics, double x, double y, double z, float u, float v, int width, int height, float textureWidth, float textureHeight) {
+        drawRectWithTexture(location, graphics.pose(), x, y, z, u, v, width, height, textureWidth, textureHeight);
+    }
+
+    public static void drawRectWithTexture(ResourceLocation location, PoseStack pose, double x, double y, double z, float u, float v, int width, int height, float textureWidth, float textureHeight) {
         //Gui.blit(pose, (int) x, (int) y, width, height, u, v, width, height, (int) textureWidth, (int) textureHeight);
         float scale = 0.00390625f;
-        var e = graphics.pose().last().pose();
+        var e = pose.last().pose();
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         BufferBuilder buffer = Tesselator.getInstance().getBuilder();
         try {
@@ -104,10 +108,14 @@ public class RenderUtil {
     }
 
     public static void drawRectWithTexture(ResourceLocation location, GuiGraphics graphics, double x, double y, float u, float v, int width, int height, float textureWidth, float textureHeight, int sourceWidth, int sourceHeight) {
+        drawRectWithTexture(location, graphics.pose(), x, y, u, v, width, height, textureWidth, textureHeight, sourceWidth, sourceHeight);
+    }
+
+    public static void drawRectWithTexture(ResourceLocation location, PoseStack pose, double x, double y, float u, float v, int width, int height, float textureWidth, float textureHeight, int sourceWidth, int sourceHeight) {
         //Gui.blit(pose, (int) x, (int) y, width, height, u, v, sourceWidth, sourceHeight, (int) textureWidth, (int) textureHeight);
         float scaleWidth = 1f / sourceWidth;
         float scaleHeight = 1f / sourceHeight;
-        var e = graphics.pose().last().pose();
+        var e = pose.last().pose();
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         BufferBuilder buffer = Tesselator.getInstance().getBuilder();
         buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
