@@ -6,6 +6,7 @@ import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.util.GLHelper;
 import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.Mth;
 
 import java.awt.*;
@@ -41,21 +42,21 @@ public class ScrollableLayout extends Layout {
     }
 
     @Override
-    public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         if (!visible)
             return;
 
         GLHelper.pushScissor(x, y, width, visibleHeight);
-        super.render(pose, laptop, mc, x, y - scroll, mouseX, mouseY, windowActive, partialTicks);
+        super.render(graphics, laptop, mc, x, y - scroll, mouseX, mouseY, windowActive, partialTicks);
         GLHelper.popScissor();
     }
 
     @Override
-    public void renderOverlay(PoseStack pose, Laptop laptop, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
+    public void renderOverlay(GuiGraphics graphics, Laptop laptop, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
         if (!visible)
             return;
 
-        super.renderOverlay(pose, laptop, mc, mouseX, mouseY, windowActive);
+        super.renderOverlay(graphics, laptop, mc, mouseX, mouseY, windowActive);
 
         if (this.height > this.visibleHeight) {
             int visibleScrollBarHeight = visibleHeight;
@@ -63,7 +64,7 @@ public class ScrollableLayout extends Layout {
             float scrollPercentage = Mth.clamp(scroll / (float) (height - visibleHeight), 0f, 1f);
             int scrollBarY = (int) ((visibleScrollBarHeight - scrollBarHeight) * scrollPercentage);
             int scrollY = yPosition + scrollBarY;
-            fill(pose, xPosition + width - 5, scrollY, xPosition + width - 2, scrollY + scrollBarHeight, placeholderColor);
+            graphics.fill(xPosition + width - 5, scrollY, xPosition + width - 2, scrollY + scrollBarHeight, placeholderColor);
         }
     }
 
