@@ -113,6 +113,12 @@ allprojects {
     java {
         withSourcesJar()
     }
+
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xmaxerrs" << "9999"
+        }
+    }
 }
 
 void setupRepositories(RepositoryHandler repositories) {
