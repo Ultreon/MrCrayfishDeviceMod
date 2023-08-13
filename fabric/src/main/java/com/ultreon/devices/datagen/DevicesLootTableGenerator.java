@@ -29,7 +29,7 @@ public class DevicesLootTableGenerator extends FabricBlockLootTableProvider {
     }
 
     @Override
-    public void accept(BiConsumer<ResourceLocation, LootTable.Builder> resourceLocationBuilderBiConsumer) {
+    public void generate(BiConsumer<ResourceLocation, LootTable.Builder> resourceLocationBuilderBiConsumer) {
         Registrar<Block> blocks = Devices.REGISTRIES.get().get(Registries.BLOCK);
         for (var block : DeviceBlocks.getAllBlocks().toList()) {
             ResourceLocation id = blocks.getId(block);
