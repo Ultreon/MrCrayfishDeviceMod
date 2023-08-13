@@ -36,11 +36,13 @@ public class RenderUtil {
     public static void drawIcon(GuiGraphics graphics, double x, double y, AppInfo info, int width, int height) {
         //Gui.blit(pose, (int) x, (int) y, width, height, u, v, sourceWidth, sourceHeight, (int) textureWidth, (int) textureHeight);
         if (info == null || (info.getIcon().getBase().getU() == -1 && info.getIcon().getBase().getV() == -1)) {
+            RenderSystem.setShaderTexture(0, Laptop.ICON_TEXTURES);
             drawRectWithTexture(Laptop.ICON_TEXTURES, graphics, x, y, 0, 0, width, height, 14, 14, 224, 224);
             return;
         }
         RenderSystem.enableBlend();
         var glyphs = new AppInfo.Icon.Glyph[]{info.getIcon().getBase(), info.getIcon().getOverlay0(), info.getIcon().getOverlay1()};
+        RenderSystem.setShaderTexture(0, Laptop.ICON_TEXTURES);
         for (AppInfo.Icon.Glyph glyph : glyphs) {
             if (glyph.getU() == -1 || glyph.getV() == -1) continue;
             var col = new Color(info.getTint(glyph.getType()));

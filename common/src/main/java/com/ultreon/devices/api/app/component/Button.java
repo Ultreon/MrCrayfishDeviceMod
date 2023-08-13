@@ -249,7 +249,7 @@ public class Button extends Component {
             if (iconResource != null) {
                 int iconY = (height - iconHeight) / 2;
                 RenderSystem.setShaderTexture(0, iconResource);
-                graphics.blit(Component.COMPONENTS_GUI, x + contentX, y + iconY, iconWidth, iconHeight, iconU, iconV, iconVWidth, iconUHeight, iconSourceWidth, iconSourceHeight);
+                graphics.blit(iconResource, x + contentX, y + iconY, iconWidth, iconHeight, iconU, iconV, iconVWidth, iconUHeight, iconSourceWidth, iconSourceHeight);
             }
 
             if (!StringUtils.isNullOrEmpty(text)) {
