@@ -72,7 +72,7 @@ public final class DiagnosticsApp extends SystemApp {
         int textHeight = Minecraft.getInstance().font.wordWrapHeight(messageText, getWidth() - 10);
         layoutMain.height += textHeight;
 
-        layoutMain.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> Gui.fill(pose, x, y, x + width, y + height, Color.LIGHT_GRAY.getRGB()));
+        layoutMain.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> graphics.fill(x, y, x + width, y + height, Color.LIGHT_GRAY.getRGB()));
 
         Text message = new Text(messageText, 5, 5, getWidth() - 10);
         this.addComponent(message);

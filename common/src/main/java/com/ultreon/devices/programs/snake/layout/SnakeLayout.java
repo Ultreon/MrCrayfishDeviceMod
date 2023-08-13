@@ -26,7 +26,7 @@ public class SnakeLayout extends Layout {
             app.setCurrentLayout(app.titleScreen);
         }));
 
-        this.setBackground((graphics, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
+        this.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
             graphics.fill(x,y,x+width,x+height, new Color(0x0, 0x0, 0x0).getRGB());
         });
         this.addComponent(button);

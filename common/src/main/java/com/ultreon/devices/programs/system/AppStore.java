@@ -54,17 +54,17 @@ public class AppStore extends SystemApp {
 
         ScrollableLayout homePageLayout = new ScrollableLayout(0, 0, LAYOUT_WIDTH, 368-160+80*rows, LAYOUT_HEIGHT);
         homePageLayout.setScrollSpeed(10);
-        homePageLayout.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
+        homePageLayout.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
             Color color = new Color(Laptop.getSystem().getSettings().getColorScheme().getBackgroundColor());
             int offset = 60;
-            Gui.fill(pose, x, y + offset, x + LAYOUT_WIDTH, y + offset + 1, color.brighter().getRGB());
-            Gui.fill(pose, x, y + offset + 1, x + LAYOUT_WIDTH, y + offset + 19, color.getRGB());
-            Gui.fill(pose, x, y + offset + 19, x + LAYOUT_WIDTH, y + offset + 20, color.darker().getRGB());
+            graphics.fill(x, y + offset, x + LAYOUT_WIDTH, y + offset + 1, color.brighter().getRGB());
+            graphics.fill(x, y + offset + 1, x + LAYOUT_WIDTH, y + offset + 19, color.getRGB());
+            graphics.fill(x, y + offset + 19, x + LAYOUT_WIDTH, y + offset + 20, color.darker().getRGB());
 
             offset = 172;
-            Gui.fill(pose, x, y + offset, x + LAYOUT_WIDTH, y + offset + 1, color.brighter().getRGB());
-            Gui.fill(pose, x, y + offset + 1, x + LAYOUT_WIDTH, y + offset + 19, color.getRGB());
-            Gui.fill(pose, x, y + offset + 19, x + LAYOUT_WIDTH, y + offset + 20, color.darker().getRGB());
+            graphics.fill(x, y + offset, x + LAYOUT_WIDTH, y + offset + 1, color.brighter().getRGB());
+            graphics.fill(x, y + offset + 1, x + LAYOUT_WIDTH, y + offset + 19, color.getRGB());
+            graphics.fill(x, y + offset + 19, x + LAYOUT_WIDTH, y + offset + 20, color.darker().getRGB());
         });
 
         com.ultreon.devices.api.app.component.Image imageBanner = new com.ultreon.devices.api.app.component.Image(0, 0, LAYOUT_WIDTH, 60);

@@ -36,7 +36,7 @@ public record RouterRenderer(
             RenderSystem.enableBlend();
             RenderSystem.blendFuncSeparate(770, 771, 1, 0);
 //            RenderSystem.disableLighting();
-            RenderSystem.disableTexture();
+            //            RenderSystem.disableTexture();
 //            RenderSystem.enableAlpha();
             pose.pushPose();
             {
@@ -75,7 +75,7 @@ public record RouterRenderer(
             RenderSystem.disableBlend();
 //            RenderSystem.disableAlpha();
 //            RenderSystem.enableLighting();
-            RenderSystem.enableTexture();
+       //     RenderSystem.enableTexture();
         }
     }
 
