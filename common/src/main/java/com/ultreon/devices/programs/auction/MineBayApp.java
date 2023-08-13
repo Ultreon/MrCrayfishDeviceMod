@@ -158,13 +158,13 @@ public class MineBayApp extends Application {
                 {
                     graphics.pose().translate(x + 24, y + 4, 0);
                     graphics.pose().scale(0.666f, 0.666f, 0);
-                    graphics.drawString(mc.font, e.getStack().getDisplayName(), 0, 0, Color.WHITE.getRGB());
-                    graphics.drawString(mc.font, TimeUtil.getTotalRealTime(e.getTimeLeft()), 0, 11, Color.LIGHT_GRAY.getRGB());
+                    graphics.drawString(mc.font, e.getStack().getDisplayName(), 0, 0, Color.WHITE.getRGB(), false);
+                    graphics.drawString(mc.font, TimeUtil.getTotalRealTime(e.getTimeLeft()), 0, 11, Color.LIGHT_GRAY.getRGB(), false);
                 }
                 graphics.pose().popPose();
 
                 String price = "$" + e.getPrice();
-                graphics.drawString(mc.font, price, x - mc.font.width(price) + width - 5, y + 6, Color.YELLOW.getRGB());
+                graphics.drawString(mc.font, price, x - mc.font.width(price) + width - 5, y + 6, Color.YELLOW.getRGB(), false);
             }
         });
         layoutMain.addComponent(items);

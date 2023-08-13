@@ -190,8 +190,8 @@ public class PixelPainterApp extends Application {
             @Override
             public void render(GuiGraphics graphics, Picture picture, Minecraft mc, int x, int y, int width, int height, boolean selected) {
                 graphics.fill(x, y, x + width, y + height, selected ? ITEM_SELECTED.getRGB() : ITEM_BACKGROUND.getRGB());
-                graphics.drawString(mc.font, picture.getName(), x + 2, y + 2, Color.WHITE.getRGB());
-                graphics.drawString(mc.font, picture.getAuthor(), x + 2, y + 11, AUTHOR_TEXT.getRGB());
+                graphics.drawString(mc.font, picture.getName(), x + 2, y + 2, Color.WHITE.getRGB(), false);
+                graphics.drawString(mc.font, picture.getAuthor(), x + 2, y + 11, AUTHOR_TEXT.getRGB(), false);
             }
         });
         listPictures.setItemClickListener((picture, index, mouseButton) ->
