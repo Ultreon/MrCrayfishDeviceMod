@@ -51,8 +51,8 @@
   ],
   "depends": {
     "fabricloader": ">=${loaderVersion}",
-    "minecraft": [">=${minecraftVersion} <1.19.4"],
-    "architectury": ">=7.1 <8"
+    "minecraft": [">=${minecraftVersion} <1.21"],
+    "architectury": ">=9.1 <10"
   },
   "custom": {
     "modmenu": {

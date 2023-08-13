@@ -67,9 +67,17 @@ dependencies {
         exclude module: "fabric-api"
     }
 
-    modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:12.0.645"
+    modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:12.0.645", {
+        exclude module: "fabric-api"
+    }
 
-    modApi "curse.maven:emojiful-284324:4672307"
+  //  modApi "curse.maven:emojiful-284324:4672307"
+}
+
+configurations.all {
+    resolutionStrategy {
+        force("net.fabricmc:fabric-loader:$fabric_loader_version")
+    }
 }
 
 processResources {
