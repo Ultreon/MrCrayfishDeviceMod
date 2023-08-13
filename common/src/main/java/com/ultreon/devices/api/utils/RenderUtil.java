@@ -24,10 +24,15 @@ public class RenderUtil {
 //        RenderSystem.enableLighting();
         Lighting.setupForFlatItems();
         //RenderSystem.setShader();
+        PoseStack.Pose last = graphics.pose().last();
+        var _4d = last.pose();
+        var _3d = last.normal();
+        graphics.pose().setIdentity();
         graphics.renderItem(stack, x, y);
         if (overlay)
             graphics.renderItemDecorations(Minecraft.getInstance().font, stack, x, y);
-
+        graphics.pose().last().pose().normal(_4d);
+        graphics.pose().last().normal().normal(_3d);
         // Todo - Port to 1.18.2 if possible
         //RenderSystem.enableAlpha();
         //Lighting.setupForFlatItems();
