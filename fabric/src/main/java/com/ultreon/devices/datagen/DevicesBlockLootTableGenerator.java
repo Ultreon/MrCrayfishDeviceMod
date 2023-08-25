@@ -20,9 +20,4 @@ public class DevicesBlockLootTableGenerator extends FabricBlockLootTableProvider
         DeviceBlocks.getAllPrinters().forEach(this::dropSelf);
         DeviceBlocks.getAllRouters().forEach(this::dropSelf);
     }
-
-    @Override
-    public void accept(BiConsumer<ResourceLocation, LootTable.Builder> resourceLocationBuilderBiConsumer) {
-
-    }
 }

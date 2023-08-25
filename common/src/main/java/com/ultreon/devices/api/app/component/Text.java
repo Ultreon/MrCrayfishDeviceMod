@@ -6,6 +6,7 @@ import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
 
@@ -40,7 +41,7 @@ public class Text extends Component {
     }
 
     @Override
-    public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
 //        DebugLog.log(lines.size() + ", " + rawText + ", " + lines);
         if (this.visible) {
             for (int i = 0; i < lines.size(); i++) {
@@ -49,8 +50,8 @@ public class Text extends Component {
                     text = text.substring(0, text.length() - 1);
                 }
                 assert text != null;
-                if (shadow) Laptop.getFont().drawShadow(pose, text, x + padding, y + (i * 10) + padding, textColor);
-                else Laptop.getFont().draw(pose, text, x + padding, y + (i * 10) + padding, textColor);
+                if (shadow) graphics.drawString(Laptop.getFont(), text, x + padding, y + (i * 10) + padding, textColor);
+                else graphics.drawString(Laptop.getFont(), text, x + padding, y + (i * 10) + padding, textColor, false);
             }
         }
     }

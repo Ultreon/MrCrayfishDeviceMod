@@ -44,9 +44,9 @@ public class GitWebApp extends Application implements SystemAccessor, DataHandle
     @Override
     public void init(@Nullable CompoundTag intent) {
         layoutBrowser = new StandardLayout(null, 362, 240, this, null);
-        layoutBrowser.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
+        layoutBrowser.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
             Color color = new Color(Laptop.getSystem().getSettings().getColorScheme().getItemBackgroundColor());
-            Gui.fill(pose, x, y + 21, x + width, y + 164, color.getRGB());
+            graphics.fill(x, y + 21, x + width, y + 164, color.getRGB());
         });
 
         layoutPref = new SettingsApp.Menu("Preferences");

@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.core.Laptop;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 
 import java.awt.*;
 
@@ -31,23 +32,23 @@ public class Label extends Component {
     }
 
     @Override
-    public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         if (this.visible) {
-            pose.pushPose();
+            graphics.pose().pushPose();
             {
-                pose.translate(xPosition, yPosition, 0);
-                pose.scale((float) scale, (float) scale, (float) scale);
+                graphics.pose().translate(xPosition, yPosition, 0);
+                graphics.pose().scale((float) scale, (float) scale, (float) scale);
                 if (alignment == ALIGN_RIGHT)
-                    pose.translate((int) -(mc.font.width(text) * scale), 0, 0);
+                    graphics.pose().translate((int) -(mc.font.width(text) * scale), 0, 0);
                 if (alignment == ALIGN_CENTER)
-                    pose.translate((float) ((int) -(mc.font.width(text) * scale) / (int) (2 * scale)), 0, 0);
+                    graphics.pose().translate((float) ((int) -(mc.font.width(text) * scale) / (int) (2 * scale)), 0, 0);
                 if (shadow) {
-                    mc.font.drawShadow(pose, text, 0, 0, textColor);
+                    graphics.drawString(mc.font, text, 0, 0, textColor);
                 } else {
-                    mc.font.draw(pose, text, 0, 0, textColor);
+                    graphics.drawString(mc.font, text, 0, 0, textColor, false);
                 }
             }
-            pose.popPose();
+            graphics.pose().popPose();
         }
     }
 

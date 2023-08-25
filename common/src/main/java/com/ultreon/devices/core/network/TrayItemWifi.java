@@ -19,7 +19,7 @@ import com.ultreon.devices.core.network.task.TaskPing;
 import com.ultreon.devices.object.TrayItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
@@ -43,15 +43,15 @@ public class TrayItemWifi extends TrayItem {
 
     private static Layout createWifiMenu(TrayItem item) {
         Layout layout = new Layout.Context(100, 100);
-        layout.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> Gui.fill(pose, x, y, x + width, y + height, new Color(0.65f, 0.65f, 0.65f, 0.9f).getRGB()));
+        layout.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> graphics.fill(x, y, x + width, y + height, new Color(0.65f, 0.65f, 0.65f, 0.9f).getRGB()));
 
         ItemList<Device> itemListRouters = new ItemList<>(5, 5, 90, 4);
         itemListRouters.setItems(getRouters());
         itemListRouters.setListItemRenderer(new ListItemRenderer<>(16) {
             @Override
-            public void render(PoseStack pose, Device device, GuiComponent gui, Minecraft mc, int x, int y, int width, int height, boolean selected) {
-                Gui.fill(pose, x, y, x + width, y + height, selected ? Color.DARK_GRAY.getRGB() : Color.GRAY.getRGB());
-                RenderUtil.drawStringClipped(pose, device.getName(), x + 16, y + 4, 70, Color.WHITE.getRGB(), false);
+            public void render(GuiGraphics graphics, Device device, Minecraft mc, int x, int y, int width, int height, boolean selected) {
+                graphics.fill(x, y, x + width, y + height, selected ? Color.DARK_GRAY.getRGB() : Color.GRAY.getRGB());
+                RenderUtil.drawStringClipped(graphics, device.getName(), x + 16, y + 4, 70, Color.WHITE.getRGB(), false);
 
                 if (device.getPos() == null) return;
 
@@ -59,11 +59,11 @@ public class TrayItemWifi extends TrayItem {
                 assert laptopPos != null;
                 double distance = Math.sqrt(device.getPos().distToCenterSqr(laptopPos.getX() + 0.5, laptopPos.getY() + 0.5, laptopPos.getZ() + 0.5));
                 if (distance > 20) {
-                    Icons.WIFI_LOW.draw(pose, mc, x + 3, y + 3);
+                    Icons.WIFI_LOW.draw(graphics, mc, x + 3, y + 3);
                 } else if (distance > 10) {
-                    Icons.WIFI_MED.draw(pose, mc, x + 3, y + 3);
+                    Icons.WIFI_MED.draw(graphics, mc, x + 3, y + 3);
                 } else {
-                    Icons.WIFI_HIGH.draw(pose, mc, x + 3, y + 3);
+                    Icons.WIFI_HIGH.draw(graphics, mc, x + 3, y + 3);
                 }
             }
         });

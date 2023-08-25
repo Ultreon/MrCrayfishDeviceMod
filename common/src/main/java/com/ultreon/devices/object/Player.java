@@ -9,6 +9,7 @@ import com.ultreon.devices.object.tiles.Tile;
 import com.ultreon.devices.util.KeyboardHelper;
 import com.ultreon.devices.util.Vec2d;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.BoatRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
@@ -116,39 +117,39 @@ public class Player {
         return (int) (posY / Tile.HEIGHT);
     }
 
-    public void render(PoseStack pose, int x, int y, float partialTicks) {
+    public void render(GuiGraphics graphics, int x, int y, float partialTicks) {
         float scale = 0.5f;
         double px = x + posXPrev + (posX - posXPrev) * partialTicks;
         double py = y + posYPrev + (posY - posYPrev) * partialTicks;
         float rot = rotationPrev + (rotation - rotationPrev) * partialTicks;
 
-        pose.pushPose();
-        pose.translate((float) px, (float) py, 3f);
-        pose.scale(-scale, -scale, -scale);
-        pose.mulPose(new Quaternionf(180f, 0f, 0f, 1f)); //Flips boat up
-        pose.mulPose(new Quaternionf(90, 1, 0, 0));
-        pose.translate(0f, -3d, 0f);
-        pose.mulPose(new Quaternionf(-90, 1f, 0f, 0f));
-        pose.mulPose(new Quaternionf(rot, 0f, 1f, 0f));
+        graphics.pose().pushPose();
+        graphics.pose().translate((float) px, (float) py, 3f);
+        graphics.pose().scale(-scale, -scale, -scale);
+        graphics.pose().mulPose(new Quaternionf(180f, 0f, 0f, 1f)); //Flips boat up
+        graphics.pose().mulPose(new Quaternionf(90, 1, 0, 0));
+        graphics.pose().translate(0f, -3d, 0f);
+        graphics.pose().mulPose(new Quaternionf(-90, 1f, 0f, 0f));
+        graphics.pose().mulPose(new Quaternionf(rot, 0f, 1f, 0f));
         RenderSystem.setShaderTexture(0, boatTextures);
         EntityRenderDispatcher entityRender = Minecraft.getInstance().getEntityRenderDispatcher();
-        entityRender.render(this.boat, 0, 0, 0, 0f, partialTicks, pose, MultiBufferSource.immediate(Tesselator.getInstance().getBuilder()), 1);
+        entityRender.render(this.boat, 0, 0, 0, 0f, partialTicks, graphics.pose(), MultiBufferSource.immediate(Tesselator.getInstance().getBuilder()), 1);
 //        boatModel.render(boat, 0f, 0f, pose, Minecraft.getInstance().renderBuffers().bufferSource(), 1);
-        pose.popPose();
+        graphics.pose().popPose();
 
-        pose.pushPose();
-        pose.translate((float) px, (float) py, 3f);
-        pose.scale(-scale, scale, scale);
+        graphics.pose().pushPose();
+        graphics.pose().translate((float) px, (float) py, 3f);
+        graphics.pose().scale(-scale, scale, scale);
         // //Flips boat up
-        pose.mulPose(new Quaternionf(90, 1, 0, 0));
-        pose.translate(0f, 5f, 0f);
-        pose.mulPose(new Quaternionf(90, 1f, 0f, 0f));
-        pose.mulPose(new Quaternionf(180f, 0f, 0f, 1f));
-        pose.mulPose(new Quaternionf(rot - 90, 0f, 1f, 0f));
-        pose.translate(0f, -12f, 5f);
+        graphics.pose().mulPose(new Quaternionf(90, 1, 0, 0));
+        graphics.pose().translate(0f, 5f, 0f);
+        graphics.pose().mulPose(new Quaternionf(90, 1f, 0f, 0f));
+        graphics.pose().mulPose(new Quaternionf(180f, 0f, 0f, 1f));
+        graphics.pose().mulPose(new Quaternionf(rot - 90, 0f, 1f, 0f));
+        graphics.pose().translate(0f, -12f, 5f);
 //        Minecraft.getMinecraft().getTextureManager().bindTexture(Minecraft.getMinecraft().player.getLocationSkin());
         //playerModel.render(null, 0f, 0f, 0f, 0f, 0f, 1f);
-        pose.popPose();
+        graphics.pose().popPose();
     }
 
 //    public static class ModelDummyPlayer extends PlayerModel<net.minecraft.world.entity.player.Player> {

@@ -37,6 +37,11 @@ subprojects {
         }
 
         maven {
+            name = "Fuzs Mod Resources"
+            url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
+        }
+
+        maven {
             name = 'BlameJared Maven (CrT / Bookshelf)'
             url = 'https://maven.blamejared.com'
         }
@@ -71,7 +76,7 @@ subprojects {
         // The following line declares the mojmap mappings, you may use other mappings as well
         mappings loom.layered() {
             officialMojangMappings()
-            parchment("org.parchmentmc.data:parchment-1.19.2:2022.08.10@zip")
+            parchment("org.parchmentmc.data:parchment-1.20.1:2023.06.26@zip")
         }
 
 //        layered
@@ -107,6 +112,12 @@ allprojects {
 
     java {
         withSourcesJar()
+    }
+
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xmaxerrs" << "9999"
+        }
     }
 }
 
