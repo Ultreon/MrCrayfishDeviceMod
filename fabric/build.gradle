@@ -43,10 +43,12 @@ dependencies {
     modApi "net.fabricmc.fabric-api:fabric-api:$fabric_api_version"
     // Remove the next line if you don't want to depend on the API
     modApi "dev.architectury:architectury-fabric:$architectury_version"
+    modApi "com.github.Ultreon.ultreonlib:ultreon-lib-fabric:$ultreonlib_version"
 
     modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:8.0.0"
     modImplementation 'com.electronwill.night-config:core:3.6.5'
     modImplementation 'com.electronwill.night-config:toml:3.6.5'
+
 
 //    include(implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.10"))
 //    include(implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10"))
