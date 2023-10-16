@@ -18,7 +18,7 @@ dependencies {
     // Remove the next line if you don't want to depend on the API
     modApi "dev.architectury:architectury:$architectury_version"
 
-    modImplementation 'com.github.Ultreon.ultreonlib:ultreon-lib:1.3.2'
+    modImplementation "com.github.Ultreon.ultreonlib:ultreon-lib:$ultreonlib_version"
 
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.10")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10")
