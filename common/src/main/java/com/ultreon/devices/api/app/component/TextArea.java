@@ -8,16 +8,18 @@ import com.ultreon.devices.api.app.interfaces.IHighlight;
 import com.ultreon.devices.api.app.listener.KeyListener;
 import com.ultreon.devices.api.utils.RenderUtil;
 import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.util.GLHelper;
 import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.util.Mth;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -94,17 +96,17 @@ public class TextArea extends Component {
     }
 
     @Override
-    public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         if (this.visible) {
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 
             Color bgColor = new Color(backgroundColor);
-            Gui.fill(pose, x, y, x + width, y + height, bgColor.darker().darker().getRGB());
-            Gui.fill(pose, x + 1, y + 1, x + width - 1, y + height - 1, bgColor.getRGB());
+            graphics.fill(x, y, x + width, y + height, bgColor.darker().darker().getRGB());
+            graphics.fill(x + 1, y + 1, x + width - 1, y + height - 1, bgColor.getRGB());
 
             if (!isFocused && placeholder != null && (lines.isEmpty() || (lines.size() == 1 && lines.get(0).isEmpty()))) {
                 RenderSystem.enableBlend();
-                RenderUtil.drawStringClipped(pose, placeholder, x + padding, y + padding, width - padding * 2, placeholderColor, false);
+                RenderUtil.drawStringClipped(graphics, placeholder, x + padding, y + padding, width - padding * 2, placeholderColor, false);
             }
 
             GLHelper.pushScissor(x + padding, y + padding, width - padding * 2, height - padding * 2);
@@ -125,9 +127,9 @@ public class TextArea extends Component {
                         builder.append(word);
                         builder.append(ChatFormatting.RESET);
                     }
-                    font.draw(pose, builder.toString(), x + padding - scrollX, y + padding + i * font.lineHeight, -1);
+                    graphics.drawString(mc.font, builder.toString(), x + padding - scrollX, y + padding + i * font.lineHeight, -1, false);
                 } else {
-                    font.draw(pose, lines.get(lineY), x + padding - scrollX, y + padding + i * font.lineHeight, textColor);
+                    graphics.drawString(mc.font, lines.get(lineY), x + padding - scrollX, y + padding + i * font.lineHeight, textColor, false);
                 }
             }
             GLHelper.popScissor();
@@ -144,7 +146,7 @@ public class TextArea extends Component {
                         int stringWidth = font.width(subString);
                         int posX = x + padding + stringWidth - Mth.clamp(horizontalScroll + (int) (horizontalOffset * pixelsPerUnit), 0, Math.max(0, maxLineWidth - visibleWidth));
                         int posY = y + padding + (cursorY - scroll) * font.lineHeight;
-                        Gui.fill(pose, posX, posY - 1, posX + 1, posY + font.lineHeight, Color.WHITE.getRGB());
+                        graphics.fill(posX, posY - 1, posX + 1, posY + font.lineHeight, Color.WHITE.getRGB());
                     }
                 }
             }
@@ -157,7 +159,7 @@ public class TextArea extends Component {
                     float scrollPercentage = Mth.clamp((verticalScroll + verticalOffset) / (float) (lines.size() - visibleLines), 0f, 1f);
                     int scrollBarY = (int) ((visibleScrollBarHeight - scrollBarHeight) * scrollPercentage);
                     int scrollY = yPosition + 2 + scrollBarY;
-                    Gui.fill(pose, x + width - 2 - scrollBarSize, scrollY, x + width - 2, scrollY + scrollBarHeight, placeholderColor);
+                    graphics.fill(x + width - 2 - scrollBarSize, scrollY, x + width - 2, scrollY + scrollBarHeight, placeholderColor);
                 }
 
                 if (!wrapText && maxLineWidth >= width - padding * 2) {
@@ -167,7 +169,7 @@ public class TextArea extends Component {
                     int scrollBarWidth = Math.max(20, (int) ((float) visibleWidth / (float) maxLineWidth * (float) visibleScrollBarWidth));
                     int relativeScrollX = (int) (scrollPercentage * (visibleScrollBarWidth - scrollBarWidth));
                     int scrollX = xPosition + 2 + Mth.clamp(relativeScrollX + horizontalOffset, 0, visibleScrollBarWidth - scrollBarWidth);
-                    Gui.fill(pose, scrollX, y + height - scrollBarSize - 2, scrollX + scrollBarWidth, y + height - 2, placeholderColor);
+                    graphics.fill(scrollX, y + height - scrollBarSize - 2, scrollX + scrollBarWidth, y + height - 2, placeholderColor);
                 }
             }
         }
@@ -244,7 +246,7 @@ public class TextArea extends Component {
     public void handleCharTyped(char codePoint, int modifiers) {
         if (!this.visible || !this.enabled || !this.isFocused || !this.editable) return;
 
-        System.out.println("TextArea.handleCharTyped: codePoint = " + codePoint + ", modifiers = " + modifiers);
+        DebugLog.log("TextArea.handleCharTyped: codePoint = " + codePoint + ", modifiers = " + modifiers);
 
         if (codePoint == '\\') performBackspace();
         else if (Character.isDefined(codePoint)) writeText(codePoint);
@@ -259,7 +261,7 @@ public class TextArea extends Component {
     public void handleKeyPressed(int keyCode, int scanCode, int modifiers) {
         if (!this.visible || !this.enabled || !this.isFocused || !this.editable) return;
 
-        System.out.println("TextArea.handleKeyPressed: keyCode = " + keyCode + ", scanCode = " + scanCode + ", modifiers = " + modifiers);
+        DebugLog.log("TextArea.handleKeyPressed: keyCode = " + keyCode + ", scanCode = " + scanCode + ", modifiers = " + modifiers);
 
         if (Screen.isPaste(keyCode)) {
             String[] lines = Minecraft.getInstance().keyboardHandler.getClipboard().split("\n");
@@ -268,7 +270,7 @@ public class TextArea extends Component {
             }
             writeText(lines[lines.length - 1]);
         } else {
-            System.out.println("TextArea.handleKeyTypes: keyCode = " + keyCode);
+            DebugLog.log("TextArea.handleKeyTypes: keyCode = " + keyCode);
             switch (keyCode) {
                 case InputConstants.KEY_BACKSPACE -> performBackspace(); // TODO: Make delete actually work
                 case InputConstants.KEY_RETURN -> performReturn();

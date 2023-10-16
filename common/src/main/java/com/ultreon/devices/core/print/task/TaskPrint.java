@@ -22,6 +22,7 @@ public class TaskPrint extends Task {
     private BlockPos devicePos;
     private UUID printerId;
     private IPrint print;
+    private String reason = null;
 
     public TaskPrint() {
         super("print");
@@ -52,14 +53,22 @@ public class TaskPrint extends Task {
                     IPrint print = IPrint.load(tag.getCompound("print"));
                     ((PrinterBlockEntity) printer).addToQueue(print);
                     this.setSuccessful();
+                } else {
+                    this.reason = "Network device is not a printer";
                 }
+            } else {
+                this.reason = "Not connected to router";
             }
+        } else {
+            this.reason = "No network driver found";
         }
     }
 
     @Override
     public void prepareResponse(CompoundTag tag) {
-
+        if (this.reason != null) {
+            tag.putString("reason", this.reason);
+        }
     }
 
     @Override

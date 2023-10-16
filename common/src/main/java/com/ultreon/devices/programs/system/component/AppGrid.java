@@ -17,6 +17,7 @@ import com.ultreon.devices.programs.system.object.RemoteEntry;
 import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 
 import java.awt.*;
@@ -64,14 +65,14 @@ public class AppGrid extends Component {
     }
 
     @Override
-    protected void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    protected void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         int size = Math.min(entries.size(), verticalItems * horizontalItems);
         for (int i = 0; i < size; i++) {
             int itemX = x + (i % horizontalItems) * (itemWidth + padding) + padding;
             int itemY = y + (i / horizontalItems) * (itemHeight + padding) + padding;
             if (GuiHelper.isMouseWithin(mouseX, mouseY, itemX, itemY, itemWidth, itemHeight)) {
-                Gui.fill(pose, itemX, itemY, itemX + itemWidth, itemY + itemHeight, Color.GRAY.getRGB());
-                Gui.fill(pose, itemX + 1, itemY + 1, itemX + itemWidth - 1, itemY + itemHeight - 1, Laptop.getSystem().getSettings().getColorScheme().getItemBackgroundColor());
+                graphics.fill(itemX, itemY, itemX + itemWidth, itemY + itemHeight, Color.GRAY.getRGB());
+                graphics.fill(itemX + 1, itemY + 1, itemX + itemWidth - 1, itemY + itemHeight - 1, Laptop.getSystem().getSettings().getColorScheme().getItemBackgroundColor());
             }
         }
     }

@@ -26,7 +26,7 @@ configurations {
 }
 
 dependencies {
-    forge "net.minecraftforge:forge:${rootProject.architectury.minecraft}-$forge_version"
+    forge "net.minecraftforge:forge:${architectury.minecraft}-$forge_version"
     include(project(path: ":forge", configuration: "namedElements"))
 
     forgeRuntimeLibrary('me.friwi:jcefmaven:109.1.11.1')
@@ -37,17 +37,17 @@ shadowJar {
     exclude "fabric.mod.json"
 
     configurations = [project.configurations.shadowCommon]
-    classifier "dev-shadow"
+    archiveClassifier = "dev-shadow"
 }
 
 remapJar {
     input.set shadowJar.archiveFile
     dependsOn shadowJar
-    classifier null
+    archiveClassifier = null
 }
 
 jar {
-    classifier "dev"
+    archiveClassifier = "dev"
 }
 
 sourcesJar {

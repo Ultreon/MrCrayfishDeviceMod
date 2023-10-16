@@ -23,6 +23,7 @@ import com.ultreon.devices.core.network.task.TaskGetDevices;
 import com.ultreon.devices.core.network.task.TaskPing;
 import com.ultreon.devices.core.print.task.TaskPrint;
 import com.ultreon.devices.core.task.TaskInstallApp;
+import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.network.PacketHandler;
 import com.ultreon.devices.network.task.SyncApplicationPacket;
 import com.ultreon.devices.network.task.SyncConfigPacket;
@@ -52,10 +53,10 @@ import dev.architectury.event.events.client.ClientPlayerEvent;
 import dev.architectury.event.events.common.InteractionEvent;
 import dev.architectury.event.events.common.LifecycleEvent;
 import dev.architectury.event.events.common.PlayerEvent;
-import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.architectury.injectables.targets.ArchitecturyTarget;
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.CreativeTabRegistry;
+import dev.architectury.registry.registries.DeferredSupplier;
 import dev.architectury.registry.registries.RegistrarManager;
 import dev.architectury.utils.Env;
 import dev.architectury.utils.EnvExecutor;
@@ -65,9 +66,13 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import org.burningwave.core.assembler.StaticComponentContainer;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -80,12 +85,12 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
-public class Devices {
+public abstract class Devices {
     public static final boolean DEVELOPER_MODE = false;
     public static final String MOD_ID = "devices";
     public static final Logger LOGGER = LoggerFactory.getLogger("Devices Mod");
 
-    public static final CreativeTabRegistry.TabSupplier TAB_DEVICE = DeviceTab.create();
+    public static final DeferredSupplier<CreativeModeTab> TAB_DEVICE = DeviceTab.create();
     public static final Supplier<RegistrarManager> REGISTRIES = Suppliers.memoize(() -> RegistrarManager.get(MOD_ID));
     public static final List<SiteRegistration> SITE_REGISTRATIONS = new ProtectedArrayList<>();
     private static final Pattern DEV_PREVIEW_PATTERN = Pattern.compile("\\d+\\.\\d+\\.\\d+-dev\\d+");
@@ -104,6 +109,7 @@ public class Devices {
     static List<AppInfo> allowedApps;
     private static List<Vulnerability> vulnerabilities;
     private static boolean shownLicense;
+    private static Devices instance;
 
     public static List<Vulnerability> getVulnerabilities() {
         return vulnerabilities;
@@ -111,12 +117,19 @@ public class Devices {
     private static MinecraftServer server;
     private static TestManager tests;
 
-    public static void init() {
+    protected Devices() {
+        Devices.instance = this;
+    }
+
+    public static Devices getInstance() {
+        return instance;
+    }
+
+    public void init() {
         StaticComponentContainer.Modules.exportAllToAll();
         String prop = System.getProperty("java.awt.headless");
         System.out.println("property = " + prop);
         System.getProperties().remove("java.awt.headless");
-
         if (ArchitecturyTarget.getCurrentTarget().equals("fabric")) {
             preInit();
             serverSetup();
@@ -152,128 +165,7 @@ public class Devices {
         if (!ArchitecturyTarget.getCurrentTarget().equals("forge")) {
             loadComplete();
         }
-
-//        ultranLang:
-//        {
-//            if (!tests.isEnabled("ultran_lang")) break ultranLang;
-//            SpiKt.setShouldLogInternalErrors(false);
-//            SpiKt.setShouldLogScope(false);
-//            SpiKt.setShouldLogStack(false);
-//            SpiKt.setShouldLogTokens(false);
-//
-//            String text = """
-//                    program Main;
-//
-//                    function Alpha(a: integer; b: integer) {
-//                        function Beta(a: integer; b: integer) {
-//                            var x: integer;
-//                            x = a * 10 + b * 2;
-//                        };
-//                        var x: integer;
-//                        x = (a + b ) * 2;
-//                        Beta(5, 10);      [ function call ]
-//                    };
-//
-//                    Alpha(3 + 5, 7);  [ function call ]
-//                    var x: integer;
-//                    x = 300;
-//                    var startX: integer;
-//                    var startY: integer;
-//                    startX = 10;
-//                    startY = 20;
-//
-//                    function PrintHelloWorld() {
-//                        log("info", "Hello World from an UltranLang script.");
-//                    };
-//
-//                    PrintHelloWorld();
-//
-//                    log("info", "Hello World! Number: " + randInt(startX, startY));
-//                    """;
-//
-//            NativeCalls calls = new NativeCalls();
-//            registerNativeFunctions(calls);
-//
-//            var lexer = new Lexer(text);
-//            Program tree;
-//            try {
-//                var parser = new Parser(lexer);
-//                tree = parser.parse();
-//            } catch (LexerException | ParserException e) {
-//                if (SpiKt.getShouldLogInternalErrors()) e.printStackTrace();
-//                LOGGER.error("Error parsing file: {}", e.getMessage());
-//                break ultranLang;
-//            } catch (RuntimeException e) {
-//                var cause = e.getCause();
-//                while (cause instanceof InvocationTargetException || cause instanceof RuntimeException) {
-//                    cause = cause.getCause();
-//                }
-//                if (cause instanceof LexerException) {
-//                    if (SpiKt.getShouldLogInternalErrors()) cause.printStackTrace();
-//                    LOGGER.error("Error parsing file: {}", cause.getMessage());
-//                } else if (cause instanceof ParserException) {
-//                    if (SpiKt.getShouldLogInternalErrors()) cause.printStackTrace();
-//                    LOGGER.error("Error parsing file: {}", cause.getMessage());
-//                } else {
-//                    throw e;
-//                }
-//                break ultranLang;
-//            }
-//
-//            var semanticAnalyzer = new SemanticAnalyzer(calls);
-//
-//            try {
-//                semanticAnalyzer.visit(tree);
-//            } catch (SemanticException e) {
-//                if (SpiKt.getShouldLogInternalErrors()) e.printStackTrace();
-//                LOGGER.error("Error analyzing file: {}", e.getMessage());
-//                break ultranLang;
-//            } catch (RuntimeException e) {
-//                var cause = e.getCause();
-//                while (cause instanceof InvocationTargetException || cause instanceof RuntimeException) {
-//                    cause = cause.getCause();
-//                }
-//                if (cause instanceof SemanticException) {
-//                    if (SpiKt.getShouldLogInternalErrors()) cause.printStackTrace();
-//                    ULTRAN_LANG_LOGGER.error("Error analyzing file: {}", cause.getMessage());
-//                } else {
-//                    throw e;
-//                }
-//                break ultranLang;
-//            }
-//
-//            try {
-//                var interpreter = new Interpreter(tree);
-//                interpreter.interpret();
-//            } catch (Exception e) {
-//                if (SpiKt.getShouldLogInternalErrors()) e.printStackTrace();
-//                LOGGER.error("Error interpreting file: {}", e.getMessage());
-//            }
-//        }
     }
-
-//    private static void registerNativeFunctions(NativeCalls calls) {
-//        calls.register("log", SpiKt.params()
-//                .add("level", BuiltinTypeSymbol.STRING)
-//                .add("message", BuiltinTypeSymbol.STRING), ar -> {
-//            Object level = ar.get("level");
-//            if (level instanceof String levelName) {
-//                Object message = ar.get("message");
-//                if (message == null) message = "null";
-//
-//                switch (levelName.toLowerCase(Locale.ROOT)) {
-//                    case "warn" -> ULTRAN_LANG_LOGGER.warn(message.toString());
-//                    case "error" -> ULTRAN_LANG_LOGGER.error(message.toString());
-//                    case "debug" -> ULTRAN_LANG_LOGGER.debug(message.toString());
-//                    case "trace" -> ULTRAN_LANG_LOGGER.trace(message.toString());
-//                    default -> ULTRAN_LANG_LOGGER.info(message.toString());
-//                }
-//            } else {
-//                throw new IllegalArgumentException("Invalid level of type " + (level == null ? "null" : level.getClass().getName()));
-//            }
-//            return null;
-//        });
-//    }
 
     public static void preInit() {
         if (DEVELOPER_MODE && !Platform.isDevelopmentEnvironment() && PROTECT_FROM_LAUNCH) {
@@ -296,16 +188,16 @@ public class Devices {
         return tests;
     }
 
-    public static void serverSetup() {
+    public void serverSetup() {
         LOGGER.info("Doing some server setup.");
     }
 
-    public static void loadComplete() {
+    public void loadComplete() {
         LOGGER.info("Doing some load complete handling.");
     }
 
 
-    private static void registerApplications() {
+    private void registerApplications() {
         // Applications (Both)
 
         registerApplicationEvent();
@@ -371,15 +263,11 @@ public class Devices {
         EnvExecutor.runInEnv(Env.CLIENT, () -> () -> PrintingManager.registerPrint(new ResourceLocation(Reference.MOD_ID, "picture"), PixelPainterApp.PicturePrint.class));
     }
 
-    @ExpectPlatform
-    private static void registerApplicationEvent() {
-        throw new AssertionError();
-    }
+    public abstract int getBurnTime(ItemStack stack, RecipeType<?> type);
 
-    @ExpectPlatform
-    private static List<Application> getAPPLICATIONS() {
-        throw new AssertionError();
-    }
+    protected abstract void registerApplicationEvent();
+
+    protected abstract List<Application> getApplications();
 
     public static void setAllowedApps(List<AppInfo> allowedApps) {
         Devices.allowedApps = allowedApps;
@@ -402,11 +290,11 @@ public class Devices {
     }
 
     /**
-     * @deprecated do not call
+     * DO NOT CALL: FOR INTERNAL USE ONLY
      */
-    @Deprecated
     @Nullable
-    public static Application registerApplication(ResourceLocation identifier, ApplicationSupplier app) {
+    @ApiStatus.Internal
+    public Application registerApplication(ResourceLocation identifier, ApplicationSupplier app) {
         if ("minecraft".equals(identifier.getNamespace())) {
             throw new IllegalArgumentException("Identifier cannot be \"minecraft\"!");
         }
@@ -424,7 +312,7 @@ public class Devices {
         AtomicReference<Application> application = new AtomicReference<>(null);
         EnvExecutor.runInEnv(Env.CLIENT, () -> () -> {
             Application appl = app.get().get();
-            List<Application> apps = getAPPLICATIONS(); /*ObfuscationReflectionHelper.getPrivateValue(Laptop.class, null, "APPLICATIONS");*/
+            List<Application> apps = getApplications(); /*ObfuscationReflectionHelper.getPrivateValue(Laptop.class, null, "APPLICATIONS");*/
             assert apps != null;
             apps.add(appl);
 
@@ -444,17 +332,11 @@ public class Devices {
         return info;
     }
 
-    @ExpectPlatform
-    private static Map<String, IPrint.Renderer> getRegisteredRenders() {
-        throw new AssertionError();
-    }
+    protected abstract Map<String, IPrint.Renderer> getRegisteredRenders();
 
-    @ExpectPlatform
-    private static void setRegisteredRenders(Map<String, IPrint.Renderer> map) {
-        throw new AssertionError();
-    }
+    protected abstract void setRegisteredRenders(Map<String, IPrint.Renderer> map);
 
-    public static boolean registerPrint(ResourceLocation identifier, Class<? extends IPrint> classPrint) {
+    public boolean registerPrint(ResourceLocation identifier, Class<? extends IPrint> classPrint) {
         LOGGER.debug("Registering print: " + identifier.toString());
 
         try {
@@ -505,23 +387,6 @@ public class Devices {
         return new ResourceLocation(Devices.MOD_ID, path);
     }
 
-//    private void enqueueIMC(final InterModEnqueueEvent event) {
-//        // Check for self availability.
-//        InterModComms.sendTo(Reference.MOD_ID, "availability", () -> {
-//            LOGGER.info("IMC is working correctly");
-//            return "Hello world";
-//        });
-//    }
-//
-//    private void processIMC(final InterModProcessEvent event) {
-//        event.getIMCStream().forEachOrdered(imcMessage -> {
-//            // Availability IMC handling.
-//            if (imcMessage.method().equals("availability")) {
-//                LOGGER.info("Received message from " + imcMessage.senderModId() + ": " + imcMessage.messageSupplier().get());
-//            }
-//        });
-//    }
-
     private static void setupClientEvents() {
         ClientPlayerEvent.CLIENT_PLAYER_QUIT.register((player -> {
             LOGGER.debug("Client disconnected from server");
@@ -535,7 +400,7 @@ public class Devices {
         LifecycleEvent.SERVER_STARTING.register((instance -> server = instance));
         LifecycleEvent.SERVER_STOPPED.register(instance -> server = null);
         InteractionEvent.RIGHT_CLICK_BLOCK.register(((player, hand, pos, face) -> {
-            Level level = player.getLevel();
+            Level level = player.level();
             if (!player.getItemInHand(hand).isEmpty() && player.getItemInHand(hand).getItem() == Items.PAPER) {
                 if (level.getBlockState(pos).getBlock() instanceof PrinterBlock) {
                     return EventResult.interruptTrue();
@@ -571,9 +436,7 @@ public class Devices {
             vulnerabilities = Vulnerability.parseArray(array);
             vulnerabilities.forEach(vul -> {
                 String s = vul.toPrettyString();
-                s.lines().toList().forEach(line -> {
-                    LOGGER.debug("[VulChecker] {}", line);
-                });
+                s.lines().toList().forEach(line -> LOGGER.debug("[VulChecker] {}", line));
                 LOGGER.debug("[VulChecker]");
             });
         }));
@@ -589,9 +452,12 @@ public class Devices {
         OnlineRequest.getInstance().make(url, (success, response) -> {
             if (success) {
                 //Minecraft.getInstance().doRunTask(() -> {
-                JsonArray array = JsonParser.parseString(response).getAsJsonArray();
-                for (JsonElement jsonElement : array) {
-                    JsonObject elem = jsonElement.getAsJsonObject();
+                JsonElement root = JsonParser.parseString(response);
+                DebugLog.log("root = " + root);
+                JsonArray rootArray = root.getAsJsonArray();
+                for (JsonElement rootRegister : rootArray) {
+                    DebugLog.log("rootRegister = " + rootRegister);
+                    JsonObject elem = rootRegister.getAsJsonObject();
                     var registrant = elem.get("registrant") != null ? elem.get("registrant").getAsString() : null;
                     var type = Type.REGISTRATION;
                     JsonElement typeElem;

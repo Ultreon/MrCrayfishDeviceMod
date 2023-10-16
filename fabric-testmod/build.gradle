@@ -28,8 +28,8 @@ dependencies {
     implementation project(path: ":fabric", configuration: "namedElements")
     implementation project(path: ":common", configuration: "namedElements")
     common(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
-    modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
-    modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
+    modImplementation "net.fabricmc:fabric-loader:$fabric_loader_version"
+    modApi "net.fabricmc.fabric-api:fabric-api:$fabric_api_version"
     modImplementation "com.terraformersmc:modmenu:4.0.6", {
         exclude module: "fabric-api"
     }
@@ -41,7 +41,7 @@ dependencies {
 }
 
 jar {
-    classifier "dev"
+    archiveClassifier = "dev"
 }
 
 components.java {

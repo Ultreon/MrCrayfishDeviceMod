@@ -1,7 +1,9 @@
 package com.ultreon.devices.core.task;
 
+import com.ultreon.devices.Devices;
 import com.ultreon.devices.api.task.Task;
-import com.ultreon.devices.block.entity.LaptopBlockEntity;
+import com.ultreon.devices.block.entity.ComputerBlockEntity;
+import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.object.AppInfo;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -37,25 +39,24 @@ public class TaskInstallApp extends Task {
         tag.putString("appId", appId);
         tag.putLong("pos", laptopPos.asLong());
         tag.putBoolean("install", install);
-        System.out.println("Prep message " + appId + ", " + laptopPos.toString() + ", " + install);
+        DebugLog.log("Prep message " + appId + ", " + laptopPos.toString() + ", " + install);
     }
 
     @Override
     public void processRequest(CompoundTag tag, Level level, Player player) {
-        System.out.println("Proc message " + tag.getString("appId") + ", " +  BlockPos.of(tag.getLong("pos")) + ", " + tag.getBoolean("install"));
+        DebugLog.log("Proc message " + tag.getString("appId") + ", " +  BlockPos.of(tag.getLong("pos")) + ", " + tag.getBoolean("install"));
         String appId = tag.getString("appId");
-        System.out.println(level.getBlockState(BlockPos.of(tag.getLong("pos"))).getBlock().toString());
+        DebugLog.log(level.getBlockState(BlockPos.of(tag.getLong("pos"))).getBlock());
         BlockEntity tileEntity = level.getChunkAt(BlockPos.of(tag.getLong("pos"))).getBlockEntity(BlockPos.of(tag.getLong("pos")), LevelChunk.EntityCreationType.IMMEDIATE);
-        System.out.println(tileEntity);
-        if (tileEntity instanceof LaptopBlockEntity laptop) {
-            System.out.println("laptop is made out of laptop");
+        DebugLog.log(tileEntity);
+        if (tileEntity instanceof ComputerBlockEntity laptop) {
             CompoundTag systemData = laptop.getSystemData();
             ListTag list = systemData.getList("InstalledApps", Tag.TAG_STRING);
 
             if (tag.getBoolean("install")) {
                 for (int i = 0; i < list.size(); i++) {
                     if (list.getString(i).equals(appId)) {
-                        System.out.println("FOund duplicate, noping out");
+                        Devices.LOGGER.warn("Found duplicate, noping out");
                         return;
                     }
                 }
@@ -73,7 +74,9 @@ public class TaskInstallApp extends Task {
             }
             systemData.put("InstalledApps", list);
         }
-        System.out.println("Successful: " + this.isSucessful());
+        if (!this.isSucessful()) {
+            Devices.LOGGER.info("Installing {} unsuccessful", appId);
+        }
     }
 
 

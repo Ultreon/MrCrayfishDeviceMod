@@ -2,9 +2,11 @@ package com.ultreon.devices.programs.gitweb.component.container;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.ultreon.devices.Devices;
 import com.ultreon.devices.core.Laptop;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Blocks;
@@ -24,12 +26,12 @@ public class FurnaceBox extends ContainerBox {
         slots.add(new Slot(26, 8, input));
         slots.add(new Slot(26, 44, fuel));
         slots.add(new Slot(85, 26, result));
-        this.fuelTime = getBurnTime(fuel, RecipeType.SMELTING);
+        this.fuelTime = Devices.getInstance().getBurnTime(fuel, RecipeType.SMELTING);
     }
 
-    @ExpectPlatform
+    @Deprecated
     private static int getBurnTime(ItemStack stack, RecipeType<?> type) {
-        throw new AssertionError();
+        return Devices.getInstance().getBurnTime(stack, type);
     }
 
     @Override
@@ -43,16 +45,16 @@ public class FurnaceBox extends ContainerBox {
     }
 
     @Override
-    protected void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
-        super.render(pose, laptop, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
+    protected void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+        super.render(graphics, laptop, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
 
         RenderSystem.setShaderTexture(0, CONTAINER_BOXES_TEXTURE);
 
         int burnProgress = this.getBurnLeftScaled(13);
-        this.blit(pose, x + 26, y + 52 - burnProgress, 128, 238 - burnProgress, 14, burnProgress + 1);
+        graphics.blit(CONTAINER_BOXES_TEXTURE, x + 26, y + 52 - burnProgress, 128, 238 - burnProgress, 14, burnProgress + 1);
 
         int cookProgress = this.getCookProgressScaled(24);
-        this.blit(pose, x + 49, y + 37, 128, 239, cookProgress + 1, 16);
+        graphics.blit(CONTAINER_BOXES_TEXTURE, x + 49, y + 37, 128, 239, cookProgress + 1, 16);
     }
 
     private int getCookProgressScaled(int pixels) {

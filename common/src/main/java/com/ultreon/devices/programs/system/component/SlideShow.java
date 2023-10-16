@@ -10,6 +10,7 @@ import com.ultreon.devices.programs.system.object.ImageEntry;
 import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 
@@ -59,26 +60,26 @@ public class SlideShow extends Component {
     }
 
     @Override
-    protected void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    protected void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         if (!this.visible) return;
-        image.render(pose, laptop, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
+        image.render(graphics, laptop, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
 
         if (currentImage > 0) {
             if (GuiHelper.isMouseWithin(mouseX, mouseY, x, y, 15, height)) {
-                Gui.fill(pose, x, y, x + 15, y + height, OVERLAY_HOVER.getRGB());
+                graphics.fill(x, y, x + 15, y + height, OVERLAY_HOVER.getRGB());
             } else {
-                Gui.fill(pose, x, y, x + 15, y + height, OVERLAY.getRGB());
+                graphics.fill(x, y, x + 15, y + height, OVERLAY.getRGB());
             }
-            Icons.CHEVRON_LEFT.draw(pose, mc, x + 2, y + (height - 10) / 2);
+            Icons.CHEVRON_LEFT.draw(graphics, mc, x + 2, y + (height - 10) / 2);
         }
 
         if (currentImage < IMAGES.size() - 1) {
             if (GuiHelper.isMouseWithin(mouseX, mouseY, x + width - 15, y, 15, height)) {
-                Gui.fill(pose, x + width - 15, y, x + width, y + height, OVERLAY_HOVER.getRGB());
+                graphics.fill(x + width - 15, y, x + width, y + height, OVERLAY_HOVER.getRGB());
             } else {
-                Gui.fill(pose, x + width - 15, y, x + width, y + height, OVERLAY.getRGB());
+                graphics.fill(x + width - 15, y, x + width, y + height, OVERLAY.getRGB());
             }
-            Icons.CHEVRON_RIGHT.draw(pose, mc, x + 3 + width - 15, y + (height - 10) / 2);
+            Icons.CHEVRON_RIGHT.draw(graphics, mc, x + 3 + width - 15, y + (height - 10) / 2);
         }
     }
 

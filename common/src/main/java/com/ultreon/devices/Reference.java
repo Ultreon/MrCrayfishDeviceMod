@@ -6,6 +6,7 @@ import dev.architectury.platform.Platform;
 import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import dev.architectury.platform.Platform;
 
 public class Reference {
     public static final String MOD_ID = "devices";
@@ -20,9 +21,8 @@ public class Reference {
         }
     }
 
-    @ExpectPlatform // gets the mod version of "devices"
     public static String getVersion() {
-        throw new AssertionError();
+        return Platform.getMod(Devices.MOD_ID).getVersion();
     }
 
     public static String[] getVerInfo() {

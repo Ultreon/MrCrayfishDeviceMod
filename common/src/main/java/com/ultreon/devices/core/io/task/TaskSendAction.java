@@ -2,7 +2,7 @@ package com.ultreon.devices.core.io.task;
 
 import com.ultreon.devices.api.io.Drive;
 import com.ultreon.devices.api.task.Task;
-import com.ultreon.devices.block.entity.LaptopBlockEntity;
+import com.ultreon.devices.block.entity.ComputerBlockEntity;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.core.io.action.FileAction;
@@ -45,7 +45,7 @@ public class TaskSendAction extends Task {
     public void processRequest(CompoundTag tag, Level level, Player player) {
         FileAction action = FileAction.fromTag(tag.getCompound("action"));
         BlockEntity tileEntity = level.getChunkAt(BlockPos.of(tag.getLong("pos"))).getBlockEntity(BlockPos.of(tag.getLong("pos")), LevelChunk.EntityCreationType.IMMEDIATE);
-        if (tileEntity instanceof LaptopBlockEntity laptop) {
+        if (tileEntity instanceof ComputerBlockEntity laptop) {
             response = laptop.getFileSystem().readAction(tag.getString("uuid"), action, level);
             this.setSuccessful();
         }

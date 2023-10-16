@@ -6,7 +6,7 @@ import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.component.Button;
 import net.minecraft.nbt.CompoundTag;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author MrCrayfish

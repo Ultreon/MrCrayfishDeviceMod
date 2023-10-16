@@ -132,4 +132,4 @@ run/
 !libs/*
 
 # Cache
-common/src/main/generated/resources/.cache
+/common/src/main/generated/resources/.cache

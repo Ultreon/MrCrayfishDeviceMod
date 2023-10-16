@@ -5,10 +5,11 @@
   "name": "Devices Mod",
   "description": "${description}",
   "authors": [
-    "Qboi123",
-    "Jab125"
+    "Ultreon Team"
   ],
   "contributors": [
+    "Qboi123",
+    "Jab125",
     "MrCrayfish",
     "MinecraftDoodler",
     "Mastef Chief",
@@ -20,15 +21,15 @@
     "jack jook",
     "Hunstagamez",
     "Techyy YT",
-    "MinecraftDoodler",
     "Norge100YT",
     "Cyberman2208",
     "CreepergamingsMC"
   ],
   "contact": {
-    "website": "https://ultreon.github.io/web/",
+    "website": "https://ultreon.github.io",
     "repo": "https://github.com/Ultreon/devices-mod",
-    "issues": "https://github.com/Ultreon/devices-mod/issues"
+    "issues": "https://github.com/Ultreon/devices-mod/issues",
+    "sources": "https://github.com/Ultreon/devices-mod"
   },
   "license": "GPL-3.0",
   "icon": "devices_mod.png",
@@ -50,7 +51,17 @@
   ],
   "depends": {
     "fabricloader": ">=${loaderVersion}",
-    "minecraft": [">=${minecraftVersion} <1.20"],
-    "architectury": ">=7.1 <8"
+    "minecraft": [">=1.20 <=1.20.1"],
+    "architectury": ">=9.1 <10"
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://discord.gg/dtdc46g6ry",
+        "modmenu.youtube": "https://youtube.com/@ultreon",
+        "modmenu.curseforge": "https://www.curseforge.com/minecraft/mc-mods/devices-mod",
+        "modmenu.modrinth": "https://modrinth.com/mod/devices-mod"
+      }
+    }
   }
 }

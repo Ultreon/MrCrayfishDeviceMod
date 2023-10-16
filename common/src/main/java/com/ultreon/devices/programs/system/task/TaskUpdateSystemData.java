@@ -1,7 +1,7 @@
 package com.ultreon.devices.programs.system.task;
 
 import com.ultreon.devices.api.task.Task;
-import com.ultreon.devices.block.entity.LaptopBlockEntity;
+import com.ultreon.devices.block.entity.ComputerBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
@@ -33,7 +33,7 @@ public class TaskUpdateSystemData extends Task {
     public void processRequest(CompoundTag tag, Level level, Player player) {
         BlockPos pos = BlockPos.of(tag.getLong("pos"));
         BlockEntity tileEntity = level.getChunkAt(pos).getBlockEntity(pos, LevelChunk.EntityCreationType.IMMEDIATE);
-        if (tileEntity instanceof LaptopBlockEntity laptop)
+        if (tileEntity instanceof ComputerBlockEntity laptop)
             laptop.setSystemData(tag.getCompound("data"));
         this.setSuccessful();
     }
