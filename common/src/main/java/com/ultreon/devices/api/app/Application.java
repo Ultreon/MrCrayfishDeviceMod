@@ -12,6 +12,7 @@ import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.util.DataHandler;
 import com.ultreon.devices.util.GLHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.Nullable;
@@ -121,7 +122,7 @@ public abstract class Application extends Wrappable implements DataHandler {
     /**
      * Renders the application. This method is called every frame.
      *
-     * @param pose         the current pose stack.
+     * @param graphics     gui graphics helper
      * @param laptop       the laptop instance.
      * @param mc           the minecraft instance.
      * @param x            the x position of the top left corner of the application window.
@@ -132,11 +133,11 @@ public abstract class Application extends Wrappable implements DataHandler {
      * @param partialTicks the render partial ticks.
      */
     @Override
-    public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
+    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
 //        GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
         GLHelper.pushScissor(x, y, width, height);
-        currentLayout.render(pose, laptop, mc, x, y, mouseX, mouseY, active, partialTicks);
+        currentLayout.render(graphics, laptop, mc, x, y, mouseX, mouseY, active, partialTicks);
         GLHelper.popScissor();
 
         // TODO Port this to 1.18.2 if possible
@@ -147,7 +148,7 @@ public abstract class Application extends Wrappable implements DataHandler {
 
 //        GL11.glDisable(GL11.GL_SCISSOR_TEST);
 
-        currentLayout.renderOverlay(pose, laptop, mc, mouseX, mouseY, active);
+        currentLayout.renderOverlay(graphics, laptop, mc, mouseX, mouseY, active);
 
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 

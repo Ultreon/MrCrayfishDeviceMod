@@ -4,6 +4,7 @@ import com.jab125.apoint.api.APoint;
 import com.jab125.apoint.api.APointRuntime;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Layout;
+import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.programs.gitweb.component.GitWebFrame;
 import com.ultreon.devices.programs.gitweb.layout.ModuleLayout;
 
@@ -31,7 +32,7 @@ public class ScriptModule extends Module {
         var script = data.get("script").replaceAll("scriptModule:newLine", "\n").replaceAll("scriptModule:equals", "=");
         if (data.get("runtime").equals("apoint")) {
             initAPointRuntime(frame);
-            System.out.println(script);
+            DebugLog.log(script);
             frame.aPointRuntime.parse(script);
         } else if (data.get("runtime").equals("ulang")) {
             //
@@ -45,7 +46,7 @@ public class ScriptModule extends Module {
                 VAL str "Hello World!"
                 MODIFY
                 """;
-        System.out.println(script.replaceAll("\n", "scriptModule:newLine").replaceAll("=", "scriptModule:equals"));
+        DebugLog.log(script.replaceAll("\n", "scriptModule:newLine").replaceAll("=", "scriptModule:equals"));
     }
 
     private void initAPointRuntime(GitWebFrame frame) {

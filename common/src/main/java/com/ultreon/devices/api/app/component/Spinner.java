@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.core.Laptop;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 
 import java.awt.*;
 
@@ -33,7 +34,7 @@ public class Spinner extends Component {
     }
 
     @Override
-    public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         if (this.visible) {
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
             Color bgColor = new Color(getColorScheme().getBackgroundColor()).brighter().brighter();
@@ -41,7 +42,7 @@ public class Spinner extends Component {
             bgColor = new Color(Color.HSBtoRGB(hsb[0], hsb[1], 1f));
             RenderSystem.setShaderColor(bgColor.getRed() / 255f, bgColor.getGreen() / 255f, bgColor.getBlue() / 255f, 1f);
             RenderSystem.setShaderTexture(0, Component.COMPONENTS_GUI);
-            blit(pose, xPosition, yPosition, (currentProgress % 8) * 12, 12 + 12 * (int) Math.floor((double) currentProgress / 8), 12, 12);
+            graphics.blit(Component.COMPONENTS_GUI, xPosition, yPosition, (currentProgress % 8) * 12, 12 + 12 * (int) Math.floor((double) currentProgress / 8), 12, 12);
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
         }
     }

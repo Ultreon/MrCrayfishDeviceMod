@@ -5,8 +5,8 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -162,7 +162,7 @@ public final class ServerFolder extends ServerFile {
     }
 
     @Override
-    public FileSystem.Response setData(@Nonnull CompoundTag data) {
+    public FileSystem.Response setData(@NotNull CompoundTag data) {
         return FileSystem.createResponse(Status.FILE_INVALID_DATA, "Data can not be set to a folder");
     }
 
@@ -187,7 +187,7 @@ public final class ServerFolder extends ServerFile {
         return folder;
     }
 
-    /*public void print(int startingDepth)
+    /*public void.json print(int startingDepth)
     {
         String indent = "";
         for(int i = 0; i < startingDepth; i++)

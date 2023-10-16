@@ -10,6 +10,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
@@ -29,31 +31,14 @@ public class FlashDriveItem extends Item implements Colored, SubItems, IDeviceTy
         this.color = color;
     }
 
-    private static ChatFormatting getFromColor(DyeColor color) {
-        return switch (color) {
-            case ORANGE, BROWN -> ChatFormatting.GOLD;
-            case MAGENTA, PINK -> ChatFormatting.LIGHT_PURPLE;
-            case LIGHT_BLUE -> ChatFormatting.BLUE;
-            case YELLOW -> ChatFormatting.YELLOW;
-            case LIME -> ChatFormatting.GREEN;
-            case GRAY -> ChatFormatting.DARK_GRAY;
-            case LIGHT_GRAY -> ChatFormatting.GRAY;
-            case CYAN -> ChatFormatting.DARK_AQUA;
-            case PURPLE -> ChatFormatting.DARK_PURPLE;
-            case BLUE -> ChatFormatting.DARK_BLUE;
-            case GREEN -> ChatFormatting.DARK_GREEN;
-            case RED -> ChatFormatting.DARK_RED;
-            case BLACK -> ChatFormatting.BLACK;
-            default -> ChatFormatting.WHITE;
-        };
-    }
-
     @Override
     @SuppressWarnings("deprecation")
     public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltip, @NotNull TooltipFlag isAdvanced) {
-        String colorName = color.getName().replace("_", " ");
-        colorName = WordUtils.capitalize(colorName);
-        tooltip.add(Component.literal("Color: " + ChatFormatting.BOLD + getFromColor(color).toString() + colorName));
+        TextColor textColor = TextColor.fromRgb(this.color == DyeColor.BLACK ? 0xffffff : this.color.getTextColor());
+
+        MutableComponent colorComponent = Component.literal(WordUtils.capitalize(this.color.getName().replace("_", " ")))
+                .withStyle(style -> style.withBold(true).withColor(textColor));
+        tooltip.add(Component.literal("Color: ").withStyle(ChatFormatting.GRAY).append(colorComponent));
     }
 
     @Override

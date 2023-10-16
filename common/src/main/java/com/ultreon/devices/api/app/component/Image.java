@@ -14,6 +14,7 @@ import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.object.AppInfo;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
@@ -248,7 +249,7 @@ public class Image extends Component {
     }
 
     @Override
-    public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         if (this.visible) {
             if (loader != null && loader.setup) {
                 image = loader.load(this);
@@ -257,7 +258,7 @@ public class Image extends Component {
             }
 
             if (hasBorder) {
-                fill(pose, x, y, x + componentWidth, y + componentHeight, borderColor);
+                graphics.fill(x, y, x + componentWidth, y + componentHeight, borderColor);
             }
 
             RenderSystem.setShaderColor(tint.get().r/255f, tint.get().g/255f, tint.get().b/255f, alpha);
@@ -271,30 +272,30 @@ public class Image extends Component {
 
                 if (/*hasBorder*/true) {
                     if (drawFull) {
-                        //System.out.println("Rendering image");
-                        RenderUtil.drawRectWithTexture(pose, x + borderThickness, y + borderThickness, 0, imageU, imageV, componentWidth - borderThickness * 2, componentHeight - borderThickness * 2, 256, 256);
+                        //DebugLog.log("Rendering image");
+                        RenderUtil.drawRectWithTexture(null, graphics, x + borderThickness, y + borderThickness, 0, imageU, imageV, componentWidth - borderThickness * 2, componentHeight - borderThickness * 2, 256, 256);
                         //GuiComponent.blit(pose, x + borderThickness, y + borderThickness, imageU, imageV, componentWidth - borderThickness * 2, componentHeight - borderThickness * 2, 256, 256);
                     } else {
-                        //System.out.println("Rendering image");
-                        RenderUtil.drawRectWithTexture(pose, x + borderThickness, y + borderThickness, imageU, imageV, componentWidth - borderThickness * 2, componentHeight - borderThickness * 2, imageWidth, imageHeight, sourceWidth, sourceHeight);
+                        //DebugLog.log("Rendering image");
+                        RenderUtil.drawRectWithTexture(null, graphics, x + borderThickness, y + borderThickness, imageU, imageV, componentWidth - borderThickness * 2, componentHeight - borderThickness * 2, imageWidth, imageHeight, sourceWidth, sourceHeight);
                         //GuiComponent.blit(pose, x + borderThickness, y + borderThickness, componentWidth - borderThickness * 2, imageU, imageV, componentHeight - borderThickness * 2, sourceWidth, sourceHeight, imageWidth, imageHeight);
                     }
                 } else {
                     if (drawFull) {
-                        //System.out.println("Rendering image");
-                        RenderUtil.drawRectWithTexture(pose, x, y, componentWidth, componentHeight, imageU, imageV, 256, 256);
+                        //DebugLog.log("Rendering image");
+                        RenderUtil.drawRectWithTexture(null, graphics, x, y, componentWidth, componentHeight, imageU, imageV, 256, 256);
 //                        GuiComponent.blit(pose, x, y, componentWidth, componentHeight, imageU, imageV, 256, 256);
                     } else {
-                        //System.out.println("Rendering image");
-                        RenderUtil.drawRectWithTexture(pose, x, y, componentWidth, componentHeight, imageU, imageV, imageWidth, imageHeight, sourceWidth, sourceHeight);
+                        //DebugLog.log("Rendering image");
+                        RenderUtil.drawRectWithTexture(null, graphics, x, y, componentWidth, componentHeight, imageU, imageV, imageWidth, imageHeight, sourceWidth, sourceHeight);
                         //GuiComponent.blit(pose, x, y, componentWidth, componentHeight, imageU, imageV, sourceWidth, sourceHeight, imageWidth, imageHeight);
                     }
                 }
             } else {
                 if (/*hasBorder*/true) {
-                    fill(pose, x + borderThickness, y + borderThickness, x + componentWidth - borderThickness, y + componentHeight - borderThickness, Color.LIGHT_GRAY.getRGB());
+                    graphics.fill(x + borderThickness, y + borderThickness, x + componentWidth - borderThickness, y + componentHeight - borderThickness, Color.LIGHT_GRAY.getRGB());
                 } else {
-                    fill(pose, x, y, x + componentWidth, y + componentHeight, Color.LIGHT_GRAY.getRGB());
+                    graphics.fill(x, y, x + componentWidth, y + componentHeight, Color.LIGHT_GRAY.getRGB());
                 }
             }
             RenderSystem.setShaderColor(1f, 1f, 1f, alpha);

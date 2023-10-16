@@ -13,7 +13,7 @@ public class WorldDataHandler {
     private static final LevelResource DEVICES_MOD_DATA = new LevelResource("data/devices-mod");
 
 //    @SubscribeEvent
-//    public void load(final LifecycleEvent.START event) {
+//    public void.json load(final LifecycleEvent.START event) {
 ////        LifecycleEvent.SERVER_STARTING;
 //        final File modData = Objects.requireNonNull(event.getServer(), "World loaded without server").getWorldPath(DEVICES_MOD_DATA).toFile();
 //        if (!modData.exists()) {
@@ -29,7 +29,7 @@ public class WorldDataHandler {
 //    }
 
 //    @SubscribeEvent
-//    public void save(final WorldEvent.Save event) {
+//    public void.json save(final WorldEvent.Save event) {
 //        LifecycleEvent.SERVER_LEVEL_SAVE
 //        final MinecraftServer server = event.getWorld().getServer();
 //        if (server == null) {

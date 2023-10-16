@@ -13,6 +13,7 @@ import com.ultreon.devices.util.GLHelper;
 import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 
 import java.awt.*;
@@ -64,13 +65,13 @@ public class Palette extends Component {
     }
 
     @Override
-    protected void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
-        Gui.fill(pose, x, y, x + 52, y + 52, Color.DARK_GRAY.getRGB());
+    protected void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+        graphics.fill(x, y, x + 52, y + 52, Color.DARK_GRAY.getRGB());
 
         // Todo: Disable lighting somehow.
         Lighting.setupForFlatItems();
 //        RenderSystem.disableLighting();
-        RenderSystem.disableTexture();
+        // RenderSystem.disableTexture();
         RenderSystem.enableBlend();
         // Todo: Disable alpha somehow
 //        RenderSystem.disableAlpha();
@@ -93,7 +94,7 @@ public class Palette extends Component {
         RenderSystem.disableBlend();
         // Todo: Make enabling alpha possible.
 //        RenderSystem.enableAlpha();
-        RenderSystem.enableTexture();
+        // RenderSystem.enableTexture();
         Lighting.setupFor3DItems();
     }
 

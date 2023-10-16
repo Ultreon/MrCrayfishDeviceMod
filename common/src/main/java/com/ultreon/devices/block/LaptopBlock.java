@@ -9,11 +9,11 @@ import dev.architectury.utils.EnvExecutor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -22,10 +22,11 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -33,9 +34,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Locale;
 
-public class LaptopBlock extends DeviceBlock.Colored {
+public class LaptopBlock extends ComputerBlock.Colored {
     public static final EnumProperty<Type> TYPE = EnumProperty.create("type", Type.class);
     public static final BooleanProperty OPEN = BooleanProperty.create("open");
 
@@ -49,8 +51,7 @@ public class LaptopBlock extends DeviceBlock.Colored {
     private static final VoxelShape SHAPE_CLOSED_WEST = Block.box(1, 0, 1, 13, 2, 15);
 
     public LaptopBlock(DyeColor color) {
-        super(Properties.of(Material.HEAVY_METAL, color).strength(6f).sound(SoundType.METAL), color, ModDeviceTypes.LAPTOP);
-        registerDefaultState(this.getStateDefinition().any().setValue(TYPE, Type.BASE).setValue(OPEN, false));
+        super(Properties.of().mapColor(color).strength(6f).sound(SoundType.METAL), color, ModDeviceTypes.COMPUTER);
     }
 
     @Override
@@ -70,56 +71,9 @@ public class LaptopBlock extends DeviceBlock.Colored {
         };
     }
 
-    @NotNull
     @Override
-    @SuppressWarnings("deprecation")
-    public InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
-
-        BlockEntity blockEntity = level.getBlockEntity(pos);
-        if (blockEntity instanceof LaptopBlockEntity laptop) {
-            if (player.isCrouching()) {
-                if (!level.isClientSide) {
-                    laptop.openClose(player);
-                }
-                return InteractionResult.SUCCESS;
-            } else {
-                if (hit.getDirection() == state.getValue(FACING).getCounterClockWise(Direction.Axis.Y)) {
-                    ItemStack heldItem = player.getItemInHand(hand);
-                    if (!heldItem.isEmpty() && heldItem.getItem() instanceof FlashDriveItem) {
-                        if (!level.isClientSide) {
-                            if (laptop.getFileSystem().setAttachedDrive(heldItem.copy())) {
-                                heldItem.shrink(1);
-                                return InteractionResult.CONSUME;
-                            } else {
-                                return InteractionResult.FAIL;
-                            }
-                        }
-                        return InteractionResult.PASS;
-                    }
-
-                    if (!level.isClientSide) {
-                        ItemStack stack = laptop.getFileSystem().removeAttachedDrive();
-                        if (stack != null) {
-                            BlockPos summonPos = pos.relative(state.getValue(FACING).getCounterClockWise(Direction.Axis.Y));
-                            level.addFreshEntity(new ItemEntity(level, summonPos.getX() + 0.5, summonPos.getY(), summonPos.getZ() + 0.5, stack));
-                            BlockEntityUtil.markBlockForUpdate(level, pos);
-                        }
-                    }
-                    return InteractionResult.SUCCESS;
-                }
-
-                if (laptop.isOpen()) {
-                    if (level.isClientSide) {
-                        EnvExecutor.runInEnv(Env.CLIENT, () -> () -> {
-                            ClientLaptopWrapper.execute(laptop);
-                        });
-                    }
-                    return InteractionResult.sidedSuccess(level.isClientSide);
-                }
-            }
-        }
-
-        return InteractionResult.PASS;
+    public boolean isDesktopPC() {
+        return false;
     }
 
     @Override
@@ -128,23 +82,24 @@ public class LaptopBlock extends DeviceBlock.Colored {
     }
 
     @Override
-    public @Nullable BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
-        return new LaptopBlockEntity(pos, state);
+    @SuppressWarnings("deprecation")
+    public @NotNull List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
+        List<ItemStack> drops = super.getDrops(state, builder);
+        BlockEntity parameter = builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
+        if (parameter == null) return drops;
+        for (ItemStack drop : drops) {
+            if (drop.getItem() instanceof BlockItem blockItem) {
+                if (blockItem.getBlock() instanceof LaptopBlock) {
+                    parameter.saveToItem(drop);
+                }
+            }
+        }
+
+        return drops;
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> pBuilder) {
-        super.createBlockStateDefinition(pBuilder);
-        pBuilder.add(TYPE, OPEN);
-    }
-
-    public enum Type implements StringRepresentable {
-        BASE, SCREEN;
-
-        @NotNull
-        @Override
-        public String getSerializedName() {
-            return name().toLowerCase(Locale.ROOT);
-        }
+    public @Nullable BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
+        return new LaptopBlockEntity(pos, state);
     }
 }

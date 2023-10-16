@@ -2,6 +2,7 @@ package com.ultreon.devices.block;
 
 import com.ultreon.devices.ModDeviceTypes;
 import com.ultreon.devices.block.entity.OfficeChairBlockEntity;
+import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.entity.SeatEntity;
 import com.ultreon.devices.util.SeatUtil;
 import net.minecraft.Util;
@@ -23,7 +24,6 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.EntityCollisionContext;
@@ -31,7 +31,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class OfficeChairBlock extends DeviceBlock.Colored
 {
@@ -43,7 +43,7 @@ public class OfficeChairBlock extends DeviceBlock.Colored
 
     public OfficeChairBlock(DyeColor color)
     {
-        super(BlockBehaviour.Properties.of(Material.STONE, color.getMaterialColor()), color, ModDeviceTypes.SEAT);
+        super(BlockBehaviour.Properties.of().mapColor(color), color, ModDeviceTypes.SEAT);
         //this.setUnlocalizedName("office_chair");
         //this.setRegistryName("office_chair");
         //this.setCreativeTab(MrCrayfishDeviceMod.TAB_DEVICE);
@@ -84,8 +84,8 @@ public class OfficeChairBlock extends DeviceBlock.Colored
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit)
     {
-        //System.out.println(DeviceEntities.SEAT.get().create(level).toString());
-        System.out.println("OKOKJRTKFD");
+        //DebugLog.log(DeviceEntities.SEAT.get().create(level).toString());
+        DebugLog.log("OKOKJRTKFD");
         if(!level.isClientSide)
         {
             SeatUtil.createSeatAndSit(level, pos, player, -1);

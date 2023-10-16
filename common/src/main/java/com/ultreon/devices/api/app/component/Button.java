@@ -11,7 +11,7 @@ import com.ultreon.devices.util.StringUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.resources.ResourceLocation;
@@ -210,7 +210,7 @@ public class Button extends Component {
     }
 
     @Override
-    public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         if (this.visible) {
             RenderSystem.setShaderTexture(0, Component.COMPONENTS_GUI);
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
@@ -225,19 +225,19 @@ public class Button extends Component {
             RenderSystem.blendFunc(770, 771);
 
             /* Corners */
-            GuiComponent.blit(pose, x, y, 2, 2, 96 + i * 5, 12, 2, 2, 256, 256);
-            GuiComponent.blit(pose, x + width - 2, y, 2, 2, 99 + i * 5, 12, 2, 2, 256, 256);
-            GuiComponent.blit(pose, x + width - 2, y + height - 2, 2, 2, 99 + i * 5, 15, 2, 2, 256, 256);
-            GuiComponent.blit(pose, x, y + height - 2, 2, 2, 96 + i * 5, 15, 2, 2, 256, 256);
+            graphics.blit(Component.COMPONENTS_GUI, x, y, 2, 2, 96 + i * 5, 12, 2, 2, 256, 256);
+            graphics.blit(Component.COMPONENTS_GUI, x + width - 2, y, 2, 2, 99 + i * 5, 12, 2, 2, 256, 256);
+            graphics.blit(Component.COMPONENTS_GUI, x + width - 2, y + height - 2, 2, 2, 99 + i * 5, 15, 2, 2, 256, 256);
+            graphics.blit(Component.COMPONENTS_GUI, x, y + height - 2, 2, 2, 96 + i * 5, 15, 2, 2, 256, 256);
 
             /* Middles */
-            GuiComponent.blit(pose, x + 2, y, width - 4, 2, 98 + i * 5, 12, 1, 2, 256, 256);
-            GuiComponent.blit(pose, x + width - 2, y + 2, 2, height - 4, 99 + i * 5, 14, 2, 1, 256, 256);
-            GuiComponent.blit(pose, x + 2, y + height - 2, width - 4, 2, 98 + i * 5, 15, 1, 2, 256, 256);
-            GuiComponent.blit(pose, x, y + 2, 2, height - 4, 96 + i * 5, 14, 2, 1, 256, 256);
+            graphics.blit(Component.COMPONENTS_GUI, x + 2, y, width - 4, 2, 98 + i * 5, 12, 1, 2, 256, 256);
+            graphics.blit(Component.COMPONENTS_GUI, x + width - 2, y + 2, 2, height - 4, 99 + i * 5, 14, 2, 1, 256, 256);
+            graphics.blit(Component.COMPONENTS_GUI, x + 2, y + height - 2, width - 4, 2, 98 + i * 5, 15, 1, 2, 256, 256);
+            graphics.blit(Component.COMPONENTS_GUI, x, y + 2, 2, height - 4, 96 + i * 5, 14, 2, 1, 256, 256);
 
             /* Center */
-            GuiComponent.blit(pose, x + 2, y + 2, width - 4, height - 4, 98 + i * 5, 14, 1, 1, 256, 256);
+            graphics.blit(Component.COMPONENTS_GUI, x + 2, y + 2, width - 4, height - 4, 98 + i * 5, 14, 1, 1, 256, 256);
 
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
@@ -249,22 +249,22 @@ public class Button extends Component {
             if (iconResource != null) {
                 int iconY = (height - iconHeight) / 2;
                 RenderSystem.setShaderTexture(0, iconResource);
-                GuiComponent.blit(pose, x + contentX, y + iconY, iconWidth, iconHeight, iconU, iconV, iconVWidth, iconUHeight, iconSourceWidth, iconSourceHeight);
+                graphics.blit(iconResource, x + contentX, y + iconY, iconWidth, iconHeight, iconU, iconV, iconVWidth, iconUHeight, iconSourceWidth, iconSourceHeight);
             }
 
             if (!StringUtils.isNullOrEmpty(text)) {
                 int textY = (height - mc.font.lineHeight) / 2 + 1;
                 int textOffsetX = iconResource != null ? iconWidth + 3 : 0;
                 int textColor = !Button.this.enabled ? 0xa0a0a0 : 0xe0e0e0;
-                drawString(pose, mc.font, text, x + contentX + textOffsetX, y + textY, textColor);
+                graphics.drawString(mc.font, text, x + contentX + textOffsetX, y + textY, textColor);
             }
         }
     }
 
     @Override
-    public void renderOverlay(PoseStack pose, Laptop laptop, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
+    public void renderOverlay(GuiGraphics graphics, Laptop laptop, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
         if (this.hovered && this.toolTip != null && toolTipTick >= TOOLTIP_DELAY) {
-            laptop.renderComponentTooltip(pose, Arrays.asList(net.minecraft.network.chat.Component.literal(this.toolTipTitle).withStyle(ChatFormatting.GOLD), net.minecraft.network.chat.Component.literal(this.toolTip)), mouseX, mouseY);
+            laptop.renderComponentTooltip(graphics, Arrays.asList(net.minecraft.network.chat.Component.literal(this.toolTipTitle).withStyle(ChatFormatting.GOLD), net.minecraft.network.chat.Component.literal(this.toolTip)), mouseX, mouseY);
         }
     }
 

@@ -19,12 +19,9 @@ jobs:
             command: "chmod +x gradlew"
       - run:
             name: "Build Project"
-            command: "./gradlew build mergeJars"
+            command: "./gradlew build"
             environment:
               CIRCLE_CI: true
-      - store_artifacts:
-          name: "Store Merged Artifacts"
-          path: build/libs/merged
       - store_artifacts:
           name: "Store Fabric Artifacts"
           path: fabric/build/libs

@@ -6,6 +6,7 @@ import com.ultreon.devices.api.app.component.Slider;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 
 import java.awt.*;
 
@@ -31,20 +32,20 @@ public class ColorGrid extends Component {
     }
 
     @Override
-    public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         int endX = xPosition + width + 2;
         int endY = yPosition + (colors.length / 5) * 10 + 2;
-        fill(pose, xPosition, yPosition, endX, endY, Color.DARK_GRAY.getRGB());
+        graphics.fill(xPosition, yPosition, endX, endY, Color.DARK_GRAY.getRGB());
         for (int i = 0; i < colors.length; i++) {
             int startX = xPosition + (i % 5) * 10 + 1;
             int startY = yPosition + (i / 5) * 10 + 1;
-            fill(pose, startX, startY, startX + 10, startY + 10, colors[i].getRGB());
+            graphics.fill(startX, startY, startX + 10, startY + 10, colors[i].getRGB());
         }
 
         if (GuiHelper.isMouseInside(mouseX, mouseY, xPosition + 1, yPosition + 1, endX - 2, endY - 2)) {
             int boxX = (mouseX - xPosition - 1) / 10;
             int boxY = (mouseY - yPosition - 1) / 10;
-            fill(pose, xPosition + (boxX * 10) + 1, yPosition + (boxY * 10) + 1, xPosition + (boxX * 10) + 11, yPosition + (boxY * 10) + 11, hoverColor);
+            graphics. fill(xPosition + (boxX * 10) + 1, yPosition + (boxY * 10) + 1, xPosition + (boxX * 10) + 11, yPosition + (boxY * 10) + 11, hoverColor);
         }
     }
 

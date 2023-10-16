@@ -16,7 +16,6 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -78,7 +77,7 @@ public class PrinterBlock extends DeviceBlock.Colored implements Colored {
             box(12, 3, 4, 16, 9.3, 12));
 
     public PrinterBlock(DyeColor color) {
-        super(Properties.of(Material.HEAVY_METAL, color).strength(6f).sound(SoundType.METAL), color, ModDeviceTypes.PRINTER);
+        super(Properties.of().mapColor(color).strength(6f).sound(SoundType.METAL), color, ModDeviceTypes.PRINTER);
         this.registerDefaultState(getStateDefinition().any().setValue(FACING, Direction.NORTH));
     }
 
