@@ -3,6 +3,7 @@ package com.ultreon.devices.core;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.app.Dialog;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,7 +30,7 @@ public abstract class Wrappable {
      * The main render loop. Note if you override, make sure you call this super
      * method.
      *
-     * @param pose
+     * @param graphics
      * @param laptop       laptop instance
      * @param mc           a Minecraft instance
      * @param x            the starting x position
@@ -39,7 +40,7 @@ public abstract class Wrappable {
      * @param active       if the window active
      * @param partialTicks time passed since tick
      */
-    public abstract void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks);
+    public abstract void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks);
 
     /**
      * Called when a key is typed from your keyboard. Note if you override, make

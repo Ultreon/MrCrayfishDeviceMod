@@ -1,6 +1,7 @@
 package com.ultreon.devices.mixin.common;
 
 
+import com.ultreon.devices.debug.DebugLog;
 import dev.architectury.injectables.targets.ArchitecturyTarget;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
@@ -51,11 +52,11 @@ public class MixinPlugin implements IMixinConfigPlugin {
     private static void objectPrinter(Object o, String i) {
         try {
             if (o instanceof String || o instanceof Boolean || o instanceof Integer || o instanceof Character || o instanceof Long || o instanceof Byte || o instanceof Short || o instanceof Float || o instanceof Double) {
-                System.out.println(i + o);
+                DebugLog.log(i + o);
                 return;
             } else if (o instanceof List list){
                 if (list.isEmpty()) {
-                    System.out.println(i + "    " + "Empty list");
+                    DebugLog.log(i + "    " + "Empty list");
                     return;
                 }
                 for (Object o1 : list) {
@@ -67,7 +68,7 @@ public class MixinPlugin implements IMixinConfigPlugin {
             for (Field field : fields) {
                 field.setAccessible(true);
                 var val = field.get(o);
-                System.out.println(i + /*field.getName()); +*/ " : " + field.getType());
+                DebugLog.log(i + /*field.getName()); +*/ " : " + field.getType());
                 objectPrinter(val, i + "    ");
             }
         } catch (Exception e) {

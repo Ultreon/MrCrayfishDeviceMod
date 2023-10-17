@@ -1,17 +1,15 @@
 package com.ultreon.devices.core;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.app.Application;
 import com.ultreon.devices.api.app.Dialog;
 import com.ultreon.devices.gui.GuiButtonClose;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 
 public class Window<T extends Wrappable> {
@@ -76,7 +74,7 @@ public class Window<T extends Wrappable> {
         content.onTick();
     }
 
-    public void render(PoseStack pose, Laptop gui, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
+    public void render(GuiGraphics graphics, Laptop gui, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
         if (content.isPendingLayoutUpdate()) {
             this.setWidth(content.getWidth());
             this.setHeight(content.getHeight());
@@ -86,47 +84,47 @@ public class Window<T extends Wrappable> {
             content.clearPendingLayout();
         }
 
-        pose.pushPose();
+        graphics.pose().pushPose();
 
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
         RenderSystem.enableBlend();
         RenderSystem.setShaderTexture(0, WINDOW_GUI);
 
         /* Corners */
-        gui.blit(pose, x + offsetX, y + offsetY, 0, 0, 1, 13);
-        gui.blit(pose, x + offsetX + width - 13, y + offsetY, 2, 0, 13, 13);
-        gui.blit(pose, x + offsetX + width - 1, y + offsetY + height - 1, 14, 14, 1, 1);
-        gui.blit(pose, x + offsetX, y + offsetY + height - 1, 0, 14, 1, 1);
+        graphics.blit(WINDOW_GUI,x + offsetX, y + offsetY, 0, 0, 1, 0);
+        graphics.blit(WINDOW_GUI,x + offsetX + width - 13, y + offsetY, 2, 0, 13, 13);
+        graphics.blit(WINDOW_GUI,x + offsetX + width - 1, y + offsetY + height - 1, 14, 14, 1, 1);
+        graphics.blit(WINDOW_GUI,x + offsetX, y + offsetY + height - 1, 0, 14, 1, 1);
 
         /* Edges */
-        GuiComponent.blit(pose, x + offsetX + 1, y + offsetY, width - 14, 13, 1, 0, 1, 13, 256, 256);
-        GuiComponent.blit(pose, x + offsetX + width - 1, y + offsetY + 13, 1, height - 14, 14, 13, 1, 1, 256, 256);
-        GuiComponent.blit(pose, x + offsetX + 1, y + offsetY + height - 1, width - 2, 1, 1, 14, 13, 1, 256, 256);
-        GuiComponent.blit(pose, x + offsetX, y + offsetY + 13, 1, height - 14, 0, 13, 1, 1, 256, 256);
+        graphics.blit(WINDOW_GUI,x + offsetX + 1, y + offsetY, width - 14, 13, 1, 0, 1, 13, 256, 256);
+        graphics.blit(WINDOW_GUI,x + offsetX + width - 1, y + offsetY + 13, 1, height - 14, 14, 13, 1, 1, 256, 256);
+        graphics.blit(WINDOW_GUI,x + offsetX + 1, y + offsetY + height - 1, width - 2, 1, 1, 14, 13, 1, 256, 256);
+        graphics.blit(WINDOW_GUI,x + offsetX, y + offsetY + 13, 1, height - 14, 0, 13, 1, 1, 256, 256);
 
         /* Center */
-        GuiComponent.blit(pose, x + offsetX + 1, y + offsetY + 13, width - 2, height - 14, 1, 13, 13, 1, 256, 256);
+        graphics.blit(WINDOW_GUI, x + offsetX + 1, y + offsetY + 13, width - 2, height - 14, 1, 13, 13, 1, 256, 256);
 
         String windowTitle = content.getWindowTitle();
         if (mc.font.width(windowTitle) > width - 2 - 13 - 3) { // window width, border, close button, padding, padding
             windowTitle = mc.font.plainSubstrByWidth(windowTitle, width - 2 - 13 - 3);
         }
-        mc.font.drawShadow(pose, windowTitle, x + offsetX + 3, y + offsetY + 3, Color.WHITE.getRGB(), true);
+        graphics.drawString(mc.font, windowTitle, x + offsetX + 3, y + offsetY + 3, Color.WHITE.getRGB(), true);
 
-        btnClose.renderButton(pose, mouseX, mouseY, partialTicks);
+        btnClose.renderWidget(graphics, mouseX, mouseY, partialTicks);
 
         RenderSystem.disableBlend();
 
         /* Render content */
-        content.render(pose, gui, mc, x + offsetX + 1, y + offsetY + 13, mouseX, mouseY, active && dialogWindow == null, partialTicks);
+        content.render(graphics, gui, mc, x + offsetX + 1, y + offsetY + 13, mouseX, mouseY, active && dialogWindow == null, partialTicks);
 
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 
         if (dialogWindow != null) {
-            Gui.fill(pose, x + offsetX, y + offsetY, x + offsetX + width, y + offsetY + height, Color_WINDOW_DARK);
-            dialogWindow.render(pose, gui, mc, x, y, mouseX, mouseY, active, partialTicks);
+            graphics.fill(x + offsetX, y + offsetY, x + offsetX + width, y + offsetY + height, Color_WINDOW_DARK);
+            dialogWindow.render(graphics, gui, mc, x, y, mouseX, mouseY, active, partialTicks);
         }
-        pose.popPose();
+        graphics.pose().popPose();
     }
 
     @Deprecated

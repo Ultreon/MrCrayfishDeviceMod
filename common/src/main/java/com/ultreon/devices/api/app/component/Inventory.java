@@ -10,6 +10,7 @@ import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -38,11 +39,11 @@ public class Inventory extends Component {
     }
 
     @Override
-    public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         if (this.visible) {
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
             RenderSystem.setShaderTexture(0, CHEST_GUI_TEXTURE);
-            RenderUtil.drawRectWithTexture(pose, xPosition, yPosition, 7, 139, 162, 54, 162, 54);
+            RenderUtil.drawRectWithTexture(CHEST_GUI_TEXTURE, graphics, xPosition, yPosition, 7, 139, 162, 54, 162, 54);
 
             assert mc.player != null;
             net.minecraft.world.entity.player.Inventory inventory = mc.player.getInventory();
@@ -51,23 +52,23 @@ public class Inventory extends Component {
                 int offsetY = (i / 9) * 18 - 18;
 
                 if (selected == i) {
-                    Gui.fill(pose, xPosition + offsetX, yPosition + offsetY, xPosition + offsetX + 18, yPosition + offsetY + 18, selectedColor);
+                    graphics.fill(xPosition + offsetX, yPosition + offsetY, xPosition + offsetX + 18, yPosition + offsetY + 18, selectedColor);
                 }
 
                 if (GuiHelper.isMouseInside(mouseX, mouseY, xPosition + offsetX, yPosition + offsetY, xPosition + offsetX + 17, yPosition + offsetY + 17)) {
-                    Gui.fill(pose, xPosition + offsetX, yPosition + offsetY, xPosition + offsetX + 18, yPosition + offsetY + 18, hoverColor);
+                    graphics.fill(xPosition + offsetX, yPosition + offsetY, xPosition + offsetX + 18, yPosition + offsetY + 18, hoverColor);
                 }
 
                 ItemStack stack = inventory.getItem(i);
                 if (!stack.isEmpty()) {
-                    RenderUtil.renderItem(xPosition + offsetX + 1, yPosition + offsetY + 1, stack, true);
+                    RenderUtil.renderItem(graphics, xPosition + offsetX + 1, yPosition + offsetY + 1, stack, true);
                 }
             }
         }
     }
 
     @Override
-    public void renderOverlay(PoseStack pose, Laptop laptop, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
+    public void renderOverlay(GuiGraphics graphics, Laptop laptop, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
         if (this.visible) {
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 9; j++) {
@@ -76,7 +77,7 @@ public class Inventory extends Component {
                     if (GuiHelper.isMouseInside(mouseX, mouseY, x, y, x + 18, y + 18)) {
                         ItemStack stack = mc.player.getInventory().getItem((i * 9) + j + 9);
                         if (!stack.isEmpty()) {
-                            laptop.renderTooltip(pose, stack.getDisplayName(), mouseX, mouseY);
+                            graphics.renderTooltip(mc.font, stack, mouseX, mouseY);
                         }
                         return;
                     }

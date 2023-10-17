@@ -8,6 +8,7 @@ import com.ultreon.devices.api.utils.RenderUtil;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -38,28 +39,28 @@ public abstract class ContainerBox extends Component {
     }
 
     @Override
-    protected void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    protected void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         RenderSystem.setShaderTexture(0, CONTAINER_BOXES_TEXTURE);
-        RenderUtil.drawRectWithTexture(pose, x, y + 12, boxU, boxV, WIDTH, height, WIDTH, height, 256, 256);
+        RenderUtil.drawRectWithTexture(CONTAINER_BOXES_TEXTURE, graphics, x, y + 12, boxU, boxV, WIDTH, height, WIDTH, height, 256, 256);
         //Gui.blit(pose, x, y + 12, WIDTH, height, boxU, boxV, 256, 256, WIDTH, height);
 
         int contentOffset = (WIDTH - (Laptop.getFont().width(title) + 8 + 4)) / 2;
-        pose.pushPose();
+        graphics.pose().pushPose();
         {
-            pose.translate(x + contentOffset, y, 0);
-            pose.scale(0.5f, 0.5f, 0.5f);
-            RenderUtil.renderItem(x+contentOffset-5, y-4, icon, false);
+            graphics.pose().translate(x + contentOffset, y, 0);
+            graphics.pose().scale(0.5f, 0.5f, 0.5f);
+            RenderUtil.renderItem(graphics, x+contentOffset-5, y-4, icon, false);
         }
-        pose.popPose();
+        graphics.pose().popPose();
 
-        RenderUtil.drawStringClipped(pose, title, x + contentOffset + 8 + 4, y, 110, Color.WHITE.getRGB(), true);
+        RenderUtil.drawStringClipped(graphics, title, x + contentOffset + 8 + 4, y, 110, Color.WHITE.getRGB(), true);
 
-        slots.forEach(slot -> slot.render(x, y + 12));
+        slots.forEach(slot -> slot.render(graphics, x, y + 12));
     }
 
     @Override
-    protected void renderOverlay(PoseStack pose, Laptop laptop, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
-        slots.forEach(slot -> slot.renderOverlay(pose, laptop, xPosition, yPosition + 12, mouseX, mouseY));
+    protected void renderOverlay(GuiGraphics graphics, Laptop laptop, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
+        slots.forEach(slot -> slot.renderOverlay(graphics, laptop, xPosition, yPosition + 12, mouseX, mouseY));
     }
 
     protected static class Slot {
@@ -73,14 +74,14 @@ public abstract class ContainerBox extends Component {
             this.stack = stack;
         }
 
-        public void render(int x, int y) {
-            RenderUtil.renderItem(x + slotX, y + slotY, stack, true);
+        public void render(GuiGraphics graphics, int x, int y) {
+            RenderUtil.renderItem(graphics, x + slotX, y + slotY, stack, true);
         }
 
-        public void renderOverlay(PoseStack pose, Laptop laptop, int x, int y, int mouseX, int mouseY) {
+        public void renderOverlay(GuiGraphics graphics, Laptop laptop, int x, int y, int mouseX, int mouseY) {
             if (GuiHelper.isMouseWithin(mouseX, mouseY, x + slotX, y + slotY, 16, 16)) {
                 if (!stack.isEmpty()) {
-                    laptop.renderTooltip(pose, laptop.getTooltipFromItem(stack), Optional.empty(), mouseX, mouseY/*, stack*/);
+                    graphics.renderTooltip(Minecraft.getInstance().font, laptop.getTooltipFromItem(Minecraft.getInstance(), stack), Optional.empty(), mouseX, mouseY/*, stack*/);
                 }
             }
 

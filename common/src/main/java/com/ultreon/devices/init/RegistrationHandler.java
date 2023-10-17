@@ -11,8 +11,10 @@ public class RegistrationHandler {
         DeviceEntities.register();
         DeviceBlockEntities.register();
         DeviceBlocks.register();
+        DeviceTags.register();
         DeviceItems.register();
         DeviceSounds.register();
+        DeviceCreativeTabs.register();
         EnvExecutor.runInEnv(EnvType.CLIENT, () -> DeviceEntityRenderers::register);
     }
 }

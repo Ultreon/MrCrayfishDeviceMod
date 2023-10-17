@@ -1,6 +1,7 @@
 package com.ultreon.devices.core.network;
 
 import com.ultreon.devices.block.entity.RouterBlockEntity;
+import com.ultreon.devices.debug.DebugLog;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
@@ -44,10 +45,16 @@ public class Connection {
             return null;
 
         BlockEntity blockEntity = level.getBlockEntity(routerPos);
+        System.out.println("routerPos = " + routerPos);
+        System.out.println("blockEntity = " + blockEntity);
         if (blockEntity instanceof RouterBlockEntity router) {
             if (router.getRouter().getId().equals(routerId)) {
                 return router.getRouter();
+            } else {
+                DebugLog.log("Invalid router ID");
             }
+        } else {
+            DebugLog.log("Router is not a router");
         }
         return null;
     }

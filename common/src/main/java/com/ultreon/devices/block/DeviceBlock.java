@@ -1,7 +1,7 @@
 package com.ultreon.devices.block;
 
-import com.ultreon.devices.ModDeviceTypes;
 import com.ultreon.devices.IDeviceType;
+import com.ultreon.devices.ModDeviceTypes;
 import com.ultreon.devices.block.entity.DeviceBlockEntity;
 import com.ultreon.devices.util.BlockEntityUtil;
 import com.ultreon.devices.util.Colorable;
@@ -132,7 +132,7 @@ public abstract class DeviceBlock extends HorizontalDirectionalBlock implements 
         return deviceType;
     }
 
-    public static abstract class Colored extends DeviceBlock {
+    public static abstract class Colored extends DeviceBlock implements ColoredBlock {
         private final DyeColor color;
 
         protected Colored(Properties properties, DyeColor color, ModDeviceTypes deviceType) {
@@ -140,6 +140,7 @@ public abstract class DeviceBlock extends HorizontalDirectionalBlock implements 
             this.color = color;
         }
 
+        @Override
         public DyeColor getColor() {
             return color;
         }

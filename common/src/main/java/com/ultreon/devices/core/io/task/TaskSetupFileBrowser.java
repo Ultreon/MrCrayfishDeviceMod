@@ -1,9 +1,10 @@
 package com.ultreon.devices.core.io.task;
 
 import com.ultreon.devices.api.task.Task;
-import com.ultreon.devices.block.entity.LaptopBlockEntity;
+import com.ultreon.devices.block.entity.ComputerBlockEntity;
 import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.core.io.drive.AbstractDrive;
+import com.ultreon.devices.debug.DebugLog;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -44,7 +45,7 @@ public class TaskSetupFileBrowser extends Task {
     @Override
     public void processRequest(CompoundTag tag, Level level, Player player) {
         BlockEntity tileEntity = level.getChunkAt(BlockPos.of(tag.getLong("pos"))).getBlockEntity(BlockPos.of(tag.getLong("pos")), LevelChunk.EntityCreationType.IMMEDIATE);
-        if (tileEntity instanceof LaptopBlockEntity laptop) {
+        if (tileEntity instanceof ComputerBlockEntity laptop) {
             FileSystem fileSystem = laptop.getFileSystem();
             if (tag.getBoolean("include_main")) {
                 mainDrive = fileSystem.getMainDrive();
@@ -68,6 +69,8 @@ public class TaskSetupFileBrowser extends Task {
 
             ListTag driveList = new ListTag();
             availableDrives.forEach((k, v) -> {
+                DebugLog.log("k = " + k);
+                DebugLog.log("v.getUuid() = " + v.getUuid());
                 CompoundTag driveTag = new CompoundTag();
                 driveTag.putString("name", v.getName());
                 driveTag.putString("uuid", v.getUuid().toString());

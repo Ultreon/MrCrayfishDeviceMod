@@ -9,6 +9,7 @@ import com.ultreon.devices.exception.WorldLessException;
 import com.ultreon.devices.object.tiles.Tile;
 import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 
 import java.awt.*;
@@ -115,14 +116,14 @@ public class Game extends Component {
     }
 
     @Override
-    public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         //long start = System.currentTimeMillis();
 
         if (editorMode) {
-            fill(pose, xPosition - 1, yPosition - 1, xPosition + mapWidth * Tile.WIDTH + 1, yPosition + mapHeight * Tile.HEIGHT + 1, Color.DARK_GRAY.getRGB());
+            graphics.fill(xPosition - 1, yPosition - 1, xPosition + mapWidth * Tile.WIDTH + 1, yPosition + mapHeight * Tile.HEIGHT + 1, Color.DARK_GRAY.getRGB());
         }
 
-        pose.pushPose();
+        graphics.pose().pushPose();
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
         RenderSystem.setShaderTexture(0, ICONS);
 
@@ -130,14 +131,14 @@ public class Game extends Component {
             for (int i = 0; i < tiles[0].length; i++) {
                 Tile tile = tiles[0][i];
                 if (tile != null) {
-                    tile.render(pose, this, i % mapWidth, i / mapWidth, Layer.BACKGROUND);
+                    tile.render(graphics, this, i % mapWidth, i / mapWidth, Layer.BACKGROUND);
                 }
             }
 
             for (int i = 0; i < tiles[0].length; i++) {
                 Tile tile = tiles[0][i];
                 if (tile != null) {
-                    tile.renderForeground(pose, this, i % mapWidth, i / mapWidth, Layer.BACKGROUND);
+                    tile.renderForeground(graphics, this, i % mapWidth, i / mapWidth, Layer.BACKGROUND);
                 }
             }
         }
@@ -146,20 +147,20 @@ public class Game extends Component {
             for (int i = 0; i < tiles[1].length; i++) {
                 Tile tile = tiles[1][i];
                 if (tile != null) {
-                    tile.render(pose, this, i % mapWidth, i / mapWidth, Layer.MIDGROUND_LOW);
+                    tile.render(graphics, this, i % mapWidth, i / mapWidth, Layer.MIDGROUND_LOW);
                 }
             }
 
             for (int i = 0; i < tiles[1].length; i++) {
                 Tile tile = tiles[1][i];
                 if (tile != null) {
-                    tile.renderForeground(pose, this, i % mapWidth, i / mapWidth, Layer.MIDGROUND_LOW);
+                    tile.renderForeground(graphics, this, i % mapWidth, i / mapWidth, Layer.MIDGROUND_LOW);
                 }
             }
         }
 
         if (renderPlayer) {
-            player.render(pose, xPosition, yPosition, partialTicks);
+            player.render(graphics, xPosition, yPosition, partialTicks);
         }
 
         RenderSystem.setShaderTexture(0, ICONS);
@@ -167,14 +168,14 @@ public class Game extends Component {
             for (int i = 0; i < tiles[2].length; i++) {
                 Tile tile = tiles[2][i];
                 if (tile != null) {
-                    tile.render(pose, this, i % mapWidth, i / mapWidth, Layer.MIDGROUND_HIGH);
+                    tile.render(graphics, this, i % mapWidth, i / mapWidth, Layer.MIDGROUND_HIGH);
                 }
             }
 
             for (int i = 0; i < tiles[2].length; i++) {
                 Tile tile = tiles[2][i];
                 if (tile != null) {
-                    tile.renderForeground(pose, this, i % mapWidth, i / mapWidth, Layer.MIDGROUND_HIGH);
+                    tile.renderForeground(graphics, this, i % mapWidth, i / mapWidth, Layer.MIDGROUND_HIGH);
                 }
             }
         }
@@ -183,21 +184,21 @@ public class Game extends Component {
             for (int i = 0; i < tiles[3].length; i++) {
                 Tile tile = tiles[3][i];
                 if (tile != null) {
-                    tile.render(pose, this, i % mapWidth, i / mapWidth, Layer.FOREGROUND);
+                    tile.render(graphics, this, i % mapWidth, i / mapWidth, Layer.FOREGROUND);
                 }
             }
 
             for (int i = 0; i < tiles[3].length; i++) {
                 Tile tile = tiles[3][i];
                 if (tile != null) {
-                    tile.renderForeground(pose, this, i % mapWidth, i / mapWidth, Layer.FOREGROUND);
+                    tile.renderForeground(graphics, this, i % mapWidth, i / mapWidth, Layer.FOREGROUND);
                 }
             }
         }
 
-        pose.popPose();
+        graphics.pose().popPose();
 
-        //System.out.println("Rendered game in " + (System.currentTimeMillis() - start));
+        //DebugLog.log("Rendered game in " + (System.currentTimeMillis() - start));
     }
 
     public boolean placeTile(int x, int y, Tile tile) {

@@ -6,7 +6,7 @@ import com.ultreon.devices.api.app.component.Button;
 import com.ultreon.devices.programs.gitweb.component.GitWebFrame;
 import net.minecraft.client.gui.Gui;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,8 +62,8 @@ public class NavigationModule extends Module {
         }
 
         int finalColor = color;
-        layout.setBackground((pose, gui, mc, x, y, width1, height, mouseX, mouseY, windowActive) ->
-                Gui.fill(pose, x, y, x + width1, y + height, finalColor));
+        layout.setBackground((graphics, mc, x, y, width1, height, mouseX, mouseY, windowActive) ->
+                graphics.fill(x, y, x + width1, y + height, finalColor));
 
         List<Button> navButtons = createNavigationButtons(frame, data);
         int currentRow = 0;

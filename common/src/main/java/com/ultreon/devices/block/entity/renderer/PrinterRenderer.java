@@ -10,6 +10,7 @@ import com.ultreon.devices.Reference;
 import com.ultreon.devices.block.PrinterBlock;
 import com.ultreon.devices.block.entity.PrinterBlockEntity;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
@@ -138,7 +139,7 @@ public record PrinterRenderer(
               //  pose.pushPose();
              //   pose.scale(0.1f, -0.1f, 0.1f);
                 pose.scale(0.010416667f, -0.010416667f, 0.010416667f);
-                Minecraft.getInstance().font.drawInBatch(Integer.toString(blockEntity.getPaperCount()), Minecraft.getInstance().font.width("00")-Minecraft.getInstance().font.width(Integer.toString(blockEntity.getPaperCount())), 0, Color.WHITE.getRGB(), false, pose.last().pose(), bufferSource, false, 0x00000000, packedLight);
+                Minecraft.getInstance().font.drawInBatch(Integer.toString(blockEntity.getPaperCount()), Minecraft.getInstance().font.width("00")-Minecraft.getInstance().font.width(Integer.toString(blockEntity.getPaperCount())), 0, Color.WHITE.getRGB(), false, pose.last().pose(), bufferSource, Font.DisplayMode.NORMAL, 0x00000000, packedLight);
                 pose.popPose();
                 RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
                 RenderSystem.depthMask(true);

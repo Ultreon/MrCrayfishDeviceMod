@@ -8,6 +8,7 @@ import com.ultreon.devices.api.app.ScrollableLayout;
 import com.ultreon.devices.api.app.component.Text;
 import com.ultreon.devices.api.task.Callback;
 import com.ultreon.devices.api.utils.OnlineRequest;
+import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.programs.gitweb.layout.ModuleLayout;
 import com.ultreon.devices.programs.gitweb.module.Module;
 import com.ultreon.devices.programs.gitweb.module.*;
@@ -204,15 +205,15 @@ public class GitWebFrame extends Component {
 
     @Override
     protected void handleTick() {
-        //System.out.println("TICK TOCK");
+        //DebugLog.log("TICK TOCK");
         for (Component component : this.layout.components) {
-            //System.out.println("A");
+            //DebugLog.log("A");
             if (component instanceof ModuleLayout layout) {
-             //   System.out.println("AAAA");
+             //   DebugLog.log("AAAA");
                 layout._tick();
                // layout.entry.getModule()
             } else {
-                System.out.println(component);
+                DebugLog.log(component);
             }
         }
         if (pendingWebsite != null) {

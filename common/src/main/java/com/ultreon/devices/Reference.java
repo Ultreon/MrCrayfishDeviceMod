@@ -1,6 +1,7 @@
 package com.ultreon.devices;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
+import dev.architectury.platform.Platform;
 
 public class Reference {
     public static final String MOD_ID = "devices";
@@ -10,9 +11,8 @@ public class Reference {
         VERSION = getVersion();
     }
 
-    @ExpectPlatform // gets the mod version of "devices"
     public static String getVersion() {
-        throw new AssertionError();
+        return Platform.getMod(Devices.MOD_ID).getVersion();
     }
 
     public static String[] getVerInfo() {
