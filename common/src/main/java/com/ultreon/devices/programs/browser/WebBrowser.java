@@ -1,13 +1,13 @@
 package com.ultreon.devices.programs.browser;
 
 import com.mojang.blaze3d.platform.Window;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.app.Application;
 import com.ultreon.devices.api.app.component.BrowserRenderer;
 import com.ultreon.devices.cef.BrowserFramework;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.util.GLHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,11 +21,6 @@ public class WebBrowser extends Application {
     private int lastMouseY = Integer.MAX_VALUE;
     private int x;
     private int y;
-    private boolean wasBtnLft = false;
-    private boolean wasBtnRgt = false;
-    private boolean wasBtnMdl = false;
-    private boolean wasBtnBck = false;
-    private boolean wasBtnFwd = false;
     private boolean active = false;
 
     public WebBrowser() {
@@ -146,7 +141,6 @@ public class WebBrowser extends Application {
         if (this.active) {
             for (KeyListener mouseMotionListener : BrowserFramework.getUi().getKeyListeners()) {
                 System.out.println("Key Pressed Event");
-                char code = (char) 0;
                 if (keyCode >= 32 && keyCode <= 127) {
                     mouseMotionListener.keyPressed(new KeyEvent(BrowserFramework.getUi(), KeyEvent.KEY_PRESSED, System.currentTimeMillis(), modifiers, keyCode, (char)0, KeyEvent.KEY_LOCATION_UNKNOWN));
                 }
@@ -161,7 +155,6 @@ public class WebBrowser extends Application {
         if (this.active) {
             for (KeyListener mouseMotionListener : BrowserFramework.getUi().getKeyListeners()) {
                 System.out.println("Key Released Event");
-                char code = (char) 0;
                 if (keyCode >= 32 && keyCode <= 127) {
                     mouseMotionListener.keyReleased(new KeyEvent(BrowserFramework.getUi(), KeyEvent.KEY_RELEASED, System.currentTimeMillis(), modifiers, keyCode, (char)0, KeyEvent.KEY_LOCATION_UNKNOWN));
                 }
@@ -182,13 +175,12 @@ public class WebBrowser extends Application {
     }
 
     @Override
-    public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
+    public void render(GuiGraphics gfx, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
         GLHelper.pushScissor(x, y, getWidth(), getHeight());
         this.x = x;
         this.y = y;
         this.active = active;
         Window window = Minecraft.getInstance().getWindow();
-        long pointer = window.getWindow();
         double guiScale = window.getGuiScale();
         if (mouseX != lastMouseX || mouseY != lastMouseY && active) {
             int mx = (int) ((mouseX - x) * guiScale);
@@ -205,7 +197,7 @@ public class WebBrowser extends Application {
         BrowserFramework.getUi().setPreferredSize(new Dimension((int) (browserWidth * guiScale), (int) (browserHeight * guiScale)));
         BrowserFramework.getUi().setMaximumSize(new Dimension((int) (browserWidth * guiScale), (int) (browserHeight * guiScale)));
         BrowserFramework.getUi().setMaximumSize(new Dimension((int) (browserWidth * guiScale), (int) (browserHeight * guiScale)));
-        BrowserFramework.renderBrowser(pose, x, y, getWidth(), getHeight());
+        BrowserFramework.renderBrowser(gfx, x, y, getWidth(), getHeight());
         GLHelper.popScissor();
     }
 

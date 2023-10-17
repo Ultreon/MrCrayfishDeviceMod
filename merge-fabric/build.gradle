@@ -27,7 +27,7 @@ configurations {
 dependencies {
     include(project(path: ":fabric", configuration: "namedElements"))
 
-    include('me.friwi:jcefmaven:109.1.11.1')
+    include("me.friwi:jcefmaven:$jcef_version")
 }
 
 shadowJar {

@@ -5,9 +5,6 @@ import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.GLBuffers;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.sun.jna.platform.win32.User32;
-import com.sun.jna.platform.win32.WinDef;
 import com.ultreon.devices.Devices;
 import com.ultreon.devices.Reference;
 import com.ultreon.mods.lib.client.gui.screen.BaseScreen;
@@ -16,7 +13,10 @@ import com.ultreon.mods.lib.client.gui.widget.Button;
 import com.ultreon.mods.lib.client.gui.widget.Progressbar;
 import com.ultreon.mods.lib.event.WindowCloseEvent;
 import dev.architectury.event.EventResult;
+import dev.architectury.platform.Platform;
 import me.friwi.jcefmaven.*;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -35,20 +35,19 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import static org.lwjgl.opengl.GL11C.*;
-import static org.lwjgl.system.windows.User32.SW_HIDE;
 
 public class CEFDownloadScreen extends BaseScreen {
     private static final Component TITLE = Component.translatable("screen.devices.cef.download.title");
     private static final ThreadGroup CEF = new ThreadGroup("CEF");
     private static final String ULTREON_BROWSER_VERSION = Devices.getModVersion();
-    private static final String CHROME_VERSION = "109.1.11.1";
+    private static final String MINECRAFT_VERSION = Platform.getMinecraftVersion();
+    private static final String CHROME_VERSION = "$jcef_version";
     private BaseButton proceedBtn;
     private Progressbar progressbar;
     private int progress = 0;
 
     private static Thread thread;
     private String description = "Preparing...";
-    private BufferedImage bufImg;
 
     public CEFDownloadScreen(Screen back) {
         super(TITLE, back);
@@ -79,14 +78,10 @@ public class CEFDownloadScreen extends BaseScreen {
                 jFrame.setUndecorated(true);
                 jFrame.setVisible(true);
                 jFrame.setFocusable(false);
-//                jFrame.setLocationByPlatform(false);
                 jFrame.setLocation(new Point());
                 jFrame.toBack();
                 jFrame.setFocusableWindowState(false);
                 jFrame.setExtendedState(Frame.ICONIFIED);
-
-//                WinDef.HWND shellTray = User32.INSTANCE.GetWindowLongPtr("Shell_TrayWnd", jFrame.);
-//                User32.INSTANCE.ShowWindow(shellTray, SW_HIDE);
             } catch (RuntimeException e) {
                 String property1 = System.getProperty("java.awt.headless");
                 System.out.println("property = " + property1);
@@ -113,7 +108,7 @@ public class CEFDownloadScreen extends BaseScreen {
             builder.setProgressHandler(new MinecraftProgressHandler()); //Default
             builder.getCefSettings().windowless_rendering_enabled = useOSR; //Default - select OSR mode
             builder.getCefSettings().cache_path = Reference.BROWSER_DATA.getAbsolutePath();
-            builder.getCefSettings().user_agent_product = "UltreonBrowser/%s Chrome/%s".formatted(ULTREON_BROWSER_VERSION, CHROME_VERSION);
+            builder.getCefSettings().user_agent_product = "DevicesMod/%s Minecraft/%s Chrome/%s".formatted(ULTREON_BROWSER_VERSION, MINECRAFT_VERSION, CHROME_VERSION);
 
             builder.addJcefArgs();
 
@@ -128,7 +123,6 @@ public class CEFDownloadScreen extends BaseScreen {
 
             CefBrowser browser = client.createBrowser("www.google.com", useOSR, false);
 
-//            JPanel panel = new JPanel();
             java.awt.Component uiComponent = browser.getUIComponent();
             GLCanvas canvas = (GLCanvas) uiComponent;
             canvas.addGLEventListener(new GLEventListener() {
@@ -159,10 +153,6 @@ public class CEFDownloadScreen extends BaseScreen {
                 }
             });
 
-//            panel.setLayout(new CardLayout());
-//            panel.add(uiComponent);
-//            BrowserFramework.setUi(uiComponent);
-//            uiComponent.setVisible(true);
             jFrame.add(BrowserFramework.setUi(uiComponent));
             WindowCloseEvent.EVENT.register((window, source) -> {
                 client.dispose();
@@ -187,7 +177,7 @@ public class CEFDownloadScreen extends BaseScreen {
         for (int h = 0; h < height; h++) {
             for (int w = 0; w < width; w++) {
                 // The color are the three consecutive bytes, it's like referencing
-                // to the next consecutive array elements, so we got red, green, blue..
+                // to the next consecutive array elements, so we got red, green, blue.
                 // red, green, blue, and so on..+ ", "
                 graphics.setColor(new Color((buffer.get() & 0xff), (buffer.get() & 0xff),
                         (buffer.get() & 0xff)));
@@ -195,16 +185,16 @@ public class CEFDownloadScreen extends BaseScreen {
                 graphics.drawRect(w, height - h, 1, 1); // height - h is for flipping the image
             }
         }
-        // This is one util of mine, it make sure you clean the direct buffer
+        // This is one util of mine, it makes sure you clean the direct buffer
         buffer.clear();
 
         return screenshot;
     }
     @Override
-    public void render(@NotNull PoseStack pose, int mouseX, int mouseY, float partialTicks) {
-        super.render(pose, mouseX, mouseY, partialTicks);
+    public void render(@NotNull GuiGraphics gfx, int mouseX, int mouseY, float partialTicks) {
+        super.render(gfx, mouseX, mouseY, partialTicks);
 
-        font.drawShadow(pose, description, width / 2f - 91, height / 2f - 15, 0xffffff);
+        gfx.drawString(this.font, description, (int) (width / 2f - 91), (int) (height / 2f - 15), 0xffffff);
     }
 
     @Override

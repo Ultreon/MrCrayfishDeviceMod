@@ -29,8 +29,8 @@ dependencies {
     forge "net.minecraftforge:forge:${architectury.minecraft}-$forge_version"
     include(project(path: ":forge", configuration: "namedElements"))
 
-    forgeRuntimeLibrary('me.friwi:jcefmaven:109.1.11.1')
-    include('me.friwi:jcefmaven:109.1.11.1')
+    forgeRuntimeLibrary("me.friwi:jcefmaven:$jcef_version")
+    include("me.friwi:jcefmaven:$jcef_version")
 }
 
 shadowJar {

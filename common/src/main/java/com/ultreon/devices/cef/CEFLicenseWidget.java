@@ -1,9 +1,9 @@
 package com.ultreon.devices.cef;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.Devices;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractScrollWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
@@ -54,12 +54,12 @@ public class CEFLicenseWidget extends AbstractScrollWidget {
     }
 
     @Override
-    protected void renderContents(@NotNull PoseStack poseStack, int i, int j, float f) {
+    protected void renderContents(@NotNull GuiGraphics gfx, int i, int j, float f) {
         List<String> list = license.lines().toList();
         for (int lineNr = 0, listSize = list.size(); lineNr < listSize; lineNr++) {
             String line = list.get(lineNr);
             int offset = lineNr * 9;
-            font.drawShadow(poseStack, line, getX() + 4, getY() + 4 + offset, 0xffffff, false);
+            gfx.drawString(this.font, line, getX() + 4, getY() + 4 + offset, 0xffffff, true);
         }
     }
 

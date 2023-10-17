@@ -4,13 +4,12 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.platform.TextureUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.Devices;
 import com.ultreon.mods.lib.util.KeyboardHelper;
 import dev.architectury.platform.Platform;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
 import org.cef.CefApp;
@@ -34,7 +33,6 @@ public class BrowserFramework {
     private static Component ui;
     private static NativeImage img;
     private static DynamicTexture texture;
-    private static int texId;
     private static long lastCapture;
 
     static CefApp setApp(CefApp app) {
@@ -67,7 +65,6 @@ public class BrowserFramework {
     public static void redraw() {
         if (texture == null) {
             texture = new DynamicTexture(paint());
-            texId = texture.getId();
             Minecraft.getInstance().getTextureManager().register(RES, texture);
             return;
         }
@@ -75,10 +72,12 @@ public class BrowserFramework {
         NativeImage pixels = texture.getPixels();
         if (!RenderSystem.isOnRenderThread()) {
             RenderSystem.recordRenderCall(() -> {
+                assert pixels != null;
                 TextureUtil.prepareImage(texture.getId(), pixels.getWidth(), pixels.getHeight());
                 texture.upload();
             });
         } else {
+            assert pixels != null;
             TextureUtil.prepareImage(texture.getId(), pixels.getWidth(), pixels.getHeight());
             texture.upload();
         }
@@ -117,8 +116,7 @@ public class BrowserFramework {
         return img;
     }
 
-    public static void renderBrowser(PoseStack poseStack, int x, int y, int w, int h) {
-        RenderSystem.setShaderTexture(0, RES);
-        GuiComponent.blit(poseStack, x, y, w, h, 0, 0, img.getWidth(), img.getHeight(), img.getWidth(), img.getHeight());
+    public static void renderBrowser(GuiGraphics gfx, int x, int y, int w, int h) {
+        gfx.blit(RES, x, y, w, h, 0, 0, img.getWidth(), img.getHeight(), img.getWidth(), img.getHeight());
     }
 }

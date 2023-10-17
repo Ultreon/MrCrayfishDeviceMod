@@ -43,18 +43,15 @@ dependencies {
     // Remove the next line if you don't want to depend on the API
     modApi "dev.architectury:architectury-fabric:$architectury_version"
 
-    modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:8.0.0"
-    modImplementation 'com.electronwill.night-config:core:3.6.5'
-    modImplementation 'com.electronwill.night-config:toml:3.6.5'
+    modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:$forgeconfigapiport_version"
+    modImplementation "com.electronwill.night-config:core:3.6.5"
+    modImplementation "com.electronwill.night-config:toml:3.6.5"
 
-//    include(implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.10"))
-//    include(implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10"))
-//    include(implementation("com.ultreon:ultranlang:0.1.0+6"))
-    include(implementation("com.jab125:apoint:1.0.0"))
-    include(implementation('me.friwi:jcefmaven:109.1.11.1'))
-    include(implementation('org.burningwave:core:12.62.5'))
+    include(implementation("com.jab125:apoint:$apoint_version"))
+    include(implementation("me.friwi:jcefmaven:$jcef_version"))
+    include(implementation("org.burningwave:core:$burningwave_version"))
 
-    modApi include("net.fabricmc:fabric-language-kotlin:1.8.2+kotlin.1.7.10")
+    modApi include("net.fabricmc:fabric-language-kotlin:$fabric_language_kotlin_version")
     modImplementation "com.github.Ultreon.ultreonlib:ultreon-lib-fabric:$ultreonlib_version", {
         exclude group: "com.terraformersmc"
     }
@@ -62,15 +59,10 @@ dependencies {
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 
-//    modCompileOnly "com.terraformersmc:modmenu:5.0.2", {
-//        exclude module: "fabric-api"
-//    }
+    modImplementation "com.terraformersmc:modmenu:$modmenu_version"
+    modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:$rei_version"
 
-    modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:12.0.645", {
-        exclude module: "fabric-api"
-    }
-
-  //  modApi "curse.maven:emojiful-284324:4672307"
+//    modApi "curse.maven:emojiful-284324:4672307"
 }
 
 configurations.all {

@@ -41,12 +41,12 @@ dependencies {
     modApi "curse.maven:emojiful-284324:4672310"
 
 //    forgeRuntimeLibrary "com.ultreon:ultranlang:0.1.0+6"
-    forgeRuntimeLibrary "com.jab125:apoint:1.0.0"
-    forgeRuntimeLibrary 'me.friwi:jcefmaven:109.1.11.1'
+    forgeRuntimeLibrary "com.jab125:apoint:$apoint_version"
+    forgeRuntimeLibrary "me.friwi:jcefmaven:$jcef_version"
 
 //    implementation include("com.ultreon:ultranlang:0.1.0+6")
-    implementation include("com.jab125:apoint:1.0.0")
-    implementation include('me.friwi:jcefmaven:109.1.11.1')
+    implementation include("com.jab125:apoint:$apoint_version")
+    implementation include("me.friwi:jcefmaven:$jcef_version")
 }
 
 processResources {

@@ -3,7 +3,6 @@ package com.ultreon.devices.api.app.component;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.platform.TextureUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.Devices;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Layout;
@@ -13,6 +12,7 @@ import com.ultreon.devices.cef.BrowserFramework;
 import com.ultreon.devices.core.Laptop;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
@@ -53,6 +53,14 @@ public class BrowserRenderer extends Component {
         cs.b = 255;
     });
 
+    public float getAlpha() {
+        return alpha;
+    }
+
+    public void setAlpha(float alpha) {
+        this.alpha = alpha;
+    }
+
     public void setTint(int r, int g, int b) {
         var cs = new ColorSupplier();
         cs.r = r;
@@ -61,7 +69,7 @@ public class BrowserRenderer extends Component {
         this.setTint(() -> cs);
     }
 
-    private static class ColorSupplier {
+    public static class ColorSupplier {
         int r;
         int g;
         int b;
@@ -141,13 +149,13 @@ public class BrowserRenderer extends Component {
     }
 
     @Override
-    public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(GuiGraphics gfx, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         if (this.visible) {
             if (hasBorder) {
-                fill(pose, x, y, x + componentWidth, y + componentHeight, borderColor);
+                gfx.fill(x, y, x + componentWidth, y + componentHeight, borderColor);
             }
 
-            RenderSystem.setShaderColor(tint.get().r/255f, tint.get().g/255f, tint.get().b/255f, alpha);
+            RenderSystem.setShaderColor(tint.get().r / 255f, tint.get().g / 255f, tint.get().b / 255f, alpha);
 
             if (image != null && image.textureId != -1) {
                 image.restore();
@@ -156,33 +164,13 @@ public class BrowserRenderer extends Component {
                 RenderSystem.enableBlend();
                 RenderSystem.setShaderTexture(0, BrowserFramework.RES);
 
-                if (/*hasBorder*/true) {
-                    if (drawFull) {
-                        //System.out.println("Rendering image");
-                        RenderUtil.drawRectWithTexture(pose, x + borderThickness, y + borderThickness, 0, imageU, imageV, componentWidth - borderThickness * 2, componentHeight - borderThickness * 2, 256, 256);
-                        //GuiComponent.blit(pose, x + borderThickness, y + borderThickness, imageU, imageV, componentWidth - borderThickness * 2, componentHeight - borderThickness * 2, 256, 256);
-                    } else {
-                        //System.out.println("Rendering image");
-                        RenderUtil.drawRectWithTexture(pose, x + borderThickness, y + borderThickness, imageU, imageV, componentWidth - borderThickness * 2, componentHeight - borderThickness * 2, imageWidth, imageHeight, sourceWidth, sourceHeight);
-                        //GuiComponent.blit(pose, x + borderThickness, y + borderThickness, componentWidth - borderThickness * 2, imageU, imageV, componentHeight - borderThickness * 2, sourceWidth, sourceHeight, imageWidth, imageHeight);
-                    }
+                if (drawFull) {
+                    RenderUtil.drawRectWithTexture(BrowserFramework.RES, gfx, x + borderThickness, y + borderThickness, 0, imageU, imageV, componentWidth - borderThickness * 2, componentHeight - borderThickness * 2, 256, 256);
                 } else {
-                    if (drawFull) {
-                        //System.out.println("Rendering image");
-                        RenderUtil.drawRectWithTexture(pose, x, y, componentWidth, componentHeight, imageU, imageV, 256, 256);
-//                        GuiComponent.blit(pose, x, y, componentWidth, componentHeight, imageU, imageV, 256, 256);
-                    } else {
-                        //System.out.println("Rendering image");
-                        RenderUtil.drawRectWithTexture(pose, x, y, componentWidth, componentHeight, imageU, imageV, imageWidth, imageHeight, sourceWidth, sourceHeight);
-                        //GuiComponent.blit(pose, x, y, componentWidth, componentHeight, imageU, imageV, sourceWidth, sourceHeight, imageWidth, imageHeight);
-                    }
+                    RenderUtil.drawRectWithTexture(BrowserFramework.RES, gfx, x + borderThickness, y + borderThickness, imageU, imageV, componentWidth - borderThickness * 2, componentHeight - borderThickness * 2, imageWidth, imageHeight, sourceWidth, sourceHeight);
                 }
             } else {
-                if (/*hasBorder*/true) {
-                    fill(pose, x + borderThickness, y + borderThickness, x + componentWidth - borderThickness, y + componentHeight - borderThickness, Color.LIGHT_GRAY.getRGB());
-                } else {
-                    fill(pose, x, y, x + componentWidth, y + componentHeight, Color.LIGHT_GRAY.getRGB());
-                }
+                gfx.fill(x + borderThickness, y + borderThickness, x + componentWidth - borderThickness, y + componentHeight - borderThickness, Color.LIGHT_GRAY.getRGB());
             }
             RenderSystem.setShaderColor(1f, 1f, 1f, alpha);
         }
@@ -311,7 +299,7 @@ public class BrowserRenderer extends Component {
                 } catch (IOException e) {
                     texture = MissingTextureAtlasSprite.getTexture();
                     setup = true;
-                    e.printStackTrace();
+                    Devices.LOGGER.warn("Failed to load browser frame:", e);
                 }
             };
             Thread thread = new Thread(r, "Image Loader");
@@ -331,7 +319,8 @@ public class BrowserRenderer extends Component {
                 texture.load(Minecraft.getInstance().getResourceManager());
                 CachedImage cachedImage = new CachedImage(texture.getId(), image.imageWidth, image.imageHeight, true);
                 if (texture != MissingTextureAtlasSprite.getTexture())
-                CACHE.put(url, cachedImage);
+                    CACHE.put(url, cachedImage);
+
                 return cachedImage;
             } catch (IOException e) {
                 return new CachedImage(MissingTextureAtlasSprite.getTexture().getId(), 0, 0, true);

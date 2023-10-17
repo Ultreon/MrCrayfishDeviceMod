@@ -1,6 +1,7 @@
 package com.ultreon.devices.cef;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -36,17 +37,17 @@ public class CEFLicenseScreen extends Screen {
     }
 
     @Override
-    public void render(@NotNull PoseStack poseStack, int mouseX, int mouseY, float frameTime) {
-        renderBackground(poseStack);
-        poseStack.pushPose();
+    public void render(@NotNull GuiGraphics gfx, int mouseX, int mouseY, float frameTime) {
+        renderBackground(gfx);
+        gfx.pose().pushPose();
         {
-            poseStack.scale(2, 2, 1);
-            drawCenteredString(poseStack, font, title, width / 4, 10 / 2, 0xffffff);
+            gfx.pose().scale(2, 2, 1);
+            gfx.drawCenteredString(font, title, width / 4, 10 / 2, 0xffffff);
         }
-        poseStack.popPose();
+        gfx.pose().popPose();
 
-        drawCenteredString(poseStack, font, DESCRIPTION, width / 2, 35, 0xffffff);
+        gfx.drawCenteredString(font, DESCRIPTION, width / 2, 35, 0xffffff);
 
-        super.render(poseStack, mouseX, mouseY, frameTime);
+        super.render(gfx, mouseX, mouseY, frameTime);
     }
 }

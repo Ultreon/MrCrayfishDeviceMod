@@ -20,16 +20,16 @@ dependencies {
 
     modImplementation "com.github.Ultreon.ultreonlib:ultreon-lib:$ultreonlib_version"
 
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.10")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10")
-    implementation('me.friwi:jcefmaven:109.1.11.1')
-    implementation('org.burningwave:core:12.62.5')
+    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlin_version")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")
+    implementation("me.friwi:jcefmaven:$jcef_version")
+    implementation("org.burningwave:core:$burningwave_version")
     modApi("com.ultreon:ultranlang:0.1.0+6")
-    modApi("com.jab125:apoint:1.0.0")
+    modApi("com.jab125:apoint:$apoint_version")
 
-    modCompileOnly "fuzs.forgeconfigapiport:forgeconfigapiport-common:8.0.0"
-    modCompileOnly 'com.electronwill.night-config:core:3.6.3'
-    modCompileOnly 'com.electronwill.night-config:toml:3.6.3'
+    modCompileOnly "fuzs.forgeconfigapiport:forgeconfigapiport-common:$forgeconfigapiport_version"
+    modCompileOnly "com.electronwill.night-config:core:$nightconfig_version"
+    modCompileOnly "com.electronwill.night-config:toml:$nightconfig_version"
 
 }
 
