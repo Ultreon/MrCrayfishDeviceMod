@@ -139,7 +139,6 @@ public abstract class Devices {
         registerApplications();
 
         EnvExecutor.runInEnv(Env.CLIENT, () -> () -> {
-            ClientAppDebug.register();
             ClientModEvents.clientSetup(); //todo
         });
 
