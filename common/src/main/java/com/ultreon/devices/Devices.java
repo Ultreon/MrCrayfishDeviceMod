@@ -54,6 +54,8 @@ import dev.architectury.registry.registries.DeferredSupplier;
 import dev.architectury.registry.registries.RegistrarManager;
 import dev.architectury.utils.Env;
 import dev.architectury.utils.EnvExecutor;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
@@ -141,14 +143,13 @@ public abstract class Devices {
         EnvExecutor.runInEnv(Env.CLIENT, () -> () -> {
             ClientAppDebug.register();
             ClientModEvents.clientSetup(); //todo
+            Devices.setupSiteRegistrations();
+            Devices.checkForVulnerabilities();
         });
-
-        EnvExecutor.runInEnv(Env.CLIENT, () -> Devices::setupSiteRegistrations);
-        EnvExecutor.runInEnv(Env.CLIENT, () -> Devices::checkForVulnerabilities);
 
         setupEvents();
 
-        EnvExecutor.runInEnv(Env.CLIENT, () -> Devices::setupClientEvents); //todo
+        EnvExecutor.runInEnv(Env.CLIENT, () -> () -> setupClientEvents()); //todo
         if (!ArchitecturyTarget.getCurrentTarget().equals("forge")) {
             loadComplete();
         }
@@ -197,12 +198,12 @@ public abstract class Devices {
         TaskManager.registerTask(TaskGetDevices::new);
 
         // Bank
-        TaskManager.registerTask(TaskDeposit::new);
-        TaskManager.registerTask(TaskWithdraw::new);
-        TaskManager.registerTask(TaskGetBalance::new);
-        TaskManager.registerTask(TaskPay::new);
-        TaskManager.registerTask(TaskAdd::new);
-        TaskManager.registerTask(TaskRemove::new);
+//        TaskManager.registerTask(TaskDeposit::new);
+//        TaskManager.registerTask(TaskWithdraw::new);
+//        TaskManager.registerTask(TaskGetBalance::new);
+//        TaskManager.registerTask(TaskPay::new);
+//        TaskManager.registerTask(TaskAdd::new);
+//        TaskManager.registerTask(TaskRemove::new);
 
         // File browser
         TaskManager.registerTask(TaskSendAction::new);
@@ -215,35 +216,36 @@ public abstract class Devices {
         TaskManager.registerTask(TaskInstallApp::new);
 
         // Ender Mail
-        TaskManager.registerTask(TaskUpdateInbox::new);
-        TaskManager.registerTask(TaskSendEmail::new);
-        TaskManager.registerTask(TaskCheckEmailAccount::new);
-        TaskManager.registerTask(TaskRegisterEmailAccount::new);
-        TaskManager.registerTask(TaskDeleteEmail::new);
-        TaskManager.registerTask(TaskViewEmail::new);
+//        TaskManager.registerTask(TaskUpdateInbox::new);
+//        TaskManager.registerTask(TaskSendEmail::new);
+//        TaskManager.registerTask(TaskCheckEmailAccount::new);
+//        TaskManager.registerTask(TaskRegisterEmailAccount::new);
+//        TaskManager.registerTask(TaskDeleteEmail::new);
+//        TaskManager.registerTask(TaskViewEmail::new);
 
         // Auction
-        TaskManager.registerTask(TaskAddAuction::new);
-        TaskManager.registerTask(TaskGetAuctions::new);
-        TaskManager.registerTask(TaskBuyItem::new);
+//        TaskManager.registerTask(TaskAddAuction::new);
+//        TaskManager.registerTask(TaskGetAuctions::new);
+//        TaskManager.registerTask(TaskBuyItem::new);
 
-        if (DEVELOPER_MODE) {
-            // Applications (Developers)
-            ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "example"), () -> ExampleApp::new, false);
-            ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "icons"), () -> IconsApp::new, false);
-            ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "text_area"), () -> TextAreaApp::new, false);
-            ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "test"), () -> TestApp::new, false);
-
-            TaskManager.registerTask(TaskNotificationTest::new);
-        }
-
-        EnvExecutor.runInEnv(Env.CLIENT, () -> () -> PrintingManager.registerPrint(new ResourceLocation(Reference.MOD_ID, "picture"), PixelPainterApp.PicturePrint.class));
+//        if (DEVELOPER_MODE) {
+//            // Applications (Developers)
+//            ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "example"), () -> ExampleApp::new, false);
+//            ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "icons"), () -> IconsApp::new, false);
+//            ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "text_area"), () -> TextAreaApp::new, false);
+//            ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "test"), () -> TestApp::new, false);
+//
+//            TaskManager.registerTask(TaskNotificationTest::new);
+//        }
+//
+//        EnvExecutor.runInEnv(Env.CLIENT, () -> () -> PrintingManager.registerPrint(new ResourceLocation(Reference.MOD_ID, "picture"), PixelPainterApp.PicturePrint.class));
     }
 
     public abstract int getBurnTime(ItemStack stack, RecipeType<?> type);
 
     protected abstract void registerApplicationEvent();
 
+    @Environment(EnvType.CLIENT)
     protected abstract List<Application> getApplications();
 
     public static void setAllowedApps(List<AppInfo> allowedApps) {
@@ -301,6 +303,7 @@ public abstract class Devices {
     }
 
     @NotNull
+    @Environment(EnvType.CLIENT)
     private static AppInfo generateAppInfo(ResourceLocation identifier, Class<? extends Application> clazz) {
         LOGGER.debug("Generating app info for " + identifier.toString());
 
@@ -309,10 +312,13 @@ public abstract class Devices {
         return info;
     }
 
+    @Environment(EnvType.CLIENT)
     protected abstract Map<String, IPrint.Renderer> getRegisteredRenders();
 
+    @Environment(EnvType.CLIENT)
     protected abstract void setRegisteredRenders(Map<String, IPrint.Renderer> map);
 
+    @Environment(EnvType.CLIENT)
     public boolean registerPrint(ResourceLocation identifier, Class<? extends IPrint> classPrint) {
         LOGGER.debug("Registering print: " + identifier.toString());
 
