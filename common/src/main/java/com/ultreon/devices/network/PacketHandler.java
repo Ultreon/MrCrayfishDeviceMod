@@ -61,7 +61,7 @@ public class PacketHandler {
     }
 
     public static <T extends Packet<T>> void sendToClient(Packet<T> messageNotification, Player player) { // has to be ServerPlayer if world is not null
-        if (player == null || player.level == null) {
+        if (player == null || player.level() == null) {
             messageNotification.onMessage(() -> new NetworkManager.PacketContext() {
                 @Override
                 public Player getPlayer() {

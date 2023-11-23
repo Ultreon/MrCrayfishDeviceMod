@@ -16,7 +16,6 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -255,7 +254,7 @@ public class MacMaxXBlockPart extends HorizontalDirectionalBlock {
             Block.box(6.5,   0 - 16,  17 - 16, 9, 0.5 - 16,  23 - 16));
 
     public MacMaxXBlockPart() {
-        super(Properties.of(Material.HEAVY_METAL, DyeColor.WHITE).strength(6f).sound(SoundType.METAL));
+        super(Properties.of().mapColor(DyeColor.WHITE).strength(6f).sound(SoundType.METAL));
         registerDefaultState(this.getStateDefinition().any().setValue(FACING, Direction.NORTH).setValue(PART, Part.T));
     }
 

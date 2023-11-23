@@ -50,6 +50,7 @@ import dev.architectury.event.events.common.PlayerEvent;
 import dev.architectury.injectables.targets.ArchitecturyTarget;
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.CreativeTabRegistry;
+import dev.architectury.registry.registries.DeferredSupplier;
 import dev.architectury.registry.registries.RegistrarManager;
 import dev.architectury.utils.Env;
 import dev.architectury.utils.EnvExecutor;
@@ -60,6 +61,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -82,7 +84,7 @@ public abstract class Devices {
     public static final String MOD_ID = "devices";
     public static final Logger LOGGER = LoggerFactory.getLogger("Devices Mod");
 
-    public static final CreativeTabRegistry.TabSupplier TAB_DEVICE = DeviceTab.create();
+    public static final DeferredSupplier<CreativeModeTab> TAB_DEVICE = DeviceTab.create();
     public static final Supplier<RegistrarManager> REGISTRIES = Suppliers.memoize(() -> RegistrarManager.get(MOD_ID));
     public static final List<SiteRegistration> SITE_REGISTRATIONS = new ProtectedArrayList<>();
     private static final Pattern DEV_PREVIEW_PATTERN = Pattern.compile("\\d+\\.\\d+\\.\\d+-dev\\d+");
@@ -381,7 +383,7 @@ public abstract class Devices {
         LifecycleEvent.SERVER_STARTING.register((instance -> server = instance));
         LifecycleEvent.SERVER_STOPPED.register(instance -> server = null);
         InteractionEvent.RIGHT_CLICK_BLOCK.register(((player, hand, pos, face) -> {
-            Level level = player.getLevel();
+            Level level = player.level();
             if (!player.getItemInHand(hand).isEmpty() && player.getItemInHand(hand).getItem() == Items.PAPER) {
                 if (level.getBlockState(pos).getBlock() instanceof PrinterBlock) {
                     return EventResult.interruptTrue();

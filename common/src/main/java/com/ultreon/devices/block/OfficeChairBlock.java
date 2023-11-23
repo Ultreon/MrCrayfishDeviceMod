@@ -24,7 +24,6 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.EntityCollisionContext;
@@ -44,7 +43,7 @@ public class OfficeChairBlock extends DeviceBlock.Colored
 
     public OfficeChairBlock(DyeColor color)
     {
-        super(BlockBehaviour.Properties.of(Material.STONE, color.getMaterialColor()), color, ModDeviceTypes.SEAT);
+        super(BlockBehaviour.Properties.of().mapColor(color), color, ModDeviceTypes.SEAT);
         //this.setUnlocalizedName("office_chair");
         //this.setRegistryName("office_chair");
         //this.setCreativeTab(MrCrayfishDeviceMod.TAB_DEVICE);

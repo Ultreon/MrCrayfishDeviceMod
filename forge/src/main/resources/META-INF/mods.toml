@@ -30,13 +30,13 @@ side = "BOTH"
 [[dependencies.devices]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[${minecraftVersion},1.19.4)"
+versionRange = "[1.20,1.20.1]"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.devices]]
 modId = "architectury"
 mandatory = true
-versionRange = "[7.1,8)"
+versionRange = "[9.1,10)"
 ordering = "NONE"
 side = "BOTH"

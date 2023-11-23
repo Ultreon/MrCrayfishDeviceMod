@@ -13,6 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
@@ -30,7 +31,6 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import static com.ultreon.devices.core.laptop.client.ClientLaptopScreen.LAPTOP_GUI;
-import static net.minecraft.client.gui.GuiComponent.blit;
 
 
 // NO STATICS
@@ -73,7 +73,7 @@ public class ClientLaptop {
     }
 
     //@Override
-    public void render(final @NotNull PoseStack pose, final int mouseX, final int mouseY, float partialTicks) {
+    public void render(final @NotNull GuiGraphics graphics, final int mouseX, final int mouseY, float partialTicks) {
         double[] square = new double[2];
         Minecraft.getInstance().doRunTask(() -> {
             square[0] = this.square[0];
@@ -82,14 +82,14 @@ public class ClientLaptop {
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
         RenderSystem.setShaderTexture(0, LAPTOP_GUI);
         //RenderSystem.disableBlend();
-        Gui.blit(pose, 0, 0, ClientLaptop.SCREEN_WIDTH, ClientLaptop.SCREEN_HEIGHT, 10, 10, 1, 1, 256, 256);
+        graphics.blit(LAPTOP_GUI, 0, 0, ClientLaptop.SCREEN_WIDTH, ClientLaptop.SCREEN_HEIGHT, 10, 10, 1, 1, 256, 256);
         //RenderSystem.enableBlend();
 
-        Minecraft.getInstance().font.draw(pose, "New Laptop System 0.01% complete", 0, 0, 0xffffff);
-        Gui.fill(pose, 0, 0, 10, 10, 0x2e2e2e);
-        taskbar.render(pose, this, Minecraft.getInstance(), 0, SCREEN_HEIGHT-16, mouseX, mouseY, partialTicks);
+        graphics.drawString(Minecraft.getInstance().font, "New Laptop System 0.01% complete", 0, 0, 0xffffff);
+        graphics.fill(0, 0, 10, 10, 0x2e2e2e);
+        taskbar.render(graphics, this, Minecraft.getInstance(), 0, SCREEN_HEIGHT-16, mouseX, mouseY, partialTicks);
         DebugLog.log("x = " + square[0]);
-        Gui.fill(pose, (int) square[0], (int) square[1], (int) square[0]+10, (int) square[1]+10, 0xffffff);
+        graphics.fill((int) square[0], (int) square[1], (int) square[0]+10, (int) square[1]+10, 0xffffff);
     }
 
     public void mouseMoved(double mouseX, double mouseY) {

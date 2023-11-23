@@ -43,13 +43,13 @@ public class DownloadModule extends Module {
     public void generate(GitWebFrame frame, Layout layout, int width, Map<String, String> data) {
         int height = calculateHeight(data, width) - 5;
         AppInfo info = ApplicationManager.getApplication(ResourceLocation.tryParse(data.get("file-app")));
-        layout.setBackground((pose, gui, mc, x, y, width1, height1, mouseX, mouseY, windowActive) -> {
+        layout.setBackground((graphics, mc, x, y, width1, height1, mouseX, mouseY, windowActive) -> {
             int section = layout.width / 6;
             int subWidth = section * 4;
             int posX = x + section;
             int posY = y + 5;
-            Gui.fill(pose, posX, posY, posX + subWidth, posY + height - 5, Color.BLACK.getRGB());
-            Gui.fill(pose, posX + 1, posY + 1, posX + subWidth - 1, posY + height - 5 - 1, Color.DARK_GRAY.getRGB());
+            graphics.fill(posX, posY, posX + subWidth, posY + height - 5, Color.BLACK.getRGB());
+            graphics.fill(posX + 1, posY + 1, posX + subWidth - 1, posY + height - 5 - 1, Color.DARK_GRAY.getRGB());
 
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 //            int iconU = 0, iconV = 0;
@@ -58,14 +58,14 @@ public class DownloadModule extends Module {
 //                iconV = info.getIconV();
 //            }
 
-            RenderUtil.drawIcon(pose, posX + 5, posY + 3, info, 28, 28);
+            RenderUtil.drawIcon(graphics, posX + 5, posY + 3, info, 28, 28);
 
       //      RenderUtil.drawRectWithTexture(pose, posX + 5, posY + 3, iconU, iconV, 28, 28, 14, 14, 224, 224);
 
             int textWidth = subWidth - 70 - 10 - 30 - 5;
-            RenderUtil.drawStringClipped(pose, data.getOrDefault("file-name", "File"), posX + 37, posY + 7, textWidth, Color.ORANGE.getRGB(), true);
+            RenderUtil.drawStringClipped(graphics, data.getOrDefault("file-name", "File"), posX + 37, posY + 7, textWidth, Color.ORANGE.getRGB(), true);
             if (data.containsKey("text")) {
-                RenderUtil.drawStringClipped(pose, data.get("text"), posX + 37, posY + 19, textWidth, Color.LIGHT_GRAY.getRGB(), false);
+                RenderUtil.drawStringClipped(graphics, data.get("text"), posX + 37, posY + 19, textWidth, Color.LIGHT_GRAY.getRGB(), false);
             }
         });
 
