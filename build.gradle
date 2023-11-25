@@ -68,7 +68,6 @@ subprojects {
             url = "https://dvs1.progwml6.com/files/maven/"
         }
         maven { url "https://maven.architectury.dev/" }
-        maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
     }
 
     dependencies {
