@@ -5,11 +5,13 @@ import com.ultreon.devices.block.entity.NetworkDeviceBlockEntity;
 import com.ultreon.devices.core.network.NetworkDevice;
 import com.ultreon.devices.core.network.Router;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.chunk.LevelChunk;
 
 import java.util.Collection;
@@ -19,7 +21,7 @@ import java.util.Collection;
  */
 public class TaskGetDevices extends Task {
     private BlockPos devicePos;
-    private Class<? extends NetworkDeviceBlockEntity> targetDeviceClass;
+    private BlockEntityType<?> targetType;
 
     private Collection<NetworkDevice> foundDevices;
     private String reason;
@@ -33,39 +35,45 @@ public class TaskGetDevices extends Task {
         this.devicePos = devicePos;
     }
 
-    public TaskGetDevices(BlockPos devicePos, Class<? extends NetworkDeviceBlockEntity> targetDeviceClass) {
+    public TaskGetDevices(BlockPos devicePos, BlockEntityType<?> targetType) {
         this();
         this.devicePos = devicePos;
-        this.targetDeviceClass = targetDeviceClass;
+        this.targetType = targetType;
+    }
+
+    /**
+     * @deprecated Use {@link #TaskGetDevices(BlockPos, BlockEntityType)} instead.
+     */
+    @Deprecated(forRemoval = true)
+    public TaskGetDevices(BlockPos devicePos, Class<? extends NetworkDeviceBlockEntity> ignoredTargetDeviceClass) {
+        this();
+        this.devicePos = devicePos;
     }
 
     @Override
     public void prepareRequest(CompoundTag tag) {
         tag.putLong("devicePos", devicePos.asLong());
-        if (targetDeviceClass != null) {
-            tag.putString("targetClass", targetDeviceClass.getName());
+        if (targetType != null) {
+            tag.putInt("targetType", BuiltInRegistries.BLOCK_ENTITY_TYPE.getId(targetType));
         }
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void processRequest(CompoundTag tag, Level level, Player player) {
         BlockPos devicePos = BlockPos.of(tag.getLong("devicePos"));
-        Class<? extends NetworkDeviceBlockEntity> targetDeviceClass = null;
-        try {
-            Class<?> targetClass = Class.forName(tag.getString("targetClass"));
-            if (NetworkDeviceBlockEntity.class.isAssignableFrom(targetClass)) {
-                targetDeviceClass = (Class<? extends NetworkDeviceBlockEntity>) targetClass;
-            }
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+        BlockEntityType<?> targetType;
+        int typeId = tag.getInt("targetType");
+        if (typeId < 0) {
+            this.reason = "Invalid target ID received: " + typeId;
             return;
         }
+
+        targetType = BuiltInRegistries.BLOCK_ENTITY_TYPE.byId(typeId);
 
         BlockEntity tileEntity = level.getChunkAt(devicePos).getBlockEntity(devicePos, LevelChunk.EntityCreationType.IMMEDIATE);
 
         if (!(tileEntity instanceof NetworkDeviceBlockEntity tileEntityNetworkDevice)) {
-            this.reason = "No network driver found";
+            this.reason = "Not a network device";
             return;
         }
 
@@ -80,11 +88,7 @@ public class TaskGetDevices extends Task {
             return;
         }
 
-        if (targetDeviceClass != null) {
-            this.foundDevices = router.getConnectedDevices(level, targetDeviceClass);
-        } else {
-            this.foundDevices = router.getConnectedDevices(level);
-        }
+        this.foundDevices = targetType != null ? router.getConnectedDevices(level) : router.getConnectedDevices(level, targetType);
         this.setSuccessful();
     }
 
@@ -101,6 +105,6 @@ public class TaskGetDevices extends Task {
 
     @Override
     public void processResponse(CompoundTag tag) {
-
+        // Does not need response processing
     }
 }
