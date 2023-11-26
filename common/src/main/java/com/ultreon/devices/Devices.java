@@ -216,29 +216,29 @@ public abstract class Devices {
         TaskManager.registerTask(TaskInstallApp::new);
 
         // Ender Mail
-//        TaskManager.registerTask(TaskUpdateInbox::new);
-//        TaskManager.registerTask(TaskSendEmail::new);
-//        TaskManager.registerTask(TaskCheckEmailAccount::new);
-//        TaskManager.registerTask(TaskRegisterEmailAccount::new);
-//        TaskManager.registerTask(TaskDeleteEmail::new);
-//        TaskManager.registerTask(TaskViewEmail::new);
+        TaskManager.registerTask(TaskUpdateInbox::new);
+        TaskManager.registerTask(TaskSendEmail::new);
+        TaskManager.registerTask(TaskCheckEmailAccount::new);
+        TaskManager.registerTask(TaskRegisterEmailAccount::new);
+        TaskManager.registerTask(TaskDeleteEmail::new);
+        TaskManager.registerTask(TaskViewEmail::new);
 
         // Auction
-//        TaskManager.registerTask(TaskAddAuction::new);
-//        TaskManager.registerTask(TaskGetAuctions::new);
-//        TaskManager.registerTask(TaskBuyItem::new);
+        TaskManager.registerTask(TaskAddAuction::new);
+        TaskManager.registerTask(TaskGetAuctions::new);
+        TaskManager.registerTask(TaskBuyItem::new);
 
-//        if (DEVELOPER_MODE) {
-//            // Applications (Developers)
-//            ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "example"), () -> ExampleApp::new, false);
-//            ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "icons"), () -> IconsApp::new, false);
-//            ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "text_area"), () -> TextAreaApp::new, false);
-//            ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "test"), () -> TestApp::new, false);
-//
-//            TaskManager.registerTask(TaskNotificationTest::new);
-//        }
-//
-//        EnvExecutor.runInEnv(Env.CLIENT, () -> () -> PrintingManager.registerPrint(new ResourceLocation(Reference.MOD_ID, "picture"), PixelPainterApp.PicturePrint.class));
+        if (DEVELOPER_MODE) {
+            // Applications (Developers)
+            ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "example"), () -> ExampleApp::new, false);
+            ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "icons"), () -> IconsApp::new, false);
+            ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "text_area"), () -> TextAreaApp::new, false);
+            ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "test"), () -> TestApp::new, false);
+
+            TaskManager.registerTask(TaskNotificationTest::new);
+        }
+
+        EnvExecutor.runInEnv(Env.CLIENT, () -> () -> PrintingManager.registerPrint(new ResourceLocation(Reference.MOD_ID, "picture"), PixelPainterApp.PicturePrint.class));
     }
 
     public abstract int getBurnTime(ItemStack stack, RecipeType<?> type);
