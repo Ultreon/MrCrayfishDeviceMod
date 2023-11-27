@@ -130,13 +130,13 @@ public record PrinterRenderer(BlockEntityRendererProvider.Context context) imple
         pose.mulPose(state.getValue(PrinterBlock.FACING).getRotation());
         pose.mulPose(new Quaternionf().rotateY(180f * 0.017453292519943295f));
         pose.translate(0.0675, 0.005, -0.032);
-        pose.translate((8 -6.5) * 0.0625, (8 -5.01) * 0.0625, (-3.9) * 0.0625);
+        pose.translate((8 -5.85) * 0.0625, (8 -5) * 0.0625, (-4.25) * 0.0625);
         pose.pushPose();
-        pose.scale(0.010416667f, -0.010416667f, 0.010416667f);
-        pose.mulPose(new Quaternionf().rotateX(67.5f * 0.017453292519943295f));
+        pose.scale(-0.010416667f, -0.010416667f, -0.010416667f);
+        pose.mulPose(new Quaternionf().rotateX((90 + 22.5f) * 0.017453292519943295f));
         // endregion
 
-        Minecraft.getInstance().font.drawInBatch(Integer.toString(blockEntity.getPaperCount()), Minecraft.getInstance().font.width("00")-Minecraft.getInstance().font.width(Integer.toString(blockEntity.getPaperCount())), 0, Color.WHITE.getRGB(), false, pose.last().pose(), bufferSource, Font.DisplayMode.NORMAL, 0x00000000, 15728880);
+        Minecraft.getInstance().font.drawInBatch(Integer.toString(blockEntity.getPaperCount()), -Minecraft.getInstance().font.width(Integer.toString(blockEntity.getPaperCount())), -Minecraft.getInstance().font.lineHeight, Color.WHITE.getRGB(), false, pose.last().pose(), bufferSource, Font.DisplayMode.NORMAL, 0x00000000, 15728880);
         pose.popPose();
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
         RenderSystem.depthMask(true);

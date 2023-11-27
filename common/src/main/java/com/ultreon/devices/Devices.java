@@ -384,12 +384,12 @@ public abstract class Devices {
         LifecycleEvent.SERVER_STOPPED.register(instance -> server = null);
         InteractionEvent.RIGHT_CLICK_BLOCK.register(((player, hand, pos, face) -> {
             Level level = player.level();
-            if (!player.getItemInHand(hand).isEmpty() && player.getItemInHand(hand).getItem() == Items.PAPER) {
-                if (level.getBlockState(pos).getBlock() instanceof PrinterBlock) {
-                    return EventResult.interruptTrue();
-                    //event.setUseBlock(Event.Result.ALLOW); //todo
-                }
-            }
+//            if (!player.getItemInHand(hand).isEmpty() && player.getItemInHand(hand).getItem() == Items.PAPER) {
+//                if (level.getBlockState(pos).getBlock() instanceof PrinterBlock) {
+//                    return EventResult.interruptTrue();
+//                    //event.setUseBlock(Event.Result.ALLOW); //todo
+//                }
+//            }
             return EventResult.pass();
         }));
 
