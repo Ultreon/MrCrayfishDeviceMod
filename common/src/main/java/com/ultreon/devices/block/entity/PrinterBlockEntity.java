@@ -185,7 +185,6 @@ public class PrinterBlockEntity extends NetworkDeviceBlockEntity.Colored {
     }
 
     public boolean addPaper(ItemStack stack, boolean addAll) {
-        System.out.println("stack = " + stack + ", addAll = " + addAll);
         if (!stack.isEmpty() && stack.getItem() == Items.PAPER && paperCount < DeviceConfig.MAX_PAPER_COUNT.get()) {
             if (!addAll) {
                 paperCount++;
