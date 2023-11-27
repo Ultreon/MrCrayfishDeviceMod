@@ -44,19 +44,13 @@ public class TaskGetStructure extends Task {
     @Override
     public void processRequest(CompoundTag tag, Level level, Player player) {
         BlockPos pos1 = BlockPos.of(tag.getLong("pos"));
-        DebugLog.log("pos == " + pos1.toShortString());
-        DebugLog.log("block->registryName == " + level.getBlockState(pos1).getBlock().arch$registryName());
-        DebugLog.log("level->isClient == " + level.isClientSide());
 
         Devices.getServer().submit(() -> {
             BlockEntity tileEntity = level.getBlockEntity(pos1);
-            DebugLog.log("tileEntity == " + tileEntity);
             if (tileEntity instanceof ComputerBlockEntity laptop) {
                 FileSystem fileSystem = laptop.getFileSystem();
                 UUID uuid = UUID.fromString(tag.getString("uuid"));
                 AbstractDrive serverDrive = fileSystem.getAvailableDrives(level, true).get(uuid);
-                DebugLog.log("uuid = " + uuid);
-                DebugLog.log("serverDrive = " + serverDrive);
                 if (serverDrive != null) {
                     folder = serverDrive.getDriveStructure();
                     this.setSuccessful();
