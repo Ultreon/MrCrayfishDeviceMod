@@ -11,7 +11,6 @@ import com.ultreon.devices.debug.DumpType;
 import com.ultreon.devices.init.DeviceBlockEntities;
 import com.ultreon.devices.init.DeviceBlocks;
 import com.ultreon.devices.object.AppInfo;
-import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.ReloadListenerRegistry;
 import dev.architectury.registry.client.level.entity.EntityModelLayerRegistry;
@@ -41,7 +40,6 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
-
 
 public class ClientModEvents {
     private static final Marker SETUP = MarkerFactory.getMarker("SETUP");
@@ -231,13 +229,6 @@ public class ClientModEvents {
         imageWriter.mode = 0;
         imageWriter.finish();
     }
-
-//    @ExpectPlatform
-//    private static void.json updateIcon(AppInfo info, int iconU, int iconV) {
-//        throw new AssertionError();
-////        ObfuscationReflectionHelper.setPrivateValue(AppInfo.class, info, iconU, "iconU");
-////        ObfuscationReflectionHelper.setPrivateValue(AppInfo.class, info, iconV, "iconV");
-//    }
 
     public static void setRenderLayer(Block block, RenderType type) {
         RenderRegistry.register(block, type

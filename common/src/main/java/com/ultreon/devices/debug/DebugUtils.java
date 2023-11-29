@@ -7,6 +7,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+/**
+ * The DebugUtils class provides utility methods for debugging purposes.
+ */
 public class DebugUtils {
     public static void dump(DumpType type, ResourceLocation resource, DumpWriter dumpFunc) throws IOException {
         File namespaceFile = new File("debug/dump/" + type.name().toLowerCase(), resource.getNamespace());
@@ -20,6 +23,10 @@ public class DebugUtils {
         }
     }
 
+    /**
+     * The DumpWriter interface is a functional interface
+     * that represents a writer capable of dumping data to an OutputStream.
+     */
     @FunctionalInterface
     public interface DumpWriter {
         void dump(OutputStream stream) throws IOException;

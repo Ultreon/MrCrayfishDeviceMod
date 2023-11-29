@@ -87,7 +87,7 @@ public record PrinterRenderer(BlockEntityRendererProvider.Context context) imple
             pose.mulPose(new Quaternionf().rotateX(67.5f * 0.017453292519943295f));
 
             double progress = Math.max(-0.4, -0.4 + (0.4 * ((double) (blockEntity.getRemainingPrintTime() - 10) / 20)));
-            pose.translate(0, progress, 0.4);
+            pose.translate(0, -progress, 0.4);
             pose.translate(-13 * 0.015625, -13 * 0.015625, -1 * 0.015625);
             pose.scale(0.3f, 0.3f, 0.3f);
 
@@ -95,13 +95,13 @@ public record PrinterRenderer(BlockEntityRendererProvider.Context context) imple
             VertexConsumer vertexconsumer = bufferSource.getBuffer(paperModel.renderType(PaperModel.TEXTURE));
             paperModel.renderToBuffer(pose, vertexconsumer, 0xf000f0, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1f);
             // endregion
-        } else if (blockEntity.isPrinting()) {
+        } else if (true /*blockEntity.isPrinting()*/) {
             pose.translate(0.5, 0.078125, 0.5);
             pose.mulPose(state.getValue(PrinterBlock.FACING).getRotation());
             pose.mulPose(new Quaternionf(1, 0, 0, 90f));
 
-            double progress = -0.35 + (0.50 * ((double) (blockEntity.getRemainingPrintTime() - 20) / blockEntity.getTotalPrintTime()));
-            pose.translate(0, progress, 0);
+            double progress = -0.35 + (0.50 * 0.5/*((double) (blockEntity.getRemainingPrintTime() - 20) / blockEntity.getTotalPrintTime())*/);
+            pose.translate(0, -progress, 0);
             pose.translate(-13 * 0.015625, -13 * 0.015625, -0.5 * 0.015625);
             pose.scale(0.3f, 0.3f, 0.3f);
 
@@ -112,7 +112,6 @@ public record PrinterRenderer(BlockEntityRendererProvider.Context context) imple
 
             pose.translate(0.3225, 0.085, -0.001);
             pose.mulPose(new Quaternionf(0, 1, 0, 180f));
-            pose.scale(0.3f, 0.3f, 0.3f);
 
             IPrint print = blockEntity.getPrint();
             if (print != null) {

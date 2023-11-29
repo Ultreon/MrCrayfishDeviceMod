@@ -13,7 +13,6 @@ import com.ultreon.devices.api.print.IPrint;
 import com.ultreon.devices.api.print.PrintingManager;
 import com.ultreon.devices.api.task.TaskManager;
 import com.ultreon.devices.api.utils.OnlineRequest;
-import com.ultreon.devices.block.PrinterBlock;
 import com.ultreon.devices.core.client.ClientNotification;
 import com.ultreon.devices.core.client.debug.ClientAppDebug;
 import com.ultreon.devices.core.io.task.*;
@@ -42,14 +41,11 @@ import com.ultreon.devices.programs.system.SystemApp;
 import com.ultreon.devices.programs.system.task.*;
 import com.ultreon.devices.util.SiteRegistration;
 import com.ultreon.devices.util.Vulnerability;
-import dev.architectury.event.EventResult;
 import dev.architectury.event.events.client.ClientPlayerEvent;
-import dev.architectury.event.events.common.InteractionEvent;
 import dev.architectury.event.events.common.LifecycleEvent;
 import dev.architectury.event.events.common.PlayerEvent;
 import dev.architectury.injectables.targets.ArchitecturyTarget;
 import dev.architectury.platform.Platform;
-import dev.architectury.registry.CreativeTabRegistry;
 import dev.architectury.registry.registries.DeferredSupplier;
 import dev.architectury.registry.registries.RegistrarManager;
 import dev.architectury.utils.Env;
@@ -63,9 +59,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -92,7 +86,6 @@ public abstract class Devices {
     private static final String GITWEB_REGISTER_URL = "https://ultreon.gitlab.io/gitweb/site_register.json";
     public static final String VULNERABILITIES_URL = "https://jab125.com/gitweb/vulnerabilities.php";
     private static final boolean PROTECT_FROM_LAUNCH = false;
-//    private static final Logger ULTRAN_LANG_LOGGER = LoggerFactory.getLogger("UltranLang");
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private static final SiteRegisterStack SITE_REGISTER_STACK = new SiteRegisterStack();
 
@@ -123,7 +116,6 @@ public abstract class Devices {
             preInit();
             serverSetup();
         }
-        //     BlockEntityUtil.sendUpdate(null, null, null);
 
         // STOPSHIP: 3/11/2022 should be moved to dedicated testmod
         final var property = System.getProperty("ultreon.devices.tests");
@@ -133,7 +125,6 @@ public abstract class Devices {
             tests.load(Set.of(split));
         }
 
-        //LOGGER.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
         LOGGER.info("Doing some common setup.");
 
         PacketHandler.init();
@@ -142,14 +133,14 @@ public abstract class Devices {
 
         EnvExecutor.runInEnv(Env.CLIENT, () -> () -> {
             ClientAppDebug.register();
-            ClientModEvents.clientSetup(); //todo
+            ClientModEvents.clientSetup();
             Devices.setupSiteRegistrations();
             Devices.checkForVulnerabilities();
         });
 
         setupEvents();
 
-        EnvExecutor.runInEnv(Env.CLIENT, () -> () -> setupClientEvents()); //todo
+        EnvExecutor.runInEnv(Env.CLIENT, () -> () -> setupClientEvents());
         if (!ArchitecturyTarget.getCurrentTarget().equals("forge")) {
             loadComplete();
         }
@@ -198,12 +189,12 @@ public abstract class Devices {
         TaskManager.registerTask(TaskGetDevices::new);
 
         // Bank
-//        TaskManager.registerTask(TaskDeposit::new);
-//        TaskManager.registerTask(TaskWithdraw::new);
-//        TaskManager.registerTask(TaskGetBalance::new);
-//        TaskManager.registerTask(TaskPay::new);
-//        TaskManager.registerTask(TaskAdd::new);
-//        TaskManager.registerTask(TaskRemove::new);
+        TaskManager.registerTask(TaskDeposit::new);
+        TaskManager.registerTask(TaskWithdraw::new);
+        TaskManager.registerTask(TaskGetBalance::new);
+        TaskManager.registerTask(TaskPay::new);
+        TaskManager.registerTask(TaskAdd::new);
+        TaskManager.registerTask(TaskRemove::new);
 
         // File browser
         TaskManager.registerTask(TaskSendAction::new);
@@ -291,7 +282,7 @@ public abstract class Devices {
         AtomicReference<Application> application = new AtomicReference<>(null);
         EnvExecutor.runInEnv(Env.CLIENT, () -> () -> {
             Application appl = app.get().get();
-            List<Application> apps = getApplications(); /*ObfuscationReflectionHelper.getPrivateValue(Laptop.class, null, "APPLICATIONS");*/
+            List<Application> apps = getApplications();
             assert apps != null;
             apps.add(appl);
 
@@ -305,7 +296,7 @@ public abstract class Devices {
     @NotNull
     @Environment(EnvType.CLIENT)
     private static AppInfo generateAppInfo(ResourceLocation identifier, Class<? extends Application> clazz) {
-        LOGGER.debug("Generating app info for " + identifier.toString());
+        DebugLog.log("Generating app info for {}" + identifier.toString());
 
         AppInfo info = new AppInfo(identifier, SystemApp.class.isAssignableFrom(clazz));
         info.reload();
@@ -320,7 +311,7 @@ public abstract class Devices {
 
     @Environment(EnvType.CLIENT)
     public boolean registerPrint(ResourceLocation identifier, Class<? extends IPrint> classPrint) {
-        LOGGER.debug("Registering print: " + identifier.toString());
+        DebugLog.log("Registering print: %s", identifier.toString());
 
         try {
             Constructor<? extends IPrint> constructor = classPrint.getConstructor();
@@ -328,20 +319,19 @@ public abstract class Devices {
             Class<? extends IPrint.Renderer> classRenderer = print.getRenderer();
             try {
                 IPrint.Renderer renderer = classRenderer.getConstructor().newInstance();
-                Map<String, IPrint.Renderer> idToRenderer = getRegisteredRenders(); //ObfuscationReflectionHelper.getPrivateValue(PrintingManager.class, null, "registeredRenders");
+                Map<String, IPrint.Renderer> idToRenderer = getRegisteredRenders();
                 if (idToRenderer == null) {
                     idToRenderer = new HashMap<>();
                     setRegisteredRenders(idToRenderer);
-                    //ObfuscationReflectionHelper.setPrivateValue(PrintingManager.class, null, idToRenderer, "registeredRenders");
                 }
                 idToRenderer.put(identifier.toString(), renderer);
             } catch (InstantiationException e) {
-                Devices.LOGGER.error("The print renderer '" + classRenderer.getName() + "' is missing an empty constructor and could not be registered!");
+                Devices.LOGGER.error("The print renderer '{}' is missing an empty constructor and could not be registered!", classRenderer.getName());
                 return false;
             }
             return true;
         } catch (Exception e) {
-            Devices.LOGGER.error("The print '" + classPrint.getName() + "' is missing an empty constructor and could not be registered!");
+            Devices.LOGGER.error("The print '{}' is missing an empty constructor and could not be registered!", classPrint.getName());
         }
         return false;
     }
@@ -372,7 +362,7 @@ public abstract class Devices {
 
     private static void setupClientEvents() {
         ClientPlayerEvent.CLIENT_PLAYER_QUIT.register((player -> {
-            LOGGER.debug("Client disconnected from server");
+            DebugLog.log("Client disconnected from server");
 
             allowedApps = null;
             DeviceConfig.restore();
@@ -382,19 +372,9 @@ public abstract class Devices {
     private static void setupEvents() {
         LifecycleEvent.SERVER_STARTING.register((instance -> server = instance));
         LifecycleEvent.SERVER_STOPPED.register(instance -> server = null);
-        InteractionEvent.RIGHT_CLICK_BLOCK.register(((player, hand, pos, face) -> {
-            Level level = player.level();
-//            if (!player.getItemInHand(hand).isEmpty() && player.getItemInHand(hand).getItem() == Items.PAPER) {
-//                if (level.getBlockState(pos).getBlock() instanceof PrinterBlock) {
-//                    return EventResult.interruptTrue();
-//                    //event.setUseBlock(Event.Result.ALLOW); //todo
-//                }
-//            }
-            return EventResult.pass();
-        }));
 
         PlayerEvent.PLAYER_JOIN.register((player -> {
-            LOGGER.info("Player logged in: " + player.getName());
+            LOGGER.info("Player logged in: {}", player.getName());
 
             if (allowedApps != null) {
                 PacketHandler.sendToClient(new SyncApplicationPacket(allowedApps), player);
@@ -428,63 +408,15 @@ public abstract class Devices {
     private static void setupSiteRegistration(String url) {
         SITE_REGISTER_STACK.push();
 
-        enum Type {
-            SITE_REGISTER, REGISTRATION
-        }
-
         OnlineRequest.getInstance().make(url, (success, response) -> {
             if (success) {
-                //Minecraft.getInstance().doRunTask(() -> {
                 JsonElement root = JsonParser.parseString(response);
                 DebugLog.log("root = " + root);
                 JsonArray rootArray = root.getAsJsonArray();
                 for (JsonElement rootRegister : rootArray) {
                     DebugLog.log("rootRegister = " + rootRegister);
                     JsonObject elem = rootRegister.getAsJsonObject();
-                    var registrant = elem.get("registrant") != null ? elem.get("registrant").getAsString() : null;
-                    var type = Type.REGISTRATION;
-                    JsonElement typeElem;
-                    if ((typeElem = elem.get("type")) != null && typeElem.isJsonPrimitive() && typeElem.getAsJsonPrimitive().isString()) {
-                        switch (typeElem.getAsString()) {
-                            case "registration" -> {
-                            }
-                            case "site-register" -> type = Type.SITE_REGISTER;
-                            default -> {
-                                LOGGER.error("Invalid element type: " + typeElem.getAsString());
-                                continue;
-                            }
-                        }
-                    }
-
-                    switch (type) {
-                        case REGISTRATION -> {
-                            @SuppressWarnings("all") //no
-                            var dev = elem.get("dev") != null ? elem.get("dev").getAsBoolean() : false;
-                            var site = elem.get("site").getAsString();
-                            if (dev && !IS_DEV_PREVIEW) {
-                                continue;
-                            }
-                            for (JsonElement registration : elem.get("registrations").getAsJsonArray()) {
-                                var a = registration.getAsJsonObject().keySet();
-                                var d = registration.getAsJsonObject();
-                                for (String string : a) {
-                                    var registrationType = d.get(string).getAsString();
-                                    SITE_REGISTRATIONS.add(new SiteRegistration(registrant, string, registrationType, site));
-                                }
-                            }
-                        }
-                        case SITE_REGISTER -> {
-                            if (!elem.has("register") || !elem.get("register").isJsonPrimitive() || !elem.get("register").getAsJsonPrimitive().isString()) {
-                                continue;
-                            }
-                            var registerUrl = elem.get("register").getAsString();
-                            try {
-                                setupSiteRegistration(registerUrl);
-                            } catch (Exception e) {
-                                LOGGER.error("Error when loading site register: " + registerUrl);
-                            }
-                        }
-                    }
+                    parseRegister(elem);
                 }
             } else {
                 LOGGER.error("Error occurred when loading site registrations at: " + url);
@@ -494,12 +426,70 @@ public abstract class Devices {
         });
     }
 
+    private static void parseRegister(JsonObject elem) {
+        var registrant = elem.get("registrant") != null ? elem.get("registrant").getAsString() : null;
+        RegisterType type;
+        JsonElement typeElem;
+        if ((typeElem = elem.get("type")) != null && typeElem.isJsonPrimitive() && typeElem.getAsJsonPrimitive().isString()) {
+            String asString = typeElem.getAsString();
+            if (asString.equals("registration")) {
+                type = RegisterType.REGISTRATION;
+            } else if (asString.equals("site-register")) {
+                type = RegisterType.SITE_REGISTER;
+            } else {
+                LOGGER.error("Invalid element type: {}", typeElem.getAsString());
+                return;
+            }
+        } else {
+            type = RegisterType.REGISTRATION;
+        }
+
+        if (type == RegisterType.REGISTRATION) {
+            addRegistration(elem, registrant);
+        } else {
+            addSiteRegister(elem);
+        }
+    }
+
+    private enum RegisterType {
+        SITE_REGISTER, REGISTRATION
+    }
+
+    private static void addSiteRegister(JsonObject elem) {
+        if (!elem.has("register") || !elem.get("register").isJsonPrimitive() || !elem.get("register").getAsJsonPrimitive().isString()) {
+            return;
+        }
+        var registerUrl = elem.get("register").getAsString();
+        try {
+            setupSiteRegistration(registerUrl);
+        } catch (Exception e) {
+            LOGGER.error("Error when loading site register: {}", registerUrl);
+        }
+    }
+
+    private static void addRegistration(JsonObject elem, String registrant) {
+        @SuppressWarnings("all") //no
+        var dev = elem.get("dev") != null ? elem.get("dev").getAsBoolean() : false;
+        var site = elem.get("site").getAsString();
+        if (dev && !IS_DEV_PREVIEW) {
+            return;
+        }
+        for (JsonElement registration : elem.get("registrations").getAsJsonArray()) {
+            var a = registration.getAsJsonObject().keySet();
+            var d = registration.getAsJsonObject();
+            for (String string : a) {
+                var registrationType = d.get(string).getAsString();
+                SITE_REGISTRATIONS.add(new SiteRegistration(registrant, string, registrationType, site));
+            }
+        }
+    }
+
     public static ResourceLocation id(String id) {
         return new ResourceLocation(MOD_ID, id);
     }
 
     private static class ProtectedArrayList<T> extends ArrayList<T> {
-        private final StackWalker stackWalker = StackWalker.getInstance(EnumSet.of(StackWalker.Option.RETAIN_CLASS_REFERENCE));
+        private final transient StackWalker stackWalker = StackWalker.getInstance(EnumSet.of(StackWalker.Option.RETAIN_CLASS_REFERENCE));
         private boolean frozen = false;
 
         private void freeze() {

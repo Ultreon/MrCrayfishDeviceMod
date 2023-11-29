@@ -59,8 +59,29 @@ public record PaperRenderer(
         double textureWidth = Math.abs(xTo - xFrom);
         double textureHeight = Math.abs(yTo - yFrom);
         double textureDepth = Math.abs(zTo - zFrom);
-        VertexConsumer buffer = bufferSource.getBuffer(RenderType.solid());
 
+        BufferBuilder buffer = new BufferBuilder(256);
+        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        switch (direction.getAxis()) {
+            case X -> {
+                buffer.vertex(xFrom, yFrom, zFrom).uv((float) (1 - xFrom + textureDepth), (float) (1 - yFrom + textureHeight)).endVertex();
+                buffer.vertex(xFrom, yTo, zFrom).uv((float) (1 - xFrom + textureDepth), (float) (1 - yFrom)).endVertex();
+                buffer.vertex(xTo, yTo, zTo).uv((float) (1 - xFrom), (float) (1 - yFrom)).endVertex();
+                buffer.vertex(xTo, yFrom, zTo).uv((float) (1 - xFrom), (float) (1 - yFrom + textureHeight)).endVertex();
+            }
+            case Y -> {
+                buffer.vertex(xFrom, yFrom, zFrom).uv((float) (1 - xFrom + textureWidth), (float) (1 - yFrom + textureDepth)).endVertex();
+                buffer.vertex(xFrom, yFrom, zTo).uv((float) (1 - xFrom + textureWidth), (float) (1 - yFrom)).endVertex();
+                buffer.vertex(xTo, yFrom, zTo).uv((float) (1 - xFrom), (float) (1 - yFrom)).endVertex();
+                buffer.vertex(xTo, yFrom, zFrom).uv((float) (1 - xFrom), (float) (1 - yFrom + textureDepth)).endVertex();
+            }
+            case Z -> {
+                buffer.vertex(xFrom, yFrom, zFrom).uv((float) (1 - xFrom + textureWidth), (float) (1 - yFrom + textureHeight)).endVertex();
+                buffer.vertex(xFrom, yTo, zFrom).uv((float) (1 - xFrom + textureWidth), (float) (1 - yFrom)).endVertex();
+                buffer.vertex(xTo, yTo, zTo).uv((float) (1 - xFrom), (float) (1 - yFrom)).endVertex();
+                buffer.vertex(xTo, yFrom, zTo).uv((float) (1 - xFrom), (float) (1 - yFrom + textureHeight)).endVertex();
+            }
+        }
     }
 
     private static long AA = 0;
@@ -98,11 +119,12 @@ public record PaperRenderer(
 
         pose.pushPose();
         {
-            pose.translate(blockEntity.getBlockPos().getX(), blockEntity.getBlockPos().getY(), blockEntity.getBlockPos().getZ());
-            pose.translate(0.5, 0.5, 0.5);
+            float scale = 32768;
+            pose.scale(1 / scale, 1 / scale, 1 / scale);
+//            pose.translate(blockEntity.getBlockPos().getX(), blockEntity.getBlockPos().getY(), blockEntity.getBlockPos().getZ());
+//            pose.translate(-0.5, -0.5, -0.5);
             pose.mulPose(state.getValue(PaperBlock.FACING).getRotation());
-            pose.mulPose(new Quaternionf(0, 0, 1, -blockEntity.getRotation()));
-            pose.translate(-0.5, -0.5, -0.5);
+//            pose.translate(0.5, 0.5, 0.5);
 
             IPrint print = blockEntity.getPrint();
             if (print != null) {
