@@ -14,6 +14,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.opengl.GL11;
+
 import java.awt.*;
 
 @SuppressWarnings("unused")
@@ -131,6 +133,27 @@ public class RenderUtil {
         buffer.vertex(e, (float) (x + width), (float) y, 0).uv((u + textureWidth) * scaleWidth, v * scaleHeight).endVertex();
         buffer.vertex(e, (float) x, (float) y, 0).uv(u * scaleWidth, v * scaleHeight).endVertex();
         BufferUploader.drawWithShader(buffer.end());
+    }
+
+    @Deprecated
+    public static void drawRectWithTexture2(ResourceLocation location, PoseStack pose, double x, double y, float u, float v, int width, int height, float textureWidth, float textureHeight, int sourceWidth, int sourceHeight) {
+        //Gui.blit(pose, (int) x, (int) y, width, height, u, v, sourceWidth, sourceHeight, (int) textureWidth, (int) textureHeight);
+        float scaleWidth = 1f / sourceWidth;
+        float scaleHeight = 1f / sourceHeight;
+        var e = pose.last().pose();
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        BufferBuilder buffer = Tesselator.getInstance().getBuilder();
+        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        buffer.vertex(e, (float) x, (float) (y + height), 0).uv(u * scaleWidth, (v + textureHeight) * scaleHeight).endVertex();
+        buffer.vertex(e, (float) (x + width), (float) (y + height), 0).uv((u + textureWidth) * scaleWidth, (v + textureHeight) * scaleHeight).endVertex();
+        buffer.vertex(e, (float) (x + width), (float) y, 0).uv((u + textureWidth) * scaleWidth, v * scaleHeight).endVertex();
+        buffer.vertex(e, (float) x, (float) y, 0).uv(u * scaleWidth, v * scaleHeight).endVertex();
+        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+        RenderSystem.disableCull();
+        RenderSystem.depthFunc(GL11.GL_LEQUAL);
+        Tesselator.getInstance().end();
+        RenderSystem.enableCull();
+//        BufferUploader.drawWithShader(buffer.end());
     }
 
     public static void drawApplicationIcon(GuiGraphics graphics, @Nullable AppInfo info, double x, double y) {

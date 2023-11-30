@@ -123,7 +123,11 @@ public record PaperRenderer(
             pose.scale(1 / scale, 1 / scale, 1 / scale);
 //            pose.translate(blockEntity.getBlockPos().getX(), blockEntity.getBlockPos().getY(), blockEntity.getBlockPos().getZ());
 //            pose.translate(-0.5, -0.5, -0.5);
+            pose.pushPose();
+            pose.translate(-0.5, -0.5, -0.5);
             pose.mulPose(state.getValue(PaperBlock.FACING).getRotation());
+            pose.mulPose(new Quaternionf().rotateX((float) Math.toRadians(-90)).rotateY((float) Math.toRadians(-90)));
+            pose.translate(0.5, 0.5, 0.5);
 //            pose.translate(0.5, 0.5, 0.5);
 
             IPrint print = blockEntity.getPrint();
@@ -151,6 +155,7 @@ public record PaperRenderer(
                             drawPixels(pose, tag.getIntArray("pixels"), tag.getInt("resolution"), tag.getBoolean("cut"), packedLight, bufferSource);
                         }
                     }
+                    pose.popPose();
                     pose.popPose();
                 }
             }

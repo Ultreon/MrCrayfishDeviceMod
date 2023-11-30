@@ -509,7 +509,7 @@ public class PixelPainterApp extends Application {
                 // This is for the paper background
                 if (!cut) {
                     RenderSystem.setShaderTexture(0, TEXTURE);
-                    RenderUtil.drawRectWithTexture(TEXTURE, pose, 0, 0, 0, 0, 1, 1, resolution, resolution, resolution, resolution);
+                    RenderUtil.drawRectWithTexture2(TEXTURE, pose, 0, 0, 0, 0, 1, 1, resolution, resolution, resolution, resolution);
                 }
 
                 // This creates a flipped copy of the pixel array
@@ -531,7 +531,7 @@ public class PixelPainterApp extends Application {
                 image.upload(0, 0, 0, false);
 
                 RenderSystem.setShaderTexture(0, textureId);
-                RenderUtil.drawRectWithTexture(null, pose, 0, 0, 0, 0, 1, 1, resolution, resolution, resolution, resolution);
+                RenderUtil.drawRectWithTexture2(null, pose, 0, 0, 0, 0, 1, 1, resolution, resolution, resolution, resolution);
                 RenderSystem.deleteTexture(textureId);
 
 //                RenderSystem.disableRescaleNormal();
