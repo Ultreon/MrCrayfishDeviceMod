@@ -1,5 +1,6 @@
 package com.ultreon.devices.programs;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.platform.TextureUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -522,6 +523,12 @@ public class PixelPainterApp extends Application {
 
                 int textureId = TextureUtil.generateTextureId();
                 TextureUtil.prepareImage(textureId, resolution, resolution);
+                if (!RenderSystem.isOnRenderThreadOrInit()) {
+                    RenderSystem.recordRenderCall(() -> GlStateManager._bindTexture(textureId));
+                } else {
+                    GlStateManager._bindTexture(textureId);
+                }
+                image.upload(0, 0, 0, false);
 
                 RenderSystem.setShaderTexture(0, textureId);
                 RenderUtil.drawRectWithTexture(null, pose, -1, 0, 0, 0, 1, 1, resolution, resolution, resolution, resolution);
