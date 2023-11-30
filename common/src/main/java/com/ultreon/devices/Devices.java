@@ -18,6 +18,7 @@ import com.ultreon.devices.core.client.debug.ClientAppDebug;
 import com.ultreon.devices.core.io.task.*;
 import com.ultreon.devices.core.network.task.TaskConnect;
 import com.ultreon.devices.core.network.task.TaskGetDevices;
+import com.ultreon.devices.core.network.task.TaskGetRouters;
 import com.ultreon.devices.core.network.task.TaskPing;
 import com.ultreon.devices.core.print.task.TaskPrint;
 import com.ultreon.devices.core.task.TaskInstallApp;
@@ -159,6 +160,7 @@ public abstract class Devices {
         return IS_DEV_PREVIEW;
     }
 
+    @Deprecated(forRemoval = true)
     public static MinecraftServer getServer() {
         return server;
     }
@@ -187,6 +189,7 @@ public abstract class Devices {
         TaskManager.registerTask(TaskConnect::new);
         TaskManager.registerTask(TaskPing::new);
         TaskManager.registerTask(TaskGetDevices::new);
+        TaskManager.registerTask(TaskGetRouters::new);
 
         // Bank
         TaskManager.registerTask(TaskDeposit::new);
