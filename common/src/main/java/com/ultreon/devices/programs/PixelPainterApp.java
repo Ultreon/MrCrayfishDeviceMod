@@ -5,6 +5,7 @@ import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.platform.TextureUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.ultreon.devices.Reference;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Dialog;
@@ -25,17 +26,22 @@ import com.ultreon.devices.object.ColorGrid;
 import com.ultreon.devices.object.Picture;
 import com.ultreon.devices.programs.system.layout.StandardLayout;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import org.joml.Matrix3f;
 import org.joml.Quaternionf;
 
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
+
 import java.awt.*;
-import java.lang.System;
 import java.util.Objects;
+
+import static org.lwjgl.opengl.GL11.*;
 
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
 public class PixelPainterApp extends Application {
@@ -492,7 +498,7 @@ public class PixelPainterApp extends Application {
 
         @SuppressWarnings("resource")
         @Override
-        public boolean render(PoseStack pose, CompoundTag data) {
+        public boolean render(PoseStack pose, VertexConsumer buffer, CompoundTag data, int packedLight) {
             if (data.contains("pixels", Tag.TAG_INT_ARRAY) && data.contains("resolution", Tag.TAG_INT)) {
                 int[] pixels = data.getIntArray("pixels");
                 int resolution = data.getInt("resolution");
@@ -502,7 +508,8 @@ public class PixelPainterApp extends Application {
                     return false;
 
                 RenderSystem.enableBlend();
-                RenderSystem.blendFuncSeparate(770, 771, 1, 0);
+                RenderSystem.enableDepthTest();
+                RenderSystem.blendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
 //                GlStateManager.disableLighting();
                 pose.mulPose(new Quaternionf(0, 0, 0, 180));
 
@@ -514,6 +521,7 @@ public class PixelPainterApp extends Application {
 
                 // This creates a flipped copy of the pixel array
                 // as it otherwise would be mirrored
+                // TODO This is not the best way to do it, causes performance issues. Consider caching native images.
                 NativeImage image = new NativeImage(resolution, resolution, false);
                 for (int i = 0; i < resolution; i++) {
                     for (int j = 0; j < resolution; j++) {
@@ -531,7 +539,19 @@ public class PixelPainterApp extends Application {
                 image.upload(0, 0, 0, false);
 
                 RenderSystem.setShaderTexture(0, textureId);
-                RenderUtil.drawRectWithTexture2(null, pose, 0, 0, 0, 0, 1, 1, resolution, resolution, resolution, resolution);
+                if (buffer != null) {
+                    Matrix3f poseNormal = pose.last().normal();
+                    Vector3f transformedNor = poseNormal.transform(new Vector3f(0, 0, 0));
+                    float norX = transformedNor.x();
+                    float norY = transformedNor.y();
+                    float norZ = transformedNor.z();
+                    buffer.vertex(0, 0, 0, 1, 1, 1, 1, 0, 0, 0, packedLight, norX, norY, norZ);
+                    buffer.vertex(0, resolution, 0, 1, 1, 1, 1, 0, 1, 0, packedLight, norX, norY, norZ);
+                    buffer.vertex(resolution, resolution, 0, 1, 1, 1, 1, 1, 1, 0, packedLight, norX, norY, norZ);
+                    buffer.vertex(resolution, 0, 0, 1, 1, 1, 1, 1, 0, 0, packedLight, norX, norY, norZ);
+                } else {
+                    RenderUtil.drawRectWithTexture2(null, pose, 0, 0, 0, 0, 1, 1, resolution, resolution, resolution, resolution);
+                }
                 RenderSystem.deleteTexture(textureId);
 
 //                RenderSystem.disableRescaleNormal();

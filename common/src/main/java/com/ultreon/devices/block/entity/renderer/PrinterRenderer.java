@@ -36,6 +36,10 @@ import java.util.Objects;
  * @author MrCrayfish
  */
 public record PrinterRenderer(BlockEntityRendererProvider.Context context) implements BlockEntityRenderer<PrinterBlockEntity> {
+    private static final Quaternionf tmpQ = new Quaternionf();
+    public static final float DEG2RAD = 0.017453292519943295f;
+    public static final double PIXEL_SIZE = 0.015625;
+
     @Override
     public void render(PrinterBlockEntity blockEntity, float partialTick, @NotNull PoseStack pose, @NotNull MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         PaperModel paperModel = new PaperModel(Minecraft.getInstance().getEntityModels().bakeLayer(PaperModel.LAYER_LOCATION));
@@ -55,7 +59,7 @@ public record PrinterRenderer(BlockEntityRendererProvider.Context context) imple
         }
 
         pose.pushPose();
-        renderPrint(blockEntity, pose, state, bufferSource, paperModel);
+        renderPrint(blockEntity, pose, state, bufferSource, packedLight, paperModel);
         pose.popPose();
 
         pose.pushPose();
@@ -69,56 +73,60 @@ public record PrinterRenderer(BlockEntityRendererProvider.Context context) imple
     private static void renderPaper(@NotNull PoseStack pose, @NotNull MultiBufferSource bufferSource, int packedLight, BlockState state, PaperModel paperModel) {
         pose.translate(0.5, 0.5, 0.5);
         pose.mulPose(state.getValue(PrinterBlock.FACING).getRotation());
-        pose.mulPose(new Quaternionf().rotateX(67.5f * 0.017453292519943295f));
+        pose.mulPose(new Quaternionf().rotateX(67.5f * DEG2RAD));
         pose.translate(0, 0, 0.4);
-        pose.translate(-13 * 0.015625, -13 * 0.015625, -1 * 0.015625);
+        pose.translate(-13 * PIXEL_SIZE, -13 * PIXEL_SIZE, -1 * PIXEL_SIZE);
         pose.scale(0.3f, 0.3f, 0.3f);
 
-        //region <DrawBuffer()>
-        VertexConsumer vertexconsumer = bufferSource.getBuffer(paperModel.renderType(PaperModel.TEXTURE));
-        paperModel.renderToBuffer(pose, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1f);
-        //endregion
+        drawBuffer(pose, bufferSource, packedLight, paperModel);
     }
 
-    private static void renderPrint(PrinterBlockEntity blockEntity, @NotNull PoseStack pose, BlockState state, @NotNull MultiBufferSource bufferSource, PaperModel paperModel) {
+    private static void renderPrint(PrinterBlockEntity blockEntity, @NotNull PoseStack pose, BlockState state, @NotNull MultiBufferSource bufferSource, int packedLight, PaperModel paperModel) {
         if (blockEntity.isLoading()) {
             pose.translate(0.5, 0.5, 0.5);
             pose.mulPose(state.getValue(PrinterBlock.FACING).getRotation());
-            pose.mulPose(new Quaternionf().rotateX(67.5f * 0.017453292519943295f));
+            pose.mulPose(tmpQ.identity().rotateX(67.5f * DEG2RAD));
 
             double progress = Math.max(-0.4, -0.4 + (0.4 * ((double) (blockEntity.getRemainingPrintTime() - 10) / 20)));
             pose.translate(0, -progress, 0.4);
-            pose.translate(-13 * 0.015625, -13 * 0.015625, -1 * 0.015625);
+            pose.translate(-13 * PIXEL_SIZE, -13 * PIXEL_SIZE, -1 * PIXEL_SIZE);
             pose.scale(0.3f, 0.3f, 0.3f);
 
-            // region <DrawBuffer()>
-            VertexConsumer vertexconsumer = bufferSource.getBuffer(paperModel.renderType(PaperModel.TEXTURE));
-            paperModel.renderToBuffer(pose, vertexconsumer, 0xf000f0, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1f);
-            // endregion
-        } else if (true /*blockEntity.isPrinting()*/) {
+            drawBuffer(pose, bufferSource, packedLight, paperModel);
+        } else if (blockEntity.isPrinting()) {
             pose.translate(0.5, 0.078125, 0.5);
             pose.mulPose(state.getValue(PrinterBlock.FACING).getRotation());
-            pose.mulPose(new Quaternionf(1, 0, 0, 90f));
 
-            double progress = -0.35 + (0.50 * 0.5/*((double) (blockEntity.getRemainingPrintTime() - 20) / blockEntity.getTotalPrintTime())*/);
+            double progress = -0.35 + (((double) (blockEntity.getRemainingPrintTime() - 20) / blockEntity.getTotalPrintTime()));
             pose.translate(0, -progress, 0);
-            pose.translate(-13 * 0.015625, -13 * 0.015625, -0.5 * 0.015625);
+            pose.translate(-13 * PIXEL_SIZE, -13 * PIXEL_SIZE, -0.5 * PIXEL_SIZE);
             pose.scale(0.3f, 0.3f, 0.3f);
 
-            // region <DrawBuffer()>
-            VertexConsumer vertexconsumer = bufferSource.getBuffer(paperModel.renderType(PaperModel.TEXTURE));
-            paperModel.renderToBuffer(pose, vertexconsumer, 0xf000f0, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1f);
-            // endregion
+            drawBuffer(pose, bufferSource, packedLight, paperModel);
 
-            pose.translate(0.3225, 0.085, -0.001);
-            pose.mulPose(new Quaternionf(0, 1, 0, 180f));
+            pose.translate(0.4, 0.085, -0.001);
+            pose.mulPose(tmpQ.identity().rotateY(180f * DEG2RAD));
 
+            //region <RenderPrint()>
             IPrint print = blockEntity.getPrint();
             if (print != null) {
+                pose.pushPose();
+                pose.translate(-15 * 0.0625, 7.5 * 0.0625, 0);
+                pose.scale(1 / 16384f, 1 / 16384f, 1 / 16384f);
+                pose.scale(1 / 1.5f, 1 / 1.5f, 1 / 1.5f);
+
                 IPrint.Renderer renderer = PrintingManager.getRenderer(print);
-                renderer.render(pose, print.toTag());
+                VertexConsumer buffer = bufferSource.getBuffer(paperModel.renderType(PaperModel.TEXTURE));
+                renderer.render(pose, buffer, print.toTag(), packedLight);
+                pose.popPose();
             }
+            //endregion
         }
+    }
+
+    private static void drawBuffer(@NotNull PoseStack pose, @NotNull MultiBufferSource bufferSource, int packedLight, PaperModel paperModel) {
+        VertexConsumer buffer = bufferSource.getBuffer(paperModel.renderType(PaperModel.TEXTURE));
+        paperModel.renderToBuffer(pose, buffer, packedLight, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1f);
     }
 
     private static void renderDisplay(PrinterBlockEntity blockEntity, @NotNull PoseStack pose, @NotNull MultiBufferSource bufferSource, BlockState state) {
@@ -127,12 +135,12 @@ public record PrinterRenderer(BlockEntityRendererProvider.Context context) imple
         // region <Prepare()>
         pose.translate(0.5, 0.5, 0.5);
         pose.mulPose(state.getValue(PrinterBlock.FACING).getRotation());
-        pose.mulPose(new Quaternionf().rotateY(180f * 0.017453292519943295f));
+        pose.mulPose(tmpQ.identity().rotateY(180f * DEG2RAD));
         pose.translate(0.0675, 0.005, -0.032);
         pose.translate((8 -5.85) * 0.0625, (8 -5) * 0.0625, (-4.25) * 0.0625);
         pose.pushPose();
         pose.scale(-0.010416667f, -0.010416667f, -0.010416667f);
-        pose.mulPose(new Quaternionf().rotateX((90 + 22.5f) * 0.017453292519943295f));
+        pose.mulPose(tmpQ.identity().rotateX((90 + 22.5f) * DEG2RAD));
         // endregion
 
         Minecraft.getInstance().font.drawInBatch(Integer.toString(blockEntity.getPaperCount()), -Minecraft.getInstance().font.width(Integer.toString(blockEntity.getPaperCount())), -Minecraft.getInstance().font.lineHeight, Color.WHITE.getRGB(), false, pose.last().pose(), bufferSource, Font.DisplayMode.NORMAL, 0x00000000, 15728880);

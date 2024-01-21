@@ -1,9 +1,11 @@
 package com.ultreon.devices.api.print;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.ultreon.devices.init.DeviceBlocks;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -78,6 +80,10 @@ public interface IPrint {
     Class<? extends Renderer> getRenderer();
 
     interface Renderer {
-        boolean render(PoseStack pose, CompoundTag data);
+        default boolean render(PoseStack pose, CompoundTag data) {
+            return render(pose, null, data, 0);
+        }
+
+        boolean render(PoseStack pose, VertexConsumer buffer, CompoundTag data, int packedLight);
     }
 }
