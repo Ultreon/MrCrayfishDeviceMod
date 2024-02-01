@@ -114,6 +114,7 @@ public class DeviceItems {
     public static final RegistrySupplier<BasicItem> PLASTIC = REGISTER.register(Devices.id("plastic"), () -> new BasicItem(new Item.Properties()));
     public static final RegistrySupplier<BasicItem> PLASTIC_FRAME = REGISTER.register(Devices.id("plastic_frame"), () -> new BasicItem(new Item.Properties()));
     public static final RegistrySupplier<BasicItem> WHEEL = REGISTER.register(Devices.id("wheel"), () -> new BasicItem(new Item.Properties()));
+    public static final RegistrySupplier<Item> GLASS_DUST = REGISTER.register(Devices.id("glass_dust"), () -> new Item(new Item.Properties()));
 
     public static final RegistrySupplier<ComponentItem> COMPONENT_CIRCUIT_BOARD = REGISTER.register(Devices.id("circuit_board"), () -> new ComponentItem(new Item.Properties()));
     public static final RegistrySupplier<ComponentItem> COMPONENT_MOTHERBOARD = REGISTER.register(Devices.id("motherboard"), () -> new MotherboardItem(new Item.Properties()));

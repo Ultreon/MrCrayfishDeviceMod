@@ -38,8 +38,6 @@ dependencies {
 
     modImplementation "com.github.Ultreon.ultreonlib:ultreon-lib-forge:$ultreonlib_version"
 
-    modApi "curse.maven:emojiful-284324:4672310"
-
 //    forgeRuntimeLibrary "com.ultreon:ultranlang:0.1.0+6"
     forgeRuntimeLibrary "com.jab125:apoint:$apoint_version"
     forgeRuntimeLibrary "me.friwi:jcefmaven:$jcef_version"

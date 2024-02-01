@@ -14,6 +14,8 @@ import com.ultreon.devices.init.RegistrationHandler;
 import dev.architectury.platform.forge.EventBuses;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.MavenVersionStringHelper;
 import net.minecraftforge.data.loading.DatagenModLoader;
@@ -36,8 +38,37 @@ import java.util.Map;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(Reference.MOD_ID)
-public final class DevicesForge extends Devices {
+public final class DevicesForge {
     public static final Logger LOGGER = LogUtils.getLogger();
+    private final Devices instance = new Devices() {
+        @Override
+        protected void registerApplicationEvent() {
+            DevicesForge.this.modEventBus.post(new ForgeApplicationRegistration());
+        }
+
+        @Override
+        public int getBurnTime(ItemStack stack, RecipeType<?> type) {
+            return stack.getBurnTime(type);
+        }
+
+        @Override
+        protected List<Application> getApplications() {
+            return ObfuscationReflectionHelper.getPrivateValue(Laptop.class, null, "APPLICATIONS");
+        }
+
+        @Override
+        @OnlyIn(Dist.CLIENT)
+        @SuppressWarnings("DataFlowIssue")
+        protected void setRegisteredRenders(Map<String, IPrint.Renderer> map) {
+            ObfuscationReflectionHelper.setPrivateValue(PrintingManager.class, null, map, "registeredRenders");
+        }
+
+        @Override
+        @OnlyIn(Dist.CLIENT)
+        protected Map<String, IPrint.Renderer> getRegisteredRenders() {
+            return ObfuscationReflectionHelper.getPrivateValue(PrintingManager.class, null, "registeredRenders");
+        }
+    };
 
     public IEventBus modEventBus;
 
@@ -80,41 +111,15 @@ public final class DevicesForge extends Devices {
         forgeEventBus.register(this);
     }
 
-    @Override
-    public int getBurnTime(ItemStack stack, RecipeType<?> type) {
-        return stack.getBurnTime(type);
-    }
-    
     private void fmlCommonSetup(FMLCommonSetupEvent t) {
-        this.init();
+        this.instance.init();
     }
 
     private void fmlLoadComplete(FMLLoadCompleteEvent t) {
-        this.loadComplete();
+        this.instance.loadComplete();
     }
 
     private void fmlServerSetup(FMLDedicatedServerSetupEvent t) {
-        this.serverSetup();
-    }
-
-    @Override
-    protected void registerApplicationEvent() {
-        this.modEventBus.post(new ForgeApplicationRegistration());
-    }
-
-    @Override
-    protected List<Application> getApplications() {
-        return ObfuscationReflectionHelper.getPrivateValue(Laptop.class, null, "APPLICATIONS");
-    }
-
-    @Override
-    @SuppressWarnings("DataFlowIssue")
-    protected void setRegisteredRenders(Map<String, IPrint.Renderer> map) {
-        ObfuscationReflectionHelper.setPrivateValue(PrintingManager.class, null, map, "registeredRenders");
-    }
-
-    @Override
-    protected Map<String, IPrint.Renderer> getRegisteredRenders() {
-        return ObfuscationReflectionHelper.getPrivateValue(PrintingManager.class, null, "registeredRenders");
+        this.instance.serverSetup();
     }
 }
