@@ -57,13 +57,18 @@ subprojects {
             url 'https://maven.quiltmc.org/repository/release/'
         }
 
-
         maven {
             url "https://cursemaven.com"
             content {
                 includeGroup "curse.maven"
             }
         }
+
+        maven {
+            name "Jitpack"
+            url "https://jitpack.io"
+        }
+
         maven {
             // location of the maven that hosts JEI files
             name = "Progwml6 maven"

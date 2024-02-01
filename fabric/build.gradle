@@ -25,6 +25,7 @@ loom {
 }
 
 repositories {
+    maven { url = "https://cursemaven.com" }
     maven { url "https://maven.terraformersmc.com/releases" }
     mavenCentral()
 }
@@ -42,6 +43,7 @@ dependencies {
     modApi "net.fabricmc.fabric-api:fabric-api:$fabric_api_version"
     // Remove the next line if you don't want to depend on the API
     modApi "dev.architectury:architectury-fabric:$architectury_version"
+    modApi "com.github.Ultreon.ultreonlib:ultreon-lib-fabric:$ultreonlib_version"
 
     modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:$forgeconfigapiport_version"
     modImplementation "com.electronwill.night-config:core:3.6.5"

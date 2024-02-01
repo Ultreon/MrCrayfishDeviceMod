@@ -17,6 +17,7 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:$fabric_loader_version"
     // Remove the next line if you don't want to depend on the API
     modApi "dev.architectury:architectury:$architectury_version"
+    modApi "com.github.Ultreon.ultreonlib:ultreon-lib:$ultreonlib_version"
 
     modImplementation "com.github.Ultreon.ultreonlib:ultreon-lib:$ultreonlib_version"
 
