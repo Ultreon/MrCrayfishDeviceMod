@@ -59,11 +59,11 @@ public class FooterModule extends Module {
         String title = GitWebFrame.parseFormatting(data.get("title"));
         String subTitle = GitWebFrame.parseFormatting(data.get("sub-title"));
         int finalColor = color;
-        layout.setBackground((pose, gui, mc, x, y, width1, height, mouseX, mouseY, windowActive) -> {
-            Gui.fill(pose, x, y, x + width1, y + height, finalColor);
+        layout.setBackground((graphics, mc, x, y, width1, height, mouseX, mouseY, windowActive) -> {
+            graphics.fill(x, y, x + width1, y + height, finalColor);
 
-            RenderUtil.drawStringClipped(pose, title, x + 5, y + 5, buttonHome.left - 10, -1, true);
-            RenderUtil.drawStringClipped(pose, subTitle, x + 5, y + 16, buttonHome.left - 10, Color.LIGHT_GRAY.getRGB(), false);
+            RenderUtil.drawStringClipped(graphics, title, x + 5, y + 5, buttonHome.left - 10, -1, true);
+            RenderUtil.drawStringClipped(graphics, subTitle, x + 5, y + 16, buttonHome.left - 10, Color.LIGHT_GRAY.getRGB(), false);
         });
     }
 }

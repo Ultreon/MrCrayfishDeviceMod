@@ -30,6 +30,9 @@ public class DeviceBlocks {
         }
     };
 
+    public static final RegistrySupplier<MacMaxXBlock> MAC_MAX_X = REGISTER.register(Devices.id("mac_max_x"), MacMaxXBlock::new);
+    public static final RegistrySupplier<MacMaxXBlockPart> MAC_MAX_X_PART = REGISTER.register(Devices.id("mac_max_x_part"), MacMaxXBlockPart::new);
+
     public static final DyeableRegistration<Block> PRINTERS = new DyeableRegistration<>() {
         @Override
         public RegistrySupplier<Block> register(Registrar<Block> registrar, DyeColor color) {

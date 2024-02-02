@@ -3,6 +3,7 @@ package com.ultreon.devices.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.core.Window;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentContents;
@@ -16,7 +17,7 @@ public class GuiButtonClose extends Button {
     }
 
     @Override
-    public void renderButton(@NotNull PoseStack pose, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         if (this.visible) {
             RenderSystem.setShaderTexture(0, Window.WINDOW_GUI);
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
@@ -27,7 +28,7 @@ public class GuiButtonClose extends Button {
             RenderSystem.blendFunc(770, 771);
 
             int state = this.isHovered ? 1 : 0;
-            blit(pose, this.getX(), this.getY(), state * this.width + 15, 0, this.width, this.height);
+            graphics.blit(Window.WINDOW_GUI, this.getX(), this.getY(), state * this.width + 15, 0, this.width, this.height);
         }
     }
 

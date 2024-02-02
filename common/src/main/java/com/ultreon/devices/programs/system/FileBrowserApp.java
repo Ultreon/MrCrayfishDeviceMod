@@ -11,7 +11,7 @@ import com.ultreon.devices.object.TrayItem;
 import com.ultreon.devices.programs.system.component.FileBrowser;
 import net.minecraft.nbt.CompoundTag;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class FileBrowserApp extends SystemApp {
     private FileBrowser browser;

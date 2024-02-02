@@ -3,12 +3,14 @@ package com.ultreon.devices.datagen;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.ultreon.devices.init.DeviceBlocks;
+import com.ultreon.devices.init.DeviceItems;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
 import net.minecraft.data.models.BlockModelGenerators;
 import net.minecraft.data.models.ItemModelGenerators;
 import net.minecraft.data.models.blockstates.BlockStateGenerator;
 import net.minecraft.data.models.model.ModelLocationUtils;
+import net.minecraft.data.models.model.ModelTemplates;
 import net.minecraft.world.level.block.Block;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
@@ -235,6 +237,7 @@ public class DevicesModelGenerator extends FabricModelProvider {
     }
 
     @Override
-    public void generateItemModels(ItemModelGenerators itemModelGenerator) {
+    public void generateItemModels(ItemModelGenerators generators) {
+        generators.generateFlatItem(DeviceItems.GLASS_DUST.get(), ModelTemplates.FLAT_ITEM);
     }
 }

@@ -12,8 +12,9 @@ import com.ultreon.devices.core.Laptop;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import net.minecraft.client.gui.GuiGraphics;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 
 /**
@@ -49,11 +50,11 @@ public abstract class ComboBox<T> extends Component {
 
     @Override
     public void init(Layout layout) {
-        this.layout.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> Gui.fill(pose, x, y, x + width, y + height, Color.GRAY.getRGB()));
+        this.layout.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> graphics.fill(x, y, x + width, y + height, Color.GRAY.getRGB()));
     }
 
     @Override
-    public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         if (this.visible) {
             RenderSystem.setShaderTexture(0, Component.COMPONENTS_GUI);
 
@@ -71,38 +72,38 @@ public abstract class ComboBox<T> extends Component {
             int xOffset = width - height;
 
             /* Corners */
-            RenderUtil.drawRectWithTexture(pose, xPosition + xOffset, yPosition, 96 + i * 5, 12, 2, 2, 2, 2);
-            RenderUtil.drawRectWithTexture(pose, xPosition + height - 2 + xOffset, yPosition, 99 + i * 5, 12, 2, 2, 2, 2);
-            RenderUtil.drawRectWithTexture(pose, xPosition + height - 2 + xOffset, yPosition + height - 2, 99 + i * 5, 15, 2, 2, 2, 2);
-            RenderUtil.drawRectWithTexture(pose, xPosition + xOffset, yPosition + height - 2, 96 + i * 5, 15, 2, 2, 2, 2);
+            RenderUtil.drawRectWithTexture(Component.COMPONENTS_GUI, graphics, xPosition + xOffset, yPosition, 96 + i * 5, 12, 2, 2, 2, 2);
+            RenderUtil.drawRectWithTexture(Component.COMPONENTS_GUI, graphics, xPosition + height - 2 + xOffset, yPosition, 99 + i * 5, 12, 2, 2, 2, 2);
+            RenderUtil.drawRectWithTexture(Component.COMPONENTS_GUI, graphics, xPosition + height - 2 + xOffset, yPosition + height - 2, 99 + i * 5, 15, 2, 2, 2, 2);
+            RenderUtil.drawRectWithTexture(Component.COMPONENTS_GUI, graphics, xPosition + xOffset, yPosition + height - 2, 96 + i * 5, 15, 2, 2, 2, 2);
 
             /* Middles */
-            RenderUtil.drawRectWithTexture(pose, xPosition + 2 + xOffset, yPosition, 98 + i * 5, 12, height - 4, 2, 1, 2);
-            RenderUtil.drawRectWithTexture(pose, xPosition + height - 2 + xOffset, yPosition + 2, 99 + i * 5, 14, 2, height - 4, 2, 1);
-            RenderUtil.drawRectWithTexture(pose, xPosition + 2 + xOffset, yPosition + height - 2, 98 + i * 5, 15, height - 4, 2, 1, 2);
-            RenderUtil.drawRectWithTexture(pose, xPosition + xOffset, yPosition + 2, 96 + i * 5, 14, 2, height - 4, 2, 1);
+            RenderUtil.drawRectWithTexture(Component.COMPONENTS_GUI, graphics, xPosition + 2 + xOffset, yPosition, 98 + i * 5, 12, height - 4, 2, 1, 2);
+            RenderUtil.drawRectWithTexture(Component.COMPONENTS_GUI, graphics, xPosition + height - 2 + xOffset, yPosition + 2, 99 + i * 5, 14, 2, height - 4, 2, 1);
+            RenderUtil.drawRectWithTexture(Component.COMPONENTS_GUI, graphics, xPosition + 2 + xOffset, yPosition + height - 2, 98 + i * 5, 15, height - 4, 2, 1, 2);
+            RenderUtil.drawRectWithTexture(Component.COMPONENTS_GUI, graphics, xPosition + xOffset, yPosition + 2, 96 + i * 5, 14, 2, height - 4, 2, 1);
 
             /* Center */
-            RenderUtil.drawRectWithTexture(pose, xPosition + 2 + xOffset, yPosition + 2, 98 + i * 5, 14, height - 4, height - 4, 1, 1);
+            RenderUtil.drawRectWithTexture(Component.COMPONENTS_GUI, graphics, xPosition + 2 + xOffset, yPosition + 2, 98 + i * 5, 14, height - 4, height - 4, 1, 1);
 
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 
             /* Icons */
-            RenderUtil.drawRectWithTexture(pose, xPosition + xOffset + 3, yPosition + 5, 111, 12, 8, 5, 8, 5);
+            RenderUtil.drawRectWithTexture(Component.COMPONENTS_GUI, graphics, xPosition + xOffset + 3, yPosition + 5, 111, 12, 8, 5, 8, 5);
 
             Color boxColor = new Color(getColorScheme().getBackgroundColor());
             Color borderColor = boxColor.darker().darker();
 
             /* Box */
-            drawHorizontalLine(pose, xPosition, xPosition + xOffset, yPosition, borderColor.getRGB());
-            drawHorizontalLine(pose, xPosition, xPosition + xOffset, yPosition + height - 1, borderColor.getRGB());
-            drawVerticalLine(pose, xPosition, yPosition, yPosition + height - 1, borderColor.getRGB());
-            fill(pose, xPosition + 1, yPosition + 1, xPosition + xOffset, yPosition + height - 1, boxColor.getRGB());
+            drawHorizontalLine(graphics, xPosition, xPosition + xOffset, yPosition, borderColor.getRGB());
+            drawHorizontalLine(graphics, xPosition, xPosition + xOffset, yPosition + height - 1, borderColor.getRGB());
+            drawVerticalLine(graphics, xPosition, yPosition, yPosition + height - 1, borderColor.getRGB());
+            graphics.fill(xPosition + 1, yPosition + 1, xPosition + xOffset, yPosition + height - 1, boxColor.getRGB());
 
             if (itemRenderer != null) {
-                itemRenderer.render(pose, value, laptop, mc, x + 1, y + 1, xOffset - 1, height - 2);
+                itemRenderer.render(graphics, value, mc, x + 1, y + 1, xOffset - 1, height - 2);
             } else if (value != null) {
-                RenderUtil.drawStringClipped(pose, value.toString(), xPosition + 3, yPosition + 3, width - 15, Color.WHITE.getRGB(), true);
+                RenderUtil.drawStringClipped(graphics, value.toString(), xPosition + 3, yPosition + 3, width - 15, Color.WHITE.getRGB(), true);
             }
 
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
@@ -260,7 +261,7 @@ public abstract class ComboBox<T> extends Component {
             return (Layout.Context) layout;
         }
 
-        public void setValue(@Nonnull T newVal) {
+        public void setValue(@NotNull T newVal) {
             updateValue(newVal);
         }
     }

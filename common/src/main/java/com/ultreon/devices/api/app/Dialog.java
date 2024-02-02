@@ -24,15 +24,13 @@ import com.ultreon.devices.util.GLHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.util.function.Predicate;
 
@@ -80,12 +78,12 @@ public abstract class Dialog extends Wrappable {
     }
 
     @Override
-    public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
+    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
         GLHelper.pushScissor(x, y, width, height);
-        customLayout.render(pose, laptop, mc, x, y, mouseX, mouseY, active, partialTicks);
+        customLayout.render(graphics, laptop, mc, x, y, mouseX, mouseY, active, partialTicks);
         GLHelper.popScissor();
 
-        customLayout.renderOverlay(pose, laptop, mc, mouseX, mouseY, active);
+        customLayout.renderOverlay(graphics, laptop, mc, mouseX, mouseY, active);
 
         // TODO - Port this to 1.18.2
 //        RenderHelper.disableStandardItemLighting();
@@ -208,7 +206,7 @@ public abstract class Dialog extends Wrappable {
 
             super.init(intent);
 
-            defaultLayout.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> Gui.fill(pose, x, y, x + width, y + height, Color.LIGHT_GRAY.getRGB()));
+            defaultLayout.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> graphics.fill(x, y, x + width, y + height, Color.LIGHT_GRAY.getRGB()));
 
             Text message = new Text(messageText, 5, 5, getWidth() - 10);
             this.addComponent(message);
@@ -264,7 +262,7 @@ public abstract class Dialog extends Wrappable {
 
             super.init(intent);
 
-            defaultLayout.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> Gui.fill(pose, x, y, x + width, y + height, Color.LIGHT_GRAY.getRGB()));
+            defaultLayout.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> graphics.fill(x, y, x + width, y + height, Color.LIGHT_GRAY.getRGB()));
 
             Text message = new Text(messageText, 5, 5, getWidth() - 10);
             this.addComponent(message);
@@ -309,7 +307,7 @@ public abstract class Dialog extends Wrappable {
          * @param negativeText the text to set
          */
         @SuppressWarnings("ConstantConditions")
-        public void setNegativeText(@Nonnull String negativeText) {
+        public void setNegativeText(@NotNull String negativeText) {
             if (negativeText == null) {
                 throw new IllegalArgumentException("Text can't be null");
             }
@@ -368,7 +366,7 @@ public abstract class Dialog extends Wrappable {
 
             super.init(intent);
 
-            defaultLayout.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> Gui.fill(pose, x, y, x + width, y + height, Color.LIGHT_GRAY.getRGB()));
+            defaultLayout.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> graphics.fill(x, y, x + width, y + height, Color.LIGHT_GRAY.getRGB()));
 
             if (messageText != null) {
                 Text message = new Text(messageText, 5, 5, getWidth() - 10);
@@ -407,7 +405,7 @@ public abstract class Dialog extends Wrappable {
          * @param inputText the text to set
          */
         @SuppressWarnings("ConstantConditions")
-        public void setInputText(@Nonnull String inputText) {
+        public void setInputText(@NotNull String inputText) {
             if (inputText == null) {
                 throw new IllegalArgumentException("Text can't be null");
             }
@@ -430,7 +428,7 @@ public abstract class Dialog extends Wrappable {
          * @param positiveText the text to set
          */
         @SuppressWarnings("ConstantConditions")
-        public void setPositiveText(@Nonnull String positiveText) {
+        public void setPositiveText(@NotNull String positiveText) {
             if (positiveText == null) {
                 throw new IllegalArgumentException("Text can't be null");
             }
@@ -443,7 +441,7 @@ public abstract class Dialog extends Wrappable {
          * @param negativeText the text to set
          */
         @SuppressWarnings("ConstantConditions")
-        public void setNegativeText(@Nonnull String negativeText) {
+        public void setNegativeText(@NotNull String negativeText) {
             if (negativeText == null) {
                 throw new IllegalArgumentException("Text can't be null");
             }
@@ -684,7 +682,7 @@ public abstract class Dialog extends Wrappable {
          * @param positiveText the text to set
          */
         @SuppressWarnings("ConstantConditions")
-        public void setPositiveText(@Nonnull String positiveText) {
+        public void setPositiveText(@NotNull String positiveText) {
             if (positiveText == null) {
                 throw new IllegalArgumentException("Text can't be null");
             }
@@ -697,7 +695,7 @@ public abstract class Dialog extends Wrappable {
          * @param negativeText the text to set
          */
         @SuppressWarnings("ConstantConditions")
-        public void setNegativeText(@Nonnull String negativeText) {
+        public void setNegativeText(@NotNull String negativeText) {
             if (negativeText == null) {
                 throw new IllegalArgumentException("Text can't be null");
             }
@@ -784,11 +782,11 @@ public abstract class Dialog extends Wrappable {
             itemListPrinters = new ItemList<>(5, 18, 140, 5);
             itemListPrinters.setListItemRenderer(new ListItemRenderer<>(16) {
                 @Override
-                public void render(PoseStack pose, NetworkDevice networkDevice, GuiComponent gui, Minecraft mc, int x, int y, int width, int height, boolean selected) {
+                public void render(GuiGraphics graphics, NetworkDevice networkDevice, Minecraft mc, int x, int y, int width, int height, boolean selected) {
                     ColorScheme colorScheme = Laptop.getSystem().getSettings().getColorScheme();
-                    Gui.fill(pose, x, y, x + width, y + height, selected ? colorScheme.getItemHighlightColor() : colorScheme.getItemBackgroundColor());
-                    Icons.PRINTER.draw(pose, mc, x + 3, y + 3);
-                    RenderUtil.drawStringClipped(pose, networkDevice.getName(), x + 18, y + 4, 118, Laptop.getSystem().getSettings().getColorScheme().getTextColor(), true);
+                    graphics.fill(x, y, x + width, y + height, selected ? colorScheme.getItemHighlightColor() : colorScheme.getItemBackgroundColor());
+                    Icons.PRINTER.draw(graphics, mc, x + 3, y + 3);
+                    RenderUtil.drawStringClipped(graphics, networkDevice.getName(), x + 18, y + 4, 118, Laptop.getSystem().getSettings().getColorScheme().getTextColor(), true);
                 }
             });
             itemListPrinters.setItemClickListener((blockPos, index, mouseButton) -> {
@@ -872,6 +870,9 @@ public abstract class Dialog extends Wrappable {
                         itemList.addItem(NetworkDevice.fromTag(list.getCompound(i)));
                     }
                     itemList.setLoading(false);
+                } else {
+                    String reason = tag == null ? "${null}" : tag.getString("reason");
+                    openDialog(new Message("Failed to load printers: " + reason));
                 }
             });
             TaskManager.sendTask(task);

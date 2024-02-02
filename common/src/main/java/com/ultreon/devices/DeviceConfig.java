@@ -77,15 +77,9 @@ public class DeviceConfig {
         // NO-OP
     }
 
-    @ExpectPlatform
-    public static void register(Object context) {
-        throw new AssertionError();
-        //context.registerConfig(ModConfig.Type.CLIENT, CONFIG);
-    }
-
 //    @ExpectPlatform
 //    @PlatformOnly("fabric")
-//    public static void register(ModLoadingContext context) {
+//    public static void.json register(ModLoadingContext context) {
 //        throw new AssertionError();
 //        //context.registerConfig(ModConfig.Type.CLIENT, CONFIG);
 //    }
@@ -99,7 +93,7 @@ public class DeviceConfig {
     }
 
 //    @SubscribeEvent
-//    public static void onConfigChanged(ModConfigEvent.Reloading event) {
+//    public static void.json onConfigChanged(ModConfigEvent.Reloading event) {
 //        // TODO // Implement config reloading if needed.
 //    }
 }

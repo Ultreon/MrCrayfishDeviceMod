@@ -14,6 +14,7 @@ import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.object.tiles.Tile;
 import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -79,16 +80,16 @@ public class TileGrid extends Component
 	}
 
 	@Override
-	public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks)
+	public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks)
 	{
 		try {
 			Tesselator.getInstance().getBuilder().end();
 		} catch (IllegalStateException e) {
 			// ignore it
 		}
-		fill(pose, xPosition, yPosition + 15, xPosition + 93, yPosition + 100, Color.DARK_GRAY.getRGB());
-		fill(pose, xPosition + 1, yPosition + 16, xPosition + 92, yPosition + 99, Color.GRAY.getRGB());
-		
+		graphics.fill(xPosition, yPosition + 15, xPosition + 93, yPosition + 100, Color.DARK_GRAY.getRGB());
+		graphics.fill(xPosition + 1, yPosition + 16, xPosition + 92, yPosition + 99, Color.GRAY.getRGB());
+
 
 		RenderSystem.setShaderTexture(0, Game.ICONS);
 		for(int i = 0; i < tabTiles.size(); i++)
@@ -97,13 +98,13 @@ public class TileGrid extends Component
 			int tileX = i % 6 * 15 + xPosition + 3;
 			int tileY = i / 6 * 15 + yPosition + 18;
 			if(GuiHelper.isMouseInside(mouseX, mouseY, tileX - 1, tileY - 1, tileX + 12, tileY + 12) || game.getCurrentTile() == tile)
-				fill(pose, tileX - 1, tileY - 1, tileX + 13, tileY + 13, Color.WHITE.getRGB());
+				graphics.fill(tileX - 1, tileY - 1, tileX + 13, tileY + 13, Color.WHITE.getRGB());
 			else
-				fill(pose, tileX - 1, tileY - 1, tileX + 13, tileY + 13, Color.LIGHT_GRAY.getRGB());
-			pose.pushPose();
+				graphics.fill(tileX - 1, tileY - 1, tileX + 13, tileY + 13, Color.LIGHT_GRAY.getRGB());
+			graphics.pose().pushPose();
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-			RenderUtil.drawRectWithTexture(pose, tileX, tileY, tile.x * 16, tile.y * 16, 12, 12, 16, 16);
-			pose.popPose();
+			RenderUtil.drawRectWithTexture(null, graphics, tileX, tileY, tile.x * 16, tile.y * 16, 12, 12, 16, 16);
+			graphics.pose().popPose();
 		}
 
 		if(GuiHelper.isMouseInside(mouseX, mouseX, xPosition, yPosition, xPosition + 60, yPosition + 60))
@@ -114,7 +115,7 @@ public class TileGrid extends Component
 				int tileY = i / 6 * 15 + yPosition + 17;
 				if(GuiHelper.isMouseInside(mouseX, mouseY, tileX, tileY, tileX + 14, tileY + 14))
 				{
-					fill(pose, tileX - 1, tileY - 1, tileX + 13, tileY + 13, Color.WHITE.getRGB());
+					graphics.fill(tileX - 1, tileY - 1, tileX + 13, tileY + 13, Color.WHITE.getRGB());
 				}
 			}
 		}

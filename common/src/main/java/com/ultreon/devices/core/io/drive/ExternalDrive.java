@@ -22,10 +22,10 @@ public final class ExternalDrive extends AbstractDrive {
     }
 
     @Nullable
-    public static AbstractDrive fromTag(CompoundTag driveTag) {
+    public static ExternalDrive fromTag(CompoundTag driveTag) {
         if (!PREDICATE_DRIVE_TAG.test(driveTag)) return null;
 
-        AbstractDrive drive = new ExternalDrive();
+        ExternalDrive drive = new ExternalDrive();
         drive.name = driveTag.getString("name");
         drive.uuid = UUID.fromString(driveTag.getString("uuid"));
 

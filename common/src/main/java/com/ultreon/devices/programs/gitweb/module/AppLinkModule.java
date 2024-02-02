@@ -4,6 +4,7 @@ import com.ultreon.devices.api.ApplicationManager;
 import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.component.Button;
+import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.programs.gitweb.GitWebApp;
 import com.ultreon.devices.programs.gitweb.component.GitWebFrame;
@@ -39,9 +40,9 @@ public class AppLinkModule extends Module {
         button.setSize(70, height - 15);
         button.setClickListener((mouseX, mouseY, mouseButton) -> {
             if (frame.getApp() instanceof GitWebApp gitWeb) {
-                System.out.println("FRAME");
+                DebugLog.log("FRAME");
                 gitWeb.getSystem().ifPresent(a -> {
-                    System.out.println("OPENING APP");
+                    DebugLog.log("OPENING APP");
                     var b = a.openApplication(ApplicationManager.getApplication(ResourceLocation.tryParse("devices:app_store")));
                     if (b != null && b instanceof AppStore store) {
                         store.queueOpen(info);
