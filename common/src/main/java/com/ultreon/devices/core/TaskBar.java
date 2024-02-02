@@ -1,7 +1,6 @@
 package com.ultreon.devices.core;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.Devices;
 import com.ultreon.devices.api.TrayItemAdder;
 import com.ultreon.devices.api.app.Application;
@@ -20,7 +19,6 @@ import com.ultreon.devices.programs.system.SettingsApp;
 import com.ultreon.devices.programs.system.SystemApp;
 import com.ultreon.devices.util.Vulnerability;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -111,7 +109,7 @@ public class TaskBar {
         trayItems.forEach(TrayItem::tick);
     }
 
-    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, float partialTicks) {
+    public void render(GuiGraphics gfx, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, float partialTicks) {
         RenderSystem.setShaderColor(1f, 1f, 1f, 0.75f);
         RenderSystem.enableBlend();
         RenderSystem.setShaderTexture(0, APP_BAR_GUI);
@@ -124,21 +122,21 @@ public class TaskBar {
 
         // Draw system tray.
         int trayItemsWidth = trayItems.size() * 14;
-        graphics.blit(APP_BAR_GUI, x, y, 1, 18, 0, 0, 1, 18, 256, 256);
-        graphics.blit(APP_BAR_GUI, x + 1, y, Laptop.SCREEN_WIDTH - 36 - trayItemsWidth, 18, 1, 0, 1, 18, 256, 256);
-        graphics.blit(APP_BAR_GUI, x + Laptop.SCREEN_WIDTH - 35 - trayItemsWidth, y, 35 + trayItemsWidth, 18, 2, 0, 1, 18, 256, 256);
+        gfx.blit(APP_BAR_GUI, x, y, 1, 18, 0, 0, 1, 18, 256, 256);
+        gfx.blit(APP_BAR_GUI, x + 1, y, Laptop.SCREEN_WIDTH - 36 - trayItemsWidth, 18, 1, 0, 1, 18, 256, 256);
+        gfx.blit(APP_BAR_GUI, x + Laptop.SCREEN_WIDTH - 35 - trayItemsWidth, y, 35 + trayItemsWidth, 18, 2, 0, 1, 18, 256, 256);
 
         // Draw start menu button
-        GuiComponent.blit(pose, x, y, 18, 18, 0, 0, 1, 18, 256, 256);
+        gfx.blit(APP_BAR_GUI, x, y, 18, 18, 0, 0, 1, 18, 256, 256);
 
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-        laptop.blit(pose, x + 1, y + 1, 52, 0, 16, 16);
+        gfx.blit(APP_BAR_GUI, x + 1, y + 1, 52, 0, 16, 16);
         for (int i = 0; i < APPS_DISPLAYED && i < laptop.installedApps.size(); i++) {
             AppInfo info = laptop.installedApps.get(i + offset);
-            RenderUtil.drawApplicationIcon(graphics, info, TASKS_START + x + 2 + i * 16, y + 2);
+            RenderUtil.drawApplicationIcon(gfx, info, TASKS_START + x + 2 + i * 16, y + 2);
             if (laptop.isApplicationRunning(info)) {
                 RenderSystem.setShaderTexture(0, APP_BAR_GUI);
-                graphics.blit(APP_BAR_GUI, TASKS_START + x + 1 + i * 16, y + 1, 35, 0, 16, 16);
+                gfx.blit(APP_BAR_GUI, TASKS_START + x + 1 + i * 16, y + 1, 35, 0, 16, 16);
             }
         }
 
@@ -146,7 +144,7 @@ public class TaskBar {
 
         assert mc.level == null || mc.player != null;
 //        assert mc.level != null; //can no longer assume
-        graphics.drawString(mc.font, timeToString(mc.level != null ? mc.level.getDayTime() : 0), x + 334, y + 5, Color.WHITE.getRGB(), true);
+        gfx.drawString(mc.font, timeToString(mc.level != null ? mc.level.getDayTime() : 0), x + 334, y + 5, Color.WHITE.getRGB(), true);
 
         RenderSystem.enableBlend();
 
@@ -155,9 +153,9 @@ public class TaskBar {
         for (int i = 0; i < trayItems.size(); i++) {
             int posX = startX - (trayItems.size() - 1 - i) * 14;
             if (isMouseInside(mouseX, mouseY, posX, y + 2, posX + 13, y + 15)) {
-                graphics.fill(posX, y + 2, posX + 14, y + 16, new Color(1f, 1f, 1f, 0.1f).getRGB());
+                gfx.fill(posX, y + 2, posX + 14, y + 16, new Color(1f, 1f, 1f, 0.1f).getRGB());
             }
-            trayItems.get(i).getIcon().draw(graphics, mc, posX + 2, y + 4);
+            trayItems.get(i).getIcon().draw(gfx, mc, posX + 2, y + 4);
         }
 
         RenderSystem.disableBlend();
@@ -165,15 +163,15 @@ public class TaskBar {
         RenderSystem.setShaderTexture(0, APP_BAR_GUI);
         /* Other Apps */
         if (isMouseInside(mouseX, mouseY, x + 1, y + 1, x + 17, y + 16)) {
-            laptop.blit(pose, x + 1, y + 1, 35, 0, 16, 16);
+            gfx.blit(APP_BAR_GUI, x + 1, y + 1, 35, 0, 16, 16);
         }
 
         /* Other Apps */
         if (isMouseInside(mouseX, mouseY, TASKS_START + x + 1, y + 1, x + 236, y + 16)) {
             int appIndex = (mouseX - x - 1 - TASKS_START) / 16;
             if (appIndex >= 0 && appIndex < offset + APPS_DISPLAYED && appIndex < laptop.installedApps.size()) {
-                graphics.blit(APP_BAR_GUI, TASKS_START  + x + appIndex * 16 + 1, y + 1, 35, 0, 16, 16);
-                laptop.renderComponentTooltip(graphics, List.of(Component.literal(laptop.installedApps.get(appIndex).getName())), mouseX, mouseY);
+                gfx.blit(APP_BAR_GUI, TASKS_START  + x + appIndex * 16 + 1, y + 1, 35, 0, 16, 16);
+                laptop.renderComponentTooltip(gfx, List.of(Component.literal(laptop.installedApps.get(appIndex).getName())), mouseX, mouseY);
             }
         }
 
@@ -220,7 +218,7 @@ public class TaskBar {
         var layout = new Layout(120, 114);
 
         // Set background.
-        layout.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> Gui.fill(pose, x, y, x + width, y + height, new Color(0.65f, 0.65f, 0.65f, 0.9f).getRGB()));
+        layout.setBackground((gfx, mc, x, y, width, height, mouseX, mouseY, windowActive) -> gfx.fill(x, y, x + width, y + height, new Color(0.65f, 0.65f, 0.65f, 0.9f).getRGB()));
 
         // Create app info list with installed applications.
         ItemList<AppInfo> appList = new ItemList<>(5, 5, 110, 6);
@@ -229,12 +227,12 @@ public class TaskBar {
         // Application item renderer.
         appList.setListItemRenderer(new ListItemRenderer<>(16) {
             @Override
-            public void render(PoseStack pose, AppInfo appInfo, GuiComponent gui, Minecraft mc, int x, int y, int width, int height, boolean selected) {
-                Gui.fill(pose, x, y, x + width, y + height, selected ? Color.DARK_GRAY.getRGB() : Color.GRAY.getRGB());
+            public void render(GuiGraphics gfx, AppInfo appInfo, Minecraft mc, int x, int y, int width, int height, boolean selected) {
+                gfx.fill(x, y, x + width, y + height, selected ? Color.DARK_GRAY.getRGB() : Color.GRAY.getRGB());
 
                 // Draw text and icon.
-                RenderUtil.drawStringClipped(pose, appInfo.getName(), x + 18, y + 4, 70, Color.WHITE.getRGB(), false);
-                RenderUtil.drawApplicationIcon(pose, appInfo, x + 1, y + 1);
+                RenderUtil.drawStringClipped(gfx, appInfo.getName(), x + 18, y + 4, 70, Color.WHITE.getRGB(), false);
+                RenderUtil.drawApplicationIcon(gfx, appInfo, x + 1, y + 1);
             }
         });
 
