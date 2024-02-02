@@ -125,4 +125,14 @@ public class ColorScheme {
         tag.putInt("itemHighlightColor", itemHighlightColor);
         return tag;
     }
+
+    public void set(ColorScheme colorScheme) {
+        textColor = colorScheme.textColor;
+        textSecondaryColor = colorScheme.textSecondaryColor;
+        headerColor = colorScheme.headerColor;
+        backgroundColor = colorScheme.backgroundColor;
+        backgroundSecondaryColor = colorScheme.backgroundSecondaryColor;
+        itemBackgroundColor = colorScheme.itemBackgroundColor;
+        itemHighlightColor = colorScheme.itemHighlightColor;
+    }
 }

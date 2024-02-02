@@ -1,6 +1,5 @@
 package com.ultreon.devices.programs.system;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.Devices;
 import com.ultreon.devices.Reference;
 import com.ultreon.devices.api.ApplicationManager;
@@ -8,11 +7,10 @@ import com.ultreon.devices.api.app.Dialog;
 import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.ScrollableLayout;
+import com.ultreon.devices.api.app.component.*;
 import com.ultreon.devices.api.app.component.Button;
-import com.ultreon.devices.api.app.component.CheckBox;
-import com.ultreon.devices.api.app.component.ComboBox;
-import com.ultreon.devices.api.app.component.Text;
 import com.ultreon.devices.api.app.renderer.ItemRenderer;
+import com.ultreon.devices.api.app.renderer.ListItemRenderer;
 import com.ultreon.devices.api.utils.OnlineRequest;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.core.Settings;
@@ -20,11 +18,12 @@ import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.object.TrayItem;
 import com.ultreon.devices.programs.system.component.Palette;
 import com.ultreon.devices.programs.system.object.ColorScheme;
+import com.ultreon.devices.programs.system.object.ColorSchemeRegistry;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.text.MessageFormat;
@@ -46,6 +45,7 @@ public class SettingsApp extends SystemApp {
     private Button urlWallpaperBtn;
 
     private Layout layoutColorScheme;
+    private Layout layoutColorSchemes;
     private Button buttonColorSchemeApply;
 
     private final Stack<Layout> predecessor = new Stack<>();
@@ -63,7 +63,7 @@ public class SettingsApp extends SystemApp {
         backBtn.setClickListener((mouseX, mouseY, mouseButton) ->
         {
             if (mouseButton == 0) {
-                if (predecessor.size() > 0) {
+                if (!predecessor.isEmpty()) {
                     setCurrentLayout(predecessor.pop());
                 }
                 if (predecessor.isEmpty()) {
@@ -84,9 +84,53 @@ public class SettingsApp extends SystemApp {
     private Menu addMainLayout() {
         Menu layoutMain = new Menu("Home");
 
+        Button aboutButton = createAboutButton(layoutMain);
+        layoutMain.addComponent(aboutButton);
+        //aboutButton.setToolTip("About", "When to call emergency services because you just lost all of your NFTs to a scammer");
+
+        this.layoutPersonalise = createPersonaliseLayout();
+        this.layoutColorSchemes = createColorSchemesLayout();
+        this.layoutGeneral = createGeneralLayout();
+
+        Button buttonColorScheme = new Button(5, 26+20+4, "Personalise", Icons.EDIT);
+        buttonColorScheme.setSize(90, 20);
+        buttonColorScheme.setToolTip("Personalise", "Change the wallpaper, UI colors, and more!");
+        buttonColorScheme.setClickListener((mouseX, mouseY, mouseButton) -> {
+            if (mouseButton == 0) {
+                showMenu(layoutPersonalise);
+            }
+        });
+
+        layoutMain.addComponent(buttonColorScheme);
+
+        Button buttonColorSchemes = new Button(5, 26+26+20+4, "Color Schemes", Icons.WRENCH);
+        buttonColorSchemes.setSize(90, 20);
+        buttonColorSchemes.setToolTip("Color Schemes", "Change the color scheme.");
+        buttonColorSchemes.setClickListener((mouseX, mouseY, mouseButton) -> {
+            if (mouseButton == 0) {
+                showMenu(layoutColorSchemes);
+            }
+        });
+        layoutMain.addComponent(buttonColorSchemes);
+
+        Button buttonGeneral = new Button(5, 26+26+26+20+4, "Advanced", Icons.WRENCH);
+        buttonGeneral.setSize(90, 20);
+        buttonGeneral.setToolTip("General", "General settings.");
+        buttonGeneral.setClickListener((mouseX, mouseY, mouseButton) -> {
+            if (mouseButton == 0) {
+                showMenu(layoutGeneral);
+            }
+        });
+        layoutMain.addComponent(buttonGeneral);
+
+        return layoutMain;
+    }
+
+    @NotNull
+    private Button createAboutButton(Menu layoutMain) {
         Button aboutButton = new Button(5, 26, "About", Icons.INFO);
         aboutButton.setSize(90, 20);
-        aboutButton.setClickListener((__, ___, ____) -> {
+        aboutButton.setClickListener((mouseX, mouseY, mouseButton) -> {
             var qq = new Menu("About");
             qq.addComponent(backBtn);
             var l = new ScrollableLayout(layoutMain.width, layoutMain.height, 124);
@@ -113,30 +157,19 @@ public class SettingsApp extends SystemApp {
             qq.addComponent(l);
             this.showMenu(qq);
         });
-        layoutMain.addComponent(aboutButton);
-        //aboutButton.setToolTip("About", "When to call emergency services because you just lost all of your NFTs to a scammer");
-        Button buttonColorScheme = new Button(5, 26+20+4, "Personalise", Icons.EDIT);
-        buttonColorScheme.setSize(90, 20);
-        buttonColorScheme.setToolTip("Personalise", "Change the wallpaper, UI colors, and more!");
-        buttonColorScheme.setClickListener((mouseX, mouseY, mouseButton) ->
-        {
-            if (mouseButton == 0) {
-                showMenu(layoutPersonalise);
-            }
-        });
-        layoutMain.addComponent(buttonColorScheme);
+        return aboutButton;
+    }
 
-        layoutGeneral = new Menu("General");
+    private Layout createGeneralLayout() {
+        var layoutGeneral = new Menu("General");
         layoutGeneral.addComponent(backBtn);
 
-        checkBoxShowApps = new CheckBox("Show All Apps", 5, 5);
+        checkBoxShowApps = new CheckBox("Show All Apps", 5, 26);
         checkBoxShowApps.setSelected(Settings.isShowAllApps());
         checkBoxShowApps.setClickListener(this::showAllAppsClick);
         layoutGeneral.addComponent(checkBoxShowApps);
 
-        layoutPersonalise = createPersonaliseLayout();
-
-        return layoutMain;
+        return layoutGeneral;
     }
 
     /**
@@ -180,6 +213,31 @@ public class SettingsApp extends SystemApp {
         layoutPersonalise.addComponent(buttonColorScheme);
 
         return layoutPersonalise;
+    }
+
+    private Layout createColorSchemesLayout() {
+        final Layout layoutColorSchemes = new Menu("Color schemes");
+        layoutColorSchemes.addComponent(backBtn);
+
+        ItemList<ColorScheme> list = new ItemList<>(0, 21, layoutColorSchemes.width, layoutColorSchemes.height - 21);
+        for (ColorScheme colorScheme : ColorSchemeRegistry.getValues()) {
+            list.addItem(colorScheme);
+        }
+
+        list.setItemClickListener((colorScheme, index, button) -> {
+            Laptop.getSystem().getSettings().getColorScheme().set(colorScheme);
+        });
+
+        list.setListItemRenderer(new ListItemRenderer<>(20) {
+            @Override
+            public void render(GuiGraphics graphics, ColorScheme scheme, Minecraft mc, int x, int y, int width, int height, boolean selected) {
+                graphics.drawString(mc.font, ColorSchemeRegistry.getKey(scheme).toString(), x + 5, y + 5, Color.WHITE.getRGB());
+            }
+        });
+
+        layoutColorSchemes.addComponent(list);
+
+        return layoutColorSchemes;
     }
 
     /**

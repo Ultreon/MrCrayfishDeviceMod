@@ -11,6 +11,7 @@ import com.ultreon.devices.debug.DumpType;
 import com.ultreon.devices.init.DeviceBlockEntities;
 import com.ultreon.devices.init.DeviceBlocks;
 import com.ultreon.devices.object.AppInfo;
+import com.ultreon.devices.programs.system.object.ColorSchemes;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.ReloadListenerRegistry;
@@ -75,7 +76,13 @@ public class ClientModEvents {
             generateIconAtlas();
         }
 
+        registerOSContent();
+
         ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, new ReloaderListener());
+    }
+
+    private static void registerOSContent() {
+        ColorSchemes.init();
     }
 
     @ApiStatus.Internal
