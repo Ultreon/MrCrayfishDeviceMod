@@ -1,5 +1,6 @@
 package com.ultreon.devices.cef;
 
+import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.ultreon.devices.Devices;
@@ -125,7 +126,9 @@ public class BrowserFramework {
         SwingUtilities.invokeLater(() -> {
             java.awt.Component uiComponent = browser.getUIComponent();
             GLCanvas canvas = (GLCanvas) uiComponent;
-            canvas.addGLEventListener(new BrowserGraphics(canvas));
+            GLEventListener glEventListener = canvas.getGLEventListener(0);
+            canvas.removeGLEventListener(glEventListener);
+            canvas.addGLEventListener(new BrowserGraphics(canvas, glEventListener));
 
             frame.add(uiComponent);
             frame.revalidate();
