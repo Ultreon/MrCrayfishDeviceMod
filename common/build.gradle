@@ -23,7 +23,7 @@ dependencies {
 //    modApi "com.ultreon:ultranlang:0.1.0+6"
     modApi "com.jab125:apoint:1.0.0"
 
-    modCompileOnly "curse.maven:forgeapiportfabric-547434:3671141"
+    modCompileOnly "fuzs.forgeconfigapiport:forgeconfigapiport-common:8.0.0"
     modCompileOnly 'com.electronwill.night-config:core:3.6.3'
     modCompileOnly 'com.electronwill.night-config:toml:3.6.3'
 

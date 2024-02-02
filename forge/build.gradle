@@ -36,8 +36,6 @@ dependencies {
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 
-//    modApi "curse.maven:emojiful-284324:3963433"
-
 //    forgeRuntimeLibrary "com.ultreon:ultranlang:0.1.0+6"
     forgeRuntimeLibrary "com.jab125:apoint:1.0.0"
 

@@ -1,5 +1,6 @@
 package com.ultreon.devices.core.io.task;
 
+import com.ultreon.devices.Devices;
 import com.ultreon.devices.api.io.Drive;
 import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.block.entity.ComputerBlockEntity;
@@ -43,23 +44,19 @@ public class TaskGetStructure extends Task {
     @Override
     public void processRequest(CompoundTag tag, Level level, Player player) {
         BlockPos pos1 = BlockPos.of(tag.getLong("pos"));
-        DebugLog.log("pos == " + pos1.toShortString());
-        DebugLog.log("block->registryName == " + level.getBlockState(pos1).getBlock().arch$registryName());
-        DebugLog.log("level->isClient == " + level.isClientSide());
 
-        BlockEntity tileEntity = level.getBlockEntity(pos1);
-        DebugLog.log("tileEntity == " + tileEntity);
-        if (tileEntity instanceof ComputerBlockEntity laptop) {
-            FileSystem fileSystem = laptop.getFileSystem();
-            UUID uuid = UUID.fromString(tag.getString("uuid"));
-            AbstractDrive serverDrive = fileSystem.getAvailableDrives(level, true).get(uuid);
-            DebugLog.log("uuid = " + uuid);
-            DebugLog.log("serverDrive = " + serverDrive);
-            if (serverDrive != null) {
-                folder = serverDrive.getDriveStructure();
-                this.setSuccessful();
+        Devices.getServer().submit(() -> {
+            BlockEntity tileEntity = level.getBlockEntity(pos1);
+            if (tileEntity instanceof ComputerBlockEntity laptop) {
+                FileSystem fileSystem = laptop.getFileSystem();
+                UUID uuid = UUID.fromString(tag.getString("uuid"));
+                AbstractDrive serverDrive = fileSystem.getAvailableDrives(level, true).get(uuid);
+                if (serverDrive != null) {
+                    folder = serverDrive.getDriveStructure();
+                    this.setSuccessful();
+                }
             }
-        }
+        }).join();
     }
 
     @Override

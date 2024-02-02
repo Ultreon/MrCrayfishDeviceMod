@@ -7,7 +7,7 @@ import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.core.Wrappable;
 import com.ultreon.devices.util.GLHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
 
 import java.awt.*;
@@ -157,37 +157,37 @@ public class Layout extends com.ultreon.devices.api.app.Component {
      * Renders the background of this layout if a {@link Background}
      * has be set. See {@link #setBackground(Background)}.
      *
-     * @param pose
+     * @param graphics gui graphics helper
      * @param laptop a Gui instance
      * @param mc     a Minecraft instance
      * @param x      the starting x rendering position (left most)
      * @param y      the starting y rendering position (top most)
      */
     @Override
-    public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         if (!this.visible)
             return;
 
         if (background != null) {
-            background.render(pose, laptop, mc, x, y, width, height, mouseX, mouseY, windowActive);
+            background.render(graphics, mc, x, y, width, height, mouseX, mouseY, windowActive);
         }
 
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
         for (var c : new ArrayList<>(components)) {
             RenderSystem.disableDepthTest();
             GLHelper.pushScissor(x, y, width, height);
-            c.render(pose, laptop, mc, x + c.left, y + c.top, mouseX, mouseY, windowActive, partialTicks);
+            c.render(graphics, laptop, mc, x + c.left, y + c.top, mouseX, mouseY, windowActive, partialTicks);
             GLHelper.popScissor();
         }
     }
 
     @Override
-    public void renderOverlay(PoseStack pose, Laptop laptop, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
+    public void renderOverlay(GuiGraphics graphics, Laptop laptop, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
         if (!visible)
             return;
 
         for (var c : components.stream().toList()) {
-            c.renderOverlay(pose, laptop, mc, mouseX, mouseY, windowActive);
+            c.renderOverlay(graphics, laptop, mc, mouseX, mouseY, windowActive);
         }
     }
 
@@ -363,15 +363,14 @@ public class Layout extends com.ultreon.devices.api.app.Component {
         /**
          * The render method
          *
-         * @param pose
-         * @param gui    a Gui instance
+         * @param graphics
          * @param mc     A Minecraft instance
          * @param x      the starting x rendering position (left most)
          * @param y      the starting y rendering position (top most)
          * @param width  the width of the layout
          * @param height the height of the layout
          */
-        void render(PoseStack pose, GuiComponent gui, Minecraft mc, int x, int y, int width, int height, int mouseX, int mouseY, boolean windowActive);
+        void render(GuiGraphics graphics, Minecraft mc, int x, int y, int width, int height, int mouseX, int mouseY, boolean windowActive);
     }
 
     public static class Context extends Layout {
@@ -382,13 +381,13 @@ public class Layout extends com.ultreon.devices.api.app.Component {
         }
 
         @Override
-        public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
-            super.render(pose, laptop, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
+        public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+            super.render(graphics, laptop, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
             if (borderVisible) {
-                drawHorizontalLine(pose, x, x + width - 1, y, Color.DARK_GRAY.getRGB());
-                drawHorizontalLine(pose, x, x + width - 1, y + height - 1, Color.DARK_GRAY.getRGB());
-                drawVerticalLine(pose, x, y, y + height - 1, Color.DARK_GRAY.getRGB());
-                drawVerticalLine(pose, x + width - 1, y, y + height - 1, Color.DARK_GRAY.getRGB());
+                drawHorizontalLine(graphics, x, x + width - 1, y, Color.DARK_GRAY.getRGB());
+                drawHorizontalLine(graphics, x, x + width - 1, y + height - 1, Color.DARK_GRAY.getRGB());
+                drawVerticalLine(graphics, x, y, y + height - 1, Color.DARK_GRAY.getRGB());
+                drawVerticalLine(graphics, x + width - 1, y, y + height - 1, Color.DARK_GRAY.getRGB());
             }
         }
 

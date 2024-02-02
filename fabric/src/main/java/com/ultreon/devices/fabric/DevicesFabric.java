@@ -7,13 +7,13 @@ import com.ultreon.devices.api.print.IPrint;
 import com.ultreon.devices.api.print.PrintingManager;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.init.RegistrationHandler;
+import fuzs.forgeconfigapiport.api.config.v2.ForgeConfigRegistry;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
-import net.minecraftforge.api.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
 
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ import java.util.Map;
 public class DevicesFabric extends Devices implements ModInitializer {
     @Override
     public void onInitialize() {
-        ModLoadingContext.registerConfig(Devices.MOD_ID, ModConfig.Type.CLIENT, DeviceConfig.CONFIG);
+        ForgeConfigRegistry.INSTANCE.register(Devices.MOD_ID, ModConfig.Type.CLIENT, DeviceConfig.CONFIG);
 
         this.init();
 

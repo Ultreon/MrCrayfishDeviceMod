@@ -25,7 +25,7 @@ import com.ultreon.devices.object.Picture;
 import com.ultreon.devices.programs.system.layout.StandardLayout;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
@@ -99,8 +99,8 @@ public class PixelPainterApp extends Application {
         ItemList<Picture> pictureList = new ItemList<>(5, 43, 80, 4);
         pictureList.setListItemRenderer(new ListItemRenderer<>(18) {
             @Override
-            public void render(PoseStack pose, Picture picture, GuiComponent gui, Minecraft mc, int x, int y, int width, int height, boolean selected) {
-                RenderUtil.drawStringClipped(pose, "Henlo", x, y, 100, AUTHOR_TEXT.getRGB(), true);
+            public void render(GuiGraphics graphics, Picture picture, Minecraft mc, int x, int y, int width, int height, boolean selected) {
+                RenderUtil.drawStringClipped(graphics, "Henlo", x, y, 100, AUTHOR_TEXT.getRGB(), true);
             }
         });
         layoutMainMenu.addComponent(pictureList);
@@ -188,10 +188,10 @@ public class PixelPainterApp extends Application {
         listPictures = new ItemList<>(5, 5, 80, 5);
         listPictures.setListItemRenderer(new ListItemRenderer<>(20) {
             @Override
-            public void render(PoseStack pose, Picture picture, GuiComponent gui, Minecraft mc, int x, int y, int width, int height, boolean selected) {
-                Gui.fill(pose, x, y, x + width, y + height, selected ? ITEM_SELECTED.getRGB() : ITEM_BACKGROUND.getRGB());
-                mc.font.draw(pose, picture.getName(), x + 2, y + 2, Color.WHITE.getRGB());
-                mc.font.draw(pose, picture.getAuthor(), x + 2, y + 11, AUTHOR_TEXT.getRGB());
+            public void render(GuiGraphics graphics, Picture picture, Minecraft mc, int x, int y, int width, int height, boolean selected) {
+                graphics.fill(x, y, x + width, y + height, selected ? ITEM_SELECTED.getRGB() : ITEM_BACKGROUND.getRGB());
+                graphics.drawString(mc.font, picture.getName(), x + 2, y + 2, Color.WHITE.getRGB(), false);
+                graphics.drawString(mc.font, picture.getAuthor(), x + 2, y + 11, AUTHOR_TEXT.getRGB(), false);
             }
         });
         listPictures.setItemClickListener((picture, index, mouseButton) ->
@@ -383,9 +383,9 @@ public class PixelPainterApp extends Application {
 
         colorDisplay = new Component(158, 5) {
             @Override
-            public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
-                fill(pose, xPosition, yPosition, xPosition + 50, yPosition + 20, Color.DARK_GRAY.getRGB());
-                fill(pose, xPosition + 1, yPosition + 1, xPosition + 49, yPosition + 19, canvas.getCurrentColor());
+            public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+                graphics.fill(xPosition, yPosition, xPosition + 50, yPosition + 20, Color.DARK_GRAY.getRGB());
+                graphics.fill(xPosition + 1, yPosition + 1, xPosition + 49, yPosition + 19, canvas.getCurrentColor());
             }
         };
         layoutDraw.addComponent(colorDisplay);
@@ -508,7 +508,7 @@ public class PixelPainterApp extends Application {
                 // This is for the paper background
                 if (!cut) {
                     RenderSystem.setShaderTexture(0, TEXTURE);
-                    RenderUtil.drawRectWithTexture(pose, -1, 0, 0, 0, 1, 1, resolution, resolution, resolution, resolution);
+                    RenderUtil.drawRectWithTexture(TEXTURE, pose, -1, 0, 0, 0, 1, 1, resolution, resolution, resolution, resolution);
                 }
 
                 // This creates a flipped copy of the pixel array
@@ -524,7 +524,7 @@ public class PixelPainterApp extends Application {
                 TextureUtil.prepareImage(textureId, resolution, resolution);
 
                 RenderSystem.setShaderTexture(0, textureId);
-                RenderUtil.drawRectWithTexture(pose, -1, 0, 0, 0, 1, 1, resolution, resolution, resolution, resolution);
+                RenderUtil.drawRectWithTexture(null, pose, -1, 0, 0, 0, 1, 1, resolution, resolution, resolution, resolution);
                 RenderSystem.deleteTexture(textureId);
 
 //                RenderSystem.disableRescaleNormal();

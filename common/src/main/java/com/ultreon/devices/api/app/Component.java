@@ -1,13 +1,12 @@
 package com.ultreon.devices.api.app;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.programs.system.object.ColorScheme;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 
-public abstract class Component extends GuiComponent {
+public abstract class Component {
     /**
      * The default components textures
      */
@@ -91,7 +90,7 @@ public abstract class Component extends GuiComponent {
     /**
      * The main render loop. This is where you draw your component.
      *
-     * @param pose         the current pose of the component
+     * @param graphics     gui graphics helper
      * @param laptop       a Laptop instance
      * @param mc           a Minecraft instance
      * @param mouseX       the current x position of the mouse
@@ -99,21 +98,21 @@ public abstract class Component extends GuiComponent {
      * @param windowActive if the window is active (at front)
      * @param partialTicks percentage passed in-between two ticks
      */
-    protected void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    protected void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
     }
 
     /**
      * The overlay render loop. Renders over the top of the main render
      * loop.
      *
-     * @param pose         the current pose of the component
+     * @param graphics     gui graphics helper
      * @param laptop       a Laptop instance
      * @param mc           a Minecraft instance
      * @param mouseX       the current x position of the mouse
      * @param mouseY       the current y position of the mouse
      * @param windowActive if the window is active (at front)
      */
-    protected void renderOverlay(PoseStack pose, Laptop laptop, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
+    protected void renderOverlay(GuiGraphics graphics, Laptop laptop, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
     }
 
     /**
@@ -248,11 +247,11 @@ public abstract class Component extends GuiComponent {
         return Laptop.getSystem().getSettings().getColorScheme();
     }
 
-    public void drawVerticalLine(PoseStack pose, int x, int y1, int y2, int rgb) {
-        fill(pose, x, y1, x + 1, y2, rgb);
+    public void drawVerticalLine(GuiGraphics graphics, int x, int y1, int y2, int rgb) {
+        graphics.fill(x, y1, x + 1, y2, rgb);
     }
 
-    public void drawHorizontalLine(PoseStack pose, int x1, int x2, int y, int rgb) {
-        fill(pose, x1, y, x2, y + 1, rgb);
+    public void drawHorizontalLine(GuiGraphics graphics, int x1, int x2, int y, int rgb) {
+        graphics.fill(x1, y, x2, y + 1, rgb);
     }
 }

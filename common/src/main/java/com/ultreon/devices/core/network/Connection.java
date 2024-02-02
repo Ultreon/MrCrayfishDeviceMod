@@ -67,6 +67,7 @@ public class Connection {
         CompoundTag tag = new CompoundTag();
         tag.putString("id", routerId.toString());
         if (routerPos != null) {
+            // FIXME: Router position can be null. Pls fix this.
             tag.put("Pos", NbtUtils.writeBlockPos(routerPos));
         }
         return tag;

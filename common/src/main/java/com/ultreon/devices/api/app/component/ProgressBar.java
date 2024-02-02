@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.core.Laptop;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 
 import java.awt.*;
 
@@ -31,12 +32,12 @@ public class ProgressBar extends Component {
     }
 
     @Override
-    public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         if (this.visible) {
             Color bgColor = new Color(getColorScheme().getBackgroundColor());
-            fill(pose, xPosition, yPosition, xPosition + width, yPosition + height, bgColor.darker().darker().getRGB());
-            fill(pose, xPosition + 1, yPosition + 1, xPosition + width - 1, yPosition + height - 1, bgColor.getRGB());
-            fill(pose, xPosition + 2, yPosition + 2, xPosition + 2 + getProgressScaled(), yPosition + height - 2, bgColor.brighter().brighter().getRGB());
+            graphics.fill(xPosition, yPosition, xPosition + width, yPosition + height, bgColor.darker().darker().getRGB());
+            graphics.fill(xPosition + 1, yPosition + 1, xPosition + width - 1, yPosition + height - 1, bgColor.getRGB());
+            graphics.fill(xPosition + 2, yPosition + 2, xPosition + 2 + getProgressScaled(), yPosition + height - 2, bgColor.brighter().brighter().getRGB());
         }
     }
 

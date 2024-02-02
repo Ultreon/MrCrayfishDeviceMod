@@ -22,6 +22,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
@@ -55,12 +56,12 @@ public class LayoutAppPage extends Layout {
             installed = Laptop.getSystem().getInstalledApplications().contains(((LocalEntry) entry).info());
         }
 
-        this.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) ->
+        this.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) ->
         {
             Color color = new Color(Laptop.getSystem().getSettings().getColorScheme().getBackgroundColor());
-            Gui.fill(pose, x, y + 40, x + width, y + 41, color.brighter().getRGB());
-            Gui.fill(pose, x, y + 41, x + width, y + 60, color.getRGB());
-            Gui.fill(pose, x, y + 60, x + width, y + 61, color.darker().getRGB());
+            graphics.fill(x, y + 40, x + width, y + 41, color.brighter().getRGB());
+            graphics.fill(x, y + 41, x + width, y + 60, color.getRGB());
+            graphics.fill(x, y + 60, x + width, y + 61, color.darker().getRGB());
         });
 
         ResourceLocation resource = new ResourceLocation(entry.id());
@@ -166,12 +167,12 @@ public class LayoutAppPage extends Layout {
     }
 
     @Override
-    public void renderOverlay(PoseStack pose, Laptop laptop, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
-        super.renderOverlay(pose, laptop, mc, mouseX, mouseY, windowActive);
+    public void renderOverlay(GuiGraphics graphics, Laptop laptop, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
+        super.renderOverlay(graphics, laptop, mc, mouseX, mouseY, windowActive);
         if (store.certifiedApps.contains(entry)) {
             int width = Laptop.getFont().width(entry.name()) * 2;
             if (GuiHelper.isMouseWithin(mouseX, mouseY, xPosition + 38 + width + 3, yPosition + 29, 20, 20)) {
-                laptop.renderComponentTooltip(pose, Lists.newArrayList(Component.literal("Certified App").withStyle(ChatFormatting.GREEN)), mouseX, mouseY);
+                laptop.renderComponentTooltip(graphics, Lists.newArrayList(Component.literal("Certified App").withStyle(ChatFormatting.GREEN)), mouseX, mouseY);
             }
         }
     }
