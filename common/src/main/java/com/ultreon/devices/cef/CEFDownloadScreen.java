@@ -1,10 +1,6 @@
 package com.ultreon.devices.cef;
 
-import com.jogamp.opengl.GL3;
-import com.jogamp.opengl.GLAutoDrawable;
-import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.awt.GLCanvas;
-import com.jogamp.opengl.util.GLBuffers;
 import com.ultreon.devices.Devices;
 import com.ultreon.devices.Reference;
 import com.ultreon.mods.lib.client.gui.screen.BaseScreen;
@@ -15,14 +11,16 @@ import com.ultreon.mods.lib.event.WindowCloseEvent;
 import dev.architectury.event.EventResult;
 import dev.architectury.platform.Platform;
 import me.friwi.jcefmaven.*;
-import net.minecraft.client.Minecraft;
+import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec2;
 import org.cef.CefApp;
 import org.cef.CefClient;
+import org.cef.CefSettings;
 import org.cef.browser.CefBrowser;
 import org.cef.browser.CefMessageRouter;
 import org.jetbrains.annotations.NotNull;
@@ -30,11 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-
-import static org.lwjgl.opengl.GL11C.*;
 
 public class CEFDownloadScreen extends BaseScreen {
     private static final Component TITLE = Component.translatable("screen.devices.cef.download.title");
@@ -82,6 +76,7 @@ public class CEFDownloadScreen extends BaseScreen {
                 jFrame.toBack();
                 jFrame.setFocusableWindowState(false);
                 jFrame.setExtendedState(Frame.ICONIFIED);
+                BrowserFramework.init(jFrame);
             } catch (RuntimeException e) {
                 String property1 = System.getProperty("java.awt.headless");
                 System.out.println("property = " + property1);
@@ -106,9 +101,15 @@ public class CEFDownloadScreen extends BaseScreen {
             //Configure the builder instance
             builder.setInstallDir(Reference.CEF_INSTALL); //Default
             builder.setProgressHandler(new MinecraftProgressHandler()); //Default
-            builder.getCefSettings().windowless_rendering_enabled = useOSR; //Default - select OSR mode
-            builder.getCefSettings().cache_path = Reference.BROWSER_DATA.getAbsolutePath();
-            builder.getCefSettings().user_agent_product = "DevicesMod/%s Minecraft/%s Chrome/%s".formatted(ULTREON_BROWSER_VERSION, MINECRAFT_VERSION, CHROME_VERSION);
+            Util.make(builder.getCefSettings(), settings -> {
+                settings.windowless_rendering_enabled = useOSR; //Default - select OSR mode
+                settings.log_file = "logs/cef.log";
+                settings.log_severity = CefSettings.LogSeverity.LOGSEVERITY_ERROR;
+                settings.locale = "en-US";
+                settings.background_color = settings.new ColorType(0, 0, 0, 0);
+                settings.cache_path = Reference.BROWSER_DATA.getAbsolutePath();
+                settings.user_agent_product = "DevicesMod/%s Minecraft/%s Chrome/%s".formatted(ULTREON_BROWSER_VERSION, MINECRAFT_VERSION, CHROME_VERSION);
+            });
 
             builder.addJcefArgs();
 
@@ -120,78 +121,17 @@ public class CEFDownloadScreen extends BaseScreen {
             }
 
             CefClient client = BrowserFramework.setClient(app.createClient());
-
-            CefBrowser browser = client.createBrowser("www.google.com", useOSR, false);
-
-            java.awt.Component uiComponent = browser.getUIComponent();
-            GLCanvas canvas = (GLCanvas) uiComponent;
-            canvas.addGLEventListener(new GLEventListener() {
-                private double lastImage;
-
-                @Override
-                public void init(GLAutoDrawable drawable) {
-
-                }
-
-                @Override
-                public void dispose(GLAutoDrawable drawable) {
-
-                }
-
-                @Override
-                public void display(GLAutoDrawable drawable) {
-                    double now = System.currentTimeMillis() / 1000.0;
-                    if ((now - lastImage) > 0.02) {
-                        lastImage = now;
-                        BrowserFramework.bufImg = saveImage((GL3) drawable.getGL(), uiComponent.getWidth(), uiComponent.getHeight());
-                    }
-                }
-
-                @Override
-                public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-
-                }
-            });
-
-            jFrame.add(BrowserFramework.setUi(uiComponent));
             WindowCloseEvent.EVENT.register((window, source) -> {
                 client.dispose();
                 return EventResult.pass();
             });
-
-            var msgRouter = CefMessageRouter.create();
-            client.addMessageRouter(msgRouter);
         });
     }
-    protected BufferedImage saveImage(GL3 gl3, int width, int height) {
-        BufferedImage screenshot = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-        Graphics graphics = screenshot.getGraphics();
 
-        ByteBuffer buffer = GLBuffers.newDirectByteBuffer(width * height * 4);
-        // be sure you are reading from the right fbo (here is supposed to be the default one)
-        // bind the right buffer to read from
-        gl3.glReadBuffer(GL_BACK);
-        // if the width is not multiple of 4, set unpackPixel = 1
-        gl3.glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-
-        for (int h = 0; h < height; h++) {
-            for (int w = 0; w < width; w++) {
-                // The color are the three consecutive bytes, it's like referencing
-                // to the next consecutive array elements, so we got red, green, blue.
-                // red, green, blue, and so on..+ ", "
-                graphics.setColor(new Color((buffer.get() & 0xff), (buffer.get() & 0xff),
-                        (buffer.get() & 0xff)));
-                buffer.get();   // consume alpha
-                graphics.drawRect(w, height - h, 1, 1); // height - h is for flipping the image
-            }
-        }
-        // This is one util of mine, it makes sure you clean the direct buffer
-        buffer.clear();
-
-        return screenshot;
-    }
     @Override
     public void render(@NotNull GuiGraphics gfx, int mouseX, int mouseY, float partialTicks) {
+        renderBackground(gfx);
+
         super.render(gfx, mouseX, mouseY, partialTicks);
 
         gfx.drawString(this.font, description, (int) (width / 2f - 91), (int) (height / 2f - 15), 0xffffff);

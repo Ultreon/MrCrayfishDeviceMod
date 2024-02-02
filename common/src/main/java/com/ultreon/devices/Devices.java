@@ -16,7 +16,6 @@ import com.ultreon.devices.api.utils.OnlineRequest;
 import com.ultreon.devices.block.PrinterBlock;
 import com.ultreon.devices.cef.CEFLicenseScreen;
 import com.ultreon.devices.core.client.ClientNotification;
-import com.ultreon.devices.core.client.debug.ClientAppDebug;
 import com.ultreon.devices.core.io.task.*;
 import com.ultreon.devices.core.network.task.TaskConnect;
 import com.ultreon.devices.core.network.task.TaskGetDevices;
@@ -40,12 +39,10 @@ import com.ultreon.devices.programs.email.task.*;
 import com.ultreon.devices.programs.example.ExampleApp;
 import com.ultreon.devices.programs.example.task.TaskNotificationTest;
 import com.ultreon.devices.programs.system.SystemApp;
-import com.ultreon.devices.programs.system.task.*;
+import com.ultreon.devices.programs.system.task.TaskUpdateApplicationData;
+import com.ultreon.devices.programs.system.task.TaskUpdateSystemData;
 import com.ultreon.devices.util.SiteRegistration;
 import com.ultreon.devices.util.Vulnerability;
-import com.ultreon.ultranlang.SpiKt;
-import com.ultreon.ultranlang.func.NativeCalls;
-import com.ultreon.ultranlang.symbol.BuiltinTypeSymbol;
 import dev.architectury.event.CompoundEventResult;
 import dev.architectury.event.EventResult;
 import dev.architectury.event.events.client.ClientGuiEvent;
@@ -55,14 +52,15 @@ import dev.architectury.event.events.common.LifecycleEvent;
 import dev.architectury.event.events.common.PlayerEvent;
 import dev.architectury.injectables.targets.ArchitecturyTarget;
 import dev.architectury.platform.Platform;
-import dev.architectury.registry.CreativeTabRegistry;
 import dev.architectury.registry.registries.DeferredSupplier;
 import dev.architectury.registry.registries.RegistrarManager;
 import dev.architectury.utils.Env;
 import dev.architectury.utils.EnvExecutor;
-import net.minecraft.client.gui.screens.TitleScreen;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.CrashReport;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
@@ -114,7 +112,7 @@ public abstract class Devices {
     private static Devices instance;
 
     public static List<Vulnerability> getVulnerabilities() {
-        return vulnerabilities;
+        return Objects.requireNonNullElse(vulnerabilities, Collections.emptyList());
     }
     private static MinecraftServer server;
     private static TestManager tests;
@@ -125,6 +123,11 @@ public abstract class Devices {
 
     public static Devices getInstance() {
         return instance;
+    }
+
+    public static void criticalCrash(Throwable e) {
+        CrashReport crashReport = new CrashReport("Critical error encountered in Ultreon Devices Mod", e);
+        Minecraft.crash(crashReport);
     }
 
     public void init() {

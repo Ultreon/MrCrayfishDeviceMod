@@ -18,6 +18,7 @@ import com.ultreon.devices.api.utils.OnlineRequest;
 import com.ultreon.devices.block.entity.ComputerBlockEntity;
 import com.ultreon.devices.core.task.TaskInstallApp;
 import com.ultreon.devices.object.AppInfo;
+import com.ultreon.devices.programs.browser.WebBrowser;
 import com.ultreon.devices.programs.system.DiagnosticsApp;
 import com.ultreon.devices.programs.system.SystemApp;
 import com.ultreon.devices.programs.system.component.FileBrowser;
@@ -558,6 +559,15 @@ public class Laptop extends Screen implements System {
         this.bsod = new BSOD(e);
         e.printStackTrace();
     }
+
+    public boolean isFocusedWindow(Application app) {
+        return !windows.isEmpty() && windows.get(0) == app.getWindow();
+    }
+
+    public boolean isFocusedWindow(Window<?> window) {
+        return !windows.isEmpty() && windows.get(0) == window;
+    }
+
     private static final class BSOD {
         private final Throwable throwable;
         public BSOD(Throwable e) {

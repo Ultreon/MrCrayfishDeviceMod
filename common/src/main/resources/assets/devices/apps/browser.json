@@ -1,12 +1,10 @@
 {
     "schemaVersion": 2,
-    "name": "Web Browser",
-    "authors": ["Qboi123"],
-    "description": "Chromium based web browser.",
-    "version": "0.1.0",
+    "name": "MineChromatic",
+    "authors": ["Ultreon Team", "JCEF Team"],
+    "description": "Chromium based web browser. Makes use of JCEF to draw web pages in the app.",
+    "version": "116.0.0",
     "screenshots": [
-        "https://i.imgur.com/7CzbiA7.png",
-        "https://i.imgur.com/4AiXzf8.jpg",
-        "https://i.imgur.com/C7k2UDw.jpg"
+        "https://ultreon.gitlab.io/api/mods/devices/img/MineChromaticPicture-1.png"
     ]
 }
