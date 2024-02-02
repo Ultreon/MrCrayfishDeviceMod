@@ -214,12 +214,13 @@ public class Button extends Component {
         if (this.visible) {
             RenderSystem.setShaderTexture(0, Component.COMPONENTS_GUI);
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-            Color bgColor = new Color(getColorScheme().getBackgroundColor()).brighter().brighter();
-            float[] hsb = Color.RGBtoHSB(bgColor.getRed(), bgColor.getGreen(), bgColor.getBlue(), null);
-            bgColor = new Color(Color.HSBtoRGB(hsb[0], hsb[1], 1f));
-            RenderSystem.setShaderColor(bgColor.getRed() / 255f, bgColor.getGreen() / 255f, bgColor.getBlue() / 255f, 1f);
+
+            Color color = new Color(Laptop.getSystem().getSettings().getColorScheme().getButtonColor());
+            RenderSystem.setShaderColor(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, 1);
+
             this.hovered = GuiHelper.isMouseWithin(mouseX, mouseY, x, y, width, height) && windowActive;
             int i = this.getHoverState(this.hovered);
+
             RenderSystem.enableBlend();
             RenderSystem.blendFuncSeparate(770, 771, 1, 0);
             RenderSystem.blendFunc(770, 771);
@@ -240,7 +241,10 @@ public class Button extends Component {
             graphics.blit(Component.COMPONENTS_GUI, x + 2, y + 2, width - 4, height - 4, 98 + i * 5, 14, 1, 1, 256, 256);
 
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-            RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+
+            if (this.hovered) {
+                graphics.renderOutline(x, y, width, height, Laptop.getSystem().getSettings().getColorScheme().getButtonOutlineColor());
+            }
 
             int contentWidth = (iconResource != null ? iconWidth : 0) + getTextWidth(text);
             if (iconResource != null && !StringUtils.isNotNullOrEmpty(text)) contentWidth += 3;

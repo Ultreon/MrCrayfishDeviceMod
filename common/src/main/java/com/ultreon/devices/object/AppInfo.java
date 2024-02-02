@@ -39,7 +39,6 @@ public class AppInfo {
         @Override
         public int getTintColor(AppInfo info, int o) {
             return switch (o) {
-                case 0 -> new Color(255, 255, 255).getRGB();
                 case 1 -> Laptop.getSystem().getSettings().getColorScheme().getBackgroundColor();
                 case 2 -> Laptop.getSystem().getSettings().getColorScheme().getBackgroundSecondaryColor();
                 default -> new Color(255, 255, 255).getRGB();

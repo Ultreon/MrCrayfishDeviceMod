@@ -27,8 +27,9 @@ public class GuiButtonClose extends Button {
             RenderSystem.blendFuncSeparate(770, 771, 1, 0);
             RenderSystem.blendFunc(770, 771);
 
-            int state = this.isHovered ? 1 : 0;
-            graphics.blit(Window.WINDOW_GUI, this.getX(), this.getY(), state * this.width + 15, 0, this.width, this.height);
+            if (this.isHovered) {
+                graphics.blit(Window.WINDOW_GUI, this.getX(), this.getY(), this.width + 15, 0, this.width, this.height);
+            }
         }
     }
 
