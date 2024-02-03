@@ -8,6 +8,8 @@ public final class Resources {
     }
 
 
+
     public static final ResourceLocation ENDER_MAIL_ICONS = Devices.id("textures/gui/ender_mail.png");
     public static final ResourceLocation ENDER_MAIL_BACKGROUND = Devices.id("textures/gui/ender_mail_background.png");
+    public static final ResourceLocation MISSING_ICON = Devices.id("textures/app/icon/missing.png");
 }
