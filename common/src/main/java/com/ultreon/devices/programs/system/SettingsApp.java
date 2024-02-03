@@ -49,6 +49,7 @@ public class SettingsApp extends SystemApp {
     private Button buttonColorSchemeApply;
 
     private final Stack<Layout> predecessor = new Stack<>();
+    private ComboBox.List<PredefinedResolution> comboDisplayResolutions;
 
     private void resetColorSchemeClick(int mouseX, int mouseY, int mouseButton) {
         if (mouseButton == 0) {
@@ -168,6 +169,21 @@ public class SettingsApp extends SystemApp {
         checkBoxShowApps.setSelected(Settings.isShowAllApps());
         checkBoxShowApps.setClickListener(this::showAllAppsClick);
         layoutGeneral.addComponent(checkBoxShowApps);
+
+        comboDisplayResolutions = new ComboBox.List<>(5, 26 + 20 + 4, PredefinedResolution.getResolutionList());
+        comboDisplayResolutions.setListItemRenderer(new ListItemRenderer<>(20) {
+            @Override
+            public void render(GuiGraphics graphics, PredefinedResolution resolution, Minecraft mc, int x, int y, int width, int height, boolean selected) {
+                graphics.drawString(Minecraft.getInstance().font, resolution.getDisplayName(), x + 5, y + 5, 0xFFFFFF);
+            }
+        });
+        comboDisplayResolutions.setChangeListener((oldValue, newValue) -> {
+            if (newValue != null) {
+                getLaptop().setDisplayResolution(newValue);
+            }
+        });
+
+        layoutGeneral.addComponent(comboDisplayResolutions);
 
         return layoutGeneral;
     }

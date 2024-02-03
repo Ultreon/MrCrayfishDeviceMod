@@ -15,10 +15,14 @@ import com.ultreon.devices.api.task.Callback;
 import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.api.task.TaskManager;
 import com.ultreon.devices.api.utils.OnlineRequest;
+import com.ultreon.devices.api.video.CustomResolution;
+import com.ultreon.devices.api.video.VideoInfo;
 import com.ultreon.devices.block.entity.ComputerBlockEntity;
 import com.ultreon.devices.core.task.TaskInstallApp;
 import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.programs.system.DiagnosticsApp;
+import com.ultreon.devices.programs.system.DisplayResolution;
+import com.ultreon.devices.programs.system.PredefinedResolution;
 import com.ultreon.devices.programs.system.SystemApp;
 import com.ultreon.devices.programs.system.component.FileBrowser;
 import com.ultreon.devices.programs.system.task.TaskUpdateApplicationData;
@@ -30,7 +34,6 @@ import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.ints.IntArraySet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -75,6 +78,7 @@ public class Laptop extends Screen implements System {
     private static Laptop instance;
     private Double dragWindowFromX;
     private Double dragWindowFromY;
+    private VideoInfo videoInfo;
 
     @PlatformOnly("fabric")
     public static List<Application> getApplicationsForFabric() {
@@ -88,10 +92,6 @@ public class Laptop extends Screen implements System {
     private static final List<ResourceLocation> WALLPAPERS = new ArrayList<>();
 
     private static final int BORDER = 10;
-    private static final int DEVICE_WIDTH = 384;
-    static final int SCREEN_WIDTH = DEVICE_WIDTH - BORDER * 2;
-    private static final int DEVICE_HEIGHT = 216;
-    static final int SCREEN_HEIGHT = DEVICE_HEIGHT - BORDER * 2;
     private static final List<Runnable> tasks = new CopyOnWriteArrayList<>();
     private static System system;
     private static BlockPos pos;
@@ -107,7 +107,7 @@ public class Laptop extends Screen implements System {
     private int lastMouseX, lastMouseY;
     private boolean dragging = false;
     private final IntArraySet pressed = new IntArraySet();
-    private final com.ultreon.devices.api.app.component.Image wallpaper;
+    private final Image wallpaper;
     private final Layout wallpaperLayout;
     private BSOD bsod;
 
@@ -141,6 +141,9 @@ public class Laptop extends Screen implements System {
         this.appData = laptop.getApplicationData();
         this.systemData = laptop.getSystemData();
 
+        CompoundTag videoInfoData = this.systemData.getCompound("videoInfo");
+        this.videoInfo = new VideoInfo(videoInfoData);
+
         // Windows
         this.windows = new CopyOnWriteArrayList<>() {
             @Override
@@ -172,8 +175,8 @@ public class Laptop extends Screen implements System {
         if (this.currentWallpaper == null) this.currentWallpaper = new Wallpaper(0);
         Laptop.system = this;
         Laptop.pos = laptop.getBlockPos();
-        this.wallpaperLayout = new Layout(SCREEN_WIDTH, SCREEN_HEIGHT);
-        this.wallpaper = new com.ultreon.devices.api.app.component.Image(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+        this.wallpaperLayout = new Layout(getScreenWidth(), getScreenHeight());
+        this.wallpaper = new Image(0, 0, getScreenWidth(), getScreenHeight());
         if (currentWallpaper.isBuiltIn()) {
             wallpaper.setImage(WALLPAPERS.get(currentWallpaper.location));
         } else {
@@ -188,6 +191,18 @@ public class Laptop extends Screen implements System {
 
     public static Laptop getInstance() {
         return instance;
+    }
+
+    public static int getScreenWidth() {
+        return instance.videoInfo.getResolution().width();
+    }
+
+    public static int getScreenHeight() {
+        return instance.videoInfo.getResolution().height();
+    }
+
+    public static DisplayResolution getResolution() {
+        return instance.videoInfo.getResolution();
     }
 
     public CompoundTag getModSystemTag(Mod mod) {
@@ -257,9 +272,9 @@ public class Laptop extends Screen implements System {
      */
     @Override
     public void init() {
-        int posX = (width - DEVICE_WIDTH) / 2;
-        int posY = (height - DEVICE_HEIGHT) / 2;
-        bar.init(posX + BORDER, posY + DEVICE_HEIGHT - 28);
+        int posX = (width - getDeviceWidth()) / 2;
+        int posY = (height - getDeviceHeight()) / 2;
+        bar.init(posX + BORDER, posY + getDeviceHeight() - 28);
 
         installedApps.clear();
         ListTag list = systemData.getList("InstalledApps", Tag.TAG_STRING);
@@ -273,6 +288,14 @@ public class Laptop extends Screen implements System {
         if (Minecraft.getInstance().getConnection() == null) {
             installedApps.addAll(ApplicationManager.getAvailableApplications());
         }
+    }
+
+    private static int getDeviceWidth() {
+        return getScreenWidth() + 2 * BORDER;
+    }
+
+    private static int getDeviceHeight() {
+        return getScreenHeight() + 2 * BORDER;
     }
 
     @Override
@@ -316,6 +339,21 @@ public class Laptop extends Screen implements System {
     @Override
     public void resize(@NotNull Minecraft minecraft, int width, int height) {
         super.resize(minecraft, width, height);
+
+        if (videoInfo.getResolution().width() > width || videoInfo.getResolution().height() > height) {
+            videoInfo.setResolution(new CustomResolution(width, height));
+        }
+
+        revalidateDisplay();
+    }
+
+    public void revalidateDisplay() {
+        wallpaper.componentWidth = videoInfo.getResolution().width();
+        wallpaper.componentHeight = videoInfo.getResolution().height();
+        wallpaperLayout.width = videoInfo.getResolution().width();
+        wallpaperLayout.height = videoInfo.getResolution().height();
+        wallpaperLayout.updateComponents(0, 0);
+
         for (var window : windows) {
             if (window != null) {
                 window.content.markForLayoutUpdate();
@@ -376,9 +414,9 @@ public class Laptop extends Screen implements System {
 
     public void renderBsod(final @NotNull GuiGraphics graphics, final int mouseX, final int mouseY, float partialTicks) {
         renderBezels(graphics, mouseX, mouseY, partialTicks);
-        int posX = (width - DEVICE_WIDTH) / 2;
-        int posY = (height - DEVICE_HEIGHT) / 2;
-        graphics.fill(posX+10, posY+10, posX + DEVICE_WIDTH-10, posY + DEVICE_HEIGHT-10, new Color(0, 0, 255).getRGB());
+        int posX = (width - getDeviceWidth()) / 2;
+        int posY = (height - getDeviceHeight()) / 2;
+        graphics.fill(posX+10, posY+10, posX + getDeviceWidth()-10, posY + getDeviceHeight()-10, new Color(0, 0, 255).getRGB());
         var bo = new ByteArrayOutputStream();
 
         double scale = Minecraft.getInstance().getWindow().getGuiScale();
@@ -386,7 +424,7 @@ public class Laptop extends Screen implements System {
         var b = new PrintStream(bo);
         bsod.throwable.printStackTrace(b);
         var str = bo.toString();
-        drawLines(graphics, Laptop.getFont(), str, posX+10, posY+10+getFont().lineHeight*2, (int) ((DEVICE_WIDTH - 10) * scale), new Color(255, 255, 255).getRGB());
+        drawLines(graphics, Laptop.getFont(), str, posX+10, posY+10+getFont().lineHeight*2, (int) ((getDeviceWidth() - 10) * scale), new Color(255, 255, 255).getRGB());
         graphics.pose().pushPose();
         graphics.pose().scale(2, 2, 0);
         graphics.pose().translate((posX+10)/2f,(posY+10)/2f,0);
@@ -398,7 +436,7 @@ public class Laptop extends Screen implements System {
         var lines = new ArrayList<String>();
         font.getSplitter().splitLines(FormattedText.of(text.replaceAll("\r\n", "\n").replaceAll("\r", "\n")), width, Style.EMPTY).forEach(b -> lines.add(b.getString()));
         var totalTextHeight = font.lineHeight*lines.size();
-        var textScale = (DEVICE_HEIGHT-20-(getFont().lineHeight*2))/(float)totalTextHeight;
+        var textScale = (instance.videoInfo.getResolution().height()-20-(getFont().lineHeight*2))/(float)totalTextHeight;
         textScale = (float) (1f / Minecraft.getInstance().getWindow().getGuiScale());
         textScale = Math.max(0.5f, textScale);
         graphics.pose().pushPose();
@@ -424,23 +462,25 @@ public class Laptop extends Screen implements System {
         //*************************//
         //     Physical Screen     //
         //*************************//
-        int posX = (width - DEVICE_WIDTH) / 2;
-        int posY = (height - DEVICE_HEIGHT) / 2;
+        int deviceWidth = videoInfo.getResolution().width() + BORDER * 2;
+        int deviceHeight = videoInfo.getResolution().height() + BORDER * 2;
+        int posX = (width - deviceWidth) / 2;
+        int posY = (height - deviceHeight) / 2;
 
         // Corners
         graphics.blit(LAPTOP_GUI, posX, posY, 0, 0, BORDER, BORDER); // TOP-LEFT
-        graphics.blit(LAPTOP_GUI, posX + DEVICE_WIDTH - BORDER, posY, 11, 0, BORDER, BORDER); // TOP-RIGHT
-        graphics.blit(LAPTOP_GUI, posX + DEVICE_WIDTH - BORDER, posY + DEVICE_HEIGHT - BORDER, 11, 11, BORDER, BORDER); // BOTTOM-RIGHT
-        graphics.blit(LAPTOP_GUI, posX, posY + DEVICE_HEIGHT - BORDER, 0, 11, BORDER, BORDER); // BOTTOM-LEFT
+        graphics.blit(LAPTOP_GUI, posX + deviceWidth - BORDER, posY, 11, 0, BORDER, BORDER); // TOP-RIGHT
+        graphics.blit(LAPTOP_GUI, posX + deviceWidth - BORDER, posY + deviceHeight - BORDER, 11, 11, BORDER, BORDER); // BOTTOM-RIGHT
+        graphics.blit(LAPTOP_GUI, posX, posY + deviceHeight - BORDER, 0, 11, BORDER, BORDER); // BOTTOM-LEFT
 
         // Edges
-        graphics.blit(LAPTOP_GUI, posX + BORDER, posY, SCREEN_WIDTH, BORDER, 10, 0, 1, BORDER, 256, 256); // TOP
-        graphics.blit(LAPTOP_GUI, posX + DEVICE_WIDTH - BORDER, posY + BORDER, BORDER, SCREEN_HEIGHT, 11, 10, BORDER, 1, 256, 256); // RIGHT
-        graphics.blit(LAPTOP_GUI, posX + BORDER, posY + DEVICE_HEIGHT - BORDER, SCREEN_WIDTH, BORDER, 10, 11, 1, BORDER, 256, 256); // BOTTOM
-        graphics.blit(LAPTOP_GUI, posX, posY + BORDER, BORDER, SCREEN_HEIGHT, 0, 11, BORDER, 1, 256, 256); // LEFT
+        graphics.blit(LAPTOP_GUI, posX + BORDER, posY, getScreenWidth(), BORDER, 10, 0, 1, BORDER, 256, 256); // TOP
+        graphics.blit(LAPTOP_GUI, posX + deviceWidth - BORDER, posY + BORDER, BORDER, getScreenHeight(), 11, 10, BORDER, 1, 256, 256); // RIGHT
+        graphics.blit(LAPTOP_GUI, posX + BORDER, posY + deviceHeight - BORDER, getScreenWidth(), BORDER, 10, 11, 1, BORDER, 256, 256); // BOTTOM
+        graphics.blit(LAPTOP_GUI, posX, posY + BORDER, BORDER, getScreenHeight(), 0, 11, BORDER, 1, 256, 256); // LEFT
 
         // Center
-        graphics.blit(LAPTOP_GUI, posX + BORDER, posY + BORDER, SCREEN_WIDTH, SCREEN_HEIGHT, 10, 10, 1, 1, 256, 256);
+        graphics.blit(LAPTOP_GUI, posX + BORDER, posY + BORDER, getScreenWidth(), getScreenHeight(), 10, 10, 1, 1, 256, 256);
 
     }
 
@@ -453,14 +493,17 @@ public class Laptop extends Screen implements System {
      * @param partialTicks the rendering partial ticks that forge give use (which is useless here).
      */
     public void renderLaptop(final @NotNull GuiGraphics graphics, final int mouseX, final int mouseY, float partialTicks) {
-        int posX = (width - DEVICE_WIDTH) / 2;
-        int posY = (height - DEVICE_HEIGHT) / 2;
+        int posX = (width - getDeviceWidth()) / 2;
+        int posY = (height - getDeviceHeight()) / 2;
         // Fixes the strange partialTicks that Forge decided to give us
         final float frameTime = Minecraft.getInstance().getFrameTime();
         for (Runnable task : tasks) {
             task.run();
         }
+        
         renderBezels(graphics, mouseX, mouseY, partialTicks);
+
+        GLHelper.pushScissor(posX, posY, videoInfo.getResolution().width() + BORDER, videoInfo.getResolution().height() + BORDER);
         //*******************//
         //     Wallpaper     //
         //*******************//
@@ -507,21 +550,22 @@ public class Laptop extends Screen implements System {
                             closeApplication(app);
                         }
                     }
-                    graphics.pose().translate(0, 0, 100);
+                    graphics.pose().translate(0, 0, 400);
                 }
             }
         }
+        bar.render(graphics, this, minecraft, posX + 10, posY + getDeviceHeight() - 28, mouseX, mouseY, frameTime);
+
+        graphics.pose().translate(0, 0, 100);
+        if (context != null) {
+            context.render(graphics, this, minecraft, context.xPosition, context.yPosition, mouseX, mouseY, true, frameTime);
+        }
+
         graphics.pose().popPose();
 
         //****************************//
         // Render the Application Bar //
         //****************************//
-        bar.render(graphics, this, minecraft, posX + 10, posY + DEVICE_HEIGHT - 28, mouseX, mouseY, frameTime);
-
-        if (context != null) {
-            context.render(graphics, this, minecraft, context.xPosition, context.yPosition, mouseX, mouseY, true, frameTime);
-        }
-
         Image.CACHE.entrySet().removeIf(entry -> {
             Image.CachedImage cachedImage = entry.getValue();
             if (cachedImage.isDynamic() && cachedImage.isPendingDeletion()) {
@@ -535,6 +579,7 @@ public class Laptop extends Screen implements System {
         });
 
         super.render(graphics, mouseX, mouseY, frameTime);
+        GLHelper.popScissor();
 
         GLHelper.clearScissorStack();
     }
@@ -558,6 +603,21 @@ public class Laptop extends Screen implements System {
         this.bsod = new BSOD(e);
         e.printStackTrace();
     }
+
+    public VideoInfo getVideoInfo() {
+        return videoInfo;
+    }
+
+    public void setDisplayResolution(PredefinedResolution newValue) {
+        if (this.videoInfo != null) {
+            this.videoInfo.setResolution(newValue);
+        }
+    }
+
+    public void revalidate() {
+
+    }
+
     private static final class BSOD {
         private final Throwable throwable;
         public BSOD(Throwable e) {
@@ -569,8 +629,8 @@ public class Laptop extends Screen implements System {
         this.lastMouseX = (int) mouseX;
         this.lastMouseY = (int) mouseY;
 
-        int posX = (width - SCREEN_WIDTH) / 2;
-        int posY = (height - SCREEN_HEIGHT) / 2;
+        int posX = (width - getScreenWidth()) / 2;
+        int posY = (height - getScreenHeight()) / 2;
 
         if (this.context != null) {
             int dropdownX = context.xPosition;
@@ -583,7 +643,7 @@ public class Laptop extends Screen implements System {
             }
         }
 
-        this.bar.handleClick(this, posX, posY + SCREEN_HEIGHT - TaskBar.BAR_HEIGHT, (int) mouseX, (int) mouseY, mouseButton);
+        this.bar.handleClick(this, posX, posY + getScreenHeight() - TaskBar.BAR_HEIGHT, (int) mouseX, (int) mouseY, mouseButton);
 
         for (int i = 0; i < windows.size(); i++) {
             Window<Application> window = (Window<Application>) windows.get(i);
@@ -733,8 +793,8 @@ public class Laptop extends Screen implements System {
     @SuppressWarnings("unchecked")
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        int posX = (width - SCREEN_WIDTH) / 2;
-        int posY = (height - SCREEN_HEIGHT) / 2;
+        int posX = (width - getScreenWidth()) / 2;
+        int posY = (height - getScreenHeight()) / 2;
 
         try {
             if (this.context != null) {
@@ -850,7 +910,7 @@ public class Laptop extends Screen implements System {
             }
 
             Window<Application> window = new Window<>(app, this);
-            window.init((width - SCREEN_WIDTH) / 2, (height - SCREEN_HEIGHT) / 2, intent);
+            window.init((width - getScreenWidth()) / 2, (height - getScreenHeight()) / 2, intent);
 
             if (appData.contains(app.getInfo().getFormattedId())) {
                 app.load(appData.getCompound(app.getInfo().getFormattedId()));
@@ -966,28 +1026,28 @@ public class Laptop extends Screen implements System {
     }
 
     private boolean isMouseOnScreen(int mouseX, int mouseY) {
-        int posX = (width - SCREEN_WIDTH) / 2;
-        int posY = (height - SCREEN_HEIGHT) / 2;
-        return isMouseInside(mouseX, mouseY, posX, posY, posX + SCREEN_WIDTH, posY + SCREEN_HEIGHT);
+        int posX = (width - getScreenWidth()) / 2;
+        int posY = (height - getScreenHeight()) / 2;
+        return isMouseInside(mouseX, mouseY, posX, posY, posX + getScreenWidth(), posY + getScreenHeight());
     }
 
     private boolean isMouseWithinWindowBar(int mouseX, int mouseY, Window<?> window) {
         if (window == null) return false;
-        int posX = (width - SCREEN_WIDTH) / 2;
-        int posY = (height - SCREEN_HEIGHT) / 2;
+        int posX = (width - getScreenWidth()) / 2;
+        int posY = (height - getScreenHeight()) / 2;
         return isMouseInside(mouseX, mouseY, posX + window.offsetX + 1, posY + window.offsetY + 1, posX + window.offsetX + window.width - 13, posY + window.offsetY + 11);
     }
 
     private boolean isMouseWithinWindow(int mouseX, int mouseY, Window<?> window) {
         if (window == null) return false;
-        int posX = (width - SCREEN_WIDTH) / 2;
-        int posY = (height - SCREEN_HEIGHT) / 2;
+        int posX = (width - getScreenWidth()) / 2;
+        int posY = (height - getScreenHeight()) / 2;
         return isMouseInside(mouseX, mouseY, posX + window.offsetX, posY + window.offsetY, posX + window.offsetX + window.width, posY + window.offsetY + window.height);
     }
 
     public boolean isMouseWithinApp(int mouseX, int mouseY, Window<?> window) {
-        int posX = (width - SCREEN_WIDTH) / 2;
-        int posY = (height - SCREEN_HEIGHT) / 2;
+        int posX = (width - getScreenWidth()) / 2;
+        int posY = (height - getScreenHeight()) / 2;
         return isMouseInside(mouseX, mouseY, posX + window.offsetX + 1, posY + window.offsetY + 13, posX + window.offsetX + window.width - 1, posY + window.offsetY + window.height - 1);
     }
 
