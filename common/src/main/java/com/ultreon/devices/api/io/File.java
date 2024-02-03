@@ -2,6 +2,7 @@ package com.ultreon.devices.api.io;
 
 import com.ultreon.devices.api.app.Application;
 import com.ultreon.devices.api.task.Callback;
+import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.core.io.action.FileAction;
 import com.ultreon.devices.programs.system.component.FileBrowser;
@@ -29,6 +30,9 @@ public class File {
     protected CompoundTag data;
     protected boolean protect = false;
     protected boolean valid = false;
+    private long creationTime = Laptop.getInstance().getTime();
+    private long lastAccessed = creationTime;
+    private long lastModified = creationTime;
 
     protected File() {
 
@@ -289,7 +293,7 @@ public class File {
     }
 
     /**
-     * Deletes this file from the folder its contained in. This method does not specify a callback,
+     * Deletes this file from the folder it's contained in. This method does not specify a callback,
      * so any errors occurred will not be reported.
      */
     public void delete() {
@@ -297,7 +301,7 @@ public class File {
     }
 
     /**
-     * Deletes this file from the folder its contained in. This method allows the specification of a
+     * Deletes this file from the folder it's contained in. This method allows the specification of a
      * callback and will tell if deleted successfully or not.
      *
      * @param callback the callback
@@ -444,6 +448,10 @@ public class File {
         CompoundTag tag = new CompoundTag();
         tag.putString("openingApp", openingApp);
         tag.put("data", data);
+        tag.putBoolean("protected", isProtected());
+        tag.putLong("creationTime", creationTime);
+        tag.putLong("lastAccessed", lastAccessed);
+        tag.putLong("lastModified", lastModified);
         return tag;
     }
 
@@ -455,7 +463,12 @@ public class File {
      * @return a file instance
      */
     public static File fromTag(String name, CompoundTag tag) {
-        return new File(name, tag.getString("openingApp"), tag.getCompound("data"));
+        File file = new File(name, tag.getString("openingApp"), tag.getCompound("data"));
+        file.protect = tag.getBoolean("protected");
+        file.creationTime = tag.getLong("creationTime");
+        file.lastAccessed = tag.getLong("lastAccessed");
+        file.lastModified = tag.getLong("lastModified");
+        return file;
     }
 
     @Override
@@ -486,5 +499,17 @@ public class File {
      */
     public File copy(String newName) {
         return new File(newName, openingApp, data.copy());
+    }
+
+    public long getCreationTime() {
+        return creationTime;
+    }
+
+    public long getLastModified() {
+        return this.lastModified;
+    }
+    
+    public long getLastAccessed() {
+        return this.lastAccessed;
     }
 }

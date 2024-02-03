@@ -1,29 +1,25 @@
 package com.ultreon.devices.programs.themes;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.app.*;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Dialog;
-import com.ultreon.devices.api.app.System;
+import com.ultreon.devices.api.app.DeviceSystem;
 import com.ultreon.devices.api.app.component.Button;
 import com.ultreon.devices.api.app.component.TextField;
 import com.ultreon.devices.api.utils.RenderUtil;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.object.AppInfo;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
-import org.apache.commons.codec.binary.Hex;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.math.BigInteger;
 import java.util.Arrays;
-import java.util.HexFormat;
 
 public class ThemesApp extends Application implements SystemAccessor {
-    private System system;
+    private DeviceSystem system;
     private int[] lastMousePositionsX = null;
     private int[] lastMousePositionsY = null;
 
@@ -45,7 +41,7 @@ public class ThemesApp extends Application implements SystemAccessor {
     }
 
     @Override
-    public void sendSystem(System system) {
+    public void sendSystem(DeviceSystem system) {
         this.system = system;
     }
 

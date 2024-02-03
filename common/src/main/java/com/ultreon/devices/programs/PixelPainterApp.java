@@ -24,7 +24,6 @@ import com.ultreon.devices.object.ColorGrid;
 import com.ultreon.devices.object.Picture;
 import com.ultreon.devices.programs.system.layout.StandardLayout;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -33,7 +32,6 @@ import org.joml.Quaternionf;
 
 import org.jetbrains.annotations.Nullable;
 import java.awt.*;
-import java.lang.System;
 import java.util.Objects;
 
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
@@ -194,7 +192,7 @@ public class PixelPainterApp extends Application {
                 graphics.drawString(mc.font, picture.getAuthor(), x + 2, y + 11, AUTHOR_TEXT.getRGB(), false);
             }
         });
-        listPictures.setItemClickListener((picture, index, mouseButton) ->
+        listPictures.setItemClickListener((picture, index, mouseX, mouseY, mouseButton) ->
         {
             if (mouseButton == 0) {
                 btnLoadSavedPicture.setEnabled(true);

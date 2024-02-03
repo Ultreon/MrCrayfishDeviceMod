@@ -1,6 +1,5 @@
 package com.ultreon.devices.api.app;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.app.component.Button;
 import com.ultreon.devices.api.app.component.ItemList;
 import com.ultreon.devices.api.app.component.Text;
@@ -18,12 +17,12 @@ import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.core.network.NetworkDevice;
 import com.ultreon.devices.core.network.task.TaskGetDevices;
 import com.ultreon.devices.core.print.task.TaskPrint;
+import com.ultreon.devices.init.DeviceBlockEntities;
 import com.ultreon.devices.programs.system.component.FileBrowser;
 import com.ultreon.devices.programs.system.object.ColorScheme;
 import com.ultreon.devices.util.GLHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -489,7 +488,7 @@ public abstract class Dialog extends Wrappable {
             browser = new FileBrowser(0, 0, app, FileBrowser.Mode.BASIC);
             browser.openFolder(FileSystem.DIR_HOME);
             browser.setFilter(file -> filter == null || filter.test(file) || file.isFolder());
-            browser.setItemClickListener((file, index, mouseButton) -> {
+            browser.setItemClickListener((file, index, mouseX, mouseY, mouseButton) -> {
                 if (mouseButton == 0) {
                     if (!file.isFolder()) {
                         buttonPositive.setEnabled(true);
@@ -789,7 +788,7 @@ public abstract class Dialog extends Wrappable {
                     RenderUtil.drawStringClipped(graphics, networkDevice.getName(), x + 18, y + 4, 118, Laptop.getSystem().getSettings().getColorScheme().getTextColor(), true);
                 }
             });
-            itemListPrinters.setItemClickListener((blockPos, index, mouseButton) -> {
+            itemListPrinters.setItemClickListener((blockPos, index, mouseX, mouseY, mouseButton) -> {
                 if (mouseButton == 0) {
                     buttonPrint.setEnabled(true);
                     buttonInfo.setEnabled(true);
@@ -861,7 +860,7 @@ public abstract class Dialog extends Wrappable {
         private void getPrinters(ItemList<NetworkDevice> itemList) {
             itemList.removeAll();
             itemList.setLoading(true);
-            Task task = new TaskGetDevices(Laptop.getPos(), PrinterBlockEntity.class);
+            Task task = new TaskGetDevices(Laptop.getPos(), DeviceBlockEntities.PRINTER.get());
             task.setCallback((tag, success) -> {
                 if (success) {
                     assert tag != null;

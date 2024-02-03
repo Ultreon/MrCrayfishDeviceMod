@@ -68,7 +68,7 @@ public class NoteStashApp extends Application {
         });
 
         notes = new ItemList<>(5, 5, 100, 5);
-        notes.setItemClickListener((e, index, mouseButton) -> {
+        notes.setItemClickListener((e, index, mouseX, mouseY, mouseButton) -> {
             btnView.setEnabled(true);
             btnDelete.setEnabled(true);
         });

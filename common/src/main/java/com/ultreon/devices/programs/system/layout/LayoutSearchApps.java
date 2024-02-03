@@ -1,7 +1,6 @@
 package com.ultreon.devices.programs.system.layout;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.ApplicationManager;
 import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Layout;
@@ -15,7 +14,6 @@ import com.ultreon.devices.programs.system.AppStore;
 import com.ultreon.devices.programs.system.object.LocalEntry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import org.apache.commons.lang3.StringUtils;
 
@@ -56,7 +54,7 @@ public class LayoutSearchApps extends StandardLayout {
                 RenderUtil.drawStringClipped(graphics, info.getName() + ChatFormatting.GRAY + " - " + ChatFormatting.DARK_GRAY + info.getDescription(), x + 20, y + 5, itemListResults.getWidth() - 22, Color.WHITE.getRGB(), false);
             }
         });
-        itemListResults.setItemClickListener((info, index, mouseButton) -> {
+        itemListResults.setItemClickListener((info, index, mouseX, mouseY, mouseButton) -> {
             if (mouseButton == 0) {
                 if (System.currentTimeMillis() - this.lastClick <= 200) {
                     openApplication(info);

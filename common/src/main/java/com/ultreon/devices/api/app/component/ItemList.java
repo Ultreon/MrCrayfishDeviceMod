@@ -166,7 +166,7 @@ public class ItemList<E> extends Component implements Iterable<E> {
                 if (GuiHelper.isMouseInside(mouseX, mouseY, xPosition + 1, yPosition + (i * height) + i, xPosition + width - 1, yPosition + (i * height) + i + height)) {
                     if (mouseButton == 0) this.selected = i + offset;
                     if (itemClickListener != null) {
-                        itemClickListener.onClick(items.get(i + offset), i + offset, mouseButton);
+                        itemClickListener.onClick(items.get(i + offset), i + offset, mouseX, mouseY, mouseButton);
                     }
                 }
             }

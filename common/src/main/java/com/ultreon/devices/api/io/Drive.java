@@ -1,9 +1,14 @@
 package com.ultreon.devices.api.io;
 
+import com.ultreon.devices.api.driver.DiskDriver;
+import com.ultreon.devices.api.driver.PhysicalDiskDriver;
+import com.ultreon.devices.api.driver.VirtualDiskDriver;
+import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.core.io.FileSystem;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public class Drive {
@@ -14,6 +19,12 @@ public class Drive {
     private Folder root;
 
     private boolean synced = false;
+
+    public Drive(String name, UUID uuid, Type type) {
+        this.name = name;
+        this.uuid = uuid;
+        this.type = type;
+    }
 
     public Drive(CompoundTag driveTag) {
         this.name = driveTag.getString("name");
@@ -75,15 +86,17 @@ public class Drive {
     /**
      * Do not use! Checks if the drive structure is synced
      *
-     * @return is drive structure synced
+     * @return is drive structure synced?
      */
     public boolean isSynced() {
         return synced;
     }
 
     /**
-     * Gets a folder in the file system. To get sub folders, simply use a
-     * '/' between each folder name. If the folder does not exist, it will
+     * Gets a folder in the file system.
+     * To get subfolders, Use a
+     * '/' between each folder name.
+     * If the folder does not exist, it will
      * return null.
      *
      * @param path the directory of the folder
@@ -115,6 +128,10 @@ public class Drive {
     @Override
     public String toString() {
         return name;
+    }
+
+    public Optional<? extends DiskDriver> getDriver() {
+        return Laptop.getInstance().getDriverManager().getByClass(PhysicalDiskDriver.class);
     }
 
     public enum Type {

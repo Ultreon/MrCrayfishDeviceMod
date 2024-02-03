@@ -188,6 +188,7 @@ public class TaskBar {
         return mouseX >= x1 && mouseX <= x2 && mouseY >= y1 && mouseY <= y2;
     }
 
+    @Deprecated
     public String timeToString(long time) {
         int hours = (int) ((Math.floor(time / 1000d) + 6) % 24);
         int minutes = (int) Math.floor((time % 1000) / 1000d * 60);

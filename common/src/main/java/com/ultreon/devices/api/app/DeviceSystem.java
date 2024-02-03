@@ -11,7 +11,7 @@ import java.util.Collection;
 /**
  * @author MrCrayfish
  */
-public interface System {
+public interface DeviceSystem { // XyperCode: Renamed System to DeviceSystem due to conflict with Java's System class.
     /**
      * Open a context on the screen
      */

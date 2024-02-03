@@ -6,11 +6,14 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.Devices;
 import com.ultreon.devices.api.ApplicationManager;
 import com.ultreon.devices.api.app.Dialog;
-import com.ultreon.devices.api.app.System;
+import com.ultreon.devices.api.app.DeviceSystem;
 import com.ultreon.devices.api.app.*;
 import com.ultreon.devices.api.app.component.Image;
+import com.ultreon.devices.api.driver.DeviceDrivers;
+import com.ultreon.devices.api.driver.DriverManager;
 import com.ultreon.devices.api.io.Drive;
 import com.ultreon.devices.api.io.File;
+import com.ultreon.devices.api.io.VirtualDrive;
 import com.ultreon.devices.api.task.Callback;
 import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.api.task.TaskManager;
@@ -30,9 +33,9 @@ import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.ints.IntArraySet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -63,7 +66,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  *
  * @author MrCrayfish, Qboi123
  */
-public class Laptop extends Screen implements System {
+public class Laptop extends Screen implements DeviceSystem {
     public static final int ID = 1;
     public static final ResourceLocation ICON_TEXTURES = new ResourceLocation(Devices.MOD_ID, "textures/atlas/app_icons.png");
     public static final int ICON_SIZE = 14;
@@ -75,6 +78,7 @@ public class Laptop extends Screen implements System {
     private static Laptop instance;
     private Double dragWindowFromX;
     private Double dragWindowFromY;
+    private DriverManager driverManager = new DriverManager();
 
     @PlatformOnly("fabric")
     public static List<Application> getApplicationsForFabric() {
@@ -93,7 +97,7 @@ public class Laptop extends Screen implements System {
     private static final int DEVICE_HEIGHT = 216;
     static final int SCREEN_HEIGHT = DEVICE_HEIGHT - BORDER * 2;
     private static final List<Runnable> tasks = new CopyOnWriteArrayList<>();
-    private static System system;
+    private static DeviceSystem system;
     private static BlockPos pos;
     private static Drive mainDrive;
     private final Settings settings;
@@ -182,6 +186,14 @@ public class Laptop extends Screen implements System {
         this.wallpaperLayout.addComponent(this.wallpaper);
         this.wallpaperLayout.handleLoad();
 
+        if (worldLess) {
+            mainDrive = new VirtualDrive();
+
+            driverManager.registerDriver(DeviceDrivers.VIRTUAL_DISK.create());
+        } else {
+            driverManager.registerDriver(DeviceDrivers.PHYSICAL_DISK.create());
+        }
+
         // World-less flag.
         Laptop.worldLess = worldLess;
     }
@@ -228,7 +240,7 @@ public class Laptop extends Screen implements System {
         }
     }
 
-    public static System getSystem() {
+    public static DeviceSystem getSystem() {
         return system;
     }
 
@@ -558,6 +570,25 @@ public class Laptop extends Screen implements System {
         this.bsod = new BSOD(e);
         e.printStackTrace();
     }
+
+    public long getTime() {
+        ClientLevel level = Minecraft.getInstance().level;
+        if (worldLess || level == null) {
+            return java.lang.System.currentTimeMillis() / 86400000 * 24000;
+        }
+        return level.getDayTime();
+    }
+
+    public String formatDateTime(long dateTime) {
+        int hours = (int) ((Math.floor(dateTime / 1000d) + 6) % 24);
+        int minutes = (int) Math.floor((dateTime % 1000) / 1000d * 60);
+        return String.format("Day %d, %02d:%02d", Math.floorDiv(dateTime, 24000), hours, minutes);
+    }
+
+    public DriverManager getDriverManager() {
+        return driverManager;
+    }
+
     private static final class BSOD {
         private final Throwable throwable;
         public BSOD(Throwable e) {
@@ -617,7 +648,7 @@ public class Laptop extends Screen implements System {
                     e.printStackTrace();
                     Dialog.Message message = new Dialog.Message("An error has occurred.\nSend logs to devs.");
                     message.setTitle("Error");
-                    if (windows.size() == 0 || windows.get(0) == null) {
+                    if (windows.isEmpty() || windows.get(0) == null) {
                         CompoundTag intent = new CompoundTag();
                         AppInfo info = window.content.getInfo();
                         if (info != null) {
@@ -795,6 +826,7 @@ public class Laptop extends Screen implements System {
     }
 
     public void renderComponentTooltip(@NotNull GuiGraphics graphics, @NotNull List<Component> tooltips, int x, int y) {
+        assert minecraft != null;
         graphics.renderComponentTooltip(minecraft.font, tooltips, x, y);
     }
 
@@ -807,7 +839,6 @@ public class Laptop extends Screen implements System {
                 windows.remove(i);
                 updateWindowStack();
                 windows.add(0, window);
-                i--;
                 return Pair.of((Application) window.content, true);
             }
         }

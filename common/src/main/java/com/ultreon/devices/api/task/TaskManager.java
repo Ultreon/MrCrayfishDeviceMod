@@ -8,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 public final class TaskManager {
@@ -46,7 +47,21 @@ public final class TaskManager {
         int requestId = manager.currentId++;
         manager.requests.put(requestId, task);
         if(Minecraft.getInstance().getConnection() != null)
-        PacketHandler.INSTANCE.sendToServer(new RequestPacket(requestId, task));
+            PacketHandler.INSTANCE.sendToServer(new RequestPacket(requestId, task));
+    }
+
+    public static <T> CompletableFuture<T> sendTask(CompletableTask<T> task) {
+        TaskManager manager = get();
+        if (!manager.registeredRequests.containsKey(task.getName())) {
+            throw new RuntimeException("Unregistered Task: " + task.getClass().getName() + ". Use TaskManager#requestRequest to register your task.");
+        }
+
+        int requestId = manager.currentId++;
+        manager.requests.put(requestId, task);
+        if(Minecraft.getInstance().getConnection() != null)
+            PacketHandler.INSTANCE.sendToServer(new RequestPacket(requestId, task));
+
+        return task.future;
     }
 
     public static Task getTask(String name) {

@@ -2,6 +2,7 @@ package com.ultreon.devices.core.io;
 
 import com.ultreon.devices.Devices;
 import com.ultreon.devices.api.app.Application;
+import com.ultreon.devices.api.driver.DiskDriver;
 import com.ultreon.devices.api.io.Drive;
 import com.ultreon.devices.api.io.Folder;
 import com.ultreon.devices.api.task.Callback;
@@ -14,8 +15,6 @@ import com.ultreon.devices.core.io.drive.AbstractDrive;
 import com.ultreon.devices.core.io.drive.ExternalDrive;
 import com.ultreon.devices.core.io.drive.InternalDrive;
 import com.ultreon.devices.core.io.task.TaskGetFiles;
-import com.ultreon.devices.core.io.task.TaskGetMainDrive;
-import com.ultreon.devices.core.io.task.TaskSendAction;
 import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.init.DeviceItems;
 import com.ultreon.devices.item.FlashDriveItem;
@@ -64,16 +63,15 @@ public class FileSystem {
     public static void sendAction(Drive drive, FileAction action, @Nullable Callback<Response> callback) {
         if (Laptop.getPos() != null) {
             DebugLog.log("Sending action " + action + " to " + drive);
-            Task task = new TaskSendAction(drive, action);
-            task.setCallback((tag, success) -> {
-                DebugLog.log("Action " + action + " sent to " + drive + ": " + success);
-                if (callback != null) {
-                    assert tag != null;
-                    DebugLog.log("Callback: " + tag.getString("response"));
-                    callback.execute(Response.fromTag(tag.getCompound("response")), success);
+            DiskDriver diskDriver = Laptop.getInstance().getDriverManager().getByClass(DiskDriver.class).orElseThrow();
+            diskDriver.sendAction(Laptop.getPos(), drive, action, callback).handle((response, throwable) -> {
+                if (response != null && callback != null) {
+                    DebugLog.log("Action " + action + " sent to " + drive + ": " + response.getStatus());
+                    callback.execute(response, response.getStatus() == Status.SUCCESSFUL);
                 }
+
+                return null;
             });
-            TaskManager.sendTask(task);
         } else {
             DebugLog.log("Sending action " + action + " to " + drive + " failed: Laptop not found");
         }
@@ -88,16 +86,18 @@ public class FileSystem {
         }
 
         if (Laptop.getMainDrive() == null) {
-            Task task = new TaskGetMainDrive(Laptop.getPos());
-            task.setCallback((tag, success) -> {
-                if (success) {
+            DiskDriver diskDriver = Laptop.getInstance().getDriverManager().getBySubClass(DiskDriver.class).orElseThrow();
+            diskDriver.getMainDrive().handle((drive, throwable) -> {
+                if (drive == null) {
                     setupApplicationFolder(app, callback);
-                } else {
-                    callback.execute(null, false);
+                    return null;
                 }
+                if (throwable != null) {
+                    callback.execute(null, false);
+                    return null;
+                }
+                return null;
             });
-
-            TaskManager.sendTask(task);
         } else {
             setupApplicationFolder(app, callback);
         }
@@ -187,7 +187,7 @@ public class FileSystem {
             return constructor.newInstance(name, true);
         } catch (NoSuchMethodException | IllegalAccessException | InstantiationException |
                  InvocationTargetException e) {
-            e.printStackTrace();
+            Devices.LOGGER.error("Failed to create protected folder " + name, e);
         }
         return null;
     }
@@ -314,7 +314,7 @@ public class FileSystem {
             this.status = status;
         }
 
-        private Response(int status, String message) {
+        public Response(int status, String message) {
             this.status = status;
             this.message = message;
         }
