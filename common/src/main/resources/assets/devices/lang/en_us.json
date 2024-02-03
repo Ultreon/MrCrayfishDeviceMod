@@ -14,6 +14,7 @@
   "app.devices.example.author": "MrCrayfish",
   "app.devices.file_browser": "File Browser",
   "app.devices.file_browser.author": "MrCrayfish",
+  "app.devices.file_browser.open": "Open",
   "app.devices.mine_bay": "MineBay",
   "app.devices.mine_bay.author": "MrCrayfish",
   "app.devices.note_stash": "Note Stash",

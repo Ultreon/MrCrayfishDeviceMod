@@ -62,8 +62,8 @@ public class NavigationModule extends Module {
         }
 
         int finalColor = color;
-        layout.setBackground((pose, gui, mc, x, y, width1, height, mouseX, mouseY, windowActive) ->
-                Gui.fill(pose, x, y, x + width1, y + height, finalColor));
+        layout.setBackground((graphics, mc, x, y, width1, height, mouseX, mouseY, windowActive) ->
+                graphics.fill(x, y, x + width1, y + height, finalColor));
 
         List<Button> navButtons = createNavigationButtons(frame, data);
         int currentRow = 0;

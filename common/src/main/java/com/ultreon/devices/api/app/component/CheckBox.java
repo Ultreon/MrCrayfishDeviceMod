@@ -7,6 +7,7 @@ import com.ultreon.devices.api.app.listener.ClickListener;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 
 import java.awt.*;
 
@@ -56,14 +57,14 @@ public class CheckBox extends Component implements RadioGroup.Item {
     }
 
     @Override
-    public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         if (this.visible) {
             if (group == null) {
                 Color bgColor = new Color(getColorScheme().getBackgroundColor());
-                fill(pose, xPosition, yPosition, xPosition + 10, yPosition + 10, color(borderColor, bgColor.darker().darker().getRGB()));
-                fill(pose, xPosition + 1, yPosition + 1, xPosition + 9, yPosition + 9, color(backgroundColor, bgColor.getRGB()));
+                graphics.fill(xPosition, yPosition, xPosition + 10, yPosition + 10, color(borderColor, bgColor.darker().darker().getRGB()));
+                graphics.fill(xPosition + 1, yPosition + 1, xPosition + 9, yPosition + 9, color(backgroundColor, bgColor.getRGB()));
                 if (checked) {
-                    fill(pose, xPosition + 2, yPosition + 2, xPosition + 8, yPosition + 8, color(checkedColor, bgColor.brighter().brighter().getRGB()));
+                    graphics.fill(xPosition + 2, yPosition + 2, xPosition + 8, yPosition + 8, color(checkedColor, bgColor.brighter().brighter().getRGB()));
                 }
             } else {
                 Color bgColor = new Color(getColorScheme().getBackgroundColor()).brighter().brighter();
@@ -71,9 +72,9 @@ public class CheckBox extends Component implements RadioGroup.Item {
                 bgColor = new Color(Color.HSBtoRGB(hsb[0], hsb[1], 1f));
                 RenderSystem.setShaderColor(bgColor.getRed() / 255f, bgColor.getGreen() / 255f, bgColor.getBlue() / 255f, 1f);
                 RenderSystem.setShaderTexture(0, COMPONENTS_GUI);
-                blit(pose, xPosition, yPosition, checked ? 10 : 0, 60, 10, 10);
+                graphics.blit(COMPONENTS_GUI, xPosition, yPosition, checked ? 10 : 0, 60, 10, 10);
             }
-            drawString(pose, mc.font, name, xPosition + 12, yPosition + 1, color(textColor, getColorScheme().getTextColor()));
+            graphics.drawString(mc.font, name, xPosition + 12, yPosition + 1, color(textColor, getColorScheme().getTextColor()));
         }
     }
 

@@ -14,6 +14,7 @@ public class RegistrationHandler {
         DeviceTags.register();
         DeviceItems.register();
         DeviceSounds.register();
+        DeviceCreativeTabs.register();
         EnvExecutor.runInEnv(EnvType.CLIENT, () -> DeviceEntityRenderers::register);
     }
 }

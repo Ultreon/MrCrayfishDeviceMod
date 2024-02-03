@@ -1,29 +1,25 @@
 package com.ultreon.devices.programs.themes;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.app.*;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Dialog;
-import com.ultreon.devices.api.app.System;
+import com.ultreon.devices.api.app.DeviceSystem;
 import com.ultreon.devices.api.app.component.Button;
 import com.ultreon.devices.api.app.component.TextField;
 import com.ultreon.devices.api.utils.RenderUtil;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.object.AppInfo;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
-import org.apache.commons.codec.binary.Hex;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.math.BigInteger;
 import java.util.Arrays;
-import java.util.HexFormat;
 
 public class ThemesApp extends Application implements SystemAccessor {
-    private System system;
+    private DeviceSystem system;
     private int[] lastMousePositionsX = null;
     private int[] lastMousePositionsY = null;
 
@@ -45,13 +41,13 @@ public class ThemesApp extends Application implements SystemAccessor {
     }
 
     @Override
-    public void sendSystem(System system) {
+    public void sendSystem(DeviceSystem system) {
         this.system = system;
     }
 
     @Override
-    public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
-        super.render(pose, laptop, mc, x, y, mouseX, mouseY, active, partialTicks);
+    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
+        super.render(graphics, laptop, mc, x, y, mouseX, mouseY, active, partialTicks);
     }
 
     @Override
@@ -74,9 +70,9 @@ public class ThemesApp extends Application implements SystemAccessor {
         }
     }
 
-    private void renderBackground(PoseStack poseStack, GuiComponent component, Minecraft minecraft, int x, int y, int width, int height, int mouseX, int mouseY, boolean active) {
+    private void renderBackground(GuiGraphics graphics, Minecraft minecraft, int x, int y, int width, int height, int mouseX, int mouseY, boolean active) {
         if (true) return;
-        poseStack.pushPose();
+        graphics.pose().pushPose();
         if (!active) return;
         currentMouse[0] = mouseX;
         currentMouse[1] = mouseY;
@@ -87,13 +83,13 @@ public class ThemesApp extends Application implements SystemAccessor {
             lastMousePositionsY = new int[20];
             Arrays.fill(lastMousePositionsY, mouseY);
         }
-        Gui.fill(poseStack, x, y, x + width, x + height, new Color(0, 0, 0).getRGB());
+        graphics.fill(x, y, x + width, x + height, new Color(0, 0, 0).getRGB());
         for (int i = 0; i < lastMousePositionsX.length; i++) {
             mouseX = lastMousePositionsX[i];
             mouseY = lastMousePositionsY[i];
-            Gui.fill(poseStack, mouseX - 5, mouseY - 5, mouseX + 5, mouseY + 5, 0x57575788);
+            graphics.fill(mouseX - 5, mouseY - 5, mouseX + 5, mouseY + 5, 0x57575788);
         }
-        poseStack.popPose();
+        graphics.pose().popPose();
     }
 
     int marginX = 10;
@@ -243,11 +239,11 @@ public class ThemesApp extends Application implements SystemAccessor {
         }
 
         @Override
-        protected void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
-            super.render(pose, laptop, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
-            pose.pushPose();
-            RenderUtil.drawIcon(pose, x, y, info, height, height); // height is intended
-            pose.popPose();
+        protected void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+            super.render(graphics, laptop, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
+            graphics.pose().pushPose();
+            RenderUtil.drawIcon(graphics, x, y, info, height, height); // height is intended
+            graphics.pose().popPose();
         }
     }
 

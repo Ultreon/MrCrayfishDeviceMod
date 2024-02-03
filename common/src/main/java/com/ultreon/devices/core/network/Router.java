@@ -3,10 +3,13 @@ package com.ultreon.devices.core.network;
 import com.ultreon.devices.DeviceConfig;
 import com.ultreon.devices.block.entity.NetworkDeviceBlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -80,18 +83,31 @@ public class Router {
         return NETWORK_DEVICES.values().stream().filter(device -> device.getPos() != null).toList();
     }
 
-    public Collection<NetworkDevice> getConnectedDevices(final Level level, Class<? extends NetworkDeviceBlockEntity> type) {
-        final Predicate<NetworkDevice> DEVICE_TYPE = networkDevice -> {
+    public Collection<NetworkDevice> getConnectedDevices(final Level level, BlockEntityType<?> targetType) {
+        final Predicate<NetworkDevice> deviceType = networkDevice -> {
             if (networkDevice.getPos() == null)
                 return false;
 
             BlockEntity blockEntity = level.getBlockEntity(networkDevice.getPos());
+            return blockEntity instanceof NetworkDeviceBlockEntity device && targetType.equals(device.getType());
+
+        };
+        return getConnectedDevices(level).stream().filter(deviceType).toList();
+    }
+
+    public Collection<NetworkDevice> getConnectedDevices(final Level level, TagKey<BlockEntityType<?>> targetType) {
+        final Predicate<NetworkDevice> deviceType = networkDevice -> {
+            if (networkDevice.getPos() == null)
+                return false;
+
+            BlockEntity blockEntity = level.getBlockEntity(networkDevice.getPos());
+
             if (blockEntity instanceof NetworkDeviceBlockEntity device) {
-                return type.isAssignableFrom(device.getClass());
+                return BuiltInRegistries.BLOCK_ENTITY_TYPE.wrapAsHolder(blockEntity.getType()).is(targetType);
             }
             return false;
         };
-        return getConnectedDevices(level).stream().filter(DEVICE_TYPE).toList();
+        return getConnectedDevices(level).stream().filter(deviceType).toList();
     }
 
     private void sendBeacon(Level level) {

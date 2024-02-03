@@ -6,7 +6,7 @@ import com.ultreon.devices.Devices;
 import com.ultreon.devices.core.laptop.client.ClientLaptop;
 import com.ultreon.devices.programs.system.object.ColorScheme;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -40,7 +40,7 @@ public class TaskBar {
 //        trayItems.forEach(TrayItem::tick);
 //    }
 
-    public void render(PoseStack pose, ClientLaptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, float partialTicks) {
+    public void render(GuiGraphics graphics, ClientLaptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, float partialTicks) {
         RenderSystem.setShaderColor(1f, 1f, 1f, 0.75f);
         RenderSystem.enableBlend();
         RenderSystem.setShaderTexture(0, APP_BAR_GUI);
@@ -54,9 +54,9 @@ public class TaskBar {
         RenderSystem.setShaderColor(bgColor.getRed() / 255f, bgColor.getGreen() / 255f, bgColor.getBlue() / 255f, 1f);
 
         int trayItemsWidth = /*trayItems.size()*/0 * 14;
-        GuiComponent.blit(pose, x, y, 1, 18, 0, 0, 1, 18, 256, 256);
-        GuiComponent.blit(pose, x + 1, y, ClientLaptop.SCREEN_WIDTH - 36 - trayItemsWidth, 18, 1, 0, 1, 18, 256, 256);
-        GuiComponent.blit(pose, x + ClientLaptop.SCREEN_WIDTH - 35 - trayItemsWidth, y, 35 + trayItemsWidth, 18, 2, 0, 1, 18, 256, 256);
+        graphics.blit(APP_BAR_GUI, x, y, 1, 18, 0, 0, 1, 18, 256, 256);
+        graphics.blit(APP_BAR_GUI, x + 1, y, ClientLaptop.SCREEN_WIDTH - 36 - trayItemsWidth, 18, 1, 0, 1, 18, 256, 256);
+        graphics.blit(APP_BAR_GUI, x + ClientLaptop.SCREEN_WIDTH - 35 - trayItemsWidth, y, 35 + trayItemsWidth, 18, 2, 0, 1, 18, 256, 256);
 
         RenderSystem.disableBlend();
 
@@ -72,7 +72,7 @@ public class TaskBar {
 
         assert mc.level == null || mc.player != null;
        // assert mc.level != null; //can no longer assume
-        mc.font.drawShadow(pose, timeToString(mc.level != null ? mc.level.getDayTime() : 0), x + 334, y + 5, Color.WHITE.getRGB(), true);
+        graphics.drawString(mc.font, timeToString(mc.level != null ? mc.level.getDayTime() : 0), x + 334, y + 5, Color.WHITE.getRGB(), true);
 
         /* Settings App */
         int startX = x + 317;

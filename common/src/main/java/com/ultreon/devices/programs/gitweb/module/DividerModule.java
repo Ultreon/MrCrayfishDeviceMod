@@ -29,8 +29,8 @@ public class DividerModule extends Module {
     public void generate(GitWebFrame frame, Layout layout, int width, Map<String, String> data) {
         if (data.containsKey("color")) {
             int color = Integer.parseInt(data.get("color"));
-            layout.setBackground((pose, gui, mc, x, y, width1, height, mouseX, mouseY, windowActive) ->
-                    Gui.fill(pose, x, y, x + width1, y + height, color));
+            layout.setBackground((graphics, mc, x, y, width1, height, mouseX, mouseY, windowActive) ->
+                    graphics.fill(x, y, x + width1, y + height, color));
         }
     }
 }

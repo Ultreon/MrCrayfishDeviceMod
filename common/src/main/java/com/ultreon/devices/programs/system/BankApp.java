@@ -90,14 +90,14 @@ public class BankApp extends Application {//The bank is not a system application
     @Override
     public void init(@Nullable CompoundTag intent) {
         layoutStart = new Layout();
-        layoutStart.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
+        layoutStart.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
             assert Minecraft.getInstance().level != null;
             // TODO: get villager to render without instant game crash
-            pose.pushPose();
+            graphics.pose().pushPose();
             {
                 RenderSystem.enableDepthTest();
-                pose.translate(x + 25, y + 33, 15);
-                pose.scale((float) -2.5, (float) -2.5, (float) -2.5);
+                graphics.pose().translate(x + 25, y + 33, 15);
+                graphics.pose().scale((float) -2.5, (float) -2.5, (float) -2.5);
                 // Todo: do rotations
               //  pose.mulPose(new Quaternion(1, 0, 0, -mouseX+mouseY));
                // pose.mulPose(new Quaternion(0, 0, 1, mouseX+mouseY));
@@ -112,17 +112,17 @@ public class BankApp extends Application {//The bank is not a system application
                 assert villager != null;
                 villager.setVillagerData(new VillagerData(VillagerType.PLAINS, VillagerProfession.NITWIT, 1));
                 villager.getVillagerData().setProfession(VillagerProfession.NITWIT);
-                pose.pushPose();
-                pose.scale(scaleX, scaleY, 1F);
+                graphics.pose().pushPose();
+                graphics.pose().scale(scaleX, scaleY, 1F);
         //        renderer.render(villager, 0F, 0F, pose, buffer, 15);
-                pose.popPose();
+                graphics.pose().popPose();
 
                 RenderSystem.disableDepthTest();
             }
-            pose.popPose();
+            graphics.pose().popPose();
 
             RenderSystem.setShaderTexture(0, BANK_ASSETS);
-            RenderUtil.drawRectWithTexture(pose, x + 46, y + 19, 0, 0, 146, 52, 146, 52);
+            RenderUtil.drawRectWithTexture(BANK_ASSETS, graphics, x + 46, y + 19, 0, 0, 146, 52, 146, 52);
         });
 
         labelTeller = new Label(ChatFormatting.YELLOW + "Casey The Teller", 60, 7);
@@ -157,13 +157,13 @@ public class BankApp extends Application {//The bank is not a system application
                 labelEmeraldAmount.setText("x " + amount);
             }
         };
-        layoutMain.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
-            Gui.fill(pose, x, y, x + width, y + 40, Color.GRAY.getRGB());
-            Gui.fill(pose, x, y + 39, x + width, y + 40, Color.DARK_GRAY.getRGB());
-            Gui.fill(pose, x + 62, y + 103, x + 115, y + 138, Color.BLACK.getRGB());
-            Gui.fill(pose, x + 63, y + 104, x + 114, y + 113, Color.DARK_GRAY.getRGB());
-            Gui.fill(pose, x + 63, y + 114, x + 114, y + 137, Color.GRAY.getRGB());
-            RenderUtil.renderItem(x + 65, y + 118, EMERALD, false);
+        layoutMain.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
+            graphics.fill(x, y, x + width, y + 40, Color.GRAY.getRGB());
+            graphics.fill(x, y + 39, x + width, y + 40, Color.DARK_GRAY.getRGB());
+            graphics.fill(x + 62, y + 103, x + 115, y + 138, Color.BLACK.getRGB());
+            graphics.fill(x + 63, y + 104, x + 114, y + 113, Color.DARK_GRAY.getRGB());
+            graphics.fill(x + 63, y + 114, x + 114, y + 137, Color.GRAY.getRGB());
+            RenderUtil.renderItem(graphics, x + 65, y + 118, EMERALD, false);
         });
 
         labelBalance = new Label("Balance", 60, 5);

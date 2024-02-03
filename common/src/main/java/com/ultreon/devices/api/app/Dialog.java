@@ -1,6 +1,5 @@
 package com.ultreon.devices.api.app;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.app.component.Button;
 import com.ultreon.devices.api.app.component.ItemList;
 import com.ultreon.devices.api.app.component.Text;
@@ -18,13 +17,13 @@ import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.core.network.NetworkDevice;
 import com.ultreon.devices.core.network.task.TaskGetDevices;
 import com.ultreon.devices.core.print.task.TaskPrint;
+import com.ultreon.devices.init.DeviceBlockEntities;
 import com.ultreon.devices.programs.system.component.FileBrowser;
 import com.ultreon.devices.programs.system.object.ColorScheme;
 import com.ultreon.devices.util.GLHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -78,12 +77,12 @@ public abstract class Dialog extends Wrappable {
     }
 
     @Override
-    public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
+    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
         GLHelper.pushScissor(x, y, width, height);
-        customLayout.render(pose, laptop, mc, x, y, mouseX, mouseY, active, partialTicks);
+        customLayout.render(graphics, laptop, mc, x, y, mouseX, mouseY, active, partialTicks);
         GLHelper.popScissor();
 
-        customLayout.renderOverlay(pose, laptop, mc, mouseX, mouseY, active);
+        customLayout.renderOverlay(graphics, laptop, mc, mouseX, mouseY, active);
 
         // TODO - Port this to 1.18.2
 //        RenderHelper.disableStandardItemLighting();
@@ -206,7 +205,7 @@ public abstract class Dialog extends Wrappable {
 
             super.init(intent);
 
-            defaultLayout.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> Gui.fill(pose, x, y, x + width, y + height, Color.LIGHT_GRAY.getRGB()));
+            defaultLayout.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> graphics.fill(x, y, x + width, y + height, Color.LIGHT_GRAY.getRGB()));
 
             Text message = new Text(messageText, 5, 5, getWidth() - 10);
             this.addComponent(message);
@@ -262,7 +261,7 @@ public abstract class Dialog extends Wrappable {
 
             super.init(intent);
 
-            defaultLayout.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> Gui.fill(pose, x, y, x + width, y + height, Color.LIGHT_GRAY.getRGB()));
+            defaultLayout.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> graphics.fill(x, y, x + width, y + height, Color.LIGHT_GRAY.getRGB()));
 
             Text message = new Text(messageText, 5, 5, getWidth() - 10);
             this.addComponent(message);
@@ -366,7 +365,7 @@ public abstract class Dialog extends Wrappable {
 
             super.init(intent);
 
-            defaultLayout.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> Gui.fill(pose, x, y, x + width, y + height, Color.LIGHT_GRAY.getRGB()));
+            defaultLayout.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> graphics.fill(x, y, x + width, y + height, Color.LIGHT_GRAY.getRGB()));
 
             if (messageText != null) {
                 Text message = new Text(messageText, 5, 5, getWidth() - 10);
@@ -489,7 +488,7 @@ public abstract class Dialog extends Wrappable {
             browser = new FileBrowser(0, 0, app, FileBrowser.Mode.BASIC);
             browser.openFolder(FileSystem.DIR_HOME);
             browser.setFilter(file -> filter == null || filter.test(file) || file.isFolder());
-            browser.setItemClickListener((file, index, mouseButton) -> {
+            browser.setItemClickListener((file, index, mouseX, mouseY, mouseButton) -> {
                 if (mouseButton == 0) {
                     if (!file.isFolder()) {
                         buttonPositive.setEnabled(true);
@@ -782,14 +781,14 @@ public abstract class Dialog extends Wrappable {
             itemListPrinters = new ItemList<>(5, 18, 140, 5);
             itemListPrinters.setListItemRenderer(new ListItemRenderer<>(16) {
                 @Override
-                public void render(PoseStack pose, NetworkDevice networkDevice, GuiComponent gui, Minecraft mc, int x, int y, int width, int height, boolean selected) {
+                public void render(GuiGraphics graphics, NetworkDevice networkDevice, Minecraft mc, int x, int y, int width, int height, boolean selected) {
                     ColorScheme colorScheme = Laptop.getSystem().getSettings().getColorScheme();
-                    Gui.fill(pose, x, y, x + width, y + height, selected ? colorScheme.getItemHighlightColor() : colorScheme.getItemBackgroundColor());
-                    Icons.PRINTER.draw(pose, mc, x + 3, y + 3);
-                    RenderUtil.drawStringClipped(pose, networkDevice.getName(), x + 18, y + 4, 118, Laptop.getSystem().getSettings().getColorScheme().getTextColor(), true);
+                    graphics.fill(x, y, x + width, y + height, selected ? colorScheme.getItemHighlightColor() : colorScheme.getItemBackgroundColor());
+                    Icons.PRINTER.draw(graphics, mc, x + 3, y + 3);
+                    RenderUtil.drawStringClipped(graphics, networkDevice.getName(), x + 18, y + 4, 118, Laptop.getSystem().getSettings().getColorScheme().getTextColor(), true);
                 }
             });
-            itemListPrinters.setItemClickListener((blockPos, index, mouseButton) -> {
+            itemListPrinters.setItemClickListener((blockPos, index, mouseX, mouseY, mouseButton) -> {
                 if (mouseButton == 0) {
                     buttonPrint.setEnabled(true);
                     buttonInfo.setEnabled(true);
@@ -861,7 +860,7 @@ public abstract class Dialog extends Wrappable {
         private void getPrinters(ItemList<NetworkDevice> itemList) {
             itemList.removeAll();
             itemList.setLoading(true);
-            Task task = new TaskGetDevices(Laptop.getPos(), PrinterBlockEntity.class);
+            Task task = new TaskGetDevices(Laptop.getPos(), DeviceBlockEntities.PRINTER.get());
             task.setCallback((tag, success) -> {
                 if (success) {
                     assert tag != null;

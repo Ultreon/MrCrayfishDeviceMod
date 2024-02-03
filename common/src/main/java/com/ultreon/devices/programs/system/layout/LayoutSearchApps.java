@@ -1,7 +1,6 @@
 package com.ultreon.devices.programs.system.layout;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.ApplicationManager;
 import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Layout;
@@ -15,8 +14,7 @@ import com.ultreon.devices.programs.system.AppStore;
 import com.ultreon.devices.programs.system.object.LocalEntry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import org.apache.commons.lang3.StringUtils;
 
 import java.awt.*;
@@ -48,15 +46,15 @@ public class LayoutSearchApps extends StandardLayout {
         itemListResults.sortBy(Comparator.comparing(AppInfo::getName));
         itemListResults.setListItemRenderer(new ListItemRenderer<>(18) {
             @Override
-            public void render(PoseStack pose, AppInfo info, GuiComponent gui, Minecraft mc, int x, int y, int width, int height, boolean selected) {
-                Gui.fill(pose, x, y, x + width, y + height, selected ? ITEM_SELECTED.getRGB() : ITEM_BACKGROUND.getRGB());
+            public void render(GuiGraphics graphics, AppInfo info, Minecraft mc, int x, int y, int width, int height, boolean selected) {
+                graphics.fill(x, y, x + width, y + height, selected ? ITEM_SELECTED.getRGB() : ITEM_BACKGROUND.getRGB());
 
                 RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-                RenderUtil.drawApplicationIcon(pose, info, x + 2, y + 2);
-                RenderUtil.drawStringClipped(pose, info.getName() + ChatFormatting.GRAY + " - " + ChatFormatting.DARK_GRAY + info.getDescription(), x + 20, y + 5, itemListResults.getWidth() - 22, Color.WHITE.getRGB(), false);
+                RenderUtil.drawApplicationIcon(graphics, info, x + 2, y + 2);
+                RenderUtil.drawStringClipped(graphics, info.getName() + ChatFormatting.GRAY + " - " + ChatFormatting.DARK_GRAY + info.getDescription(), x + 20, y + 5, itemListResults.getWidth() - 22, Color.WHITE.getRGB(), false);
             }
         });
-        itemListResults.setItemClickListener((info, index, mouseButton) -> {
+        itemListResults.setItemClickListener((info, index, mouseX, mouseY, mouseButton) -> {
             if (mouseButton == 0) {
                 if (System.currentTimeMillis() - this.lastClick <= 200) {
                     openApplication(info);

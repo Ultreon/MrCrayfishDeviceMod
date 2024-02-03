@@ -1,7 +1,6 @@
 package com.ultreon.devices.programs.system.component;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.ApplicationManager;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Dialog;
@@ -11,6 +10,7 @@ import com.ultreon.devices.api.app.component.Label;
 import com.ultreon.devices.api.app.component.*;
 import com.ultreon.devices.api.app.listener.ItemClickListener;
 import com.ultreon.devices.api.app.renderer.ListItemRenderer;
+import com.ultreon.devices.api.driver.DiskDriver;
 import com.ultreon.devices.api.io.Drive;
 import com.ultreon.devices.api.io.File;
 import com.ultreon.devices.api.io.Folder;
@@ -30,20 +30,18 @@ import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.programs.system.SystemApp;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.lang.System;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
-import java.util.Stack;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -61,20 +59,20 @@ public class FileBrowser extends Component {
 
     private static final ListItemRenderer<File> ITEM_RENDERER = new ListItemRenderer<>(18) {
         @Override
-        public void render(PoseStack pose, File file, GuiComponent gui, Minecraft mc, int x, int y, int width, int height, boolean selected) {
+        public void render(GuiGraphics graphics, File file, Minecraft mc, int x, int y, int width, int height, boolean selected) {
             Color bgColor = new Color(Laptop.getSystem().getSettings().getColorScheme().getBackgroundColor());
-            Gui.fill(pose, x, y, x + width, y + height, selected ? bgColor.brighter().brighter().getRGB() : bgColor.brighter().getRGB());
+            graphics.fill(x, y, x + width, y + height, selected ? bgColor.brighter().brighter().getRGB() : bgColor.brighter().getRGB());
 
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
             RenderSystem.setShaderTexture(0, ASSETS);
             if (file.isFolder()) {
-                RenderUtil.drawRectWithTexture(pose, x + 3, y + 2, 0, 0, 14, 14, 14, 14);
+                RenderUtil.drawRectWithTexture(ASSETS, graphics, x + 3, y + 2, 0, 0, 14, 14, 14, 14);
             } else {
                 assert file.getOpeningApp() != null;
                 AppInfo info = ApplicationManager.getApplication(ResourceLocation.tryParse(file.getOpeningApp()));
-                RenderUtil.drawApplicationIcon(pose, info, x + 3, y + 2);
+                RenderUtil.drawApplicationIcon(graphics, info, x + 3, y + 2);
             }
-            drawString(pose, Minecraft.getInstance().font, file.getName(), x + 22, y + 5, file.isProtected() ? PROTECTED_FILE.getRGB() : Laptop.getSystem().getSettings().getColorScheme().getTextColor());
+            graphics.drawString(Minecraft.getInstance().font, file.getName(), x + 22, y + 5, file.isProtected() ? PROTECTED_FILE.getRGB() : Laptop.getSystem().getSettings().getColorScheme().getTextColor());
         }
     };
 
@@ -115,6 +113,7 @@ public class FileBrowser extends Component {
     private ItemClickListener<File> itemClickListener;
 
     private Predicate<File> filter;
+    private final List<ContextMenuItem<File>> contextMenuItems;
 
     /**
      * The default constructor for a component. For your component to
@@ -133,15 +132,37 @@ public class FileBrowser extends Component {
         super(left, top);
         this.wrappable = wrappable;
         this.mode = mode;
+        contextMenuItems = List.of(
+                new ContextMenuItem<>(
+                        net.minecraft.network.chat.Component.translatable("app.devices.file_browser.open"),
+                        (file) -> {
+                            if (file instanceof Folder) {
+                                handleFolderOpen((Folder) file);
+                            } else if (wrappable instanceof SystemApp systemApp) {
+                                handleFileOpen(file, systemApp);
+                            }
+                        }
+                ),
+                new ContextMenuItem<>(
+                        net.minecraft.network.chat.Component.translatable("app.devices.file_browser.properties"),
+                        (file) -> {
+                            if (file instanceof Folder) {
+                                handleFolderProperties((Folder) file);
+                            } else {
+                                handleFileProperties(file);
+                            }
+                        }
+                )
+        );
     }
 
     @Override
     public void init(Layout layout) {
         layoutMain = new Layout(mode.getWidth(), mode.getHeight());
-        layoutMain.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
+        layoutMain.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
             Color color = new Color(Laptop.getSystem().getSettings().getColorScheme().getHeaderColor());
-            Gui.fill(pose, x, y, x + width, y + 20, color.getRGB());
-            Gui.fill(pose, x, y + 20, x + width, y + 21, color.darker().getRGB());
+            graphics.fill(x, y, x + width, y + 20, color.getRGB());
+            graphics.fill(x, y + 20, x + width, y + 21, color.darker().getRGB());
         });
 
         btnPreviousFolder = new Button(5, 2, Icons.ARROW_LEFT);
@@ -230,50 +251,14 @@ public class FileBrowser extends Component {
         fileList = new ItemList<>(mode.getOffset(), 25, 180, mode.getVisibleItems());
         fileList.setListItemRenderer(ITEM_RENDERER);
         fileList.sortBy(File.SORT_BY_NAME);
-        fileList.setItemClickListener((file, index, mouseButton) -> {
+        fileList.setItemClickListener((file, index, mouseX, mouseY, mouseButton) -> {
             if (mouseButton == 0) {
-                btnRename.setEnabled(true);
-                btnDelete.setEnabled(true);
-                if (mode == Mode.FULL) {
-                    btnCopy.setEnabled(true);
-                    btnCut.setEnabled(true);
-                }
-                if (System.currentTimeMillis() - this.lastClick <= 200) {
-                    if (file.isFolder()) {
-                        fileList.setSelectedIndex(-1);
-                        openFolder((Folder) file, true, (folder, success) -> {
-                            if (mode == Mode.FULL) {
-                                btnRename.setEnabled(false);
-                                btnCopy.setEnabled(false);
-                                btnCut.setEnabled(false);
-                                btnDelete.setEnabled(false);
-                            }
-                        });
-                    } else if (mode == Mode.FULL && wrappable instanceof SystemApp systemApp) {
-                        Laptop laptop = systemApp.getLaptop();
-                        if (laptop != null) {
-                            //TODO change to check if application is installed
-                            Application targetApp = laptop.getApplication(file.getOpeningApp());
-                            if (targetApp != null) {
-                                if (laptop.isApplicationInstalled(targetApp.getInfo())) {
-                                    if (!laptop.openApplication(targetApp.getInfo(), file).right()) {
-                                        laptop.sendApplicationToFront(systemApp.getInfo());
-                                        createErrorDialog(targetApp.getInfo().getName() + " was unable to open the file.");
-                                    }
-                                } else {
-                                    createErrorDialog("This file could not be open because the application '" + ChatFormatting.YELLOW + targetApp.getInfo().getName() + ChatFormatting.RESET + "' is not installed.");
-                                }
-                            } else {
-                                createErrorDialog("The application designed for this file does not exist.");
-                            }
-                        }
-                    }
-                } else {
-                    this.lastClick = System.currentTimeMillis();
-                }
+                this.handleFileListClick(file);
+            } else if (mouseButton == 1) {
+                Laptop.getSystem().openContext(createFileMenu(mouseX, mouseY, file), mouseX - 100, mouseY - 100);
             }
             if (itemClickListener != null) {
-                itemClickListener.onClick(file, index, mouseButton);
+                itemClickListener.onClick(file, index, mouseX, mouseY, mouseButton);
             }
         });
         layoutMain.addComponent(fileList);
@@ -282,18 +267,18 @@ public class FileBrowser extends Component {
         comboBoxDrive.setChangeListener((oldValue, newValue) -> openDrive(newValue));
         comboBoxDrive.setListItemRenderer(new ListItemRenderer<>(12) {
             @Override
-            public void render(PoseStack pose, Drive drive, GuiComponent gui, Minecraft mc, int x, int y, int width, int height, boolean selected) {
+            public void render(GuiGraphics graphics, Drive drive, Minecraft mc, int x, int y, int width, int height, boolean selected) {
                 Color bgColor = new Color(getColorScheme().getBackgroundColor());
-                fill(pose, x, y, x + width, y + height, selected ? bgColor.brighter().brighter().getRGB() : bgColor.brighter().getRGB());
+                graphics.fill(x, y, x + width, y + height, selected ? bgColor.brighter().brighter().getRGB() : bgColor.brighter().getRGB());
                 RenderSystem.setShaderTexture(0, ASSETS);
                 RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-                RenderUtil.drawRectWithTexture(pose, x + 2, y + 2, drive.getType().ordinal() * 8, 30, 8, 8, 8, 8);
+                RenderUtil.drawRectWithTexture(ASSETS, graphics, x + 2, y + 2, drive.getType().ordinal() * 8, 30, 8, 8, 8, 8);
 
                 String text = drive.getName();
                 if (mc.font.width(text) > 87) {
                     text = mc.font.plainSubstrByWidth(drive.getName(), 78) + "...";
                 }
-                mc.font.drawShadow(pose, text, x + 13, y + 2, Color.WHITE.getRGB());
+                graphics.drawString(mc.font, text, x + 13, y + 2, Color.WHITE.getRGB());
             }
         });
         layoutMain.addComponent(comboBoxDrive);
@@ -303,12 +288,153 @@ public class FileBrowser extends Component {
         layout.addComponent(layoutMain);
 
         layoutLoading = new Layout(mode.getOffset(), 25, fileList.getWidth(), fileList.getHeight());
-        layoutLoading.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> Gui.fill(pose, x, y, x + width, y + height, Window.Color_WINDOW_DARK));
+        layoutLoading.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> graphics.fill(x, y, x + width, y + height, Window.Color_WINDOW_DARK));
         layoutLoading.setVisible(false);
 
         spinnerLoading = new Spinner((layoutLoading.width - 12) / 2, (layoutLoading.height - 12) / 2);
         layoutLoading.addComponent(spinnerLoading);
         layout.addComponent(layoutLoading);
+    }
+
+    private void handleFileListClick(File file) {
+        btnRename.setEnabled(true);
+        btnDelete.setEnabled(true);
+        if (mode == Mode.FULL) {
+            btnCopy.setEnabled(true);
+            btnCut.setEnabled(true);
+        }
+        if (System.currentTimeMillis() - this.lastClick <= 200) {
+            if (file.isFolder()) {
+                handleFolderOpen((Folder) file);
+            } else if (mode == Mode.FULL && wrappable instanceof SystemApp systemApp) {
+                handleFileOpen(file, systemApp);
+            }
+        } else {
+            this.lastClick = System.currentTimeMillis();
+        }
+    }
+
+    private void handleFileOpen(File file, SystemApp systemApp) {
+        Laptop laptop = systemApp.getLaptop();
+        if (laptop != null) {
+            //TODO change to check if application is installed
+            Application targetApp = laptop.getApplication(file.getOpeningApp());
+            if (targetApp != null) {
+                startUpAppWithFile(file, systemApp, laptop, targetApp);
+            } else {
+                createErrorDialog("The application designed for this file does not exist.");
+            }
+        }
+    }
+
+    private void startUpAppWithFile(File file, SystemApp systemApp, Laptop laptop, Application targetApp) {
+        if (laptop.isApplicationInstalled(targetApp.getInfo())) {
+            if (!laptop.openApplication(targetApp.getInfo(), file).right()) {
+                laptop.sendApplicationToFront(systemApp.getInfo());
+                createErrorDialog(targetApp.getInfo().getName() + " was unable to open the file.");
+            }
+        } else {
+            createErrorDialog("This file could not be open because the application '" + ChatFormatting.YELLOW + targetApp.getInfo().getName() + ChatFormatting.RESET + "' is not installed.");
+        }
+    }
+
+    private void handleFolderOpen(Folder file) {
+        fileList.setSelectedIndex(-1);
+        openFolder(file, true, (folder, success) -> {
+            if (mode == Mode.FULL) {
+                btnRename.setEnabled(false);
+                btnCopy.setEnabled(false);
+                btnCut.setEnabled(false);
+                btnDelete.setEnabled(false);
+            }
+        });
+    }
+
+    private void handleFolderProperties(Folder file) {
+        Dialog dialog = new Dialog() {
+            @Override
+            public void init(@Nullable CompoundTag intent) {
+                super.init(intent);
+
+                Layout layout = new Layout(150, 150);
+                layout.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> graphics.fill(x, y, x + width, y + height, Laptop.getSystem().getSettings().getColorScheme().getBackgroundColor())); // TODO Window Background
+                layout.addComponent(new com.ultreon.devices.api.app.component.Label("Folder Properties", 5, 5));
+                layout.addComponent(new com.ultreon.devices.api.app.component.Label(file.getName(), 5, 20));
+                layout.addComponent(new com.ultreon.devices.api.app.component.Label(file.getPath(), 5, 35));
+                layout.addComponent(new com.ultreon.devices.api.app.component.Label("Creation Date: " + Laptop.getInstance().formatDateTime(file.getCreationTime()), 5, 50));
+                layout.addComponent(new com.ultreon.devices.api.app.component.Label("Last Modified: " + Laptop.getInstance().formatDateTime(file.getLastModified()), 5, 65));
+                layout.addComponent(new com.ultreon.devices.api.app.component.Label("Last Accessed: " + Laptop.getInstance().formatDateTime(file.getLastAccessed()), 5, 80));
+                layout.addComponent(new com.ultreon.devices.api.app.component.Label("Protected: " + (file.isProtected() ? "Yes" : "No"), 5, 95));
+
+                Button close = new Button(45, 125, 50, 20, "Close");
+                close.setClickListener((mouseX, mouseY, mouseButton) -> {
+                    close();
+                });
+
+                layout.addComponent(close);
+
+                this.setLayout(layout);
+            }
+        };
+
+        wrappable.openDialog(dialog);
+    }
+
+    private void handleFileProperties(File file) {
+        Dialog dialog = new Dialog() {
+            @Override
+            public void init(@Nullable CompoundTag intent) {
+                super.init(intent);
+
+                Layout layout = new Layout(150, 150);
+                layout.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> graphics.fill(x, y, x + width, y + height, Laptop.getSystem().getSettings().getColorScheme().getBackgroundColor())); // TODO Window Background
+                layout.addComponent(new com.ultreon.devices.api.app.component.Label("File Properties", 5, 5));
+                layout.addComponent(new com.ultreon.devices.api.app.component.Label(file.getName(), 5, 20));
+                layout.addComponent(new com.ultreon.devices.api.app.component.Label(file.getPath(), 5, 35));
+                layout.addComponent(new com.ultreon.devices.api.app.component.Label("Creation Date: " + Laptop.getInstance().formatDateTime(file.getCreationTime()), 5, 50));
+                layout.addComponent(new com.ultreon.devices.api.app.component.Label("Last Modified: " + Laptop.getInstance().formatDateTime(file.getLastModified()), 5, 65));
+                layout.addComponent(new com.ultreon.devices.api.app.component.Label("Last Accessed: " + Laptop.getInstance().formatDateTime(file.getLastAccessed()), 5, 80));
+                layout.addComponent(new com.ultreon.devices.api.app.component.Label("Opening App: " + Objects.requireNonNullElse(file.getOpeningApp(), "N/A"), 5, 95));
+                layout.addComponent(new com.ultreon.devices.api.app.component.Label("Protected: " + (file.isProtected() ? "Yes" : "No"), 5, 110));
+
+                Button close = new Button(45, 125, 50, 20, "Close");
+                close.setClickListener((mouseX, mouseY, mouseButton) -> {
+                    close();
+                });
+
+                layout.addComponent(close);
+
+                this.setLayout(layout);
+            }
+        };
+
+        wrappable.openDialog(dialog);
+    }
+
+    private Layout createFileMenu(int x, int y, File file) {
+        Layout layout = new Layout.Context(100, contextMenuItems.size() * 20 + 10);
+        layout.xPosition = x;
+        layout.yPosition = y;
+
+        layout.setBackground((graphics, mc, bgX, bgY, width, height, mouseX, mouseY, windowActive) -> graphics.fill(bgX, bgY, bgX + width, bgY + height, Laptop.getSystem().getSettings().getColorScheme().getBackgroundColor())); // TODO Window Background
+
+        ItemList<ContextMenuItem<File>> list = new ItemList<>(0, 10, 100, contextMenuItems.size());
+        contextMenuItems.forEach(list::addItem);
+        list.setListItemRenderer(new ListItemRenderer<>(20) {
+            @Override
+            public void render(GuiGraphics graphics, ContextMenuItem<File> contextMenuItem, Minecraft mc, int x, int y, int width, int height, boolean selected) {
+                contextMenuItem.render(graphics, contextMenuItem, mc, x, y, width, height, selected);
+            }
+        });
+        list.setItemClickListener((contextMenuItem, index, mouseX, mouseY, mouseButton) -> {
+            if (mouseButton == 0) {
+                Laptop.getSystem().closeContext();
+                contextMenuItem.execute(file);
+            }
+        });
+        layout.addComponent(list);
+
+        return layout;
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -318,6 +444,12 @@ public class FileBrowser extends Component {
             setLoading(true);
             Task task = new TaskSetupFileBrowser(Laptop.getPos(), Laptop.getMainDrive() == null);
             task.setCallback((tag, success) -> {
+                DiskDriver diskDriver = Laptop.getInstance().getDriverManager().getBySubClass(DiskDriver.class).orElse(null);
+                if (diskDriver == null) {
+                    createErrorDialog("No available disk driver found.");
+                    return;
+                }
+
                 if (success) {
                     if (Laptop.getMainDrive() == null) {
                         assert tag != null;
@@ -330,6 +462,7 @@ public class FileBrowser extends Component {
 
                     assert tag != null;
                     ListTag driveList = tag.getList("available_drives", Tag.TAG_COMPOUND);
+
                     Drive[] drives = new Drive[driveList.size() + 1];
                     drives[0] = currentDrive = Laptop.getMainDrive();
                     for (int i = 0; i < driveList.size(); i++) {
@@ -358,6 +491,7 @@ public class FileBrowser extends Component {
                     }
                 } else {
                     createErrorDialog("A critical error occurred while initializing.");
+                    return;
                 }
                 setLoading(false);
             });
@@ -473,7 +607,7 @@ public class FileBrowser extends Component {
         }
         Collections.reverse(predecessors);
         predecessors.forEach(predecessor::push);
-        if (predecessor.size() > 0) {
+        if (!predecessor.isEmpty()) {
             btnPreviousFolder.setEnabled(true);
         }
     }
@@ -492,7 +626,7 @@ public class FileBrowser extends Component {
     }
 
     private void goToPreviousFolder() {
-        if (predecessor.size() > 0) {
+        if (!predecessor.isEmpty()) {
             setLoading(true);
             Folder folder = predecessor.pop();
             openFolder(folder, false, (folder2, success) -> {
@@ -727,7 +861,7 @@ public class FileBrowser extends Component {
     }
 
     private boolean isRootFolder() {
-        return predecessor.size() == 0;
+        return predecessor.isEmpty();
     }
 
     private void updatePath() {

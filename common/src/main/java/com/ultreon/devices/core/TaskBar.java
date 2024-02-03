@@ -17,7 +17,7 @@ import com.ultreon.devices.programs.system.SystemApp;
 import com.ultreon.devices.util.Vulnerability;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -106,7 +106,7 @@ public class TaskBar {
         trayItems.forEach(TrayItem::tick);
     }
 
-    public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, float partialTicks) {
+    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, float partialTicks) {
         RenderSystem.setShaderColor(1f, 1f, 1f, 0.75f);
         RenderSystem.enableBlend();
         RenderSystem.setShaderTexture(0, APP_BAR_GUI);
@@ -118,34 +118,34 @@ public class TaskBar {
         RenderSystem.setShaderColor(bgColor.getRed() / 255f, bgColor.getGreen() / 255f, bgColor.getBlue() / 255f, 1f);
 
         int trayItemsWidth = trayItems.size() * 14;
-        GuiComponent.blit(pose, x, y, 1, 18, 0, 0, 1, 18, 256, 256);
-        GuiComponent.blit(pose, x + 1, y, Laptop.SCREEN_WIDTH - 36 - trayItemsWidth, 18, 1, 0, 1, 18, 256, 256);
-        GuiComponent.blit(pose, x + Laptop.SCREEN_WIDTH - 35 - trayItemsWidth, y, 35 + trayItemsWidth, 18, 2, 0, 1, 18, 256, 256);
+        graphics.blit(APP_BAR_GUI, x, y, 1, 18, 0, 0, 1, 18, 256, 256);
+        graphics.blit(APP_BAR_GUI, x + 1, y, Laptop.SCREEN_WIDTH - 36 - trayItemsWidth, 18, 1, 0, 1, 18, 256, 256);
+        graphics.blit(APP_BAR_GUI, x + Laptop.SCREEN_WIDTH - 35 - trayItemsWidth, y, 35 + trayItemsWidth, 18, 2, 0, 1, 18, 256, 256);
 
         RenderSystem.disableBlend();
 
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
         for (int i = 0; i < APPS_DISPLAYED && i < laptop.installedApps.size(); i++) {
             AppInfo info = laptop.installedApps.get(i + offset);
-            RenderUtil.drawApplicationIcon(pose, info, x + 2 + i * 16, y + 2);
+            RenderUtil.drawApplicationIcon(graphics, info, x + 2 + i * 16, y + 2);
             if (laptop.isApplicationRunning(info)) {
                 RenderSystem.setShaderTexture(0, APP_BAR_GUI);
-                laptop.blit(pose, x + 1 + i * 16, y + 1, 35, 0, 16, 16);
+                graphics.blit(APP_BAR_GUI, x + 1 + i * 16, y + 1, 35, 0, 16, 16);
             }
         }
 
         assert mc.level == null || mc.player != null;
        // assert mc.level != null; //can no longer assume
-        mc.font.drawShadow(pose, timeToString(mc.level != null ? mc.level.getDayTime() : 0), x + 334, y + 5, Color.WHITE.getRGB(), true);
+        graphics.drawString(mc.font, timeToString(mc.level != null ? mc.level.getDayTime() : 0), x + 334, y + 5, Color.WHITE.getRGB(), true);
 
         /* Settings App */
         int startX = x + 317;
         for (int i = 0; i < trayItems.size(); i++) {
             int posX = startX - (trayItems.size() - 1 - i) * 14;
             if (isMouseInside(mouseX, mouseY, posX, y + 2, posX + 13, y + 15)) {
-                Gui.fill(pose, posX, y + 2, posX + 14, y + 16, new Color(1f, 1f, 1f, 0.1f).getRGB());
+                graphics.fill(posX, y + 2, posX + 14, y + 16, new Color(1f, 1f, 1f, 0.1f).getRGB());
             }
-            trayItems.get(i).getIcon().draw(pose, mc, posX + 2, y + 4);
+            trayItems.get(i).getIcon().draw(graphics, mc, posX + 2, y + 4);
         }
 
         RenderSystem.setShaderTexture(0, APP_BAR_GUI);
@@ -154,8 +154,8 @@ public class TaskBar {
         if (isMouseInside(mouseX, mouseY, x + 1, y + 1, x + 236, y + 16)) {
             int appIndex = (mouseX - x - 1) / 16;
             if (appIndex >= 0 && appIndex < offset + APPS_DISPLAYED && appIndex < laptop.installedApps.size()) {
-                laptop.blit(pose, x + appIndex * 16 + 1, y + 1, 35, 0, 16, 16);
-                laptop.renderComponentTooltip(pose, List.of(Component.literal(laptop.installedApps.get(appIndex).getName())), mouseX, mouseY);
+                graphics.blit(APP_BAR_GUI, x + appIndex * 16 + 1, y + 1, 35, 0, 16, 16);
+                laptop.renderComponentTooltip(graphics, List.of(Component.literal(laptop.installedApps.get(appIndex).getName())), mouseX, mouseY);
             }
         }
 
@@ -188,6 +188,7 @@ public class TaskBar {
         return mouseX >= x1 && mouseX <= x2 && mouseY >= y1 && mouseY <= y2;
     }
 
+    @Deprecated
     public String timeToString(long time) {
         int hours = (int) ((Math.floor(time / 1000d) + 6) % 24);
         int minutes = (int) Math.floor((time % 1000) / 1000d * 60);

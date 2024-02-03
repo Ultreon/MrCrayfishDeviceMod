@@ -6,6 +6,7 @@ import com.ultreon.devices.api.app.IIcon;
 import com.ultreon.devices.api.utils.RenderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.toasts.Toast;
 import net.minecraft.client.gui.components.toasts.ToastComponent;
 import net.minecraft.client.resources.language.I18n;
@@ -29,21 +30,21 @@ public class ClientNotification implements Toast {
 
     @NotNull
     @Override
-    public Visibility render(@NotNull PoseStack pose, ToastComponent toastComponent, long timeSinceLastVisible) {
+    public Visibility render(@NotNull GuiGraphics graphics, ToastComponent toastComponent, long timeSinceLastVisible) {
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
         RenderSystem.setShaderTexture(0, TEXTURE_TOASTS);
-        toastComponent.blit(pose, 0, 0, 0, 0, 160, 32);
+        graphics.blit(TEXTURE_TOASTS, 0, 0, 0, 0, 160, 32);
         Font font = toastComponent.getMinecraft().font;
 
         if (subTitle == null) {
-            font.drawShadow(pose, font.plainSubstrByWidth(I18n.get(title), 118), 38, 12, -1);
+            graphics.drawString(font, font.plainSubstrByWidth(I18n.get(title), 118), 38, 12, -1);
         } else {
-            font.drawShadow(pose, font.plainSubstrByWidth(I18n.get(title), 118), 38, 7, -1);
-            font.draw(pose, font.plainSubstrByWidth(I18n.get(subTitle), 118), 38, 18, -1);
+            graphics.drawString(font, font.plainSubstrByWidth(I18n.get(title), 118), 38, 7, -1);
+            graphics.drawString(font, font.plainSubstrByWidth(I18n.get(subTitle), 118), 38, 18, -1, false);
         }
 
         RenderSystem.setShaderTexture(0, icon.getIconAsset());
-        RenderUtil.drawRectWithTexture(pose, 6, 6, icon.getGridWidth(), icon.getGridHeight(), icon.getU(), icon.getV(), icon.getSourceWidth(), icon.getSourceHeight(), icon.getIconSize(), icon.getIconSize());
+        RenderUtil.drawRectWithTexture(null, graphics, 6, 6, icon.getGridWidth(), icon.getGridHeight(), icon.getU(), icon.getV(), icon.getSourceWidth(), icon.getSourceHeight(), icon.getIconSize(), icon.getIconSize());
 
         return timeSinceLastVisible >= 5000L ? Visibility.HIDE : Visibility.SHOW;
     }

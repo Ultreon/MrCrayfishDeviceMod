@@ -73,11 +73,11 @@ public class ClientInit implements ClientModInitializer {
         var map = new HashMap<String, LanguageInfo>();
         packResourcesStream.forEach((packResources -> {
                     try {
-                        LanguageMetadataSection languageMetadataSection = (LanguageMetadataSection) packResources.getMetadataSection(LanguageMetadataSection.SERIALIZER);
+                        LanguageMetadataSection languageMetadataSection = (LanguageMetadataSection) packResources.getMetadataSection(LanguageMetadataSection.TYPE);
                         if (languageMetadataSection != null) {
 
-                            for (LanguageInfo languageInfo : languageMetadataSection.getLanguages()) {
-                                map.putIfAbsent(languageInfo.getCode(), languageInfo);
+                            for (Map.Entry<String, LanguageInfo> languageInfoSet : languageMetadataSection.languages().entrySet()) {
+                                map.putIfAbsent(languageInfoSet.getKey(), languageInfoSet.getValue());
                             }
 
                         }
@@ -93,8 +93,8 @@ public class ClientInit implements ClientModInitializer {
         HashMap<String, String> map = Maps.newHashMap();
         boolean bl = false;
         for (LanguageInfo languageInfo2 : languageInfo) {
-            bl |= languageInfo2.isBidirectional();
-            String string = languageInfo2.getCode();
+            bl |= languageInfo2.bidirectional();
+            String string = languageInfo2.name();
             String string2 = String.format(Locale.ROOT, "lang/%s.json", string);
             JsonObject gg = new JsonObject();
             for (String string3 : resourceManager.getNamespaces()) {
@@ -131,11 +131,11 @@ public class ClientInit implements ClientModInitializer {
         Map<String, LanguageInfo> map = Maps.newHashMap();
         packResources.forEach((packResourcesx) -> {
             try {
-                LanguageMetadataSection languageMetadataSection = (LanguageMetadataSection)packResourcesx.getMetadataSection(LanguageMetadataSection.SERIALIZER);
+                LanguageMetadataSection languageMetadataSection = (LanguageMetadataSection)packResourcesx.getMetadataSection(LanguageMetadataSection.TYPE);
                 if (languageMetadataSection != null) {
 
-                    for (LanguageInfo languageInfo : languageMetadataSection.getLanguages()) {
-                        map.putIfAbsent(languageInfo.getCode(), languageInfo);
+                    for (Map.Entry<String, LanguageInfo> languageInfoSet : languageMetadataSection.languages().entrySet()) {
+                        map.putIfAbsent(languageInfoSet.getKey(), languageInfoSet.getValue());
                     }
                 }
             } catch (IOException | RuntimeException var5) {

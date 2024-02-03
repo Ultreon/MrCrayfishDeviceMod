@@ -10,6 +10,7 @@ import com.ultreon.devices.object.tools.ToolEyeDropper;
 import com.ultreon.devices.object.tools.ToolPencil;
 import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 
 import java.awt.*;
 
@@ -50,17 +51,17 @@ public class Canvas extends Component {
     }
 
     @Override
-    public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
-        fill(pose, xPosition, yPosition, xPosition + picture.getWidth() * picture.getPixelWidth() + 2, yPosition + picture.getHeight() * picture.getPixelHeight() + 2, Color.DARK_GRAY.getRGB());
-        fill(pose, xPosition + 1, yPosition + 1, xPosition + picture.getWidth() * picture.getPixelWidth() + 1, yPosition + picture.getHeight() * picture.getPixelHeight() + 1, Color.WHITE.getRGB());
+    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+        graphics.fill(xPosition, yPosition, xPosition + picture.getWidth() * picture.getPixelWidth() + 2, yPosition + picture.getHeight() * picture.getPixelHeight() + 2, Color.DARK_GRAY.getRGB());
+        graphics.fill(xPosition + 1, yPosition + 1, xPosition + picture.getWidth() * picture.getPixelWidth() + 1, yPosition + picture.getHeight() * picture.getPixelHeight() + 1, Color.WHITE.getRGB());
         for (int i = 0; i < picture.getHeight(); i++) {
             for (int j = 0; j < picture.getWidth(); j++) {
                 int pixelX = xPosition + j * picture.getPixelWidth() + 1;
                 int pixelY = yPosition + i * picture.getPixelHeight() + 1;
-                fill(pose, pixelX, pixelY, pixelX + picture.getPixelWidth(), pixelY + picture.getPixelHeight(), pixels[j + i * picture.size.width]);
+                graphics.fill(pixelX, pixelY, pixelX + picture.getPixelWidth(), pixelY + picture.getPixelHeight(), pixels[j + i * picture.size.width]);
                 if (showGrid) {
-                    fill(pose, pixelX, pixelY, pixelX + picture.getPixelWidth(), pixelY + 1, gridColor);
-                    fill(pose, pixelX, pixelY, pixelX + 1, pixelY + picture.getPixelHeight(), gridColor);
+                    graphics.fill(pixelX, pixelY, pixelX + picture.getPixelWidth(), pixelY + 1, gridColor);
+                    graphics.fill(pixelX, pixelY, pixelX + 1, pixelY + picture.getPixelHeight(), gridColor);
                 }
             }
         }

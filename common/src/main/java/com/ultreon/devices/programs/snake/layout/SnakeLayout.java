@@ -1,7 +1,6 @@
 package com.ultreon.devices.programs.snake.layout;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Layout;
@@ -11,6 +10,7 @@ import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.programs.snake.SnakeApp;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -26,16 +26,16 @@ public class SnakeLayout extends Layout {
             app.setCurrentLayout(app.titleScreen);
         }));
 
-        this.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
-            Gui.fill(pose, x,y,x+width,x+height, new Color(0x0, 0x0, 0x0).getRGB());
+        this.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
+            graphics.fill(x,y,x+width,x+height, new Color(0x0, 0x0, 0x0).getRGB());
         });
         this.addComponent(button);
         this.addComponent(new Grid(0, 0));
     }
 
     @Override
-    public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
-        super.render(pose, laptop, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
+    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+        super.render(graphics, laptop, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
     }
 
     @Override
@@ -100,8 +100,8 @@ public class SnakeLayout extends Layout {
         }
 
         @Override
-        protected void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
-            super.render(pose, laptop, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
+        protected void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+            super.render(graphics, laptop, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
             var black = new Color(0, 0, 0, 0.5f);
             var intBlack = black.getRGB();
 //            for (var i = 0;i<15;i++) {
@@ -119,42 +119,42 @@ public class SnakeLayout extends Layout {
 
             for (int i = 0; i < snakePos.size(); i++) {
                 //Pos2d pos = snakePos.get(i);
-                renderConnectedSnakePart(pose, x, y, white, i);
+                renderConnectedSnakePart(graphics, x, y, white, i);
             }
-            Gui.fill(pose, x+applePos.x*10, y+applePos.y*10, x+applePos.x*10+10, y+applePos.y*10+10, red);
+            graphics.fill(x+applePos.x*10, y+applePos.y*10, x+applePos.x*10+10, y+applePos.y*10+10, red);
         }
 
-        private void renderConnectedSnakePart(PoseStack pose, int x, int y, int color, int index) {
+        private void renderConnectedSnakePart(GuiGraphics graphics, int x, int y, int color, int index) {
             var pos = snakePos.get(index);
-            Gui.fill(pose, x+pos.x*10+1, y+pos.y*10+1, x+pos.x*10+10-1, y+pos.y*10+10-1, color);
+            graphics.fill(x+pos.x*10+1, y+pos.y*10+1, x+pos.x*10+10-1, y+pos.y*10+10-1, color);
 
             // Right Checks
             if (snakePos.get(index+1) != null && snakePos.get(index).right().samePos(snakePos.get(index+1))) {
-                Gui.fill(pose, x+pos.x*10+10-1, y+pos.y*10+1, x+pos.x*10+10, y+pos.y*10+10-1, color);
+                graphics.fill(x+pos.x*10+10-1, y+pos.y*10+1, x+pos.x*10+10, y+pos.y*10+10-1, color);
             }
             if (snakePos.get(index-1) != null && snakePos.get(index).right().samePos(snakePos.get(index-1))) {
-                Gui.fill(pose, x+pos.x*10+10-1, y+pos.y*10+1, x+pos.x*10+10, y+pos.y*10+10-1, color);
+                graphics.fill(x+pos.x*10+10-1, y+pos.y*10+1, x+pos.x*10+10, y+pos.y*10+10-1, color);
             }
             // Left Checks
             if (snakePos.get(index+1) != null && snakePos.get(index).left().samePos(snakePos.get(index+1))) {
-                Gui.fill(pose, x+pos.x*10, y+pos.y*10+1, x+pos.x*10+1, y+pos.y*10+10-1, color);
+                graphics.fill(x+pos.x*10, y+pos.y*10+1, x+pos.x*10+1, y+pos.y*10+10-1, color);
             }
             if (snakePos.get(index-1) != null && snakePos.get(index).left().samePos(snakePos.get(index-1))) {
-                Gui.fill(pose, x+pos.x*10, y+pos.y*10+1, x+pos.x*10+1, y+pos.y*10+10-1, color);
+                graphics.fill(x+pos.x*10, y+pos.y*10+1, x+pos.x*10+1, y+pos.y*10+10-1, color);
             }
             // Down Checks
             if (snakePos.get(index+1) != null && snakePos.get(index).down().samePos(snakePos.get(index+1))) {
-                Gui.fill(pose, x+pos.x*10+1, y+pos.y*10+10-1, x+pos.x*10+10-1, y+pos.y*10+10, color);
+                graphics.fill(x+pos.x*10+1, y+pos.y*10+10-1, x+pos.x*10+10-1, y+pos.y*10+10, color);
             }
             if (snakePos.get(index-1) != null && snakePos.get(index).down().samePos(snakePos.get(index-1))) {
-                Gui.fill(pose, x+pos.x*10+1, y+pos.y*10+10-1, x+pos.x*10+10-1, y+pos.y*10+10, color);
+                graphics.fill(x+pos.x*10+1, y+pos.y*10+10-1, x+pos.x*10+10-1, y+pos.y*10+10, color);
             }
             // Up Checks
             if (snakePos.get(index+1) != null && snakePos.get(index).up().samePos(snakePos.get(index+1))) {
-                Gui.fill(pose, x+pos.x*10+1, y+pos.y*10, x+pos.x*10+10-1, y+pos.y*10+1, color);
+                graphics.fill(x+pos.x*10+1, y+pos.y*10, x+pos.x*10+10-1, y+pos.y*10+1, color);
             }
             if (snakePos.get(index-1) != null && snakePos.get(index).up().samePos(snakePos.get(index-1))) {
-                Gui.fill(pose, x+pos.x*10+1, y+pos.y*10, x+pos.x*10+10-1, y+pos.y*10+1, color);
+                graphics.fill(x+pos.x*10+1, y+pos.y*10, x+pos.x*10+10-1, y+pos.y*10+1, color);
             }
             //Gui.fill(pose, x+pos.x*10, y+pos.y*10, x+pos.x*10+10, y+pos.y*10+10, color);
         }
