@@ -1,6 +1,5 @@
 package com.ultreon.devices.programs.gitweb.component;
 
-import com.jab125.apoint.api.APointRuntime;
 import com.ultreon.devices.api.app.Application;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Layout;
@@ -68,7 +67,6 @@ public class GitWebFrame extends Component {
 
     private Callback<String> loadingCallback;
     private Callback<String> loadedCallback;
-    public APointRuntime aPointRuntime;
 
     public GitWebFrame(Application app, int left, int top, int width, int height) {
         super(left, top);
@@ -253,7 +251,6 @@ public class GitWebFrame extends Component {
     }
 
     private void setWebsite(String website) {
-        this.aPointRuntime = null;
         layout.clear();
 
         Matcher matcher = GitWebFrame.PATTERN_LINK.matcher(website);

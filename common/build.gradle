@@ -21,7 +21,6 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-reflect:1.7.10"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10"
 //    modApi "com.ultreon:ultranlang:0.1.0+6"
-    modApi "com.jab125:apoint:1.0.0"
 
     modCompileOnly "fuzs.forgeconfigapiport:forgeconfigapiport-common:8.0.0"
     modCompileOnly 'com.electronwill.night-config:core:3.6.3'
