@@ -89,6 +89,7 @@ public class WebBrowser extends Application {
     public void onClose() {
         this.browser.close();
         this.browser = null;
+        this.init = false;
 
         super.onClose();
     }
