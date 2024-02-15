@@ -23,27 +23,31 @@ public class WebBrowser extends Application {
     private int browserHeight;
     private MCEFBrowser browser;
     private StandardLayout layoutBrowser;
-    //    private BrowserRenderer renderer;
+    private boolean init;
 
     public WebBrowser() {
 
     }
 
     @Override
-    public void init(@Nullable CompoundTag intent) {
-        if (browser != null) {
+    public synchronized void init(@Nullable CompoundTag intent) {
+        if (browser != null && !init) {
             this.resizeBrowser();
             return;
         }
 
-        this.layoutBrowser = new StandardLayout(null, 362, this.getBrowserHeight() + 75, this, null);
+        this.init = true;
+
+        this.layoutBrowser = new StandardLayout(null, 362, 165 + 75, this, null);
         this.setCurrentLayout(this.layoutBrowser);
 
         this.setBrowserWidth(362);
         this.setBrowserHeight(165);
 
-        browser = MCEF.createBrowser("https://www.google.com", false, getWidth(), getHeight());
-        this.resizeBrowser();
+        RenderSystem.recordRenderCall(() -> {
+            browser = MCEF.createBrowser("https://www.google.com", true, getWidth(), getHeight());
+            this.resizeBrowser();
+        });
 
         Devices.LOGGER.warn("Browser initialized");
     }
