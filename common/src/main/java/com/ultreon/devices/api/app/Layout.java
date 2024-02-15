@@ -274,6 +274,16 @@ public class Layout extends com.ultreon.devices.api.app.Component {
     }
 
     @Override
+    public void handleMouseMove(int mouseX, int mouseY) {
+        if (!visible || !enabled)
+            return;
+
+        for (var c : components) {
+            c.handleMouseMove(mouseX, mouseY);
+        }
+    }
+
+    @Override
     public void handleMouseScroll(int mouseX, int mouseY, boolean direction) {
         if (!visible || !enabled)
             return;

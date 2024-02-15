@@ -41,11 +41,14 @@ dependencies {
 
 //    forgeRuntimeLibrary "com.ultreon:ultranlang:0.1.0+6"
     forgeRuntimeLibrary "com.jab125:apoint:$apoint_version"
-    forgeRuntimeLibrary "me.friwi:jcefmaven:$jcef_version"
 
 //    implementation include("com.ultreon:ultranlang:0.1.0+6")
     implementation include("com.jab125:apoint:$apoint_version")
-    implementation include("me.friwi:jcefmaven:$jcef_version")
+
+    modCompileOnly 'com.cinemamod:mcef:2.1.4-1.20.1'
+    modRuntimeOnly 'com.cinemamod:mcef-forge:2.1.4-1.20.1', {
+        exclude group: "net.neoforged"
+    }
 }
 
 processResources {

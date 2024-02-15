@@ -14,7 +14,6 @@ import com.ultreon.devices.api.print.PrintingManager;
 import com.ultreon.devices.api.task.TaskManager;
 import com.ultreon.devices.api.utils.OnlineRequest;
 import com.ultreon.devices.block.PrinterBlock;
-import com.ultreon.devices.cef.CEFLicenseScreen;
 import com.ultreon.devices.core.client.ClientNotification;
 import com.ultreon.devices.core.io.task.*;
 import com.ultreon.devices.core.network.task.TaskConnect;
@@ -43,9 +42,7 @@ import com.ultreon.devices.programs.system.task.TaskUpdateApplicationData;
 import com.ultreon.devices.programs.system.task.TaskUpdateSystemData;
 import com.ultreon.devices.util.SiteRegistration;
 import com.ultreon.devices.util.Vulnerability;
-import dev.architectury.event.CompoundEventResult;
 import dev.architectury.event.EventResult;
-import dev.architectury.event.events.client.ClientGuiEvent;
 import dev.architectury.event.events.client.ClientPlayerEvent;
 import dev.architectury.event.events.common.InteractionEvent;
 import dev.architectury.event.events.common.LifecycleEvent;
@@ -60,7 +57,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.CrashReport;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
@@ -71,7 +67,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import org.burningwave.core.assembler.StaticComponentContainer;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -131,7 +126,6 @@ public abstract class Devices {
     }
 
     public void init() {
-        StaticComponentContainer.Modules.exportAllToAll();
         String prop = System.getProperty("java.awt.headless");
         System.out.println("property = " + prop);
         System.getProperties().remove("java.awt.headless");
@@ -252,16 +246,6 @@ public abstract class Devices {
 
             TaskManager.registerTask(TaskNotificationTest::new);
         }
-
-        ClientGuiEvent.SET_SCREEN.register(screen -> {
-            if (screen instanceof TitleScreen) {
-                if (!shownLicense) {
-                    shownLicense = true;
-                    return CompoundEventResult.interruptTrue(new CEFLicenseScreen(screen));
-                }
-            }
-            return CompoundEventResult.pass();
-        });
 
         EnvExecutor.runInEnv(Env.CLIENT, () -> () -> PrintingManager.registerPrint(new ResourceLocation(Reference.MOD_ID, "picture"), PixelPainterApp.PicturePrint.class));
     }

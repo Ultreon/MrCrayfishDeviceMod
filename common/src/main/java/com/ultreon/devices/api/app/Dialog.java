@@ -105,6 +105,11 @@ public abstract class Dialog extends Wrappable {
     }
 
     @Override
+    public void handleMouseMove(int mouseX, int mouseY) {
+        customLayout.handleMouseMove(mouseX, mouseY);
+    }
+
+    @Override
     public void handleMouseScroll(int mouseX, int mouseY, double delta, boolean direction) {
         customLayout.handleMouseScroll(mouseX, mouseY, direction);
     }

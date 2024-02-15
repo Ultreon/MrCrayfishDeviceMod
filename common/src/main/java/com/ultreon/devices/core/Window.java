@@ -226,6 +226,14 @@ public class Window<T extends Wrappable> {
         content.handleMouseRelease(mouseX, mouseY, mouseButton);
     }
 
+    void handleMouseMove(int mouseX, int mouseY) {
+        if (dialogWindow != null) {
+            dialogWindow.handleMouseMove(mouseX, mouseY);
+            return;
+        }
+        content.handleMouseMove(mouseX, mouseY);
+    }
+
     void handleMouseScroll(int mouseX, int mouseY, double delta, boolean direction) {
         if (dialogWindow != null) {
             dialogWindow.handleMouseScroll(mouseX, mouseY, delta, direction);

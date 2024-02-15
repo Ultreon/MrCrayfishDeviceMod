@@ -50,8 +50,6 @@ dependencies {
     modImplementation "com.electronwill.night-config:toml:3.6.5"
 
     include(implementation("com.jab125:apoint:$apoint_version"))
-    include(implementation("me.friwi:jcefmaven:$jcef_version"))
-    include(implementation("org.burningwave:core:$burningwave_version"))
 
     modApi include("net.fabricmc:fabric-language-kotlin:$fabric_language_kotlin_version")
     modImplementation "com.github.Ultreon.ultreonlib:ultreon-lib-fabric:$ultreonlib_version", {
@@ -64,6 +62,9 @@ dependencies {
     modImplementation "com.terraformersmc:modmenu:$modmenu_version"
     modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:$rei_version"
 
+    modCompileOnly 'com.cinemamod:mcef:2.1.4-1.20.1'
+    modRuntimeOnly 'com.cinemamod:mcef-fabric:2.1.4-1.20.1'
+    
 //    modApi "curse.maven:emojiful-284324:4672307"
 }
 

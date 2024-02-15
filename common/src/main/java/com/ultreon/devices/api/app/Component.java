@@ -205,6 +205,10 @@ public abstract class Component {
     protected void handleMouseRelease(int mouseX, int mouseY, int mouseButton) {
     }
 
+    public void handleMouseMove(int mouseX, int mouseY) {
+
+    }
+
     //TODO document this plz
     protected void handleMouseScroll(int mouseX, int mouseY, boolean direction) {
     }

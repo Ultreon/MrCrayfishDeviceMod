@@ -32,6 +32,7 @@ dependencies {
     modCompileOnly "com.electronwill.night-config:core:$nightconfig_version"
     modCompileOnly "com.electronwill.night-config:toml:$nightconfig_version"
 
+    modCompileOnly 'com.cinemamod:mcef:2.1.4-1.20.1'
 }
 
 sourceSets {

@@ -1,252 +1,184 @@
 package com.ultreon.devices.programs.browser;
 
-import com.mojang.blaze3d.platform.Window;
+import com.cinemamod.mcef.MCEF;
+import com.cinemamod.mcef.MCEFBrowser;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import com.ultreon.devices.Devices;
 import com.ultreon.devices.api.app.Application;
-import com.ultreon.devices.cef.BrowserFramework;
 import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.programs.system.layout.StandardLayout;
 import com.ultreon.devices.util.GLHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.nbt.CompoundTag;
-import org.cef.browser.CefBrowser;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.concurrent.CompletableFuture;
-
 public class WebBrowser extends Application {
-    private final int browserWidth;
-    private final int browserHeight;
-    private int lastMouseX = Integer.MAX_VALUE;
-    private int lastMouseY = Integer.MAX_VALUE;
-    private int x;
-    private int y;
-    private boolean active = false;
-    private CefBrowser browser;
-    private Component ui;
-    private BrowserRenderer renderer;
+    private int browserWidth;
+    private int browserHeight;
+    private MCEFBrowser browser;
+    private StandardLayout layoutBrowser;
+    //    private BrowserRenderer renderer;
 
     public WebBrowser() {
-        this.browserWidth = 362;
-        this.browserHeight = 165;
 
-        this.setDefaultWidth(browserWidth);
-        this.setDefaultHeight(browserHeight);
     }
 
     @Override
     public void init(@Nullable CompoundTag intent) {
-        CompletableFuture.runAsync(() -> {
-            browser = BrowserFramework.createBrowser();
-            ui = browser.getUIComponent();
+        if (browser != null) {
+            this.resizeBrowser();
+            return;
+        }
 
-            RenderSystem.recordRenderCall(() -> {
-                addComponent(renderer = new BrowserRenderer(
-                        browser, ui, 0, 0, browserWidth, browserHeight, 0, 0,
-                        browserWidth, browserHeight, browserWidth, browserHeight
-                ));
+        this.layoutBrowser = new StandardLayout(null, 362, this.getBrowserHeight() + 75, this, null);
+        this.setCurrentLayout(this.layoutBrowser);
 
-                renderer.setVisible(true);
-            });
-        });
+        this.setBrowserWidth(362);
+        this.setBrowserHeight(165);
+
+        browser = MCEF.createBrowser("https://www.google.com", false, getWidth(), getHeight());
+        this.resizeBrowser();
+
+        Devices.LOGGER.warn("Browser initialized");
+    }
+
+    private void resizeBrowser() {
+        if (this.browser == null) return;
+
+        if (getBrowserWidth() > 100 && getBrowserHeight() > 100) {
+            this.browser.resize(this.scaleX(this.getBrowserWidth()), this.scaleY(this.getBrowserHeight()));
+        }
+    }
+
+    private int mouseX(double x) {
+        return (int)((x - this.getCurrentLayout().xPosition) * this.minecraft().getWindow().getGuiScale());
+    }
+
+    private int mouseY(double y) {
+        return (int)((y - this.getCurrentLayout().yPosition) * this.minecraft().getWindow().getGuiScale());
+    }
+
+    private int scaleX(double x) {
+        return (int)((x) * this.minecraft().getWindow().getGuiScale());
+    }
+
+    private int scaleY(double y) {
+        return (int)((y) * this.minecraft().getWindow().getGuiScale());
+    }
+
+    private Minecraft minecraft() {
+        return Minecraft.getInstance();
     }
 
     @Override
     public void onTick() {
         super.onTick();
-
-        BrowserFramework.redraw();
     }
 
     @Override
     public void onClose() {
-        BrowserFramework.closeBrowser(browser);
+        this.browser.close();
+        this.browser = null;
+
+        super.onClose();
     }
 
     @Override
-    public void handleMouseClick(int mouseX, int mouseY, int mouseButton) {
-        if (ui == null || browser == null) {
-            return;
-        }
+    public void handleMouseClick(int mouseX, int mouseY, int button) {
+        if (this.browser == null) return;
 
-        super.handleMouseClick(mouseX, mouseY, mouseButton);
-
-        System.out.println("Click Event");
-
-        double guiScale = Minecraft.getInstance().getWindow().getGuiScale();
-        int mx = (int) ((mouseX - x) * guiScale);
-        int my = (int) ((mouseY - y) * guiScale);
-        int mb = switch (mouseButton) {
-            case 0 -> 1;
-            case 1 -> 3;
-            case 2 -> 2;
-            case 3 -> 4;
-            case 4 -> 5;
-            default -> 0;
-        };
-
-        for (MouseListener mouseMotionListener : ui.getMouseListeners()) {
-            mouseMotionListener.mousePressed(new MouseEvent(ui, MouseEvent.MOUSE_PRESSED, System.currentTimeMillis(), 0, mx, my, 1, false, mb));
-            mouseMotionListener.mouseClicked(new MouseEvent(ui, MouseEvent.MOUSE_CLICKED, System.currentTimeMillis(), 0, mx, my, 1, false, mb));
-        }
+        this.browser.sendMousePress(this.mouseX(mouseX), this.mouseY(mouseY), button);
+        this.browser.setFocus(true);
+        super.handleMouseClick(mouseX, mouseY, button);
     }
 
     @Override
-    public void handleMouseDrag(int mouseX, int mouseY, int mouseButton) {
-        if (ui == null || browser == null) {
-            return;
-        }
+    public void handleMouseRelease(int mouseX, int mouseY, int button) {
+        if (this.browser == null) return;
 
-        super.handleMouseDrag(mouseX, mouseY, mouseButton);
-
-        System.out.println("Drag Event");
-
-        double guiScale = Minecraft.getInstance().getWindow().getGuiScale();
-        int mx = (int) ((mouseX - x) * guiScale);
-        int my = (int) ((mouseY - y) * guiScale);
-        int mb = switch (mouseButton) {
-            case 0 -> 1;
-            case 1 -> 3;
-            case 2 -> 2;
-            case 3 -> 4;
-            case 4 -> 5;
-            default -> 0;
-        };
-
-        for (MouseMotionListener mouseMotionListener : ui.getMouseMotionListeners()) {
-            mouseMotionListener.mouseDragged(new MouseEvent(ui, MouseEvent.MOUSE_DRAGGED, System.currentTimeMillis(), 0, mx, my, 1, false, mb));
-        }
+        this.browser.sendMouseRelease(this.mouseX(mouseX), this.mouseY(mouseY), button);
+        this.browser.setFocus(true);
+        super.handleMouseRelease(mouseX, mouseY, button);
     }
 
     @Override
-    public void handleMouseRelease(int mouseX, int mouseY, int mouseButton) {
-        if (ui == null || browser == null) {
-            return;
-        }
+    public void handleMouseMove(int mouseX, int mouseY) {
+        if (this.browser == null) return;
 
-        super.handleMouseRelease(mouseX, mouseY, mouseButton);
+        this.browser.sendMouseMove(this.mouseX(mouseX), this.mouseY(mouseY));
+        super.handleMouseMove(mouseX, mouseY);
+    }
 
-        System.out.println("Release Mouse Event");
+    @Override
+    public void handleMouseDrag(int mouseX, int mouseY, int button) {
+        if (this.browser == null) return;
 
-        double guiScale = Minecraft.getInstance().getWindow().getGuiScale();
-        int mx = (int) ((mouseX - x) * guiScale);
-        int my = (int) ((mouseY - y) * guiScale);
-        int mb = switch (mouseButton) {
-            case 0 -> 1;
-            case 1 -> 3;
-            case 2 -> 2;
-            case 3 -> 4;
-            case 4 -> 5;
-            default -> 0;
-        };
-
-        for (MouseListener mouseMotionListener : ui.getMouseListeners()) {
-            mouseMotionListener.mouseReleased(new MouseEvent(ui, MouseEvent.MOUSE_RELEASED, System.currentTimeMillis(), 0, mx, my, 1, false, mb));
-        }
+        super.handleMouseDrag(mouseX, mouseY, button);
     }
 
     @Override
     public void handleMouseScroll(int mouseX, int mouseY, double delta, boolean direction) {
-        if (ui == null || browser == null) {
-            return;
-        }
+        if (this.browser == null) return;
 
+        this.browser.sendMouseWheel(this.mouseX(mouseX), this.mouseY(mouseY), delta, 0);
         super.handleMouseScroll(mouseX, mouseY, delta, direction);
-
-        double guiScale = Minecraft.getInstance().getWindow().getGuiScale();
-        int mx = (int) ((mouseX - x) * guiScale);
-        int my = (int) ((mouseY - y) * guiScale);
-
-        for (MouseWheelListener mouseMotionListener : ui.getMouseWheelListeners()) {
-            System.out.println("Scroll Event");
-            mouseMotionListener.mouseWheelMoved(new MouseWheelEvent(ui, MouseEvent.MOUSE_WHEEL, System.currentTimeMillis(), 0, mx, my, mx, my, 0, false, MouseWheelEvent.WHEEL_UNIT_SCROLL, (int) delta, (int) delta, delta));
-        }
     }
 
     @Override
     public void handleKeyPressed(int keyCode, int scanCode, int modifiers) {
-        if (ui == null || browser == null) {
-            return;
-        }
+        if (this.browser == null) return;
 
+        this.browser.sendKeyPress(keyCode, scanCode, modifiers);
+        this.browser.setFocus(true);
         super.handleKeyPressed(keyCode, scanCode, modifiers);
-
-        if (this.active) {
-            for (KeyListener mouseMotionListener : ui.getKeyListeners()) {
-                System.out.println("Key Pressed Event");
-                if (keyCode >= 32 && keyCode <= 127) {
-                    mouseMotionListener.keyPressed(new KeyEvent(ui, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), modifiers, keyCode, (char) 0, KeyEvent.KEY_LOCATION_UNKNOWN));
-                }
-            }
-        }
     }
 
     @Override
     public void handleKeyReleased(int keyCode, int scanCode, int modifiers) {
-        if (ui == null || browser == null) {
-            return;
-        }
+        if (this.browser == null) return;
 
+        this.browser.sendKeyRelease(keyCode, scanCode, modifiers);
+        this.browser.setFocus(true);
         super.handleKeyReleased(keyCode, scanCode, modifiers);
-
-        if (this.active) {
-            for (KeyListener mouseMotionListener : ui.getKeyListeners()) {
-                System.out.println("Key Released Event");
-                if (keyCode >= 32 && keyCode <= 127) {
-                    mouseMotionListener.keyReleased(new KeyEvent(ui, KeyEvent.KEY_RELEASED, System.currentTimeMillis(), modifiers, keyCode, (char) 0, KeyEvent.KEY_LOCATION_UNKNOWN));
-                }
-            }
-        }
     }
 
     @Override
-    public void handleCharTyped(char character, int modifiers) {
-        if (ui == null || browser == null) {
-            return;
-        }
+    public void handleCharTyped(char codePoint, int modifiers) {
+        if (this.browser == null || codePoint == 0) return;
 
-        super.handleCharTyped(character, modifiers);
-
-        if (this.active) {
-            for (KeyListener mouseMotionListener : ui.getKeyListeners()) {
-                System.out.println("Key Typed Event");
-                mouseMotionListener.keyTyped(new KeyEvent(ui, KeyEvent.KEY_TYPED, System.currentTimeMillis(), modifiers, KeyEvent.VK_UNDEFINED, character, KeyEvent.KEY_LOCATION_UNKNOWN));
-            }
-        }
+        this.browser.sendKeyTyped(codePoint, modifiers);
+        this.browser.setFocus(true);
+        super.handleCharTyped(codePoint, modifiers);
     }
-
+    
     @Override
     public void render(GuiGraphics gfx, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
-        if (this.ui == null || this.browser == null) {
-            return;
-        }
+        if (this.browser == null) return;
 
-        if (laptop.isFocusedWindow(this)) {
-            this.active = true;
-        }
+        laptop.isFocusedWindow(this);
 
-        GLHelper.pushScissor(x, y, getWidth(), getHeight());
-        this.x = x;
-        this.y = y;
-        this.active = active;
-        Window window = Minecraft.getInstance().getWindow();
-        double guiScale = window.getGuiScale();
-        if (mouseX != lastMouseX || mouseY != lastMouseY && active) {
-            int mx = (int) ((mouseX - x) * guiScale);
-            int my = (int) ((mouseY - y) * guiScale);
+        GLHelper.pushScissor(x, y, getBrowserWidth(), getBrowserHeight());
+        RenderSystem.disableDepthTest();
+        RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
+        RenderSystem.setShaderTexture(0, this.browser.getRenderer().getTextureID());
 
-            for (MouseMotionListener mouseMotionListener : ui.getMouseMotionListeners()) {
-                mouseMotionListener.mouseMoved(new MouseEvent(ui, MouseEvent.MOUSE_MOVED, System.currentTimeMillis(), 0, mx, my, 0, false));
-            }
-
-            lastMouseX = mouseX;
-            lastMouseY = mouseY;
-        }
-
-        BrowserFramework.setSize(browser, getWidth(), getHeight());
-        BrowserFramework.renderBrowser(gfx, x, y, getWidth(), getHeight());
+        Tesselator t = Tesselator.getInstance();
+        BufferBuilder buffer = t.getBuilder();
+        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+        buffer.vertex(x, this.getBrowserHeight() + y, 0.0).uv(0.0F, 1.0F).color(255, 255, 255, 255).endVertex();
+        buffer.vertex(this.getBrowserWidth() + x, this.getBrowserHeight() + y, 0.0).uv(1.0F, 1.0F).color(255, 255, 255, 255).endVertex();
+        buffer.vertex(this.getBrowserWidth() + x, y, 0.0).uv(1.0F, 0.0F).color(255, 255, 255, 255).endVertex();
+        buffer.vertex(x, y, 0.0).uv(0.0F, 0.0F).color(255, 255, 255, 255).endVertex();
+        t.end();
+        
+        RenderSystem.setShaderTexture(0, 0);
+        RenderSystem.enableDepthTest();
         GLHelper.popScissor();
     }
 
@@ -258,5 +190,32 @@ public class WebBrowser extends Application {
     @Override
     public void save(CompoundTag tag) {
 
+    }
+
+    public int getBrowserWidth() {
+        return browserWidth;
+    }
+
+    void setBrowserWidth(int browserWidth) {
+        this.browserWidth = browserWidth;
+        this.layoutBrowser.width = browserWidth;
+    }
+
+    public int getBrowserHeight() {
+        return browserHeight;
+    }
+
+    void setBrowserHeight(int browserHeight) {
+        this.browserHeight = browserHeight;
+        this.layoutBrowser.height = browserHeight + 75;
+    }
+
+    public void resize(int width, int height) {
+        this.browserWidth = width;
+        this.browserHeight = height;
+        this.layoutBrowser.width = width;
+        this.layoutBrowser.height = height + 75;
+
+        this.resizeBrowser();
     }
 }

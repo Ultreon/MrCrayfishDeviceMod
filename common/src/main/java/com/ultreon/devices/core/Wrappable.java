@@ -120,6 +120,8 @@ public abstract class Wrappable {
      */
     public abstract void handleMouseRelease(int mouseX, int mouseY, int mouseButton);
 
+    public abstract void handleMouseMove(int mouseX, int mouseY);
+
     /**
      * Called when you scroll the wheel on your mouse.
      *

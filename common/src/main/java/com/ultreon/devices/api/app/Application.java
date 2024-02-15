@@ -1,7 +1,6 @@
 package com.ultreon.devices.api.app;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.Devices;
 import com.ultreon.devices.api.io.File;
 import com.ultreon.devices.core.Laptop;
@@ -13,7 +12,6 @@ import com.ultreon.devices.util.DataHandler;
 import com.ultreon.devices.util.GLHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,7 +34,6 @@ public abstract class Application extends Wrappable implements DataHandler {
         throw new IllegalStateException();
     }
     private final Layout defaultLayout = new Layout();
-    private BlockPos laptopPositon;
     private int width, height;
     private Layout currentLayout;
 
@@ -196,12 +193,23 @@ public abstract class Application extends Wrappable implements DataHandler {
     }
 
     /**
+     * Called when the mouse moves. Note if you override, make sure you call this super method..
+     *
+     * @param mouseX      the x position of the release
+     * @param mouseY      the y position of the release
+     */
+    @Override
+    public void handleMouseMove(int mouseX, int mouseY) {
+        currentLayout.handleMouseMove(mouseX, mouseY);
+    }
+
+    /**
      * Called when you scroll the wheel on your mouse. Note if you override,
      * make sure you call this super method.
      *
      * @param mouseX    the x position of the mouse
      * @param mouseY    the y position of the mouse
-     * @param delta
+     * @param delta     the scroll delta.
      * @param direction the direction of the scroll. true is up, false is down
      */
     @Override
