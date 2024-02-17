@@ -106,7 +106,7 @@ public class SettingsApp extends SystemApp {
 
         layoutMain.addComponent(buttonColorScheme);
 
-        Button buttonColorSchemes = new Button(5, 26+26+20+4, "Color Scheme Presets", Icons.WRENCH);
+        Button buttonColorSchemes = new Button(5, 26+26+20+4, "Themes", Icons.WRENCH);
         buttonColorSchemes.setSize(90, 20);
         buttonColorSchemes.setToolTip("Color Schemes", "Change the color scheme using presets or choose a custom one.");
         buttonColorSchemes.setClickListener((mouseX, mouseY, mouseButton) -> {
@@ -219,7 +219,7 @@ public class SettingsApp extends SystemApp {
     }
 
     private Layout createColorSchemesLayout() {
-        final Layout layoutColorSchemes = new Menu("Color Scheme Presets");
+        final Layout layoutColorSchemes = new Menu("Themes");
         layoutColorSchemes.addComponent(backBtn);
 
         Preset custom = new Preset(null, Devices.id("custom"));
