@@ -180,7 +180,6 @@ public class ColorScheme {
         textColor = Color.decode("0xFFFFFF").getRGB();
         textSecondaryColor = Color.decode("0xABEFF4").getRGB();
         headerColor = Color.decode("0x387A96").getRGB();
-        //backgroundColor = Color.decode("0x535861").getRGB();
         backgroundColor = Color.decode("0x6899C2").getRGB();
         backgroundSecondaryColor = Color.decode("0x36C052").getRGB();
         backgroundColor = Color.decode("0x6899C2").getRGB();
@@ -210,21 +209,5 @@ public class ColorScheme {
         tag.putInt("iconColor", iconColor);
         tag.putInt("iconSecondaryColor", iconSecondaryColor);
         return tag;
-    }
-
-    public void set(ColorScheme colorScheme) {
-        buttonColor = colorScheme.buttonColor;
-        textColor = colorScheme.textColor;
-        textSecondaryColor = colorScheme.textSecondaryColor;
-        headerColor = colorScheme.headerColor;
-        backgroundColor = colorScheme.backgroundColor;
-        backgroundSecondaryColor = colorScheme.backgroundSecondaryColor;
-        itemBackgroundColor = colorScheme.itemBackgroundColor;
-        itemHighlightColor = colorScheme.itemHighlightColor;
-        buttonOutlineColor = colorScheme.buttonOutlineColor;
-        windowBackgroundColor = colorScheme.windowBackgroundColor;
-        windowOutlineColor = colorScheme.windowOutlineColor;
-        iconColor = colorScheme.iconColor;
-        iconSecondaryColor = colorScheme.iconSecondaryColor;
     }
 }

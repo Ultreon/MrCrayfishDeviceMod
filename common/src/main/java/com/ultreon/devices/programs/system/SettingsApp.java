@@ -18,7 +18,8 @@ import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.object.TrayItem;
 import com.ultreon.devices.programs.system.component.Palette;
 import com.ultreon.devices.programs.system.object.ColorScheme;
-import com.ultreon.devices.programs.system.object.ColorSchemeRegistry;
+import com.ultreon.devices.programs.system.object.ColorSchemePresetRegistry;
+import com.ultreon.devices.programs.system.object.Preset;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
@@ -103,9 +104,9 @@ public class SettingsApp extends SystemApp {
 
         layoutMain.addComponent(buttonColorScheme);
 
-        Button buttonColorSchemes = new Button(5, 26+26+20+4, "Color Schemes", Icons.WRENCH);
+        Button buttonColorSchemes = new Button(5, 26+26+20+4, "Color Scheme Presets", Icons.WRENCH);
         buttonColorSchemes.setSize(90, 20);
-        buttonColorSchemes.setToolTip("Color Schemes", "Change the color scheme.");
+        buttonColorSchemes.setToolTip("Color Schemes", "Change the color scheme using presets or choose a custom one.");
         buttonColorSchemes.setClickListener((mouseX, mouseY, mouseButton) -> {
             if (mouseButton == 0) {
                 showMenu(layoutColorSchemes);
@@ -216,22 +217,20 @@ public class SettingsApp extends SystemApp {
     }
 
     private Layout createColorSchemesLayout() {
-        final Layout layoutColorSchemes = new Menu("Color schemes");
+        final Layout layoutColorSchemes = new Menu("Color Scheme Presets");
         layoutColorSchemes.addComponent(backBtn);
 
-        ItemList<ColorScheme> list = new ItemList<>(0, 21, layoutColorSchemes.width, layoutColorSchemes.height - 21);
-        for (ColorScheme colorScheme : ColorSchemeRegistry.getValues()) {
+        ItemList<Preset> list = new ItemList<>(0, 21, layoutColorSchemes.width, layoutColorSchemes.height - 21);
+        for (Preset colorScheme : ColorSchemePresetRegistry.getValues()) {
             list.addItem(colorScheme);
         }
 
-        list.setItemClickListener((colorScheme, index, button) -> {
-            Laptop.getSystem().getSettings().getColorScheme().set(colorScheme);
-        });
+        list.setItemClickListener((preset, index, button) -> Laptop.getSystem().getSettings().setPreset(preset));
 
         list.setListItemRenderer(new ListItemRenderer<>(20) {
             @Override
-            public void render(GuiGraphics graphics, ColorScheme scheme, Minecraft mc, int x, int y, int width, int height, boolean selected) {
-                graphics.drawString(mc.font, ColorSchemeRegistry.getKey(scheme).toString(), x + 5, y + 5, Color.WHITE.getRGB());
+            public void render(GuiGraphics graphics, Preset scheme, Minecraft mc, int x, int y, int width, int height, boolean selected) {
+                graphics.drawString(mc.font, ColorSchemePresetRegistry.getKey(scheme).toString(), x + 5, y + 5, Color.WHITE.getRGB());
             }
         });
 

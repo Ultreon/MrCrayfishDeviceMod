@@ -11,8 +11,7 @@ import com.ultreon.devices.debug.DumpType;
 import com.ultreon.devices.init.DeviceBlockEntities;
 import com.ultreon.devices.init.DeviceBlocks;
 import com.ultreon.devices.object.AppInfo;
-import com.ultreon.devices.programs.system.object.ColorSchemes;
-import dev.architectury.injectables.annotations.ExpectPlatform;
+import com.ultreon.devices.programs.system.object.ColorSchemePresets;
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.ReloadListenerRegistry;
 import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
@@ -82,7 +81,7 @@ public class ClientModEvents {
     }
 
     private static void registerOSContent() {
-        ColorSchemes.init();
+        ColorSchemePresets.init();
     }
 
     @ApiStatus.Internal
