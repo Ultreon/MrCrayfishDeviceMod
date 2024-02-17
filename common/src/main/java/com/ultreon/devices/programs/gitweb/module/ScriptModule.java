@@ -1,16 +1,13 @@
 package com.ultreon.devices.programs.gitweb.module;
 
-import com.jab125.apoint.api.APoint;
-import com.jab125.apoint.api.APointRuntime;
-import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.programs.gitweb.component.GitWebFrame;
 import com.ultreon.devices.programs.gitweb.layout.ModuleLayout;
 
-import java.util.HashMap;
 import java.util.Map;
 
+@Deprecated
 public class ScriptModule extends Module {
     @Override
     public String[] getRequiredData() {
@@ -33,7 +30,7 @@ public class ScriptModule extends Module {
         if (data.get("runtime").equals("apoint")) {
             initAPointRuntime(frame);
             DebugLog.log(script);
-            frame.aPointRuntime.parse(script);
+//            frame.aPointRuntime.parse(script);
         } else if (data.get("runtime").equals("ulang")) {
             //
         }
@@ -50,32 +47,32 @@ public class ScriptModule extends Module {
     }
 
     private void initAPointRuntime(GitWebFrame frame) {
-        if (frame.aPointRuntime == null) {
-            APointRuntime runtime = APoint.createRuntime();
-            runtime.removeCommand("METHOD:STATIC");
-            runtime.removeCommand("METHOD");
-            runtime.removeCommand("FIELD:STATIC");
-            runtime.addCommand("RANDOM", (params) -> {
-                runtime.setPointer(runtime.getOut(), Math.random());
-            });
-            runtime.addCommand("MODIFY", (params) -> {
-                String id = (String) runtime.getVals().get(0);
-                String key = (String) runtime.getVals().get(1);
-                String value = (String) runtime.getVals().get(2);
-                for (Component component : frame.layout.components) {
-                    if (component instanceof ModuleLayout moduleLayout) {
-                        if (id.equals(moduleLayout.entry.getId())) {
-                            var newData = new HashMap<>(moduleLayout.entry.getData());
-                            newData.put(key, value);
-                            moduleLayout.entry.setData(newData);
-                            moduleLayout.modify();
-                        }
-                    }
-                }
-            });
-            frame.aPointRuntime = runtime;
-            //runtime.removeCommand("");
-        }
+//        if (frame.aPointRuntime == null) {
+//            APointRuntime runtime = APoint.createRuntime();
+//            runtime.removeCommand("METHOD:STATIC");
+//            runtime.removeCommand("METHOD");
+//            runtime.removeCommand("FIELD:STATIC");
+//            runtime.addCommand("RANDOM", (params) -> {
+//                runtime.setPointer(runtime.getOut(), Math.random());
+//            });
+//            runtime.addCommand("MODIFY", (params) -> {
+//                String id = (String) runtime.getVals().get(0);
+//                String key = (String) runtime.getVals().get(1);
+//                String value = (String) runtime.getVals().get(2);
+//                for (Component component : frame.layout.components) {
+//                    if (component instanceof ModuleLayout moduleLayout) {
+//                        if (id.equals(moduleLayout.entry.getId())) {
+//                            var newData = new HashMap<>(moduleLayout.entry.getData());
+//                            newData.put(key, value);
+//                            moduleLayout.entry.setData(newData);
+//                            moduleLayout.modify();
+//                        }
+//                    }
+//                }
+//            });
+//            frame.aPointRuntime = runtime;
+//            //runtime.removeCommand("");
+//        }
     }
 
     public static void setTimeout(Runnable runnable, int delay){
