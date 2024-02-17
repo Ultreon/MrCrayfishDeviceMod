@@ -2,10 +2,7 @@ package com.ultreon.devices;
 
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.mojang.serialization.Lifecycle;
 import com.ultreon.devices.api.ApplicationManager;
 import com.ultreon.devices.api.app.Application;
@@ -49,7 +46,6 @@ import dev.architectury.event.events.common.LifecycleEvent;
 import dev.architectury.event.events.common.PlayerEvent;
 import dev.architectury.injectables.targets.ArchitecturyTarget;
 import dev.architectury.platform.Platform;
-import dev.architectury.registry.CreativeTabRegistry;
 import dev.architectury.registry.registries.DeferredSupplier;
 import dev.architectury.registry.registries.RegistrarManager;
 import dev.architectury.utils.Env;
@@ -80,18 +76,19 @@ import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 public abstract class Devices {
-    public static final boolean DEVELOPER_MODE = false;
+    public static final boolean DEVELOPER_MODE = Platform.isDevelopmentEnvironment();
     public static final String MOD_ID = "devices";
     public static final Logger LOGGER = LoggerFactory.getLogger("Devices Mod");
 
     public static final DeferredSupplier<CreativeModeTab> TAB_DEVICE = DeviceTab.create();
     public static final Supplier<RegistrarManager> REGISTRIES = Suppliers.memoize(() -> RegistrarManager.get(MOD_ID));
     public static final List<SiteRegistration> SITE_REGISTRATIONS = new ProtectedArrayList<>();
+    public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    public static final DevicesEarlyConfig EARLY_CONFIG = DevicesEarlyConfig.load();
     private static final Pattern DEV_PREVIEW_PATTERN = Pattern.compile("\\d+\\.\\d+\\.\\d+-dev\\d+");
     private static final boolean IS_DEV_PREVIEW = DEV_PREVIEW_PATTERN.matcher(Reference.VERSION).matches();
     private static final String GITWEB_REGISTER_URL = "https://ultreon.gitlab.io/gitweb/site_register.json";
     public static final String VULNERABILITIES_URL = "https://jab125.com/gitweb/vulnerabilities.php";
-    private static final boolean PROTECT_FROM_LAUNCH = false;
 //    private static final Logger ULTRAN_LANG_LOGGER = LoggerFactory.getLogger("UltranLang");
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private static final SiteRegisterStack SITE_REGISTER_STACK = new SiteRegisterStack();
@@ -156,7 +153,7 @@ public abstract class Devices {
     }
 
     public static void preInit() {
-        if (DEVELOPER_MODE && !Platform.isDevelopmentEnvironment() && PROTECT_FROM_LAUNCH) {
+        if (DEVELOPER_MODE && !Platform.isDevelopmentEnvironment()) {
             throw new LaunchException();
         }
 
@@ -197,14 +194,6 @@ public abstract class Devices {
         TaskManager.registerTask(TaskPing::new);
         TaskManager.registerTask(TaskGetDevices::new);
 
-        // Bank
-//        TaskManager.registerTask(TaskDeposit::new);
-//        TaskManager.registerTask(TaskWithdraw::new);
-//        TaskManager.registerTask(TaskGetBalance::new);
-//        TaskManager.registerTask(TaskPay::new);
-//        TaskManager.registerTask(TaskAdd::new);
-//        TaskManager.registerTask(TaskRemove::new);
-
         // File browser
         TaskManager.registerTask(TaskSendAction::new);
         TaskManager.registerTask(TaskSetupFileBrowser::new);
@@ -223,12 +212,22 @@ public abstract class Devices {
         TaskManager.registerTask(TaskDeleteEmail::new);
         TaskManager.registerTask(TaskViewEmail::new);
 
-        // Auction
-        TaskManager.registerTask(TaskAddAuction::new);
-        TaskManager.registerTask(TaskGetAuctions::new);
-        TaskManager.registerTask(TaskBuyItem::new);
+        if (Platform.isDevelopmentEnvironment() || Devices.EARLY_CONFIG.enableBetaApps) {
+            // Auction
+            TaskManager.registerTask(TaskAddAuction::new);
+            TaskManager.registerTask(TaskGetAuctions::new);
+            TaskManager.registerTask(TaskBuyItem::new);
 
-        if (DEVELOPER_MODE) {
+            // Bank
+            TaskManager.registerTask(TaskDeposit::new);
+            TaskManager.registerTask(TaskWithdraw::new);
+            TaskManager.registerTask(TaskGetBalance::new);
+            TaskManager.registerTask(TaskPay::new);
+            TaskManager.registerTask(TaskAdd::new);
+            TaskManager.registerTask(TaskRemove::new);
+        }
+
+        if (Platform.isDevelopmentEnvironment() || Devices.EARLY_CONFIG.enableDebugApps) {
             // Applications (Developers)
             ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "example"), () -> ExampleApp::new, false);
             ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "icons"), () -> IconsApp::new, false);
