@@ -1,5 +1,6 @@
 package com.ultreon.devices.programs.system;
 
+import com.google.common.base.CaseFormat;
 import com.ultreon.devices.Devices;
 import com.ultreon.devices.Reference;
 import com.ultreon.devices.api.ApplicationManager;
@@ -24,6 +25,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
 
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.awt.*;
@@ -220,17 +222,25 @@ public class SettingsApp extends SystemApp {
         final Layout layoutColorSchemes = new Menu("Color Scheme Presets");
         layoutColorSchemes.addComponent(backBtn);
 
+        Preset custom = new Preset(null, Devices.id("custom"));
+
         ItemList<Preset> list = new ItemList<>(0, 21, layoutColorSchemes.width, layoutColorSchemes.height - 21);
         for (Preset colorScheme : ColorSchemePresetRegistry.getValues()) {
             list.addItem(colorScheme);
         }
+        list.addItem(custom);
 
-        list.setItemClickListener((preset, index, button) -> Laptop.getSystem().getSettings().setPreset(preset));
+        list.setItemClickListener((preset, index, button) -> {
+            if (preset == custom) preset = null;
+            Laptop.getSystem().getSettings().setPreset(preset);
+        });
 
         list.setListItemRenderer(new ListItemRenderer<>(20) {
             @Override
             public void render(GuiGraphics graphics, Preset scheme, Minecraft mc, int x, int y, int width, int height, boolean selected) {
-                graphics.drawString(mc.font, ColorSchemePresetRegistry.getKey(scheme).toString(), x + 5, y + 5, Color.WHITE.getRGB());
+                ResourceLocation key = ColorSchemePresetRegistry.getKey(scheme);
+                if (key == null) key = Devices.id("custom");
+                graphics.drawString(mc.font, CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, key.getPath()).replaceAll("[A-Z]", " $0").substring(1), x + 5, y + 5, Color.WHITE.getRGB());
             }
         });
 

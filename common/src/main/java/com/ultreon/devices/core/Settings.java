@@ -4,6 +4,9 @@ import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.programs.system.object.ColorScheme;
 import com.ultreon.devices.programs.system.object.Preset;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
+import org.intellij.lang.annotations.Identifier;
 
 /**
  * @author MrCrayfish
@@ -23,7 +26,11 @@ public class Settings {
     }
 
     public ColorScheme getColorScheme() {
-        return preset == null ? colorScheme : preset.colorScheme();
+        if (colorScheme == null) colorScheme = new ColorScheme();
+        if (preset == null) return colorScheme;
+
+        ColorScheme presetColorScheme = this.preset.colorScheme();
+        return presetColorScheme == null ? colorScheme : presetColorScheme;
     }
 
     public Preset getPreset() {
@@ -57,6 +64,8 @@ public class Settings {
 
         Settings settings = new Settings();
         settings.colorScheme = ColorScheme.fromTag(tag.getCompound("colorScheme"));
+        settings.preset = tag.contains("preset", Tag.TAG_COMPOUND) ? Preset.fromTag(tag.getCompound("preset")) : null;
+
         return settings;
     }
 }
