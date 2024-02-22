@@ -1,15 +1,16 @@
 package com.ultreon.devices.programs.system.object;
 
 import com.ultreon.devices.Devices;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.Consumer;
 
-public class ColorSchemes {
-    public static final ColorScheme DEFAULT = createColorSceheme("default", new ColorScheme(), colorScheme -> {
+public class ColorSchemePresets {
+    public static final Preset DEFAULT = createPreset("default", new ColorScheme(), colorScheme -> {
 
     });
 
-    public static final ColorScheme DARK = createColorSceheme("dark", new ColorScheme(), scheme -> {
+    public static final Preset DARK = createPreset("dark", new ColorScheme(), scheme -> {
         scheme.buttonColor = 0x303030;
         scheme.backgroundColor = 0x202020;
         scheme.textColor = 0xffffff;
@@ -21,7 +22,7 @@ public class ColorSchemes {
         scheme.windowBackgroundColor = 0x202020;
     });
 
-    public static final ColorScheme LIGHT = createColorSceheme("light", new ColorScheme(), scheme -> {
+    public static final Preset LIGHT = createPreset("light", new ColorScheme(), scheme -> {
         scheme.buttonColor = 0x0080ff;
         scheme.backgroundColor = 0xd0d0d0;
         scheme.textColor = 0x000000;
@@ -33,11 +34,13 @@ public class ColorSchemes {
         scheme.windowBackgroundColor = 0xe0e0e0;
     });
 
-    private static ColorScheme createColorSceheme(String name, ColorScheme colorScheme, Consumer<ColorScheme> consumer) {
+    private static Preset createPreset(String name, ColorScheme colorScheme, Consumer<ColorScheme> consumer) {
         consumer.accept(colorScheme);
-        ColorSchemeRegistry.register(Devices.id(name), colorScheme);
+        ResourceLocation id = Devices.id(name);
+        Preset preset = new Preset(colorScheme, id);
+        ColorSchemePresetRegistry.register(id, preset);
 
-        return colorScheme;
+        return preset;
     }
 
     public static void init() {
