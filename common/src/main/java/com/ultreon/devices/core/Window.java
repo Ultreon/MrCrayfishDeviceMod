@@ -15,7 +15,7 @@ import java.awt.*;
 public class Window<T extends Wrappable> {
     public static final ResourceLocation WINDOW_GUI = new ResourceLocation("devices:textures/gui/application.png");
 
-    public static final int Color_WINDOW_DARK = new Color(0f, 0f, 0f, 0.25f).getRGB();
+    public static final int COLOR_WINDOW_DARK = new Color(0f, 0f, 0f, 0.25f).getRGB();
     final Laptop laptop;
     double dragFromX;
     double dragFromY;
@@ -86,12 +86,13 @@ public class Window<T extends Wrappable> {
 
         graphics.pose().pushPose();
 
-        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+        Color color = new Color(Laptop.getSystem().getSettings().getColorScheme().getWindowBackgroundColor());
         RenderSystem.enableBlend();
         RenderSystem.setShaderTexture(0, WINDOW_GUI);
+        RenderSystem.setShaderColor(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, 1);
 
         /* Corners */
-        graphics.blit(WINDOW_GUI,x + offsetX, y + offsetY, 0, 0, 1, 0);
+        graphics.blit(WINDOW_GUI,x + offsetX, y + offsetY, 0, 0, 1, 1);
         graphics.blit(WINDOW_GUI,x + offsetX + width - 13, y + offsetY, 2, 0, 13, 13);
         graphics.blit(WINDOW_GUI,x + offsetX + width - 1, y + offsetY + height - 1, 14, 14, 1, 1);
         graphics.blit(WINDOW_GUI,x + offsetX, y + offsetY + height - 1, 0, 14, 1, 1);
@@ -104,6 +105,8 @@ public class Window<T extends Wrappable> {
 
         /* Center */
         graphics.blit(WINDOW_GUI, x + offsetX + 1, y + offsetY + 13, width - 2, height - 14, 1, 13, 13, 1, 256, 256);
+
+        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 
         String windowTitle = content.getWindowTitle();
         if (mc.font.width(windowTitle) > width - 2 - 13 - 3) { // window width, border, close button, padding, padding
@@ -121,9 +124,10 @@ public class Window<T extends Wrappable> {
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 
         if (dialogWindow != null) {
-            graphics.fill(x + offsetX, y + offsetY, x + offsetX + width, y + offsetY + height, Color_WINDOW_DARK);
+            graphics.fill(x + offsetX, y + offsetY, x + offsetX + width, y + offsetY + height, COLOR_WINDOW_DARK);
             dialogWindow.render(graphics, gui, mc, x, y, mouseX, mouseY, active, partialTicks);
         }
+
         graphics.pose().popPose();
     }
 
