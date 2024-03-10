@@ -5,11 +5,11 @@
   "name": "Gitweb Builder",
   "description": "${description}",
   "authors": [
-    "Dv8FromTheCode (Mastef_Chief)"
+    "Ultreon Team"
   ],
   "contributors": [
-    "Qboi123",
-    "Jab125"
+    "Jab125",
+    "Dv8FromTheCode (Mastef_Chief)"
   ],
   "contact": {
     "repo": "https://github.com/Ultreon/devices-mod",
@@ -17,7 +17,7 @@
     "sources": "https://github.com/Ultreon/devices-mod"
   },
   "license": "GPL-3.0",
-  "icon": "devices_mod.png",
+  "icon": "gitwebbuilder.png",
   "environment": "*",
   "entrypoints": {
     "main": [
