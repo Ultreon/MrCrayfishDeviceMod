@@ -9,6 +9,7 @@ import com.ultreon.devices.api.task.TaskManager;
 import mastef_chief.gitwebbuilder.app.tasks.TaskNotificationCopiedLink;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.font.TextFieldHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.FormattedText;
 import org.jetbrains.annotations.Nullable;
@@ -20,7 +21,6 @@ import java.awt.datatransfer.StringSelection;
 public class PasteBinCompleteDialog extends Dialog{
 
     Toolkit toolkit = Toolkit.getDefaultToolkit();
-    Clipboard clipboard = toolkit.getSystemClipboard();
 
     private String messageText = "";
 
@@ -79,8 +79,7 @@ public class PasteBinCompleteDialog extends Dialog{
         copyToClipboard = new Button(getWidth() - 104, getHeight() - 20, "Copy Link");
         copyToClipboard.setClickListener((mouseX, mouseY, mouseButton) -> {
             if(mouseButton == 0){
-                StringSelection code = new StringSelection(messageText);
-                clipboard.setContents(code, null);
+                TextFieldHelper.setClipboardContents(Minecraft.getInstance(), messageText);
                 TaskManager.sendTask(new TaskNotificationCopiedLink());
             }
         });

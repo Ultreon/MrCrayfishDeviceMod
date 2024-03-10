@@ -1,5 +1,6 @@
 package mastef_chief.gitwebbuilder.app;
 
+import com.mojang.blaze3d.platform.ClipboardManager;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.ultreon.devices.api.app.Application;
@@ -28,6 +29,7 @@ import mastef_chief.gitwebbuilder.app.tasks.TaskNotificationCopiedCode;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.font.TextFieldHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
@@ -35,7 +37,6 @@ import net.minecraft.world.entity.Entity;
 import org.joml.Quaternionf;
 
 import java.awt.*;
-import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -73,7 +74,6 @@ public class GWBApp extends Application {
     Minecraft mc = Minecraft.getInstance();
 
     Toolkit toolkit = Toolkit.getDefaultToolkit();
-    //Clipboard clipboard = toolkit.getSystemClipboard();
 
     private GitWebFrame liveGitWebFrame;
 
@@ -461,8 +461,7 @@ public class GWBApp extends Application {
         copyToClipboardButton.setToolTip("Copy to Clipboard", "Copy's code to clipboard with correct formatting for GitWeb");
         copyToClipboardButton.setClickListener((mouseX, mouseY, mouseButton) -> {
             if (mouseButton == 0) {
-                StringSelection code = new StringSelection(siteBuilderTextArea.getText().replace("\n\n", "\n"));
-                //clipboard.setContents(code, null); // TODO
+                TextFieldHelper.setClipboardContents(this.mc, siteBuilderTextArea.getText().replace("\n\n", "\n"));
                 TaskManager.sendTask(new TaskNotificationCopiedCode());
             }
         });
