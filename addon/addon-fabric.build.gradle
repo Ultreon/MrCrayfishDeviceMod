@@ -1,0 +1,29 @@
+plugins {
+    id "com.github.johnrengelman.shadow" version "7.1.2"
+}
+
+loom {
+    mixin { useLegacyMixinAp = true }
+}
+
+architectury {
+    platformSetupLoomIde()
+    fabric()
+}
+
+configurations {
+    common
+    compileClasspath.extendsFrom common
+    runtimeClasspath.extendsFrom common
+    developmentFabric.extendsFrom common
+}
+
+String strippedName = project.getName().substring(0, project.getName().length() - "-fabric".length())
+
+dependencies {
+    modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+
+    implementation project(path: ":fabric", configuration: "namedElements")
+    common(project(path: ":common", configuration: "namedElements")) { transitive false }
+    common(project(path: ":$strippedName-common", configuration: "namedElements")) { transitive false }
+}
