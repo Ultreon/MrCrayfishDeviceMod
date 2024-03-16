@@ -3,6 +3,8 @@ package mastef_chief.gitwebbuilder.app;
 import com.mojang.blaze3d.platform.ClipboardManager;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.ultreon.devices.api.app.Application;
 import com.ultreon.devices.api.app.Dialog;
 import com.ultreon.devices.api.app.Icons;
@@ -25,11 +27,14 @@ import mastef_chief.gitwebbuilder.app.components.MenuButton;
 import mastef_chief.gitwebbuilder.app.components.ModuleCreatorDialog;
 import mastef_chief.gitwebbuilder.app.components.PasteBinCompleteDialog;
 //import mastef_chief.gitwebbuilder.app.models.GWBLogoModel;
+import mastef_chief.gitwebbuilder.app.models.GWBLogoModel;
 import mastef_chief.gitwebbuilder.app.tasks.TaskNotificationCopiedCode;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.font.TextFieldHelper;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
@@ -142,7 +147,7 @@ public class GWBApp extends Application {
 
     private TextArea siteBuilderTextArea;
 
-    //private GWBLogoModel gwbLogoModel = new GWBLogoModel();
+    private GWBLogoModel gwbLogoModel = null;
 
     private static final ResourceLocation logo = new ResourceLocation("gitwebbuilder:textures/app/gui/logo.png");
     private static final ResourceLocation ud = new ResourceLocation("gitwebbuilder:textures/app/gui/ud.png");
@@ -710,7 +715,15 @@ public class GWBApp extends Application {
 
 
         if (this.getCurrentLayout() == layoutMain) {
-//            graphics.pose().pushPose();
+            if (gwbLogoModel == null) {
+                gwbLogoModel = new GWBLogoModel(GWBLogoModel.createContext().bakeLayer(GWBLogoModel.LAYER_LOCATION));
+            }
+            graphics.pose().pushPose();
+
+            MultiBufferSource.BufferSource immediate = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
+            VertexConsumer vertexConsumer = immediate.getBuffer(this.gwbLogoModel.renderType(logo));
+            gwbLogoModel.renderToBuffer(graphics.pose(), vertexConsumer, 0xF000F0, OverlayTexture.NO_OVERLAY, 1.0f, 1.0f, 1.0f, 1.0f);
+            immediate.endBatch();
 //            {
 //                RenderSystem.enableDepthTest();
 //                Lighting.setupForFlatItems();
@@ -720,12 +733,12 @@ public class GWBApp extends Application {
 //                graphics.pose().mulPose(new Quaternionf(200F, 0, 0, 1));
 //                graphics.pose().mulPose(new Quaternionf(-rotationCounter - partialTicks, 0, 1, 0));
 //                RenderSystem.setShaderTexture(0, logo);
-//                gwbLogoModel.render((Entity) null, 0F, 0F, 0F, 0F, 0F, 1.0F);
+//
 //                Lighting.setupFor3DItems();
 //                RenderSystem.disableDepthTest();
 //
 //            }
-//            graphics.pose().popPose();
+            graphics.pose().popPose();
         }
 
         if (this.getCurrentLayout() == layoutDesignView) {
