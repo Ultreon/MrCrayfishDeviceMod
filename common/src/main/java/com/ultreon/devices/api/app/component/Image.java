@@ -456,6 +456,7 @@ public class Image extends Component {
                     OnlineRequest.checkURLForSuspicions(url);
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     conn.setRequestProperty("User-Agent", "Mozilla/5.0");
+                    conn.setRequestProperty("Accept", "image/png");
                     InputStream connIn = conn.getInputStream();
                     byte[] bytes = connIn.readAllBytes();
                     connIn.close();
