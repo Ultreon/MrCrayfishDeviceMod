@@ -40,7 +40,7 @@ public class PasteBinCompleteDialog extends Dialog{
         super.init(nbtTagCompound);
 
         int lines = Minecraft.getInstance().font.split(FormattedText.of("Link: " + messageText), getWidth() - 10).size();
-        defaultLayout.height += (lines - 1) * 9;
+        defaultLayout.height += (lines) * Minecraft.getInstance().font.lineHeight;
 
         defaultLayout.setBackground((gui, mc, x, y, width, height, mouseX, mouseY, windowActive) ->
         {
