@@ -1,0 +1,23 @@
+closes:
+  - action: lock
+    delay: 0s # lock the thread immediately
+  
+labels:
+  duplicate:
+    action: close
+    delay: 15s
+    comment: "Duplicate issue created! Closing in $DELAY . . ."
+  invalid: close # use defaults for comment and delay time
+  'awaiting response': 
+    action: close
+    delay: 7 days
+    comment: false
+  snooze:
+    action: open
+    delay: 7 days
+
+default:
+  close:
+    # $DELAY will be replaced with '7 days'
+    comment: '⚠️ This has been marked to be closed in $DELAY.'
+    delay: '7 days'
