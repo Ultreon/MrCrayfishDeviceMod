@@ -85,9 +85,8 @@ public final class DevicesForge {
         IEventBus forgeEventBus = MinecraftForge.EVENT_BUS;
 
         // Common side stuff
-        LOGGER.info("Initializing registration handler and mod config.");
+        LOGGER.info("Initializing registration handler.");
         RegistrationHandler.register();
-        context.registerConfig(ModConfig.Type.CLIENT, DeviceConfig.CONFIG);
 
         forgeEventBus.register(this);
         forgeEventBus.register(new WorldDataHandler());

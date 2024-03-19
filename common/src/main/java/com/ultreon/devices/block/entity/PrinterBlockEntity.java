@@ -135,8 +135,8 @@ public class PrinterBlockEntity extends NetworkDeviceBlockEntity.Colored {
 
         state = newState;
         if (state == PRINTING) {
-            if (DeviceConfig.OVERRIDE_PRINT_SPEED.get()) {
-                remainingPrintTime = DeviceConfig.CUSTOM_PRINT_SPEED.get() * 20;
+            if (DeviceConfig.OVERRIDE_PRINT_SPEED) {
+                remainingPrintTime = DeviceConfig.CUSTOM_PRINT_SPEED * 20;
             } else {
                 remainingPrintTime = currentPrint.speed() * 20;
             }
@@ -185,7 +185,7 @@ public class PrinterBlockEntity extends NetworkDeviceBlockEntity.Colored {
     }
 
     public boolean addPaper(ItemStack stack, boolean addAll) {
-        if (!stack.isEmpty() && stack.getItem() == Items.PAPER && paperCount < DeviceConfig.MAX_PAPER_COUNT.get()) {
+        if (!stack.isEmpty() && stack.getItem() == Items.PAPER && paperCount < DeviceConfig.MAX_PAPER_COUNT) {
             if (!addAll) {
                 paperCount++;
                 stack.shrink(1);

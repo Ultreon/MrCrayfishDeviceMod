@@ -32,7 +32,7 @@ public abstract class NetworkDeviceBlockEntity extends DeviceBlockEntity impleme
             return;
 
         if (connection != null) {
-            if (++counter >= DeviceConfig.BEACON_INTERVAL.get() * 2) {
+            if (++counter >= DeviceConfig.BEACON_INTERVAL * 2) {
                 connection.setRouterPos(null);
                 counter = 0;
             }
@@ -71,7 +71,7 @@ public abstract class NetworkDeviceBlockEntity extends DeviceBlockEntity impleme
     }
 
     public boolean receiveBeacon(Router router) {
-        if (counter >= DeviceConfig.BEACON_INTERVAL.get() * 2) {
+        if (counter >= DeviceConfig.BEACON_INTERVAL * 2) {
             connect(router);
             return true;
         }
@@ -87,7 +87,7 @@ public abstract class NetworkDeviceBlockEntity extends DeviceBlockEntity impleme
         BlockPos routerPos = connection != null ? connection.getRouterPos() : null;
         if (routerPos != null) {
             double distance = Math.sqrt(worldPosition.distToCenterSqr(routerPos.getX() + 0.5, routerPos.getY() + 0.5, routerPos.getZ() + 0.5));
-            double level = DeviceConfig.SIGNAL_RANGE.get() / 3d;
+            double level = DeviceConfig.SIGNAL_RANGE / 3d;
             return distance > level * 2 ? 2 : distance > level ? 1 : 0;
         }
         return -1;

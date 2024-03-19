@@ -70,7 +70,7 @@ public class EthernetCableItem extends Item {
                         if (router.addDevice(networkDeviceBlockEntity)) {
                             networkDeviceBlockEntity.connect(router);
                             heldItem.shrink(1);
-                            if (getDistance(tileEntity1.getBlockPos(), routerBE.getBlockPos()) > DeviceConfig.SIGNAL_RANGE.get()) {
+                            if (getDistance(tileEntity1.getBlockPos(), routerBE.getBlockPos()) > DeviceConfig.SIGNAL_RANGE) {
                                 sendGameInfoMessage(player, "message.devices.successful_registered");
                             } else {
                                 sendGameInfoMessage(player, "message.devices.successful_connection");

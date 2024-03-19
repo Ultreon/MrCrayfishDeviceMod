@@ -21,7 +21,7 @@ import net.minecraft.world.item.DyeColor;
 public class ClientAppDebug {
     public static void register() {
         ClientGuiEvent.INIT_POST.register(((screen, access) -> {
-            if (DeviceConfig.DEBUG_BUTTON.get()) {
+            if (DeviceConfig.DEBUG_BUTTON) {
                 if (!(screen instanceof TitleScreen)) return;
                 var rowHeight = 24;
                 var y = screen.height / 4 + 48;
@@ -34,7 +34,7 @@ public class ClientAppDebug {
         }));
 
         ClientGuiEvent.INIT_POST.register(((screen, access) -> {
-            if (DeviceConfig.DEBUG_BUTTON.get()) {
+            if (DeviceConfig.DEBUG_BUTTON) {
                 if (!(screen instanceof TitleScreen)) return;
                 var rowHeight = 24;
                 var y = screen.height / 4 + 48;

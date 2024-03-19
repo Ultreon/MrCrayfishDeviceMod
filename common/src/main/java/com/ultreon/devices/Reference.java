@@ -1,11 +1,16 @@
 package com.ultreon.devices;
 
-import dev.architectury.injectables.annotations.ExpectPlatform;
+import de.marhali.json5.Json5;
 import dev.architectury.platform.Platform;
 
 public class Reference {
     public static final String MOD_ID = "devices";
     public static final String VERSION;
+    public static final Json5 JSON5 = Json5.builder(builder -> {
+        builder.quoteless();
+        builder.indentFactor(4);
+        return builder.build();
+    });
     private static String[] verInfo;
     static {
         VERSION = getVersion();

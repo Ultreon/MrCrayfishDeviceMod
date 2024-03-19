@@ -23,8 +23,6 @@ import java.util.Map;
 public class DevicesFabric extends Devices implements ModInitializer {
     @Override
     public void onInitialize() {
-        ForgeConfigRegistry.INSTANCE.register(Devices.MOD_ID, ModConfig.Type.CLIENT, DeviceConfig.CONFIG);
-
         this.init();
 
         RegistrationHandler.register();

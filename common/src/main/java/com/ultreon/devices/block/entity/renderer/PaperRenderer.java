@@ -109,11 +109,11 @@ public record PaperRenderer(
                 CompoundTag data = print.toTag();
                 if (data.contains("pixels", Tag.TAG_INT_ARRAY) && data.contains("resolution", Tag.TAG_INT)) {
                     RenderSystem.setShaderTexture(0, PrinterRenderer.PaperModel.TEXTURE);
-                    if (DeviceConfig.RENDER_PRINTED_3D.get() && !data.getBoolean("cut")) {
+                    if (DeviceConfig.RENDER_PRINTED_3D && !data.getBoolean("cut")) {
                        // drawCuboid(0, 0, 0, 16, 16, 1, bufferSource);
                     }
 
-                    pose.translate(0, 0, DeviceConfig.RENDER_PRINTED_3D.get() ? 0.0625 : 0.001);
+                    pose.translate(0, 0, DeviceConfig.RENDER_PRINTED_3D ? 0.0625 : 0.001);
 
                     pose.pushPose();
                     {
@@ -124,7 +124,7 @@ public record PaperRenderer(
 
                     pose.pushPose();
                     {
-                        if (DeviceConfig.RENDER_PRINTED_3D.get() && data.getBoolean("cut")) {
+                        if (DeviceConfig.RENDER_PRINTED_3D && data.getBoolean("cut")) {
                             CompoundTag tag = print.toTag();
                             drawPixels(pose, tag.getIntArray("pixels"), tag.getInt("resolution"), tag.getBoolean("cut"), packedLight, bufferSource);
                         }

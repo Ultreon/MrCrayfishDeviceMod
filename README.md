@@ -9,6 +9,8 @@
 ## License Notes
 Some code is used from other projects with other licenses.
 * The package `com.jab125` and all it's subpackages are licensed under All Rights Reserved.
+* The package `io.github.xypercode.craftyconfig` and all it's subpackages are licensed under AGPL v3.
+  Originates in [Ultracraft](https://github.com/Ultreon/ultracraft)
 * Everything in [updater/](updater) also is licensed under All Rights Reserved.
 
 [@MrCrayfish](https://github.com/MrCrayfish) has said on his discord server that we can use his code and even the assets for this port.

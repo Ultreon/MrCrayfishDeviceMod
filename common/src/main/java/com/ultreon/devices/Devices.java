@@ -100,6 +100,7 @@ public abstract class Devices {
     static List<AppInfo> allowedApps = new ArrayList<>();
     private static List<Vulnerability> vulnerabilities = new ArrayList<>();
     private static Devices instance;
+    private static DeviceConfig config;
 
     public static List<Vulnerability> getVulnerabilities() {
         return vulnerabilities;
@@ -113,6 +114,10 @@ public abstract class Devices {
 
     public static Devices getInstance() {
         return instance;
+    }
+
+    public static DeviceConfig getConfig() {
+        return config;
     }
 
     public void init() {
@@ -157,7 +162,8 @@ public abstract class Devices {
             throw new LaunchException();
         }
 
-        DeviceConfig.init();
+        config = new DeviceConfig();
+        config.load();
     }
 
 
@@ -374,7 +380,7 @@ public abstract class Devices {
             LOGGER.debug("Client disconnected from server");
 
             allowedApps = null;
-            DeviceConfig.restore();
+            Devices.config.load();
         }));
     }
 
