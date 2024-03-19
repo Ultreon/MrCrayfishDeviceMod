@@ -52,24 +52,4 @@ public class DeviceConfig extends CraftyConfig {
         tag.putInt("signalRange", SIGNAL_RANGE);
         return tag;
     }
-
-    public static void init() {
-        // NO-OP
-    }
-
-//    @ExpectPlatform
-//    @PlatformOnly("fabric")
-//    public static void.json register(ModLoadingContext context) {
-//        throw new AssertionError();
-//        //context.registerConfig(ModConfig.Type.CLIENT, CONFIG);
-//    }
-
-    public static void restore() {
-        // NO-OP
-    }
-
-//    @SubscribeEvent
-//    public static void.json onConfigChanged(ModConfigEvent.Reloading event) {
-//        // TODO // Implement config reloading if needed.
-//    }
 }

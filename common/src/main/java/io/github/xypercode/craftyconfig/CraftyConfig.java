@@ -8,7 +8,6 @@ import dev.architectury.event.Event;
 import dev.architectury.event.EventFactory;
 import dev.architectury.platform.Mod;
 import dev.architectury.platform.Platform;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resources.ResourceLocation;
 
 import java.io.IOException;
@@ -96,7 +95,7 @@ public abstract class CraftyConfig {
             throw new IllegalStateException("Class " + configClass + " is not annotated with @ConfigInfo");
 
         // Set the file name for the configuration
-        this.configPath = FabricLoader.getInstance().getConfigDir().resolve(annotation.fileName() + ".json5");
+        this.configPath = Platform.getConfigFolder().resolve(annotation.fileName() + ".json5");
 
         // Get all declared fields of the class
         Field[] declaredFields = configClass.getDeclaredFields();
@@ -295,7 +294,7 @@ public abstract class CraftyConfig {
     private static void enableWatcher() {
         try {
             // Register the watch service for entry modify, delete, and create events
-            watchKey = FabricLoader.getInstance().getConfigDir().register(WATCH_SERVICE, StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_CREATE);
+            watchKey = Platform.getConfigFolder().register(WATCH_SERVICE, StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_CREATE);
         } catch (IOException e) {
             // Log error if failed to create watch service
             Devices.LOGGER.error("Failed to create watch service", e);
@@ -361,19 +360,24 @@ public abstract class CraftyConfig {
 
                 // Log the reloading of the config file
                 Devices.LOGGER.info("Reloading config file " + context);
+
+                // Get the config file from the CONFIGS map
+                CraftyConfig craftyConfig = CONFIGS.get(fileName);
+                if (craftyConfig == null) continue;
+
                 // Disable the watcher while updating the config file
                 disableWatcher();
                 try {
                     // Attempt to load the config file
-                    if (!CONFIGS.get(fileName).loadUnsafe()) {
+                    if (!craftyConfig.loadUnsafe()) {
                         // Log an error if failed to reload and save the config file
                         Devices.LOGGER.error("Failed to reload config file " + context);
-                        CONFIGS.get(fileName).save();
+                        craftyConfig.save();
                     }
                 } catch (IOException e) {
                     // Log an error if failed to reload due to an exception and save the config file
                     Devices.LOGGER.error("Failed to reload config file " + context, e);
-                    CONFIGS.get(fileName).save();
+                    craftyConfig.save();
                 }
                 // Enable the watcher after updating the config file
                 enableWatcher();
@@ -985,6 +989,10 @@ public abstract class CraftyConfig {
 
     public Path getConfigPath() {
         return configPath;
+    }
+
+    public Ranged getRange(String key) {
+        return rangesMap.get(key);
     }
 
     /**
