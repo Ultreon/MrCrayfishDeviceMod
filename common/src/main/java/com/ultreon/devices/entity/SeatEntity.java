@@ -3,6 +3,7 @@ package com.ultreon.devices.entity;
 import com.ultreon.devices.init.DeviceEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
@@ -15,6 +16,7 @@ import java.util.List;
 public class SeatEntity extends Entity
 {
     private double yOffset;
+    private BlockPos blockPos;
     public SeatEntity(EntityType<SeatEntity> type, Level worldIn)
     {
         super(type, worldIn);
@@ -31,6 +33,7 @@ public class SeatEntity extends Entity
     {
         this(DeviceEntities.SEAT.get(), worldIn);
         this.setPos(pos.getX() + 0.5, pos.getY() + yOffset, pos.getZ() + 0.5);
+        this.blockPos = pos;
     }
 
 
@@ -39,6 +42,7 @@ public class SeatEntity extends Entity
     }
 
     public void setViaYOffset(BlockPos pos) {
+        blockPos = pos;
         this.setPos(pos.getX() + 0.5, pos.getY() + yOffset, pos.getZ() + 0.5);
     }
 
@@ -57,7 +61,7 @@ public class SeatEntity extends Entity
     @Override
     public void tick()
     {
-        if(!this.level().isClientSide && (!this.hasExactlyOnePlayerPassenger() || this.level().isEmptyBlock(this.getOnPos())))
+        if(!this.level().isClientSide && (blockPos == null || !this.hasExactlyOnePlayerPassenger() || this.level().isEmptyBlock(blockPos)))
         {
             this.kill();
         }
@@ -79,8 +83,17 @@ public class SeatEntity extends Entity
 //    protected void.json init() {}
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag compound) {}
+    protected void readAdditionalSaveData(CompoundTag compound) {
+        if (compound.contains("DevicesChairX", Tag.TAG_INT) && compound.contains("DevicesChairY", Tag.TAG_INT) && compound.contains("DevicesChairZ", Tag.TAG_INT)) {
+            blockPos = new BlockPos(compound.getInt("DevicesChairX"), compound.getInt("DevicesChairY"), compound.getInt("DevicesChairZ"));
+        }
+    }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag compound) {}
+    protected void addAdditionalSaveData(CompoundTag compound) {
+        if (blockPos == null) return;
+        compound.putInt("DevicesChairX", blockPos.getX());
+        compound.putInt("DevicesChairY", blockPos.getY());
+        compound.putInt("DevicesChairZ", blockPos.getZ());
+    }
 }
