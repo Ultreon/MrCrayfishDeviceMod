@@ -75,6 +75,8 @@ public class Laptop extends Screen implements System {
     private static Laptop instance;
     private Double dragWindowFromX;
     private Double dragWindowFromY;
+    @Nullable
+    private final LaptopBlockEntity blockEntity;
 
     @PlatformOnly("fabric")
     public static List<Application> getApplicationsForFabric() {
@@ -184,10 +186,25 @@ public class Laptop extends Screen implements System {
 
         // World-less flag.
         Laptop.worldLess = worldLess;
+        this.blockEntity = laptop;
     }
 
     public static Laptop getInstance() {
         return instance;
+    }
+
+    public static boolean isOffline() {
+        Laptop laptop = instance;
+        if (laptop == null) {
+            return false;
+        }
+
+        LaptopBlockEntity blockEntity = laptop.blockEntity;
+        if (blockEntity == null) {
+             return false;
+        }
+
+        return blockEntity.getConnection() == null;
     }
 
     public CompoundTag getModSystemTag(Mod mod) {
