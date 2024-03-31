@@ -6,7 +6,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -18,15 +17,14 @@ import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("NullableProblems")
@@ -61,7 +59,7 @@ public class PaperBlock extends HorizontalDirectionalBlock implements EntityBloc
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext pContext) {
         BlockState state = super.getStateForPlacement(pContext);
-        return state != null ? state.setValue(FACING, pContext.getHorizontalDirection()) : null;
+        return state != null ? state.setValue(FACING, pContext.getHorizontalDirection().getClockWise()) : null;
     }
 
     @Override
@@ -77,19 +75,14 @@ public class PaperBlock extends HorizontalDirectionalBlock implements EntityBloc
 
     @Override
     public List<ItemStack> getDrops(BlockState pState, LootParams.Builder pBuilder) {
-        return new ArrayList<>();
-    }
+        BlockEntity blockEntity = pBuilder.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
 
-    @Override
-    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-        if (!level.isClientSide) {
-            BlockEntity tileEntity = level.getBlockEntity(pos);
-            if (tileEntity instanceof PaperBlockEntity paper) {
-                ItemStack drop = IPrint.generateItem(paper.getPrint());
-                level.addFreshEntity(new ItemEntity(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, drop));
-            }
+        if (blockEntity instanceof PaperBlockEntity paper) {
+            ItemStack drop = IPrint.generateItem(paper.getPrint());
+            return List.of(drop);
         }
-        super.onRemove(state, level, pos, newState, isMoving);
+
+        return super.getDrops(pState, pBuilder);
     }
 
     @Override
