@@ -27,21 +27,16 @@ import com.ultreon.devices.object.Picture;
 import com.ultreon.devices.programs.system.layout.StandardLayout;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3f;
 import org.joml.Quaternionf;
-
-import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 import java.awt.*;
 import java.util.Objects;
-
-import static org.lwjgl.opengl.GL11.*;
 
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
 public class PixelPainterApp extends Application {
@@ -495,10 +490,11 @@ public class PixelPainterApp extends Application {
 
     public static class PictureRenderer implements IPrint.Renderer {
         public static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/model/paper.png");
+        public static final int MAX_COLOR = 0xFFFFFF;
 
         @SuppressWarnings("resource")
         @Override
-        public boolean render(PoseStack pose, VertexConsumer buffer, CompoundTag data, int packedLight) {
+        public boolean render(PoseStack pose, VertexConsumer buffer, CompoundTag data, int packedLight, int packedOverlay) {
             if (data.contains("pixels", Tag.TAG_INT_ARRAY) && data.contains("resolution", Tag.TAG_INT)) {
                 int[] pixels = data.getIntArray("pixels");
                 int resolution = data.getInt("resolution");
@@ -509,7 +505,6 @@ public class PixelPainterApp extends Application {
 
                 RenderSystem.enableBlend();
                 RenderSystem.enableDepthTest();
-                RenderSystem.blendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
 //                GlStateManager.disableLighting();
                 pose.mulPose(new Quaternionf(0, 0, 0, 180));
 
@@ -525,7 +520,7 @@ public class PixelPainterApp extends Application {
                 NativeImage image = new NativeImage(resolution, resolution, false);
                 for (int i = 0; i < resolution; i++) {
                     for (int j = 0; j < resolution; j++) {
-                        image.setPixelRGBA(resolution - i - 1, resolution - j - 1, pixels[i + j * resolution]);
+                        image.setPixelRGBA(resolution - i - 1, resolution - j - 1, getPx(pixels, i, j, resolution));
                     }
                 }
 
@@ -539,27 +534,27 @@ public class PixelPainterApp extends Application {
                 image.upload(0, 0, 0, false);
 
                 RenderSystem.setShaderTexture(0, textureId);
-                if (buffer != null) {
-                    Matrix3f poseNormal = pose.last().normal();
-                    Vector3f transformedNor = poseNormal.transform(new Vector3f(0, 0, 0));
-                    float norX = transformedNor.x();
-                    float norY = transformedNor.y();
-                    float norZ = transformedNor.z();
-                    buffer.vertex(0, 0, 0, 1, 1, 1, 1, 0, 0, 0, packedLight, norX, norY, norZ);
-                    buffer.vertex(0, resolution, 0, 1, 1, 1, 1, 0, 1, 0, packedLight, norX, norY, norZ);
-                    buffer.vertex(resolution, resolution, 0, 1, 1, 1, 1, 1, 1, 0, packedLight, norX, norY, norZ);
-                    buffer.vertex(resolution, 0, 0, 1, 1, 1, 1, 1, 0, 0, packedLight, norX, norY, norZ);
-                } else {
-                    RenderUtil.drawRectWithTexture2(null, pose, 0, 0, 0, 0, 1, 1, resolution, resolution, resolution, resolution);
-                }
+                Matrix3f poseNormal = pose.last().normal();
+                Vector3f transformedNor = poseNormal.transform(new Vector3f(0, 0, 0));
+                float norX = transformedNor.x();
+                float norY = transformedNor.y();
+                float norZ = transformedNor.z();
+                pose.translate(0, 0, 0.01);
+                RenderUtil.drawRectWithTexture2(null, pose, 1, 0, 0, 0, -1, 1, resolution, resolution, resolution, resolution, packedLight, packedOverlay, norX, norY, norZ);
                 RenderSystem.deleteTexture(textureId);
 
-//                RenderSystem.disableRescaleNormal();
                 RenderSystem.disableBlend();
-//                RenderSystem.enableLighting();
                 return true;
             }
             return false;
+        }
+
+        private static int getPx(int[] pixels, int i, int j, int resolution) {
+            int pixel = pixels[i + j * resolution];
+            int r = 255 - (pixel & 255);
+            int g = 255 - (pixel >> 8 & 255);
+            int b = 255 - (pixel >> 16 & 255);
+            return MAX_COLOR - (r << 16 | g << 8 | b) & MAX_COLOR | (pixel >> 24 & 0xFF) << 24;
         }
     }
 }

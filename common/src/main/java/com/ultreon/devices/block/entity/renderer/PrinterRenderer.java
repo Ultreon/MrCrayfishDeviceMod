@@ -59,7 +59,7 @@ public record PrinterRenderer(BlockEntityRendererProvider.Context context) imple
         }
 
         pose.pushPose();
-        renderPrint(blockEntity, pose, state, bufferSource, packedLight, paperModel);
+        renderPrint(blockEntity, pose, state, bufferSource, packedLight, packedOverlay, paperModel);
         pose.popPose();
 
         pose.pushPose();
@@ -81,7 +81,7 @@ public record PrinterRenderer(BlockEntityRendererProvider.Context context) imple
         drawBuffer(pose, bufferSource, packedLight, paperModel);
     }
 
-    private static void renderPrint(PrinterBlockEntity blockEntity, @NotNull PoseStack pose, BlockState state, @NotNull MultiBufferSource bufferSource, int packedLight, PaperModel paperModel) {
+    private static void renderPrint(PrinterBlockEntity blockEntity, @NotNull PoseStack pose, BlockState state, @NotNull MultiBufferSource bufferSource, int packedLight, int packedOverlay, PaperModel paperModel) {
         if (blockEntity.isLoading()) {
             pose.translate(0.5, 0.5, 0.5);
             pose.mulPose(state.getValue(PrinterBlock.FACING).getRotation());
@@ -111,13 +111,13 @@ public record PrinterRenderer(BlockEntityRendererProvider.Context context) imple
             IPrint print = blockEntity.getPrint();
             if (print != null) {
                 pose.pushPose();
-                pose.translate(-15 * 0.0625, 7.5 * 0.0625, 0);
+                pose.translate(-15 * 0.0625, 15 * 0.03125, 0);
                 pose.scale(1 / 16384f, 1 / 16384f, 1 / 16384f);
                 pose.scale(1 / 1.5f, 1 / 1.5f, 1 / 1.5f);
 
                 IPrint.Renderer renderer = PrintingManager.getRenderer(print);
                 VertexConsumer buffer = bufferSource.getBuffer(paperModel.renderType(PaperModel.TEXTURE));
-                renderer.render(pose, buffer, print.toTag(), packedLight);
+                renderer.render(pose, buffer, print.toTag(), packedLight, packedOverlay);
                 pose.popPose();
             }
             //endregion

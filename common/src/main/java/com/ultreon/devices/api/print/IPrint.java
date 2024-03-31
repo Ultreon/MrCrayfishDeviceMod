@@ -5,11 +5,9 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.ultreon.devices.init.DeviceBlocks;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-
 import org.jetbrains.annotations.Nullable;
 
 //printing somethings takes makes ink cartridge take damage. cartridge can only stack to one
@@ -81,9 +79,9 @@ public interface IPrint {
 
     interface Renderer {
         default boolean render(PoseStack pose, CompoundTag data) {
-            return render(pose, null, data, 0);
+            return render(pose, null, data, 0, 0);
         }
 
-        boolean render(PoseStack pose, VertexConsumer buffer, CompoundTag data, int packedLight);
+        boolean render(PoseStack pose, VertexConsumer buffer, CompoundTag data, int packedLight, int packedOverlay);
     }
 }

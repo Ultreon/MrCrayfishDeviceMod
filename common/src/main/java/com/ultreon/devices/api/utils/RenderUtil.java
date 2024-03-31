@@ -156,6 +156,46 @@ public class RenderUtil {
 //        BufferUploader.drawWithShader(buffer.end());
     }
 
+    public static void drawRectWithTexture2(ResourceLocation location, PoseStack pose, double x, double y, float u, float v, int width, int height, float textureWidth, float textureHeight, int sourceWidth, int sourceHeight, int packedLight, int packedOverlay) {
+        //Gui.blit(pose, (int) x, (int) y, width, height, u, v, sourceWidth, sourceHeight, (int) textureWidth, (int) textureHeight);
+        float scaleWidth = 1f / sourceWidth;
+        float scaleHeight = 1f / sourceHeight;
+        var e = pose.last().pose();
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        BufferBuilder buffer = Tesselator.getInstance().getBuilder();
+        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        buffer.vertex(e, (float) x, (float) (y + height), 0).uv(u * scaleWidth, (v + textureHeight) * scaleHeight).uv2(packedLight).overlayCoords(packedOverlay).endVertex();
+        buffer.vertex(e, (float) (x + width), (float) (y + height), 0).uv((u + textureWidth) * scaleWidth, (v + textureHeight) * scaleHeight).uv2(packedLight).overlayCoords(packedOverlay).endVertex();
+        buffer.vertex(e, (float) (x + width), (float) y, 0).uv((u + textureWidth) * scaleWidth, v * scaleHeight).uv2(packedLight).overlayCoords(packedOverlay).endVertex();
+        buffer.vertex(e, (float) x, (float) y, 0).uv(u * scaleWidth, v * scaleHeight).uv2(packedLight).overlayCoords(packedOverlay).endVertex();
+        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+        RenderSystem.disableCull();
+        RenderSystem.depthFunc(GL11.GL_LEQUAL);
+        Tesselator.getInstance().end();
+        RenderSystem.enableCull();
+//        BufferUploader.drawWithShader(buffer.end());
+    }
+
+    public static void drawRectWithTexture2(ResourceLocation location, PoseStack pose, double x, double y, float u, float v, int width, int height, float textureWidth, float textureHeight, int sourceWidth, int sourceHeight, int packedLight, int packedOverlay, float normalX, float normalY, float normalZ) {
+        //Gui.blit(pose, (int) x, (int) y, width, height, u, v, sourceWidth, sourceHeight, (int) textureWidth, (int) textureHeight);
+        float scaleWidth = 1f / sourceWidth;
+        float scaleHeight = 1f / sourceHeight;
+        var e = pose.last().pose();
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        BufferBuilder buffer = Tesselator.getInstance().getBuilder();
+        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        buffer.vertex(e, (float) x, (float) (y + height), 0).uv(u * scaleWidth, (v + textureHeight) * scaleHeight).uv2(packedLight).overlayCoords(packedOverlay).normal(normalX, normalY, normalZ).endVertex();
+        buffer.vertex(e, (float) (x + width), (float) (y + height), 0).uv((u + textureWidth) * scaleWidth, (v + textureHeight) * scaleHeight).uv2(packedLight).overlayCoords(packedOverlay).normal(normalX, normalY, normalZ).endVertex();
+        buffer.vertex(e, (float) (x + width), (float) y, 0).uv((u + textureWidth) * scaleWidth, v * scaleHeight).uv2(packedLight).overlayCoords(packedOverlay).normal(normalX, normalY, normalZ).endVertex();
+        buffer.vertex(e, (float) x, (float) y, 0).uv(u * scaleWidth, v * scaleHeight).uv2(packedLight).overlayCoords(packedOverlay).normal(normalX, normalY, normalZ).endVertex();
+        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+        RenderSystem.disableCull();
+        RenderSystem.depthFunc(GL11.GL_LEQUAL);
+        Tesselator.getInstance().end();
+        RenderSystem.enableCull();
+//        BufferUploader.drawWithShader(buffer.end());
+    }
+
     public static void drawApplicationIcon(GuiGraphics graphics, @Nullable AppInfo info, double x, double y) {
         //TODO: Reset color GlStateManager.color(1f, 1f, 1f);
         RenderSystem.setShaderTexture(0, Laptop.ICON_TEXTURES);

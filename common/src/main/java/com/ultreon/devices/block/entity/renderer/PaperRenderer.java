@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import java.awt.*;
 import java.util.Objects;
@@ -31,6 +32,8 @@ import java.util.Objects;
  */
 public record PaperRenderer(
         BlockEntityRendererProvider.Context context) implements BlockEntityRenderer<PaperBlockEntity> {
+    private static long TextureIndex = 0;
+
 
     @SuppressWarnings("SameParameterValue")
     private static void drawCuboid(double x, double y, double z, double width, double height, double depth, MultiBufferSource bufferSource) {
@@ -82,29 +85,28 @@ public record PaperRenderer(
         }
     }
 
-    private static long AA = 0;
     private static void drawPixels(PoseStack poseStack, int[] pixels, int resolution, boolean cut, int packedLight, int packedOverlay, MultiBufferSource bufferSource) {
-        double scale = 16 / (double) resolution;
         var d = new DynamicTexture(resolution, resolution, true);
         for (int i = 0; i < resolution; i++) {
             for (int j = 0; j < resolution; j++) {
-
                 int r = (pixels[j + i * resolution] >> 16 & 255);
                 int g = (pixels[j + i * resolution] >> 8 & 255);
                 int b = (pixels[j + i * resolution] & 255);
-                int a = (int) Math.floor((pixels[j + i * resolution] >> 24 & 255));
+                int a = (int) (double) (pixels[j + i * resolution] >> 24 & 255);
+
                 assert d.getPixels() != null;
                 d.getPixels().setPixelRGBA(i, j, new Color(r, g, b, a).getRGB());
             }
         }
-        ResourceLocation resourcelocation = Minecraft.getInstance().getTextureManager().register("map/" + AA, d);
+
+        ResourceLocation resourcelocation = Minecraft.getInstance().getTextureManager().register("map/" + TextureIndex, d);
         Matrix4f matrix4f = poseStack.last().pose();
         var vertexconsumer = bufferSource.getBuffer(RenderType.text(resourcelocation));
         vertexconsumer.vertex(matrix4f, 0.0f, 128.0f, -0.01f).color(255, 255, 255, 255).uv(0.0f, 1.0f).uv2(packedLight).overlayCoords(packedOverlay).endVertex();
         vertexconsumer.vertex(matrix4f, 128.0f, 128.0f, -0.01f).color(255, 255, 255, 255).uv(1.0f, 1.0f).uv2(packedLight).overlayCoords(packedOverlay).endVertex();
         vertexconsumer.vertex(matrix4f, 128.0f, 0.0f, -0.01f).color(255, 255, 255, 255).uv(1.0f, 0.0f).uv2(packedLight).overlayCoords(packedOverlay).endVertex();
         vertexconsumer.vertex(matrix4f, 0.0f, 0.0f, -0.01f).color(255, 255, 255, 255).uv(0.0f, 0.0f).uv2(packedLight).overlayCoords(packedOverlay).endVertex();
-        AA++;
+        TextureIndex++;
     }
 
     @Override
@@ -118,27 +120,36 @@ public record PaperRenderer(
         //region <RenderRoot()>
         pose.pushPose();
         {
-            float scale = 32768;
-            pose.scale(1 / scale, 1 / scale, 1 / scale);
-//            pose.translate(blockEntity.getBlockPos().getX(), blockEntity.getBlockPos().getY(), blockEntity.getBlockPos().getZ());
-//            pose.translate(-0.5, -0.5, -0.5);
 
             //region <RenderMain()>
             pose.pushPose();
-            pose.translate(-0.5, -0.5, -0.5);
-            pose.mulPose(state.getValue(PaperBlock.FACING).getRotation());
-            pose.mulPose(new Quaternionf().rotateX((float) Math.toRadians(-90)).rotateY((float) Math.toRadians(-90)));
+            Vector3f vector3f = new Vector3f(0.5f, 0f, 0.5f);
+            Quaternionf quat = (switch (state.getValue(PaperBlock.FACING)) {
+                case DOWN -> new Quaternionf().rotationX((float) Math.PI);
+                case UP -> new Quaternionf();
+                case NORTH -> new Quaternionf().rotateXYZ(0, -0.0F, (float) (Math.PI)).rotateY((float) (Math.PI / 2));
+                case SOUTH -> new Quaternionf().rotateXYZ(0, -(float) (Math.PI), (float) (Math.PI)).rotateY((float) (Math.PI / 2));
+                case WEST -> new Quaternionf().rotateXYZ(0, -(float) (Math.PI / 2), (float) (Math.PI)).rotateY((float) (Math.PI / 2));
+                case EAST -> new Quaternionf().rotateXYZ(0, -(float) -(Math.PI / 2), (float) (Math.PI)).rotateY((float) (Math.PI / 2));
+            });
+            vector3f.set(-1, -1, -1).rotate(quat);
             pose.translate(0.5, 0.5, 0.5);
-//            pose.translate(0.5, 0.5, 0.5);
+            pose.mulPose(quat);
+            pose.translate(-0.5, -0.5, -0.5);
+
+            float scale = 32768f;
+            pose.scale(1 / scale, 1 / scale, 1 / scale);
 
             IPrint print = blockEntity.getPrint();
             if (print != null) {
                 CompoundTag data = print.toTag();
                 if (data.contains("pixels", Tag.TAG_INT_ARRAY) && data.contains("resolution", Tag.TAG_INT)) {
                     RenderSystem.setShaderTexture(0, PrinterRenderer.PaperModel.TEXTURE);
-                    if (DeviceConfig.RENDER_PRINTED_3D.get() && !data.getBoolean("cut")) {
-                       // drawCuboid(0, 0, 0, 16, 16, 1, bufferSource);
-                    }
+
+                    // TODO: Fix in either 0.9 or 0.10
+//                    if (DeviceConfig.RENDER_PRINTED_3D.get() && !data.getBoolean("cut")) {
+//                        drawCuboid(0, 0, 0, 16, 16, 1, bufferSource);
+//                    }
 
                     pose.translate(0, 0, DeviceConfig.RENDER_PRINTED_3D.get() ? 0.0625 : 0.001);
 
@@ -146,7 +157,8 @@ public record PaperRenderer(
                     pose.pushPose();
                     {
                         IPrint.Renderer renderer = PrintingManager.getRenderer(print);
-                        renderer.render(pose, data);
+                        VertexConsumer buffer = bufferSource.getBuffer(RenderType.entitySolid(PrinterRenderer.PaperModel.TEXTURE));
+                        renderer.render(pose, buffer, data, packedLight, packedOverlay);
                     }
                     pose.popPose();
                     //endregion
