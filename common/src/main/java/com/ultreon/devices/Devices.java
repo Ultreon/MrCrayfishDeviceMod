@@ -160,7 +160,6 @@ public abstract class Devices {
         return IS_DEV_PREVIEW;
     }
 
-    @Deprecated(forRemoval = true)
     public static MinecraftServer getServer() {
         return server;
     }

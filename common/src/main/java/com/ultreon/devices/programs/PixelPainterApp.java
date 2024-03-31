@@ -27,6 +27,7 @@ import com.ultreon.devices.object.Picture;
 import com.ultreon.devices.programs.system.layout.StandardLayout;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
@@ -494,7 +495,7 @@ public class PixelPainterApp extends Application {
 
         @SuppressWarnings("resource")
         @Override
-        public boolean render(PoseStack pose, VertexConsumer buffer, CompoundTag data, int packedLight, int packedOverlay) {
+        public boolean render(PoseStack pose, VertexConsumer buffer, CompoundTag data, int packedLight, int packedOverlay, Direction direction) {
             if (data.contains("pixels", Tag.TAG_INT_ARRAY) && data.contains("resolution", Tag.TAG_INT)) {
                 int[] pixels = data.getIntArray("pixels");
                 int resolution = data.getInt("resolution");
@@ -505,7 +506,6 @@ public class PixelPainterApp extends Application {
 
                 RenderSystem.enableBlend();
                 RenderSystem.enableDepthTest();
-//                GlStateManager.disableLighting();
                 pose.mulPose(new Quaternionf(0, 0, 0, 180));
 
                 // This is for the paper background
@@ -535,7 +535,7 @@ public class PixelPainterApp extends Application {
 
                 RenderSystem.setShaderTexture(0, textureId);
                 Matrix3f poseNormal = pose.last().normal();
-                Vector3f transformedNor = poseNormal.transform(new Vector3f(0, 0, 0));
+                Vector3f transformedNor = poseNormal.transform(new Vector3f());
                 float norX = transformedNor.x();
                 float norY = transformedNor.y();
                 float norZ = transformedNor.z();

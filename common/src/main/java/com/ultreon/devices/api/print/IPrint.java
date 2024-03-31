@@ -1,10 +1,12 @@
 package com.ultreon.devices.api.print;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.ultreon.devices.init.DeviceBlocks;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -79,9 +81,9 @@ public interface IPrint {
 
     interface Renderer {
         default boolean render(PoseStack pose, CompoundTag data) {
-            return render(pose, null, data, 0, 0);
+            return render(pose, Tesselator.getInstance().getBuilder(), data, 0, 0, Direction.NORTH);
         }
 
-        boolean render(PoseStack pose, VertexConsumer buffer, CompoundTag data, int packedLight, int packedOverlay);
+        boolean render(PoseStack pose, VertexConsumer buffer, CompoundTag data, int packedLight, int packedOverlay, Direction direction);
     }
 }

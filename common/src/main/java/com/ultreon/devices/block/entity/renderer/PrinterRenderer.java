@@ -117,7 +117,7 @@ public record PrinterRenderer(BlockEntityRendererProvider.Context context) imple
 
                 IPrint.Renderer renderer = PrintingManager.getRenderer(print);
                 VertexConsumer buffer = bufferSource.getBuffer(paperModel.renderType(PaperModel.TEXTURE));
-                renderer.render(pose, buffer, print.toTag(), packedLight, packedOverlay);
+                renderer.render(pose, buffer, print.toTag(), packedLight, packedOverlay, blockEntity.getBlockState().getValue(PrinterBlock.FACING));
                 pose.popPose();
             }
             //endregion

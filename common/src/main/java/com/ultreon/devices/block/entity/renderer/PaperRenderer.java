@@ -27,6 +27,8 @@ import org.joml.Vector3f;
 import java.awt.*;
 import java.util.Objects;
 
+import static net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY;
+
 /**
  * @author MrCrayfish
  */
@@ -101,7 +103,7 @@ public record PaperRenderer(
 
         ResourceLocation resourcelocation = Minecraft.getInstance().getTextureManager().register("map/" + TextureIndex, d);
         Matrix4f matrix4f = poseStack.last().pose();
-        var vertexconsumer = bufferSource.getBuffer(RenderType.text(resourcelocation));
+        var vertexconsumer = bufferSource.getBuffer(RenderType.entitySolid(resourcelocation));
         vertexconsumer.vertex(matrix4f, 0.0f, 128.0f, -0.01f).color(255, 255, 255, 255).uv(0.0f, 1.0f).uv2(packedLight).overlayCoords(packedOverlay).endVertex();
         vertexconsumer.vertex(matrix4f, 128.0f, 128.0f, -0.01f).color(255, 255, 255, 255).uv(1.0f, 1.0f).uv2(packedLight).overlayCoords(packedOverlay).endVertex();
         vertexconsumer.vertex(matrix4f, 128.0f, 0.0f, -0.01f).color(255, 255, 255, 255).uv(1.0f, 0.0f).uv2(packedLight).overlayCoords(packedOverlay).endVertex();
@@ -158,7 +160,7 @@ public record PaperRenderer(
                     {
                         IPrint.Renderer renderer = PrintingManager.getRenderer(print);
                         VertexConsumer buffer = bufferSource.getBuffer(RenderType.entitySolid(PrinterRenderer.PaperModel.TEXTURE));
-                        renderer.render(pose, buffer, data, packedLight, packedOverlay);
+                        renderer.render(pose, buffer, data, packedLight, NO_OVERLAY, blockEntity.getBlockState().getValue(PaperBlock.FACING));
                     }
                     pose.popPose();
                     //endregion
