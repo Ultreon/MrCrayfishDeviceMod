@@ -31,10 +31,10 @@ import java.util.List;
 public class PaperBlock extends HorizontalDirectionalBlock implements EntityBlock {
     private static final VoxelShape SELECTION_BOUNDS = box(15, 0, 0, 16, 16, 16);
 
-    private static final VoxelShape SELECTION_BOX_NORTH = box(15, 0, 0, 16, 16, 16);
-    private static final VoxelShape SELECTION_BOX_SOUTH = box(0, 0, 0, 1, 16, 16);
-    private static final VoxelShape SELECTION_BOX_WEST = box(0, 0, 15, 16, 16, 16);
-    private static final VoxelShape SELECTION_BOX_EAST = box(0, 0, 0, 16, 16, 1);
+    private static final VoxelShape SELECTION_BOX_NORTH = box(0, 0, 0, 16, 16, 1);
+    private static final VoxelShape SELECTION_BOX_SOUTH = box(0, 0, 15, 16, 16, 16);
+    private static final VoxelShape SELECTION_BOX_EAST = box(15, 0, 0, 16, 16, 16);
+    private static final VoxelShape SELECTION_BOX_WEST = box(0, 0, 0, 1, 16, 16);
     private static final VoxelShape[] SELECTION_BOUNDING_BOX = {SELECTION_BOX_SOUTH, SELECTION_BOX_WEST, SELECTION_BOX_NORTH, SELECTION_BOX_EAST};
 
     public PaperBlock() {
@@ -47,10 +47,10 @@ public class PaperBlock extends HorizontalDirectionalBlock implements EntityBloc
     @Override
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
         return switch (pState.getValue(FACING)) {
-            case SOUTH -> SELECTION_BOX_EAST;
+            case NORTH -> SELECTION_BOX_NORTH;
+            case SOUTH -> SELECTION_BOX_SOUTH;
+            case EAST -> SELECTION_BOX_EAST;
             case WEST -> SELECTION_BOX_WEST;
-            case NORTH -> SELECTION_BOX_SOUTH;
-            case EAST -> SELECTION_BOX_NORTH;
             default -> throw new IllegalStateException("Unexpected value: " + pState.getValue(FACING));
         };
     }
