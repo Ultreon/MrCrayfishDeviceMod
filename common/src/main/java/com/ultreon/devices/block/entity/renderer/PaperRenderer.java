@@ -9,12 +9,10 @@ import com.ultreon.devices.api.print.PrintingManager;
 import com.ultreon.devices.block.PaperBlock;
 import com.ultreon.devices.block.entity.PaperBlockEntity;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.MapRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.entity.ItemFrameRenderer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -85,7 +83,7 @@ public record PaperRenderer(
     }
 
     private static long AA = 0;
-    private static void drawPixels(PoseStack poseStack, int[] pixels, int resolution, boolean cut, int packedLight, MultiBufferSource bufferSource) {
+    private static void drawPixels(PoseStack poseStack, int[] pixels, int resolution, boolean cut, int packedLight, int packedOverlay, MultiBufferSource bufferSource) {
         double scale = 16 / (double) resolution;
         var d = new DynamicTexture(resolution, resolution, true);
         for (int i = 0; i < resolution; i++) {
@@ -102,10 +100,10 @@ public record PaperRenderer(
         ResourceLocation resourcelocation = Minecraft.getInstance().getTextureManager().register("map/" + AA, d);
         Matrix4f matrix4f = poseStack.last().pose();
         var vertexconsumer = bufferSource.getBuffer(RenderType.text(resourcelocation));
-        vertexconsumer.vertex(matrix4f, 0.0f, 128.0f, -0.01f).color(255, 255, 255, 255).uv(0.0f, 1.0f).uv2(packedLight).endVertex();
-        vertexconsumer.vertex(matrix4f, 128.0f, 128.0f, -0.01f).color(255, 255, 255, 255).uv(1.0f, 1.0f).uv2(packedLight).endVertex();
-        vertexconsumer.vertex(matrix4f, 128.0f, 0.0f, -0.01f).color(255, 255, 255, 255).uv(1.0f, 0.0f).uv2(packedLight).endVertex();
-        vertexconsumer.vertex(matrix4f, 0.0f, 0.0f, -0.01f).color(255, 255, 255, 255).uv(0.0f, 0.0f).uv2(packedLight).endVertex();
+        vertexconsumer.vertex(matrix4f, 0.0f, 128.0f, -0.01f).color(255, 255, 255, 255).uv(0.0f, 1.0f).uv2(packedLight).overlayCoords(packedOverlay).endVertex();
+        vertexconsumer.vertex(matrix4f, 128.0f, 128.0f, -0.01f).color(255, 255, 255, 255).uv(1.0f, 1.0f).uv2(packedLight).overlayCoords(packedOverlay).endVertex();
+        vertexconsumer.vertex(matrix4f, 128.0f, 0.0f, -0.01f).color(255, 255, 255, 255).uv(1.0f, 0.0f).uv2(packedLight).overlayCoords(packedOverlay).endVertex();
+        vertexconsumer.vertex(matrix4f, 0.0f, 0.0f, -0.01f).color(255, 255, 255, 255).uv(0.0f, 0.0f).uv2(packedLight).overlayCoords(packedOverlay).endVertex();
         AA++;
     }
 
@@ -117,12 +115,15 @@ public record PaperRenderer(
             return;
         }
 
+        //region <RenderRoot()>
         pose.pushPose();
         {
             float scale = 32768;
             pose.scale(1 / scale, 1 / scale, 1 / scale);
 //            pose.translate(blockEntity.getBlockPos().getX(), blockEntity.getBlockPos().getY(), blockEntity.getBlockPos().getZ());
 //            pose.translate(-0.5, -0.5, -0.5);
+
+            //region <RenderMain()>
             pose.pushPose();
             pose.translate(-0.5, -0.5, -0.5);
             pose.mulPose(state.getValue(PaperBlock.FACING).getRotation());
@@ -141,25 +142,31 @@ public record PaperRenderer(
 
                     pose.translate(0, 0, DeviceConfig.RENDER_PRINTED_3D.get() ? 0.0625 : 0.001);
 
+                    //region <RenderPrint()>
                     pose.pushPose();
                     {
                         IPrint.Renderer renderer = PrintingManager.getRenderer(print);
                         renderer.render(pose, data);
                     }
                     pose.popPose();
+                    //endregion
 
+                    //region <RenderPrint3D()>
                     pose.pushPose();
                     {
                         if (DeviceConfig.RENDER_PRINTED_3D.get() && data.getBoolean("cut")) {
                             CompoundTag tag = print.toTag();
-                            drawPixels(pose, tag.getIntArray("pixels"), tag.getInt("resolution"), tag.getBoolean("cut"), packedLight, bufferSource);
+                            drawPixels(pose, tag.getIntArray("pixels"), tag.getInt("resolution"), tag.getBoolean("cut"), packedLight, packedOverlay, bufferSource);
                         }
                     }
                     pose.popPose();
-                    pose.popPose();
+                    //endregion
                 }
             }
+            pose.popPose();
+            //endregion
         }
         pose.popPose();
+        //endregion
     }
 }

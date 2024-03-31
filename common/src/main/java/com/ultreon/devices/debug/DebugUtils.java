@@ -1,5 +1,6 @@
 package com.ultreon.devices.debug;
 
+import dev.architectury.platform.Platform;
 import net.minecraft.resources.ResourceLocation;
 
 import java.io.File;
@@ -12,6 +13,8 @@ import java.io.OutputStream;
  */
 public class DebugUtils {
     public static void dump(DumpType type, ResourceLocation resource, DumpWriter dumpFunc) throws IOException {
+        if (!Platform.isDevelopmentEnvironment()) return;
+
         File namespaceFile = new File("debug/dump/" + type.name().toLowerCase(), resource.getNamespace());
         File outputFile = new File(namespaceFile, resource.getPath());
         File outputDir = outputFile.getParentFile();
