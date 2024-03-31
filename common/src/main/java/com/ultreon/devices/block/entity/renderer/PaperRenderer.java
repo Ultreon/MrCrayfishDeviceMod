@@ -127,10 +127,10 @@ public record PaperRenderer(
             Quaternionf quat = (switch (state.getValue(PaperBlock.FACING)) {
                 case DOWN -> new Quaternionf().rotationX((float) Math.PI);
                 case UP -> new Quaternionf();
-                case NORTH -> new Quaternionf().rotateXYZ(0, -0.0F, (float) (Math.PI)).rotateY((float) (Math.PI / 2));
-                case SOUTH -> new Quaternionf().rotateXYZ(0, -(float) (Math.PI), (float) (Math.PI)).rotateY((float) (Math.PI / 2));
-                case WEST -> new Quaternionf().rotateXYZ(0, -(float) (Math.PI / 2), (float) (Math.PI)).rotateY((float) (Math.PI / 2));
-                case EAST -> new Quaternionf().rotateXYZ(0, -(float) -(Math.PI / 2), (float) (Math.PI)).rotateY((float) (Math.PI / 2));
+                case NORTH -> new Quaternionf().rotateXYZ(0, 0.0F, 0);
+                case SOUTH -> new Quaternionf().rotateXYZ(0, (float) (Math.PI), 0);
+                case WEST -> new Quaternionf().rotateXYZ(0, (float) (Math.PI / 2), 0);
+                case EAST -> new Quaternionf().rotateXYZ(0, (float) -(Math.PI / 2), 0);
             });
             vector3f.set(-1, -1, -1).rotate(quat);
             pose.translate(0.5, 0.5, 0.5);

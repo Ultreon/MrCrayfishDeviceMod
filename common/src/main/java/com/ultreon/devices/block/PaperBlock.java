@@ -47,10 +47,10 @@ public class PaperBlock extends HorizontalDirectionalBlock implements EntityBloc
     @Override
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
         return switch (pState.getValue(FACING)) {
-            case NORTH -> SELECTION_BOX_NORTH;
-            case SOUTH -> SELECTION_BOX_SOUTH;
+            case SOUTH -> SELECTION_BOX_EAST;
             case WEST -> SELECTION_BOX_WEST;
-            case EAST -> SELECTION_BOX_EAST;
+            case NORTH -> SELECTION_BOX_SOUTH;
+            case EAST -> SELECTION_BOX_NORTH;
             default -> throw new IllegalStateException("Unexpected value: " + pState.getValue(FACING));
         };
     }
@@ -59,7 +59,7 @@ public class PaperBlock extends HorizontalDirectionalBlock implements EntityBloc
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext pContext) {
         BlockState state = super.getStateForPlacement(pContext);
-        return state != null ? state.setValue(FACING, pContext.getHorizontalDirection().getClockWise()) : null;
+        return state != null ? state.setValue(FACING, pContext.getHorizontalDirection()) : null;
     }
 
     @Override
