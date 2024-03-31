@@ -70,11 +70,17 @@ public class ClientModEvents {
         registerRenderLayers();
         registerRenderers();
         registerLayerDefinitions();
+        registerBlockRenderTypes();
+
         if (Platform.isForge()) { // Note: Forge requires the icon atlas to be generator beforehand.
             generateIconAtlas();
         }
 
         ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, new ReloaderListener());
+    }
+
+    private static void registerBlockRenderTypes() {
+        DeviceBlocks.getAllLaptops().forEach(it -> RenderTypeRegistry.register(RenderType.cutout(), it));
     }
 
     @ApiStatus.Internal
