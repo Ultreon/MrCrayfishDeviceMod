@@ -70,6 +70,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -89,7 +90,7 @@ public abstract class Devices {
     private static final boolean IS_DEV_PREVIEW = DEV_PREVIEW_PATTERN.matcher(Reference.VERSION).matches();
     private static final String GITWEB_REGISTER_URL = "https://ultreon.gitlab.io/gitweb/site_register.json";
     public static final String VULNERABILITIES_URL = "https://jab125.com/gitweb/vulnerabilities.php";
-//    private static final Logger ULTRAN_LANG_LOGGER = LoggerFactory.getLogger("UltranLang");
+    //    private static final Logger ULTRAN_LANG_LOGGER = LoggerFactory.getLogger("UltranLang");
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private static final SiteRegisterStack SITE_REGISTER_STACK = new SiteRegisterStack();
 
@@ -146,7 +147,7 @@ public abstract class Devices {
 
         setupEvents();
 
-        EnvExecutor.runInEnv(Env.CLIENT, () -> () -> setupClientEvents()); //todo
+        EnvExecutor.runInEnv(Env.CLIENT, () -> Devices::setupClientEvents); //todo
         if (!ArchitecturyTarget.getCurrentTarget().equals("forge")) {
             loadComplete();
         }
@@ -424,14 +425,16 @@ public abstract class Devices {
         }));
     }
 
-    private static void setupSiteRegistration(String url) {
+    private static CompletableFuture<Void> setupSiteRegistration(String url) {
         SITE_REGISTER_STACK.push();
 
         enum Type {
             SITE_REGISTER, REGISTRATION
         }
 
-        OnlineRequest.getInstance().make(url, (success, response) -> {
+        CompletableFuture<Void> future = new CompletableFuture<>();
+
+        OnlineRequest.getInstance().make(url, (success, response) -> CompletableFuture.runAsync(() -> {
             if (success) {
                 //Minecraft.getInstance().doRunTask(() -> {
                 JsonElement root = JsonParser.parseString(response);
@@ -478,7 +481,8 @@ public abstract class Devices {
                             }
                             var registerUrl = elem.get("register").getAsString();
                             try {
-                                setupSiteRegistration(registerUrl);
+                                var registerFuture = setupSiteRegistration(registerUrl);
+                                registerFuture.join();
                             } catch (Exception e) {
                                 LOGGER.error("Error when loading site register: " + registerUrl);
                             }
@@ -487,10 +491,14 @@ public abstract class Devices {
                 }
             } else {
                 LOGGER.error("Error occurred when loading site registrations at: " + url);
+                future.complete(null);
                 return;
             }
+            future.complete(null);
             SITE_REGISTER_STACK.pop();
-        });
+        }));
+
+        return future;
     }
 
     public static ResourceLocation id(String id) {
