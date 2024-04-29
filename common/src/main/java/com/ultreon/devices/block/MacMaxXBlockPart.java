@@ -1,5 +1,6 @@
 package com.ultreon.devices.block;
 
+import com.mojang.serialization.MapCodec;
 import dev.architectury.platform.Platform;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -9,7 +10,6 @@ import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
@@ -23,10 +23,12 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * @author Qboi123
+ * @author XyperCode
  */
 public class MacMaxXBlockPart extends HorizontalDirectionalBlock {
     public static final EnumProperty<Part> PART = EnumProperty.create("part", Part.class);
+
+    public static final MapCodec<MacMaxXBlockPart> CODEC = simpleCodec(MacMaxXBlockPart::new);
 
     private static final VoxelShape BL_SHAPE_NORTH = Shapes.or(
             Block.box(-16 + 16, 31.0, 5.0,  32 + 16, 32.0, 7),
@@ -253,8 +255,8 @@ public class MacMaxXBlockPart extends HorizontalDirectionalBlock {
             Block.box(6.5,   0 - 16,  -9 - 16, 9, 0.5 - 16,  -3 - 16),
             Block.box(6.5,   0 - 16,  17 - 16, 9, 0.5 - 16,  23 - 16));
 
-    public MacMaxXBlockPart() {
-        super(Properties.of().mapColor(DyeColor.WHITE).strength(6f).sound(SoundType.METAL));
+    public MacMaxXBlockPart(Properties properties) {
+        super(properties);
         registerDefaultState(this.getStateDefinition().any().setValue(FACING, Direction.NORTH).setValue(PART, Part.T));
     }
 
@@ -311,7 +313,7 @@ public class MacMaxXBlockPart extends HorizontalDirectionalBlock {
     }
 
     @Override
-    public void playerWillDestroy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull Player player) {
+    public BlockState playerWillDestroy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull Player player) {
         BlockPos originPos = getOriginPos(pos, state);
         switch (state.getValue(FACING)) {
             case NORTH -> {
@@ -345,6 +347,7 @@ public class MacMaxXBlockPart extends HorizontalDirectionalBlock {
             default -> throw new IllegalStateException("Unexpected value: " + state.getValue(FACING));
         }
         destroyBlockExcept(level, pos, originPos, Blocks.AIR.defaultBlockState(), 3);
+        return state;
     }
 
     @SuppressWarnings("SameParameterValue")
@@ -415,6 +418,11 @@ public class MacMaxXBlockPart extends HorizontalDirectionalBlock {
     protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> pBuilder) {
         super.createBlockStateDefinition(pBuilder);
         pBuilder.add(PART, FACING);
+    }
+
+    @Override
+    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
+        return CODEC;
     }
 
     public enum Part implements StringRepresentable {

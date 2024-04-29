@@ -17,10 +17,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.minecraft.world.level.ItemLike;
-
-import java.util.function.Consumer;
 
 public class DevicesRecipeProvider extends FabricRecipeProvider {
     public DevicesRecipeProvider(FabricDataOutput dataGenerator) {
@@ -28,7 +25,7 @@ public class DevicesRecipeProvider extends FabricRecipeProvider {
     }
 
     @Override
-    public void buildRecipes(Consumer<FinishedRecipe> exporter) {
+    public void buildRecipes(RecipeOutput exporter) {
         DeviceBlocks.LAPTOPS.getMap().forEach(((dyeColor, blockRegistrySupplier) -> laptop(exporter, blockRegistrySupplier.get(), dyeColor)));
 
         //***********************//
@@ -230,7 +227,7 @@ public class DevicesRecipeProvider extends FabricRecipeProvider {
                 .save(exporter);
     }
 
-    public static void laptop(Consumer<FinishedRecipe> exporter, ItemLike laptop, DyeColor color) {
+    public static void laptop(RecipeOutput exporter, ItemLike laptop, DyeColor color) {
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, laptop)
                 .define('+', DyeUtils.getWoolFromDye(color))
                 .define('/', Items.IRON_INGOT)

@@ -8,6 +8,9 @@ import dev.architectury.registry.registries.RegistrySupplier;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -21,7 +24,7 @@ public class DeviceBlocks {
     public static final DyeableRegistration<Block> LAPTOPS = new DyeableRegistration<>() {
         @Override
         public RegistrySupplier<Block> register(Registrar<Block> registrar, DyeColor color) {
-            return registrar.register(Devices.id(color.getName() + "_laptop"), () -> new LaptopBlock(color));
+            return registrar.register(Devices.id(color.getName() + "_laptop"), () -> new LaptopBlock(color, Properties.of().mapColor(color).strength(6f).sound(SoundType.METAL)));
         }
 
         @Override
@@ -30,13 +33,13 @@ public class DeviceBlocks {
         }
     };
 
-    public static final RegistrySupplier<MacMaxXBlock> MAC_MAX_X = REGISTER.register(Devices.id("mac_max_x"), MacMaxXBlock::new);
-    public static final RegistrySupplier<MacMaxXBlockPart> MAC_MAX_X_PART = REGISTER.register(Devices.id("mac_max_x_part"), MacMaxXBlockPart::new);
+    public static final RegistrySupplier<MacMaxXBlock> MAC_MAX_X = REGISTER.register(Devices.id("mac_max_x"), () -> new MacMaxXBlock(Properties.of().mapColor(DyeColor.WHITE).strength(6f).sound(SoundType.METAL).noOcclusion().dynamicShape()));
+    public static final RegistrySupplier<MacMaxXBlockPart> MAC_MAX_X_PART = REGISTER.register(Devices.id("mac_max_x_part"), () -> new MacMaxXBlockPart(Properties.of().mapColor(DyeColor.WHITE).strength(6f).sound(SoundType.METAL)));
 
     public static final DyeableRegistration<Block> PRINTERS = new DyeableRegistration<>() {
         @Override
         public RegistrySupplier<Block> register(Registrar<Block> registrar, DyeColor color) {
-            return registrar.register(Devices.id(color.getName() + "_printer"), () -> new PrinterBlock(color));
+            return registrar.register(Devices.id(color.getName() + "_printer"), () -> new PrinterBlock(color, Properties.of().mapColor(color).strength(6f).sound(SoundType.METAL)));
         }
 
         @Override
@@ -48,7 +51,7 @@ public class DeviceBlocks {
     public static final DyeableRegistration<Block> ROUTERS = new DyeableRegistration<>() {
         @Override
         public RegistrySupplier<Block> register(Registrar<Block> registrar, DyeColor color) {
-            return registrar.register(Devices.id(color.getName() + "_router"), () -> new RouterBlock(color));
+            return registrar.register(Devices.id(color.getName() + "_router"), () -> new RouterBlock(color, Properties.of().mapColor(color).strength(6f).sound(SoundType.METAL)));
         }
 
         @Override
@@ -60,7 +63,7 @@ public class DeviceBlocks {
     public static final DyeableRegistration<Block> OFFICE_CHAIRS = new DyeableRegistration<>() {
         @Override
         public RegistrySupplier<Block> register(Registrar<Block> registrar, DyeColor color) {
-            return registrar.register(Devices.id(color.getName() + "_office_chair"), () -> new OfficeChairBlock(color));
+            return registrar.register(Devices.id(color.getName() + "_office_chair"), () -> new OfficeChairBlock(color, BlockBehaviour.Properties.of().mapColor(color)));
         }
 
         @Override
@@ -70,7 +73,7 @@ public class DeviceBlocks {
     };
 
 
-    public static final RegistrySupplier<PaperBlock> PAPER = REGISTER.register(Devices.id("paper"), PaperBlock::new);
+    public static final RegistrySupplier<PaperBlock> PAPER = REGISTER.register(Devices.id("paper"), () -> new PaperBlock(Properties.of().noCollission().instabreak().noOcclusion().noLootTable()));
 
 
     public static Stream<Block> getAllBlocks() {

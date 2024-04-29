@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Function;
 
 /**
- * @author Qboi123
+ * @author XyperCode
  */
 public class LaptopFontSet extends FontSet {
 //    private static final GlyphInfo TAB_INFO = new GlyphInfo() {

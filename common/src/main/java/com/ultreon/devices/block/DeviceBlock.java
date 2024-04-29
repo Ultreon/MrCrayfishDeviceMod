@@ -1,5 +1,6 @@
 package com.ultreon.devices.block;
 
+import com.mojang.serialization.MapCodec;
 import com.ultreon.devices.IDeviceType;
 import com.ultreon.devices.ModDeviceTypes;
 import com.ultreon.devices.block.entity.DeviceBlockEntity;
@@ -70,7 +71,6 @@ public abstract class DeviceBlock extends HorizontalDirectionalBlock implements 
             }
         }
     }
-
 
     @Override
     public void destroy(LevelAccessor level, BlockPos pos, BlockState state) {

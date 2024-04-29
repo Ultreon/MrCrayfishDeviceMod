@@ -1,5 +1,7 @@
 package com.ultreon.devices.block;
 
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.ultreon.devices.ModDeviceTypes;
 import com.ultreon.devices.block.entity.LaptopBlockEntity;
 import com.ultreon.devices.debug.DebugLog;
@@ -21,6 +23,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.ButtonBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -127,10 +130,12 @@ public abstract class ComputerBlock extends DeviceBlock {
 
     public static abstract class Colored extends ComputerBlock implements ColoredBlock {
         private final DyeColor color;
+        private final ModDeviceTypes deviceType;
 
-        protected Colored(Properties properties, DyeColor color, ModDeviceTypes deviceType) {
+        protected Colored(DyeColor color, ModDeviceTypes deviceType, Properties properties) {
             super(properties);
             this.color = color;
+            this.deviceType = deviceType;
         }
 
         @Override
@@ -151,6 +156,11 @@ public abstract class ComputerBlock extends DeviceBlock {
         @Override
         protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> pBuilder) {
             super.createBlockStateDefinition(pBuilder);
+        }
+
+        @Override
+        public ModDeviceTypes getDeviceType() {
+            return deviceType;
         }
     }
 }

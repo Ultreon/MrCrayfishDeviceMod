@@ -12,6 +12,7 @@ import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.event.WorldDataHandler;
 import com.ultreon.devices.init.RegistrationHandler;
 import dev.architectury.platform.forge.EventBuses;
+import fuzs.forgeconfigapiport.forge.api.neoforge.v4.NeoForgeConfigRegistry;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.api.distmarker.Dist;
@@ -87,7 +88,7 @@ public final class DevicesForge {
         // Common side stuff
         LOGGER.info("Initializing registration handler and mod config.");
         RegistrationHandler.register();
-        context.registerConfig(ModConfig.Type.CLIENT, DeviceConfig.CONFIG);
+        NeoForgeConfigRegistry.INSTANCE.register(ModConfig.Type.CLIENT, DeviceConfig.CONFIG);
 
         forgeEventBus.register(this);
         forgeEventBus.register(new WorldDataHandler());

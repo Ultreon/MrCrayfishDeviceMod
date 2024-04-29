@@ -1,5 +1,7 @@
 package com.ultreon.devices.block;
 
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.ultreon.devices.ModDeviceTypes;
 import com.ultreon.devices.block.entity.PrinterBlockEntity;
 import com.ultreon.devices.util.Colored;
@@ -12,6 +14,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -27,6 +30,11 @@ import org.jetbrains.annotations.Nullable;
  * @author MrCrayfish
  */
 public class PrinterBlock extends DeviceBlock.Colored implements Colored {
+    public static final MapCodec<PrinterBlock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+            DyeColor.CODEC.fieldOf("color").forGetter(PrinterBlock::getColor),
+            propertiesCodec()
+    ).apply(instance, PrinterBlock::new));
+
     private static final VoxelShape SHAPE_NORTH = Shapes.or(
             box(2, 0, 7, 14, 5, 12),
             box(3.5, 0.1, 1, 12.5, 1.1, 7),
@@ -76,7 +84,7 @@ public class PrinterBlock extends DeviceBlock.Colored implements Colored {
             box(5, 3, 1, 7, 5, 15),
             box(12, 3, 4, 16, 9.3, 12));
 
-    public PrinterBlock(DyeColor color) {
+    public PrinterBlock(DyeColor color, Properties properties) {
         super(Properties.of().mapColor(color).strength(6f).sound(SoundType.METAL), color, ModDeviceTypes.PRINTER);
         this.registerDefaultState(getStateDefinition().any().setValue(FACING, Direction.NORTH));
     }
@@ -115,5 +123,10 @@ public class PrinterBlock extends DeviceBlock.Colored implements Colored {
     @Override
     public @Nullable BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
         return new PrinterBlockEntity(pos, state);
+    }
+
+    @Override
+    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
+        return CODEC;
     }
 }

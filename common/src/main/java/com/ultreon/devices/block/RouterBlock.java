@@ -1,5 +1,7 @@
 package com.ultreon.devices.block;
 
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.ultreon.devices.ModDeviceTypes;
 import com.ultreon.devices.block.entity.RouterBlockEntity;
 import com.ultreon.devices.network.PacketHandler;
@@ -8,12 +10,15 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -22,13 +27,24 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author MrCrayfish
  */
 public class RouterBlock extends DeviceBlock.Colored {
+    public static final MapCodec<RouterBlock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+            DyeColor.CODEC.fieldOf("color").forGetter(RouterBlock::getColor),
+            propertiesCodec()
+    ).apply(instance, RouterBlock::new));
+
     public static final BooleanProperty VERTICAL = BooleanProperty.create("vertical");
 
     // Todo - do rotations for voxel shapes properly.
@@ -57,8 +73,8 @@ public class RouterBlock extends DeviceBlock.Colored {
             box(13, 0, 1, 16, 10, 15)
     };
 
-    public RouterBlock(DyeColor color) {
-        super(Properties.of().mapColor(color).strength(6f).sound(SoundType.METAL), color, ModDeviceTypes.ROUTER);
+    public RouterBlock(DyeColor color, Properties properties) {
+        super(properties, color, ModDeviceTypes.ROUTER);
         this.registerDefaultState(this.getStateDefinition().any().setValue(FACING, Direction.NORTH).setValue(VERTICAL, false));
     }
 
@@ -94,17 +110,6 @@ public class RouterBlock extends DeviceBlock.Colored {
         return state != null ? state.setValue(FACING, pContext.getHorizontalDirection().getOpposite()).setValue(VERTICAL, pContext.getClickLocation().y - pContext.getClickLocation().y > 0.5) : null;
     }
 
-//    @Override
-//    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
-//        IBlockState state = super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, hand);
-//        return state.withProperty(VERTICAL, facing.getHorizontalIndex() != -1);
-//    }
-
-//    @Override
-//    public boolean canPlaceBlockOnSide(World worldIn, BlockPos pos, EnumFacing side) {
-//        return side != EnumFacing.DOWN;
-//    }
-
     @NotNull
     @Override
     @Contract("_, _ -> new")
@@ -116,5 +121,10 @@ public class RouterBlock extends DeviceBlock.Colored {
     protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> pBuilder) {
         super.createBlockStateDefinition(pBuilder);
         pBuilder.add(VERTICAL);
+    }
+
+    @Override
+    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
+        return CODEC;
     }
 }

@@ -24,12 +24,6 @@ loom {
     }
 }
 
-repositories {
-    maven { url = "https://cursemaven.com" }
-    maven { url "https://maven.terraformersmc.com/releases" }
-    mavenCentral()
-}
-
 configurations {
     common
     shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
@@ -44,7 +38,7 @@ dependencies {
     // Remove the next line if you don't want to depend on the API
     modApi "dev.architectury:architectury-fabric:$architectury_version"
 
-    modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:8.0.0"
+    modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:$forgeconfigapiport_version"
     modImplementation 'com.electronwill.night-config:core:3.6.5'
     modImplementation 'com.electronwill.night-config:toml:3.6.5'
 
@@ -61,11 +55,11 @@ dependencies {
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 
-    modCompileOnly "com.terraformersmc:modmenu:4.0.6", {
+    modCompileOnly "com.terraformersmc:modmenu:$modmenu_version", {
         exclude module: "fabric-api"
     }
 
-    modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:12.0.684", {
+    modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:$rei_version", {
         exclude module: "fabric-api"
     }
 

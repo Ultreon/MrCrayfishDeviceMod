@@ -1,5 +1,7 @@
 package com.ultreon.devices.block;
 
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.ultreon.devices.ModDeviceTypes;
 import com.ultreon.devices.block.entity.OfficeChairBlockEntity;
 import com.ultreon.devices.debug.DebugLog;
@@ -19,6 +21,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -33,17 +36,20 @@ import org.jetbrains.annotations.NotNull;
 
 import org.jetbrains.annotations.Nullable;
 
-public class OfficeChairBlock extends DeviceBlock.Colored
-{
+public class OfficeChairBlock extends DeviceBlock.Colored {
     public static final EnumProperty<Type> TYPE = EnumProperty.create("type", Type.class);
+
+    public static final MapCodec<OfficeChairBlock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+            DyeColor.CODEC.fieldOf("color").forGetter(OfficeChairBlock::getColor),
+            propertiesCodec()
+    ).apply(instance, OfficeChairBlock::new));
 
     private static final VoxelShape EMPTY_BOX = Shapes.box(0, 0, 0, 0, 0, 0);
     private static final VoxelShape SELECTION_BOX = Shapes.box(0.0625f, 0, 0.0625f, 0.9375f, /*1.6875f*/0.625f, 0.9375f);
     private static final VoxelShape SEAT_BOUNDING_BOX = Shapes.box(0.0625f, 0, 0.0625f, 0.9375f, 0.625f, 0.9375f);
 
-    public OfficeChairBlock(DyeColor color)
-    {
-        super(BlockBehaviour.Properties.of().mapColor(color), color, ModDeviceTypes.SEAT);
+    public OfficeChairBlock(DyeColor color, Properties properties) {
+        super(properties, color, ModDeviceTypes.SEAT);
         //this.setUnlocalizedName("office_chair");
         //this.setRegistryName("office_chair");
         //this.setCreativeTab(MrCrayfishDeviceMod.TAB_DEVICE);
@@ -56,8 +62,7 @@ public class OfficeChairBlock extends DeviceBlock.Colored
 //    }
 
     @Override
-    public boolean canSurvive(BlockState state, LevelReader reader, BlockPos pos)
-    {
+    public boolean canSurvive(BlockState state, LevelReader reader, BlockPos pos) {
         return false || true;
     }
 
@@ -82,12 +87,10 @@ public class OfficeChairBlock extends DeviceBlock.Colored
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit)
-    {
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         //DebugLog.log(DeviceEntities.SEAT.get().create(level).toString());
         DebugLog.log("OKOKJRTKFD");
-        if(!level.isClientSide)
-        {
+        if (!level.isClientSide) {
             SeatUtil.createSeatAndSit(level, pos, player, -1);
         }
         return InteractionResult.SUCCESS;
@@ -95,25 +98,26 @@ public class OfficeChairBlock extends DeviceBlock.Colored
 
     @Nullable
     @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state)
-    {
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new OfficeChairBlockEntity(pos, state);
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> pBuilder)
-    {
+    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> pBuilder) {
         super.createBlockStateDefinition(pBuilder);
         pBuilder.add(TYPE);
     }
 
-    public enum Type implements StringRepresentable
-    {
+    @Override
+    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
+        return CODEC;
+    }
+
+    public enum Type implements StringRepresentable {
         LEGS, SEAT, FULL;
 
         @Override
-        public String getSerializedName()
-        {
+        public String getSerializedName() {
             return name().toLowerCase();
         }
     }

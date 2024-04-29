@@ -2,6 +2,7 @@ package com.ultreon.devices.event;
 
 import com.ultreon.devices.api.WorldSavedData;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.world.level.storage.LevelResource;
 
@@ -58,7 +59,7 @@ public class WorldDataHandler {
             return;
         }
         try {
-            CompoundTag nbt = NbtIo.readCompressed(dataFile);
+            CompoundTag nbt = NbtIo.readCompressed(dataFile.toPath(), NbtAccounter.unlimitedHeap());
             data.load(nbt);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -74,7 +75,7 @@ public class WorldDataHandler {
 
             CompoundTag nbt = new CompoundTag();
             data.save(nbt);
-            NbtIo.writeCompressed(nbt, dataFile);
+            NbtIo.writeCompressed(nbt, dataFile.toPath());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

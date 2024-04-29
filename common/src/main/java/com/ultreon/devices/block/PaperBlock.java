@@ -1,5 +1,7 @@
 package com.ultreon.devices.block;
 
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.ultreon.devices.api.print.IPrint;
 import com.ultreon.devices.block.entity.PaperBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -26,11 +28,14 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.print.Paper;
 import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("NullableProblems")
 public class PaperBlock extends HorizontalDirectionalBlock implements EntityBlock {
+    public static final MapCodec<PaperBlock> CODEC = simpleCodec(PaperBlock::new);
+
     private static final VoxelShape SELECTION_BOUNDS = box(15, 0, 0, 16, 16, 16);
 
     private static final VoxelShape SELECTION_BOX_NORTH = box(15, 0, 0, 16, 16, 16);
@@ -39,8 +44,8 @@ public class PaperBlock extends HorizontalDirectionalBlock implements EntityBloc
     private static final VoxelShape SELECTION_BOX_EAST = box(0, 0, 0, 16, 16, 1);
     private static final VoxelShape[] SELECTION_BOUNDING_BOX = {SELECTION_BOX_SOUTH, SELECTION_BOX_WEST, SELECTION_BOX_NORTH, SELECTION_BOX_EAST};
 
-    public PaperBlock() {
-        super(Properties.of().noCollission().instabreak().noOcclusion().noLootTable());
+    public PaperBlock(Properties properties) {
+        super(properties);
 
         registerDefaultState(getStateDefinition().any().setValue(FACING, Direction.NORTH));
     }
@@ -112,5 +117,10 @@ public class PaperBlock extends HorizontalDirectionalBlock implements EntityBloc
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new PaperBlockEntity(pos, state);
+    }
+
+    @Override
+    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
+        return CODEC;
     }
 }

@@ -71,7 +71,7 @@ public class ClientModEvents {
         registerRenderLayers();
         registerRenderers();
         registerLayerDefinitions();
-        if (Platform.isForge()) { // Note: Forge requires the icon atlas to be generator beforehand.
+        if (Platform.isForgeLike()) { // Note: Forge requires the icon atlas to be generator beforehand.
             generateIconAtlas();
         }
 

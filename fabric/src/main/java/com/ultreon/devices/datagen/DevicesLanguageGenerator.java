@@ -109,7 +109,7 @@ public class DevicesLanguageGenerator extends FabricLanguageProvider {
         createTranslationsFromTemplate(translationBuilder, "lol");
     }
 
-    private void createTranslationsForDutch(TranslationBuilder translationBuilder) { // TODO: @Qboi123
+    private void createTranslationsForDutch(TranslationBuilder translationBuilder) { // TODO: @XyperCode
         createTranslationsFromTemplate(translationBuilder, "nl");
     }
 

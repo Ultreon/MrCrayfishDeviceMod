@@ -59,9 +59,13 @@ public class GLHelper {
 
     /**
      * Do not call! Used for core only.
+     *
+     * @return true if the scissor stack was cleared
      */
-    public static void clearScissorStack() {
+    public static boolean clearScissorStack() {
+        if (scissorStack.isEmpty()) return false;
         scissorStack.clear();
+        return true;
     }
 
     public static Color getPixel(int x, int y) {

@@ -1,5 +1,7 @@
 package com.ultreon.devices.block;
 
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.ultreon.devices.block.entity.MacMaxXBlockEntity;
 import com.ultreon.devices.init.DeviceBlocks;
 import dev.architectury.platform.Platform;
@@ -17,6 +19,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -30,10 +33,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * @author Qboi123
+ * @author XyperCode
  */
 @SuppressWarnings("deprecation")
 public class MacMaxXBlock extends ComputerBlock {
+    public static final MapCodec<MacMaxXBlock> CODEC = simpleCodec(MacMaxXBlock::new);
+
     private static final VoxelShape SHAPE_NORTH = Shapes.or(
             Block.box(-16, 31, 5, 32, 32, 7),
             Block.box(-15, 4, 5.5, 31, 32, 7),
@@ -83,8 +88,13 @@ public class MacMaxXBlock extends ComputerBlock {
             Block.box(6.5, 0, 17, 9, 0.5, 23)
     );
 
-    public MacMaxXBlock() {
-        super(BlockBehaviour.Properties.of().mapColor(DyeColor.WHITE).strength(6f).sound(SoundType.METAL).noOcclusion().dynamicShape());
+    public MacMaxXBlock(Properties properties) {
+        super(properties);
+    }
+
+    @Override
+    protected @NotNull MapCodec<? extends MacMaxXBlock> codec() {
+        return CODEC;
     }
 
     @Override
@@ -183,7 +193,7 @@ public class MacMaxXBlock extends ComputerBlock {
     }
 
     @Override
-    public void playerWillDestroy(@NotNull Level level, @NotNull BlockPos pos, BlockState state, @NotNull Player player) {
+    public BlockState playerWillDestroy(@NotNull Level level, @NotNull BlockPos pos, BlockState state, @NotNull Player player) {
         switch (state.getValue(FACING)) {
             case NORTH -> {
                 level.setBlock(pos.above().west(), Blocks.AIR.defaultBlockState(), 3);
@@ -215,6 +225,7 @@ public class MacMaxXBlock extends ComputerBlock {
             }
             default -> throw new IllegalStateException("Unexpected value: " + state.getValue(FACING));
         }
+        return state;
     }
 
     @Override

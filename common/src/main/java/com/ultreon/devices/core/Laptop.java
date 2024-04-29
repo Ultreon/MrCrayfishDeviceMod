@@ -64,7 +64,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * Laptop GUI class.
  *
- * @author MrCrayfish, Qboi123
+ * @author MrCrayfish, XyperCode
  */
 public class Laptop extends Screen implements System {
     public static final int ID = 1;
@@ -395,8 +395,14 @@ public class Laptop extends Screen implements System {
 
         PoseStack.Pose last = graphics.pose().last();
 
+        this.renderBackground(graphics, mouseX, mouseY, partialTicks);
+
         try {
+            graphics.pose().pushPose();
+            graphics.pose().translate(0, 0, 1000);
+
             renderLaptop(graphics, mouseX, mouseY, partialTicks);
+            graphics.pose().popPose();
         } catch (NullPointerException e) {
             while (graphics.pose().last() != last) {
                 graphics.pose().popPose();
@@ -409,6 +415,15 @@ public class Laptop extends Screen implements System {
             }
             RenderSystem.disableScissor();
             bsod(e);
+        }
+
+        while (graphics.pose().last() != last) {
+            Devices.LOGGER.warn("Pose stack leakage: {}", graphics.pose().last());
+            graphics.pose().popPose();
+        }
+
+        if (GLHelper.clearScissorStack()) {
+            Devices.LOGGER.debug("Scissor stack leakage!");
         }
     }
 
@@ -454,10 +469,7 @@ public class Laptop extends Screen implements System {
     public void renderBezels(final @NotNull GuiGraphics graphics, final int mouseX, final int mouseY, float partialTicks) {
         tasks.clear();
 
-        this.renderBackground(graphics);
-
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-        RenderSystem.setShaderTexture(0, LAPTOP_GUI);
 
         //*************************//
         //     Physical Screen     //
@@ -503,7 +515,7 @@ public class Laptop extends Screen implements System {
         
         renderBezels(graphics, mouseX, mouseY, partialTicks);
 
-        GLHelper.pushScissor(posX, posY, videoInfo.getResolution().width() + BORDER, videoInfo.getResolution().height() + BORDER);
+        GLHelper.pushScissor(posX + BORDER, posY + BORDER, videoInfo.getResolution().width(), videoInfo.getResolution().height());
         //*******************//
         //     Wallpaper     //
         //*******************//
@@ -578,7 +590,6 @@ public class Laptop extends Screen implements System {
             return false;
         });
 
-        super.render(graphics, mouseX, mouseY, frameTime);
         GLHelper.popScissor();
 
         GLHelper.clearScissorStack();
@@ -838,7 +849,7 @@ public class Laptop extends Screen implements System {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double deltaX, double delta) {
         if (delta != 0) {
             try {
                 if (windows.get(0) != null) {

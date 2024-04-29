@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.BoatRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.vehicle.Boat;
 import org.joml.Quaternionf;
@@ -49,7 +50,7 @@ public class Player {
         this.velocity = new Vec2d(0, 0);
         this.boatModel = new BoatRenderer(createEntityRendererContext(), false);
 		assert Minecraft.getInstance().player != null;
-		boolean slim = Minecraft.getInstance().player.getModelName().equals("slim");
+		boolean slim = Minecraft.getInstance().player.getSkin().model() == PlayerSkin.Model.SLIM;
         if (!Laptop.isWorldLess()) {
             boat = new Boat(Objects.requireNonNull(Minecraft.getInstance().level), 0, 0, 0);
         }
