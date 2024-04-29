@@ -8,8 +8,8 @@
 
 ## License Notes
 Some code is used from other projects with other licenses.
-* The package `com.jab125` and all it's subpackages are licensed under All Rights Reserved.
-* Everything in [updater/](updater) also is licensed under All Rights Reserved.
+* The package `com.jab125` and all it's subpackages are licensed the GPL 3.0.
+* Everything in [updater/](updater) also is licensed under the GPL 3.0.
 
 [@MrCrayfish](https://github.com/MrCrayfish) has said on his discord server that we can use his code and even the assets for this port.
 
