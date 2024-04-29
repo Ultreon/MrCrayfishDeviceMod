@@ -42,7 +42,7 @@ public class EthernetCableItem extends Item {
     }
 
     @Override
-    public InteractionResult useOn(UseOnContext context) {
+    public @NotNull InteractionResult useOn(UseOnContext context) {
         Level level = context.getLevel();
         Player player = context.getPlayer();
         BlockPos pos = context.getClickedPos();

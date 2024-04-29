@@ -432,7 +432,7 @@ public class ItemList<E> extends Component implements Iterable<E> {
     }
 
     @Override
-    public Iterator<E> iterator() {
+    public @NotNull Iterator<E> iterator() {
         return items.iterator();
     }
 }

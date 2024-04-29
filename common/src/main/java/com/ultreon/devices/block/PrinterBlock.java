@@ -126,7 +126,7 @@ public class PrinterBlock extends DeviceBlock.Colored implements Colored {
     }
 
     @Override
-    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
+    protected @NotNull MapCodec<? extends HorizontalDirectionalBlock> codec() {
         return CODEC;
     }
 }

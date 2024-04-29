@@ -98,7 +98,7 @@ public class LaptopBlock extends ComputerBlock.Colored {
     }
 
     @Override
-    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
+    protected @NotNull MapCodec<? extends HorizontalDirectionalBlock> codec() {
         return CODEC;
     }
 }

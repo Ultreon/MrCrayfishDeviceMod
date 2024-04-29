@@ -72,12 +72,12 @@ public class OfficeChairBlock extends DeviceBlock.Colored {
     }
 
     @Override
-    public VoxelShape getVisualShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public @NotNull VoxelShape getVisualShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SEAT_BOUNDING_BOX;
     }
 
     @Override
-    public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public @NotNull VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         if (context instanceof EntityCollisionContext entityCollisionContext) {
             if (entityCollisionContext.getEntity() != null && entityCollisionContext.getEntity().getVehicle() instanceof SeatEntity) {
                 return EMPTY_BOX;
@@ -87,7 +87,7 @@ public class OfficeChairBlock extends DeviceBlock.Colored {
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    public @NotNull InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         //DebugLog.log(DeviceEntities.SEAT.get().create(level).toString());
         DebugLog.log("OKOKJRTKFD");
         if (!level.isClientSide) {
@@ -98,7 +98,7 @@ public class OfficeChairBlock extends DeviceBlock.Colored {
 
     @Nullable
     @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
         return new OfficeChairBlockEntity(pos, state);
     }
 
@@ -109,7 +109,7 @@ public class OfficeChairBlock extends DeviceBlock.Colored {
     }
 
     @Override
-    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
+    protected @NotNull MapCodec<? extends HorizontalDirectionalBlock> codec() {
         return CODEC;
     }
 
@@ -117,7 +117,7 @@ public class OfficeChairBlock extends DeviceBlock.Colored {
         LEGS, SEAT, FULL;
 
         @Override
-        public String getSerializedName() {
+        public @NotNull String getSerializedName() {
             return name().toLowerCase();
         }
     }

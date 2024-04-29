@@ -90,7 +90,7 @@ public class RouterBlock extends DeviceBlock.Colored {
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    public @NotNull InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (level.isClientSide && player.isCreative()) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof RouterBlockEntity router) {
@@ -124,7 +124,7 @@ public class RouterBlock extends DeviceBlock.Colored {
     }
 
     @Override
-    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
+    protected @NotNull MapCodec<? extends HorizontalDirectionalBlock> codec() {
         return CODEC;
     }
 }

@@ -1,8 +1,7 @@
 package com.ultreon.devices.block;
 
-import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.ultreon.devices.ModDeviceTypes;
+import com.ultreon.devices.block.entity.ComputerBlockEntity;
 import com.ultreon.devices.block.entity.LaptopBlockEntity;
 import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.item.FlashDriveItem;
@@ -23,7 +22,6 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.ButtonBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -58,47 +56,59 @@ public abstract class ComputerBlock extends DeviceBlock {
                 }
                 return InteractionResult.SUCCESS;
             } else {
-                if (hit.getDirection() == state.getValue(FACING).getClockWise(Direction.Axis.Y)) {
-                    ItemStack heldItem = player.getItemInHand(hand);
-                    if (!heldItem.isEmpty() && heldItem.getItem() instanceof FlashDriveItem) {
-                        if (laptop.canChangeAttachment()) {
-                            if (laptop.getFileSystem().attachDrive(heldItem.copy())) {
-                                DebugLog.logTime(level.getGameTime(), "Attached Drive");
-                                laptop.setAttachmentCooldown(10);
-                                heldItem.shrink(1);
-                                return InteractionResult.sidedSuccess(level.isClientSide);
-                            } else {
-                                return InteractionResult.FAIL;
-                            }
-                        }
-                    }
-
-                    if (laptop.canChangeAttachment()) {
-                        ItemStack stack = laptop.getFileSystem().detachDrive();
-                        if (stack != null) {
-                            DebugLog.logTime(level.getGameTime(), "Detached Drive");
-                            laptop.setAttachmentCooldown(10);
-                            BlockPos summonPos = pos.relative(state.getValue(FACING).getClockWise(Direction.Axis.Y));
-                            level.addFreshEntity(new ItemEntity(level, summonPos.getX() + 0.5, summonPos.getY(), summonPos.getZ() + 0.5, stack));
-                            BlockEntityUtil.markBlockForUpdate(level, pos);
-                            return InteractionResult.sidedSuccess(level.isClientSide);
-                        }
-                    }
-                    return InteractionResult.FAIL;
-                }
+                InteractionResult result = doAttachment(state, level, pos, player, hand, hit, laptop);
+                if (result != null) return result;
 
                 if (laptop.isOpen()) {
                     if (level.isClientSide) {
-                        EnvExecutor.runInEnv(Env.CLIENT, () -> () -> {
-                            ClientLaptopWrapper.execute(laptop);
-                        });
+                        EnvExecutor.runInEnv(Env.CLIENT, () -> () -> ClientLaptopWrapper.execute(laptop));
                     }
                     return InteractionResult.sidedSuccess(level.isClientSide);
                 }
             }
+        } else if (blockEntity instanceof ComputerBlockEntity computer) {
+            if (level.isClientSide) {
+                EnvExecutor.runInEnv(Env.CLIENT, () -> () -> ClientLaptopWrapper.execute(computer));
+            }
+
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        } else {
+            throw new IllegalStateException("Unexpected block entity: " + blockEntity);
         }
 
         return InteractionResult.PASS;
+    }
+
+    private static @Nullable InteractionResult doAttachment(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit, LaptopBlockEntity laptop) {
+        if (hit.getDirection() == state.getValue(FACING).getClockWise(Direction.Axis.Y)) {
+            ItemStack heldItem = player.getItemInHand(hand);
+            if (!heldItem.isEmpty() && heldItem.getItem() instanceof FlashDriveItem) {
+                if (laptop.canChangeAttachment()) {
+                    if (laptop.getFileSystem().attachDrive(heldItem.copy())) {
+                        DebugLog.logTime(level.getGameTime(), "Attached Drive");
+                        laptop.setAttachmentCooldown(10);
+                        heldItem.shrink(1);
+                        return InteractionResult.sidedSuccess(level.isClientSide);
+                    } else {
+                        return InteractionResult.FAIL;
+                    }
+                }
+            }
+
+            if (laptop.canChangeAttachment()) {
+                ItemStack stack = laptop.getFileSystem().detachDrive();
+                if (stack != null) {
+                    DebugLog.logTime(level.getGameTime(), "Detached Drive");
+                    laptop.setAttachmentCooldown(10);
+                    BlockPos summonPos = pos.relative(state.getValue(FACING).getClockWise(Direction.Axis.Y));
+                    level.addFreshEntity(new ItemEntity(level, summonPos.getX() + 0.5, summonPos.getY(), summonPos.getZ() + 0.5, stack));
+                    BlockEntityUtil.markBlockForUpdate(level, pos);
+                    return InteractionResult.sidedSuccess(level.isClientSide);
+                }
+            }
+            return InteractionResult.FAIL;
+        }
+        return null;
     }
 
     public abstract boolean isDesktopPC();

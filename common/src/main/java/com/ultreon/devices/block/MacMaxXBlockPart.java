@@ -313,7 +313,7 @@ public class MacMaxXBlockPart extends HorizontalDirectionalBlock {
     }
 
     @Override
-    public BlockState playerWillDestroy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull Player player) {
+    public @NotNull BlockState playerWillDestroy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull Player player) {
         BlockPos originPos = getOriginPos(pos, state);
         switch (state.getValue(FACING)) {
             case NORTH -> {
@@ -391,7 +391,7 @@ public class MacMaxXBlockPart extends HorizontalDirectionalBlock {
     }
 
     @Override
-    public InteractionResult use(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
+    public @NotNull InteractionResult use(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
         BlockPos originPos = getOriginPos(pos, state);
         BlockState originState = level.getBlockState(originPos);
         if (originState.getBlock() instanceof MacMaxXBlock block) {
@@ -401,7 +401,7 @@ public class MacMaxXBlockPart extends HorizontalDirectionalBlock {
     }
 
     @Override
-    public MutableComponent getName() {
+    public @NotNull MutableComponent getName() {
         MutableComponent normalName = Component.translatable("block.devices.mac_max_x");
         if (Platform.isModLoaded("emojiful")) {
             return Component.translatable("block.devices.mac_max_x_emoji");
@@ -410,7 +410,7 @@ public class MacMaxXBlockPart extends HorizontalDirectionalBlock {
     }
 
     @Override
-    public RenderShape getRenderShape(@NotNull BlockState state) {
+    public @NotNull RenderShape getRenderShape(@NotNull BlockState state) {
         return RenderShape.ENTITYBLOCK_ANIMATED;
     }
 
@@ -421,7 +421,7 @@ public class MacMaxXBlockPart extends HorizontalDirectionalBlock {
     }
 
     @Override
-    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
+    protected @NotNull MapCodec<? extends HorizontalDirectionalBlock> codec() {
         return CODEC;
     }
 
@@ -429,7 +429,7 @@ public class MacMaxXBlockPart extends HorizontalDirectionalBlock {
         BL, BR, TL, T, TR;
 
         @Override
-        public String getSerializedName() {
+        public @NotNull String getSerializedName() {
             return switch (this) {
                 case BL -> "bottom_left";
                 case BR -> "bottom_right";

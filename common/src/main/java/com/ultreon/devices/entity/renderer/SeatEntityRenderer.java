@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import org.jetbrains.annotations.NotNull;
 
 @Environment(EnvType.CLIENT)
 public class SeatEntityRenderer<T extends Entity>
@@ -18,7 +19,7 @@ public class SeatEntityRenderer<T extends Entity>
     }
 
     @Override
-    public ResourceLocation getTextureLocation(T entity) {
+    public @NotNull ResourceLocation getTextureLocation(T entity) {
         return TextureAtlas.LOCATION_BLOCKS;
     }
 }

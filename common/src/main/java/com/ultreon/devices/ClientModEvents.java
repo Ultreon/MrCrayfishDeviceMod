@@ -103,7 +103,6 @@ public class ClientModEvents {
     }
 
     private static void registerRenderLayers() {
-        if (true) return;
         DeviceBlocks.getAllLaptops().forEach(block -> {
             LOGGER.debug(SETUP, "Setting render layer for laptop {}", RegistrarManager.getId(block, Registries.BLOCK));
             RenderTypeRegistry.register(RenderType.cutout(), block);
