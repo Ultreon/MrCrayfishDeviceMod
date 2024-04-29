@@ -35,8 +35,8 @@ public class Window<T extends Wrappable> {
 
     void setWidth(int width) {
         this.width = width + 2;
-        if (this.width > Laptop.SCREEN_WIDTH) {
-            this.width = Laptop.SCREEN_WIDTH;
+        if (this.width > Laptop.getScreenWidth()) {
+            this.width = Laptop.getScreenWidth();
         }
     }
 
@@ -78,8 +78,8 @@ public class Window<T extends Wrappable> {
         if (content.isPendingLayoutUpdate()) {
             this.setWidth(content.getWidth());
             this.setHeight(content.getHeight());
-            this.offsetX = (Laptop.SCREEN_WIDTH - width) / 2;
-            this.offsetY = (Laptop.SCREEN_HEIGHT - TaskBar.BAR_HEIGHT - height) / 2;
+            this.offsetX = (Laptop.getScreenWidth() - width) / 2;
+            this.offsetY = (Laptop.getScreenHeight() - TaskBar.BAR_HEIGHT - height) / 2;
             updateComponents(x, y);
             content.clearPendingLayout();
         }
@@ -122,6 +122,7 @@ public class Window<T extends Wrappable> {
         content.render(graphics, gui, mc, x + offsetX + 1, y + offsetY + 13, mouseX, mouseY, active && dialogWindow == null, partialTicks);
 
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+        graphics.pose().translate(0, 0, 200);
 
         if (dialogWindow != null) {
             graphics.fill(x + offsetX, y + offsetY, x + offsetX + width, y + offsetY + height, COLOR_WINDOW_DARK);
@@ -174,20 +175,20 @@ public class Window<T extends Wrappable> {
     }
 
     public void handleWindowMove(int screenStartX, int screenStartY, int newX, int newY) {
-        if (newX >= 0 && newX <= Laptop.SCREEN_WIDTH - width) {
+        if (newX >= 0 && newX <= Laptop.getScreenWidth() - width) {
             this.offsetX = newX;
         } else if (newX < 0) {
             this.offsetX = 0;
         } else {
-            this.offsetX = Laptop.SCREEN_WIDTH - width;
+            this.offsetX = Laptop.getScreenWidth() - width;
         }
 
-        if (newY >= 0 && newY <= Laptop.SCREEN_HEIGHT - TaskBar.BAR_HEIGHT - height) {
+        if (newY >= 0 && newY <= Laptop.getScreenHeight() - TaskBar.BAR_HEIGHT - height) {
             this.offsetY = newY;
         } else if (newY < 0) {
             this.offsetY = 0;
         } else {
-            this.offsetY = Laptop.SCREEN_HEIGHT - TaskBar.BAR_HEIGHT - height;
+            this.offsetY = Laptop.getScreenHeight() - TaskBar.BAR_HEIGHT - height;
         }
 
         updateComponents(screenStartX, screenStartY);

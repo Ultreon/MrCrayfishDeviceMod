@@ -1,7 +1,6 @@
 package com.ultreon.devices.core;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.Devices;
 import com.ultreon.devices.api.TrayItemAdder;
 import com.ultreon.devices.api.app.Application;
@@ -16,7 +15,6 @@ import com.ultreon.devices.programs.system.SettingsApp;
 import com.ultreon.devices.programs.system.SystemApp;
 import com.ultreon.devices.util.Vulnerability;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -119,8 +117,8 @@ public class TaskBar {
 
         int trayItemsWidth = trayItems.size() * 14;
         graphics.blit(APP_BAR_GUI, x, y, 1, 18, 0, 0, 1, 18, 256, 256);
-        graphics.blit(APP_BAR_GUI, x + 1, y, Laptop.SCREEN_WIDTH - 36 - trayItemsWidth, 18, 1, 0, 1, 18, 256, 256);
-        graphics.blit(APP_BAR_GUI, x + Laptop.SCREEN_WIDTH - 35 - trayItemsWidth, y, 35 + trayItemsWidth, 18, 2, 0, 1, 18, 256, 256);
+        graphics.blit(APP_BAR_GUI, x + 1, y, Laptop.getScreenWidth() - 36 - trayItemsWidth, 18, 1, 0, 1, 18, 256, 256);
+        graphics.blit(APP_BAR_GUI, x + Laptop.getScreenWidth() - 35 - trayItemsWidth, y, 35 + trayItemsWidth, 18, 2, 0, 1, 18, 256, 256);
 
         RenderSystem.disableBlend();
 
@@ -136,10 +134,10 @@ public class TaskBar {
 
         assert mc.level == null || mc.player != null;
        // assert mc.level != null; //can no longer assume
-        graphics.drawString(mc.font, timeToString(mc.level != null ? mc.level.getDayTime() : 0), x + 334, y + 5, Color.WHITE.getRGB(), true);
+        graphics.drawString(mc.font, timeToString(mc.level != null ? mc.level.getDayTime() : 0), x + Laptop.getScreenWidth() - 31, y + 5, Color.WHITE.getRGB(), true);
 
         /* Settings App */
-        int startX = x + 317;
+        int startX = x + Laptop.getScreenWidth() - 48;
         for (int i = 0; i < trayItems.size(); i++) {
             int posX = startX - (trayItems.size() - 1 - i) * 14;
             if (isMouseInside(mouseX, mouseY, posX, y + 2, posX + 13, y + 15)) {
@@ -172,7 +170,7 @@ public class TaskBar {
             }
         }
 
-        int startX = x + 317;
+        int startX = x + Laptop.getScreenWidth() - 48;
         for (int i = 0; i < trayItems.size(); i++) {
             int posX = startX - (trayItems.size() - 1 - i) * 14;
             if (isMouseInside(mouseX, mouseY, posX, y + 2, posX + 13, y + 15)) {
