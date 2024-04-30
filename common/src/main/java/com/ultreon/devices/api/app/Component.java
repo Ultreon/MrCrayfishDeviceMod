@@ -1,6 +1,6 @@
 package com.ultreon.devices.api.app;
 
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.mineos.client.MineOS;
 import com.ultreon.devices.programs.system.object.ColorScheme;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -91,14 +91,14 @@ public abstract class Component {
      * The main render loop. This is where you draw your component.
      *
      * @param graphics     gui graphics helper
-     * @param laptop       a Laptop instance
+     * @param laptop       a MineOS instance
      * @param mc           a Minecraft instance
      * @param mouseX       the current x position of the mouse
      * @param mouseY       the current y position of the mouse
      * @param windowActive if the window is active (at front)
      * @param partialTicks percentage passed in-between two ticks
      */
-    protected void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    protected void render(GuiGraphics graphics, MineOS laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
     }
 
     /**
@@ -106,13 +106,13 @@ public abstract class Component {
      * loop.
      *
      * @param graphics     gui graphics helper
-     * @param laptop       a Laptop instance
+     * @param laptop       a MineOS instance
      * @param mc           a Minecraft instance
      * @param mouseX       the current x position of the mouse
      * @param mouseY       the current y position of the mouse
      * @param windowActive if the window is active (at front)
      */
-    protected void renderOverlay(GuiGraphics graphics, Laptop laptop, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
+    protected void renderOverlay(GuiGraphics graphics, MineOS laptop, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
     }
 
     /**
@@ -244,7 +244,7 @@ public abstract class Component {
      * @return
      */
     protected ColorScheme getColorScheme() {
-        return Laptop.getSystem().getSettings().getColorScheme();
+        return MineOS.getOpened().getSettings().getColorScheme();
     }
 
     public void drawVerticalLine(GuiGraphics graphics, int x, int y1, int y2, int rgb) {

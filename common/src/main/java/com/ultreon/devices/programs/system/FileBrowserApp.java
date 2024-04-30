@@ -1,10 +1,10 @@
 package com.ultreon.devices.programs.system;
 
 
-import com.ultreon.devices.Devices;
+import com.ultreon.devices.UltreonDevicesMod;
 import com.ultreon.devices.api.ApplicationManager;
 import com.ultreon.devices.api.app.Icons;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.mineos.client.MineOS;
 import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.object.TrayItem;
@@ -40,14 +40,14 @@ public class FileBrowserApp extends SystemApp {
 
     public static class FileBrowserTrayItem extends TrayItem {
         public FileBrowserTrayItem() {
-            super(Icons.FOLDER, Devices.id("file_browser"));
+            super(Icons.FOLDER, UltreonDevicesMod.id("file_browser"));
         }
 
         @Override
         public void handleClick(int mouseX, int mouseY, int mouseButton) {
-            AppInfo info = ApplicationManager.getApplication(Devices.id("file_browser"));
+            AppInfo info = ApplicationManager.getApplication(UltreonDevicesMod.id("file_browser"));
             if (info != null) {
-                Laptop.getSystem().openApplication(info);
+                MineOS.getOpened().openApplication(info);
             }
         }
     }

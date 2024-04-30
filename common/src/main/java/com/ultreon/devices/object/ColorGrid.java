@@ -1,9 +1,8 @@
 package com.ultreon.devices.object;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.component.Slider;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.mineos.client.MineOS;
 import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -32,7 +31,7 @@ public class ColorGrid extends Component {
     }
 
     @Override
-    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(GuiGraphics graphics, MineOS laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         int endX = xPosition + width + 2;
         int endY = yPosition + (colors.length / 5) * 10 + 2;
         graphics.fill(xPosition, yPosition, endX, endY, Color.DARK_GRAY.getRGB());

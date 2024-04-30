@@ -342,7 +342,7 @@ public class GitWebFrame extends Component {
                 offset += height;
             }
 
-            if (modules.size() > 0) {
+            if (!modules.isEmpty()) {
                 ModuleEntry entry = modules.get(modules.size() - 1);
                 Module module = entry.getModule();
                 int height = module.calculateHeight(entry.getData(), width);

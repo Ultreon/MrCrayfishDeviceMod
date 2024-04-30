@@ -1,8 +1,7 @@
 package com.ultreon.devices.core.network;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.DeviceConfig;
-import com.ultreon.devices.Devices;
+import com.ultreon.devices.UltreonDevicesMod;
 import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.component.Button;
@@ -13,12 +12,11 @@ import com.ultreon.devices.api.utils.RenderUtil;
 import com.ultreon.devices.block.entity.DeviceBlockEntity;
 import com.ultreon.devices.block.entity.RouterBlockEntity;
 import com.ultreon.devices.core.Device;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.mineos.client.MineOS;
 import com.ultreon.devices.core.network.task.TaskConnect;
 import com.ultreon.devices.core.network.task.TaskPing;
 import com.ultreon.devices.object.TrayItem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -38,7 +36,7 @@ public class TrayItemWifi extends TrayItem {
     private Strength strength = Strength.NONE;
 
     public TrayItemWifi() {
-        super(Icons.WIFI_NONE, Devices.id("wifi"));
+        super(Icons.WIFI_NONE, UltreonDevicesMod.id("wifi"));
     }
 
     private static Layout createWifiMenu(TrayItem item) {
@@ -55,7 +53,7 @@ public class TrayItemWifi extends TrayItem {
 
                 if (device.getPos() == null) return;
 
-                BlockPos laptopPos = Laptop.getPos();
+                BlockPos laptopPos = MineOS.getOpened().getPos();
                 assert laptopPos != null;
                 double distance = Math.sqrt(device.getPos().distToCenterSqr(laptopPos.getX() + 0.5, laptopPos.getY() + 0.5, laptopPos.getZ() + 0.5));
                 if (distance > 20) {
@@ -68,7 +66,7 @@ public class TrayItemWifi extends TrayItem {
             }
         });
         itemListRouters.sortBy((o1, o2) -> {
-            BlockPos laptopPos = Laptop.getPos();
+            BlockPos laptopPos = MineOS.getOpened().getPos();
             assert o1.getPos() != null;
             assert laptopPos != null;
             double distance1 = Math.sqrt(o1.getPos().distToCenterSqr(laptopPos.getX() + 0.5, laptopPos.getY() + 0.5, laptopPos.getZ() + 0.5));
@@ -82,11 +80,11 @@ public class TrayItemWifi extends TrayItem {
         buttonConnect.setClickListener((mouseX, mouseY, mouseButton) -> {
             if (mouseButton == 0) {
                 if (itemListRouters.getSelectedItem() != null) {
-                    TaskConnect connect = new TaskConnect(Laptop.getPos(), itemListRouters.getSelectedItem().getPos());
+                    TaskConnect connect = new TaskConnect(MineOS.getOpened().getPos(), itemListRouters.getSelectedItem().getPos());
                     connect.setCallback((tag, success) -> {
                         if (success) {
                             item.setIcon(Icons.WIFI_HIGH);
-                            Laptop.getSystem().closeContext();
+                            MineOS.getOpened().closeContext();
                         }
                     });
                     TaskManager.sendTask(connect);
@@ -102,11 +100,11 @@ public class TrayItemWifi extends TrayItem {
         List<Device> routers = new ArrayList<>();
 
         Level level = Minecraft.getInstance().level;
-        if (Laptop.isWorldLess()) {
+        if (MineOS.getOpened().isWorldLess()) {
             return new ArrayList<>();
         }
 
-        BlockPos laptopPos = Laptop.getPos();
+        BlockPos laptopPos = MineOS.getOpened().getPos();
         int range = DeviceConfig.SIGNAL_RANGE.get();
 
         for (int y = -range; y < range + 1; y++) {
@@ -128,10 +126,10 @@ public class TrayItemWifi extends TrayItem {
     @Override
     public void init() {
         this.setClickListener((mouseX, mouseY, mouseButton) -> {
-            if (Laptop.getSystem().hasContext()) {
-                Laptop.getSystem().closeContext();
+            if (MineOS.getOpened().hasContext()) {
+                MineOS.getOpened().closeContext();
             } else {
-                Laptop.getSystem().openContext(createWifiMenu(this), mouseX - 100, mouseY - 100);
+                MineOS.getOpened().openContext(createWifiMenu(this), mouseX - 100, mouseY - 100);
             }
         });
 
@@ -147,7 +145,7 @@ public class TrayItemWifi extends TrayItem {
     }
 
     private void runPingTask() {
-        TaskPing task = new TaskPing(Laptop.getPos());
+        TaskPing task = new TaskPing(MineOS.getOpened().getPos());
         task.setCallback((tag, success) -> {
             if (success) {
                 assert tag != null;

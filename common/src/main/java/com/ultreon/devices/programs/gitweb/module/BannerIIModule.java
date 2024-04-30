@@ -1,15 +1,12 @@
 package com.ultreon.devices.programs.gitweb.module;
 
 import com.mojang.blaze3d.platform.Lighting;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Layout;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.mineos.client.MineOS;
 import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.programs.gitweb.component.GitWebFrame;
-import com.ultreon.devices.programs.gitweb.component.container.ContainerBox;
-import com.ultreon.devices.programs.gitweb.component.container.LoomBox;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.model.geom.ModelLayers;
@@ -23,7 +20,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.BannerItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BannerBlockEntity;
 import net.minecraft.world.level.block.entity.BannerPattern;
 
@@ -76,16 +72,14 @@ public class BannerIIModule extends Module {
         }
 
         @Override
-        protected void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+        protected void render(GuiGraphics graphics, MineOS laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
             super.render(graphics, laptop, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
-            int i = x;//this.leftPos;
-            int j = y;//this.topPos;
             if (banner.isEmpty())return;
             Lighting.setupForFlatItems();
             MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
             graphics.pose().pushPose();
             //pose.translate((double)(i + 139), (double)(j + 52), 0.0D);
-            graphics.pose().translate(i+139,j+90,0.0D);
+            graphics.pose().translate(x +139, y +90,0.0D);
             graphics.pose().scale(48.0F, -48.0F, 48.0F);
         //    pose.scale(24.0F, -24.0F, 1.0F);
             graphics.pose().translate(0.5D, 0.5D, 0.5D);

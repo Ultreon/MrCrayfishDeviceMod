@@ -3,7 +3,7 @@ package com.ultreon.devices.programs.gitweb.module;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.component.Label;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.mineos.client.MineOS;
 import com.ultreon.devices.programs.gitweb.component.GitWebFrame;
 
 import java.util.Map;
@@ -25,9 +25,9 @@ public class HeaderModule extends Module {
     @Override
     public int calculateHeight(Map<String, String> data, int width) {
         if (data.containsKey("scale")) {
-            return (int) (Double.parseDouble(data.get("scale")) * Laptop.getFont().lineHeight + (data.containsKey("padding") ? Integer.parseInt(data.get("padding")) : 5) * 2);
+            return (int) (Double.parseDouble(data.get("scale")) * MineOS.getFont().lineHeight + (data.containsKey("padding") ? Integer.parseInt(data.get("padding")) : 5) * 2);
         }
-        return Laptop.getFont().lineHeight + (data.containsKey("padding") ? Integer.parseInt(data.get("padding")) : 5) * 2;
+        return MineOS.getFont().lineHeight + (data.containsKey("padding") ? Integer.parseInt(data.get("padding")) : 5) * 2;
     }
 
     @Override

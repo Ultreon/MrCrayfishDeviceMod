@@ -1,7 +1,7 @@
 package com.ultreon.devices.programs.email;
 
 import com.google.common.collect.HashBiMap;
-import com.ultreon.devices.Devices;
+import com.ultreon.devices.UltreonDevicesMod;
 import com.ultreon.devices.api.WorldSavedData;
 import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Notification;
@@ -71,6 +71,7 @@ public class EmailManager implements WorldSavedData {
         return uuidToName.get(player.getUUID());
     }
 
+    @Override
     public void load(CompoundTag nbt) {
         nameToInbox.clear();
 
@@ -100,6 +101,7 @@ public class EmailManager implements WorldSavedData {
         }
     }
 
+    @Override
     public void save(CompoundTag nbt) {
         ListTag inboxes = new ListTag();
         for (String key : nameToInbox.keySet()) {
@@ -135,7 +137,7 @@ public class EmailManager implements WorldSavedData {
     }
 
     private void sendNotification(String name, Email email) {
-        MinecraftServer server = Devices.getServer();
+        MinecraftServer server = UltreonDevicesMod.getServer();
         UUID id = uuidToName.inverse().get(name);
         if (id != null) {
             ServerPlayer player = server.getPlayerList().getPlayer(id);

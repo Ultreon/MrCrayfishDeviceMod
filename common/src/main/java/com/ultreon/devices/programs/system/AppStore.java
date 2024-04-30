@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
-import com.ultreon.devices.Devices;
+import com.ultreon.devices.UltreonDevicesMod;
 import com.ultreon.devices.Reference;
 import com.ultreon.devices.api.ApplicationManager;
 import com.ultreon.devices.api.app.Component;
@@ -12,10 +12,11 @@ import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.ScrollableLayout;
 import com.ultreon.devices.api.app.component.Button;
+import com.ultreon.devices.api.app.component.Image;
 import com.ultreon.devices.api.app.component.Label;
 import com.ultreon.devices.api.app.component.Spinner;
 import com.ultreon.devices.api.utils.OnlineRequest;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.mineos.client.MineOS;
 import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.object.TrayItem;
 import com.ultreon.devices.programs.system.component.AppGrid;
@@ -25,7 +26,6 @@ import com.ultreon.devices.programs.system.object.AppEntry;
 import com.ultreon.devices.programs.system.object.RemoteEntry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 
@@ -55,7 +55,7 @@ public class AppStore extends SystemApp {
         ScrollableLayout homePageLayout = new ScrollableLayout(0, 0, LAYOUT_WIDTH, 368-160+80*rows, LAYOUT_HEIGHT);
         homePageLayout.setScrollSpeed(10);
         homePageLayout.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
-            Color color = new Color(Laptop.getSystem().getSettings().getColorScheme().getBackgroundColor());
+            Color color = new Color(MineOS.getOpened().getSettings().getColorScheme().getBackgroundColor());
             int offset = 60;
             graphics.fill(x, y + offset, x + LAYOUT_WIDTH, y + offset + 1, color.brighter().getRGB());
             graphics.fill(x, y + offset + 1, x + LAYOUT_WIDTH, y + offset + 19, color.getRGB());
@@ -67,7 +67,7 @@ public class AppStore extends SystemApp {
             graphics.fill(x, y + offset + 19, x + LAYOUT_WIDTH, y + offset + 20, color.darker().getRGB());
         });
 
-        com.ultreon.devices.api.app.component.Image imageBanner = new com.ultreon.devices.api.app.component.Image(0, 0, LAYOUT_WIDTH, 60);
+        Image imageBanner = new Image(0, 0, LAYOUT_WIDTH, 60);
         imageBanner.setImage(new ResourceLocation(Reference.MOD_ID, "textures/gui/app_market_background.png"));
         imageBanner.setDrawFull(true);
         homePageLayout.addComponent(imageBanner);
@@ -85,7 +85,7 @@ public class AppStore extends SystemApp {
         btnManageApps.setToolTip("Manage Apps", "Manage your installed applications");
         homePageLayout.addComponent(btnManageApps);
 
-        com.ultreon.devices.api.app.component.Image image = new com.ultreon.devices.api.app.component.Image(5, 33, 20, 20, Icons.SHOP);
+        Image image = new Image(5, 33, 20, 20, Icons.SHOP);
         homePageLayout.addComponent(image);
 
         Label labelBanner = new Label("App Market", 32, 35);
@@ -176,7 +176,7 @@ public class AppStore extends SystemApp {
     }
 
     public void openApplication(AppEntry entry) {
-        Layout layout = new LayoutAppPage(getLaptop(), entry, this);
+        Layout layout = new LayoutAppPage(getOS(), entry, this);
         this.setCurrentLayout(layout);
         Button btnPrevious = new Button(2, 2, Icons.ARROW_LEFT);
         btnPrevious.setClickListener((mouseX1, mouseY1, mouseButton1) -> this.setCurrentLayout(layoutMain));
@@ -190,14 +190,14 @@ public class AppStore extends SystemApp {
 
     public static class StoreTrayItem extends TrayItem {
         public StoreTrayItem() {
-            super(Icons.SHOP, Devices.id("app_store"));
+            super(Icons.SHOP, UltreonDevicesMod.id("app_store"));
         }
 
         @Override
         public void handleClick(int mouseX, int mouseY, int mouseButton) {
-            AppInfo info = ApplicationManager.getApplication(Devices.id("app_store"));
+            AppInfo info = ApplicationManager.getApplication(UltreonDevicesMod.id("app_store"));
             if (info != null) {
-                Laptop.getSystem().openApplication(info);
+                MineOS.getOpened().openApplication(info);
             }
         }
     }

@@ -1,9 +1,10 @@
 package com.ultreon.devices.core.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.ultreon.devices.UltreonDevicesMod;
 import com.ultreon.devices.api.app.IIcon;
 import com.ultreon.devices.api.utils.RenderUtil;
+import com.ultreon.devices.api.bios.BiosNotification;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -26,6 +27,15 @@ public class ClientNotification implements Toast {
     private String subTitle;
 
     private ClientNotification() {
+    }
+
+    public static ClientNotification of(BiosNotification notification) {
+        ClientNotification clientNotification = new ClientNotification();
+        clientNotification.icon = notification.icon();
+        clientNotification.title = notification.title();
+        clientNotification.subTitle = notification.subTitle();
+
+        return clientNotification;
     }
 
     @NotNull
@@ -58,7 +68,7 @@ public class ClientNotification implements Toast {
         try {
             notification.icon = (IIcon) Class.forName(className).getEnumConstants()[ordinal];
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            UltreonDevicesMod.LOGGER.error("Failed to load icon", e);
         }
 
         notification.title = tag.getString("title");

@@ -1,11 +1,11 @@
 package com.ultreon.devices.fabric;
 
 import com.ultreon.devices.DeviceConfig;
-import com.ultreon.devices.Devices;
+import com.ultreon.devices.UltreonDevicesMod;
+import com.ultreon.devices.mineos.client.MineOS;
 import com.ultreon.devices.api.app.Application;
 import com.ultreon.devices.api.print.IPrint;
 import com.ultreon.devices.api.print.PrintingManager;
-import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.init.RegistrationHandler;
 import fuzs.forgeconfigapiport.fabric.api.neoforge.v4.NeoForgeConfigRegistry;
 import net.fabricmc.api.ModInitializer;
@@ -20,10 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class DevicesFabric extends Devices implements ModInitializer {
+public class UltreonDevicesModFabric extends UltreonDevicesMod implements ModInitializer {
     @Override
     public void onInitialize() {
-        NeoForgeConfigRegistry.INSTANCE.register(Devices.MOD_ID, ModConfig.Type.CLIENT, DeviceConfig.CONFIG);
+        NeoForgeConfigRegistry.INSTANCE.register(UltreonDevicesMod.MOD_ID, ModConfig.Type.CLIENT, DeviceConfig.CONFIG);
 
         this.init();
 
@@ -55,7 +55,7 @@ public class DevicesFabric extends Devices implements ModInitializer {
 
     @Override
     protected List<Application> getApplications() {
-        return Laptop.getApplicationsForFabric();
+        return MineOS.getApplicationsForFabric();
     }
 
     @Override

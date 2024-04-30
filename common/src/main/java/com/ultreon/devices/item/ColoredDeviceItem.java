@@ -14,6 +14,7 @@ public class ColoredDeviceItem extends DeviceItem implements Colored {
         this.color = color;
     }
 
+    @Override
     public DyeColor getColor() {
         return color;
     }

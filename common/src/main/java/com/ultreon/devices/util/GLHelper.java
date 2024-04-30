@@ -2,7 +2,10 @@ package com.ultreon.devices.util;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
@@ -15,9 +18,18 @@ import java.util.Stack;
  */
 public class GLHelper {
     public static Stack<Scissor> scissorStack = new Stack<>();
+    private static final Vector3f tmp = new Vector3f();
 
-    public static void pushScissor(int x, int y, int width, int height) {
-        if (scissorStack.size() > 0) {
+    public static boolean pushScissor(GuiGraphics graphics, int x, int y, int width, int height) {
+        if (width <= 0 || height <= 0) {
+            return false;
+        }
+
+        Vector3f translation = graphics.pose().last().pose().getTranslation(tmp);
+        x += (int) translation.x();
+        y += (int) translation.y();
+
+        if (!scissorStack.isEmpty()) {
             Scissor scissor = scissorStack.peek();
             x = Math.max(scissor.x, x);
             y = Math.max(scissor.y, y);
@@ -32,6 +44,7 @@ public class GLHelper {
         double scale = resolution.getScaleFactor();
         GlStateManager._scissorBox((int) (x * scale), (int) (mc.getWindow().getHeight() - y * scale - height * scale), (int) Math.max(0, width * scale), (int) Math.max(0, height * scale));
         scissorStack.push(new Scissor(x, y, width, height));
+        return true;
     }
 
     public static void popScissor() {

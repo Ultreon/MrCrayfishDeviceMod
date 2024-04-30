@@ -5,11 +5,10 @@ import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.component.Button;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.mineos.client.MineOS;
 import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.programs.snake.SnakeApp;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 
 import java.awt.*;
@@ -22,19 +21,15 @@ public class SnakeLayout extends Layout {
     public SnakeLayout(SnakeApp app) {
         super(150, 150);
         var button = new Button(1, 1, Icons.ARROW_LEFT);
-        button.setClickListener(((mouseX, mouseY, mouseButton) -> {
-            app.setCurrentLayout(app.titleScreen);
-        }));
+        button.setClickListener(((mouseX, mouseY, mouseButton) -> app.setCurrentLayout(app.titleScreen)));
 
-        this.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
-            graphics.fill(x,y,x+width,x+height, new Color(0x0, 0x0, 0x0).getRGB());
-        });
+        this.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> graphics.fill(x,y,x+width,x+height, new Color(0x0, 0x0, 0x0).getRGB()));
         this.addComponent(button);
         this.addComponent(new Grid(0, 0));
     }
 
     @Override
-    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(GuiGraphics graphics, MineOS laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         super.render(graphics, laptop, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
     }
 
@@ -100,7 +95,7 @@ public class SnakeLayout extends Layout {
         }
 
         @Override
-        protected void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+        protected void render(GuiGraphics graphics, MineOS laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
             super.render(graphics, laptop, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
             var black = new Color(0, 0, 0, 0.5f);
             var intBlack = black.getRGB();

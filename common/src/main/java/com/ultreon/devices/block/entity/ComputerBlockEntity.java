@@ -1,38 +1,37 @@
 package com.ultreon.devices.block.entity;
 
-import com.ultreon.devices.block.LaptopBlock;
+import com.google.common.collect.Lists;
+import com.ultreon.devices.OperatingSystems;
+import com.ultreon.devices.core.BiosImpl;
+import com.ultreon.devices.core.BootLoader;
 import com.ultreon.devices.core.io.FileSystem;
+import com.ultreon.devices.api.bios.Bios;
 import com.ultreon.devices.util.BlockEntityUtil;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.gameevent.GameEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class ComputerBlockEntity extends NetworkDeviceBlockEntity.Colored {
-    private static final int OPENED_ANGLE = 102;
-
-    private boolean open = false;
-
+    private final List<BootLoader<?>> bootLoaders = Lists.newArrayList(OperatingSystems.MINE_OS.get());
     private CompoundTag applicationData = new CompoundTag();
     private CompoundTag systemData = new CompoundTag();
     private FileSystem fileSystem;
 
-    @Environment(EnvType.CLIENT)
-    private int rotation;
-
-    @Environment(EnvType.CLIENT)
-    private int prevRotation;
-
     private DyeColor externalDriveColor;
+    private boolean poweredOn;
+    private CompoundTag originalData;
+    private BiosImpl bios;
 
     protected ComputerBlockEntity(BlockEntityType<? extends ComputerBlockEntity> type, BlockPos pWorldPosition, BlockState pBlockState) {
         super(type, pWorldPosition, pBlockState);
@@ -40,49 +39,19 @@ public abstract class ComputerBlockEntity extends NetworkDeviceBlockEntity.Color
 
     @Override
     public String getDeviceName() {
-        return "Laptop";
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-        Level level = this.level;
-        if (level == null) return;
-
-        if (getBlockState().getValue(LaptopBlock.OPEN) != open) {
-            level.setBlock(getBlockPos(), this.getBlockState().setValue(LaptopBlock.OPEN, open), 2);
-        }
-
-        if (level.isClientSide) {
-            prevRotation = rotation;
-            if (!open) {
-                if (rotation > 0) {
-                    rotation -= 10;
-                }
-            } else {
-                if (rotation < OPENED_ANGLE) {
-                    rotation += 10;
-                }
-            }
-        }
+        return "MineOS";
     }
 
     @Override
     public void load(@NotNull CompoundTag compound) {
         super.load(compound);
-        if (compound.contains("open")) {
-            this.open = compound.getBoolean("open");
-            Level level = getLevel();
-            if (level != null) {
-                level.setBlock(getBlockPos(), this.getBlockState().setValue(LaptopBlock.OPEN, open), 2);
-            }
+
+        if (compound.contains("original_data")) {
+            this.originalData = compound.getCompound("original_data");
+        } else {
+            this.originalData = compound.copy();
         }
-        if (compound.contains("system_data", Tag.TAG_COMPOUND)) {
-            this.systemData = compound.getCompound("system_data");
-        }
-        if (compound.contains("application_data", Tag.TAG_COMPOUND)) {
-            this.applicationData = compound.getCompound("application_data");
-        }
+
         if (compound.contains("file_system")) {
             this.fileSystem = new FileSystem(this, compound.getCompound("file_system"));
         }
@@ -97,7 +66,10 @@ public abstract class ComputerBlockEntity extends NetworkDeviceBlockEntity.Color
     @Override
     public void saveAdditional(@NotNull CompoundTag compound) {
         super.saveAdditional(compound);
-        compound.putBoolean("open", open);
+
+        if (originalData != null) {
+            compound.put("original_data", originalData);
+        }
 
         if (systemData != null) {
             compound.put("system_data", systemData);
@@ -115,7 +87,6 @@ public abstract class ComputerBlockEntity extends NetworkDeviceBlockEntity.Color
     @Override
     public CompoundTag saveSyncTag() {
         CompoundTag tag = super.saveSyncTag();
-        tag.putBoolean("open", open);
         tag.put("system_data", getSystemData());
 
         if (getFileSystem().getAttachedDrive() != null) {
@@ -136,34 +107,6 @@ public abstract class ComputerBlockEntity extends NetworkDeviceBlockEntity.Color
 //    public AxisAlignedBB getRenderBoundingBox() {
 //        return INFINITE_EXTENT_AABB;
 //    }
-
-    public void openClose(@Nullable Entity entity) {
-        Level level = this.level;
-        if (level != null) {
-            level.gameEvent(!open ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, getBlockPos(), GameEvent.Context.of(entity, this.getBlockState()));
-        }
-        boolean oldOpen = open;
-        open = !getBlockState().getValue(LaptopBlock.OPEN);
-        if (oldOpen != open) {
-            pipeline.putBoolean("open", open);
-            var d = getBlockState().setValue(LaptopBlock.OPEN, open);
-            this.level.setBlock(this.getBlockPos(), d, 18);
-            sync();
-        }
-
-        if (level != null) {
-            markUpdated();
-            doNeighborUpdates(level, this.getBlockPos(), this.getBlockState());
-        }
-    }
-
-    private static void doNeighborUpdates(Level level, BlockPos pos, BlockState state) {
-        state.updateNeighbourShapes(level, pos, 3);
-    }
-
-    public boolean isOpen() {
-        return open;
-    }
 
     public CompoundTag getApplicationData() {
         return applicationData != null ? applicationData : new CompoundTag();
@@ -198,11 +141,6 @@ public abstract class ComputerBlockEntity extends NetworkDeviceBlockEntity.Color
     }
 
     @Environment(EnvType.CLIENT)
-    public float getScreenAngle(float partialTicks) {
-        return -OPENED_ANGLE * ((prevRotation + (rotation - prevRotation) * partialTicks) / OPENED_ANGLE);
-    }
-
-    @Environment(EnvType.CLIENT)
     public boolean isExternalDriveAttached() {
         return externalDriveColor != null;
     }
@@ -210,5 +148,31 @@ public abstract class ComputerBlockEntity extends NetworkDeviceBlockEntity.Color
     @Environment(EnvType.CLIENT)
     public DyeColor getExternalDriveColor() {
         return externalDriveColor;
+    }
+
+    public boolean isPoweredOn() {
+        return this.poweredOn;
+    }
+
+    public void powerOn() {
+        this.poweredOn = true;
+        setChanged();
+        assert level != null;
+        BlockEntityUtil.markBlockForUpdate(level, worldPosition);
+
+        bios = new BiosImpl(this, this.bootLoaders);
+        try {
+            bios.powerOn();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private List<BootLoader<?>> getBootLoaders() {
+        return bootLoaders;
+    }
+
+    public BiosImpl getBios() {
+        return bios;
     }
 }

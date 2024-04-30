@@ -1,7 +1,6 @@
 package com.ultreon.devices.object;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Icons;
@@ -10,7 +9,7 @@ import com.ultreon.devices.api.app.component.Button;
 import com.ultreon.devices.api.app.component.Label;
 import com.ultreon.devices.api.app.listener.ClickListener;
 import com.ultreon.devices.api.utils.RenderUtil;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.mineos.client.MineOS;
 import com.ultreon.devices.object.tiles.Tile;
 import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.client.Minecraft;
@@ -80,7 +79,7 @@ public class TileGrid extends Component
 	}
 
 	@Override
-	public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks)
+	public void render(GuiGraphics graphics, MineOS laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks)
 	{
 		try {
 			Tesselator.getInstance().getBuilder().end();

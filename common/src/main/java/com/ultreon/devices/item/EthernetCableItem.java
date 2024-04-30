@@ -1,7 +1,7 @@
 package com.ultreon.devices.item;
 
 import com.ultreon.devices.DeviceConfig;
-import com.ultreon.devices.Devices;
+import com.ultreon.devices.UltreonDevicesMod;
 import com.ultreon.devices.block.entity.NetworkDeviceBlockEntity;
 import com.ultreon.devices.block.entity.RouterBlockEntity;
 import com.ultreon.devices.core.network.Router;
@@ -9,10 +9,8 @@ import com.ultreon.devices.util.KeyboardHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -26,6 +24,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -34,7 +33,7 @@ import java.util.List;
  */
 public class EthernetCableItem extends Item {
     public EthernetCableItem() {
-        super(new Properties().arch$tab(Devices.TAB_DEVICE).stacksTo(1));
+        super(new Properties().arch$tab(UltreonDevicesMod.TAB_DEVICE).stacksTo(1));
     }
 
     private static double getDistance(BlockPos source, BlockPos target) {
@@ -128,32 +127,32 @@ public class EthernetCableItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level level, @NotNull List<Component> tooltip, @NotNull TooltipFlag isAdvanced) {
+    public void appendHoverText(ItemStack stack, @Nullable Level level, @NotNull List<Component> tooltip, @NotNull TooltipFlag isAdvanced) {
         if (stack.hasTag()) {
             CompoundTag tag = stack.getTag();
             if (tag != null) {
-                tooltip.add(net.minecraft.network.chat.Component.literal(ChatFormatting.RED.toString() + ChatFormatting.BOLD + "ID: " + ChatFormatting.RESET + tag.getUUID("id")));
-                tooltip.add(net.minecraft.network.chat.Component.literal(ChatFormatting.RED.toString() + ChatFormatting.BOLD + "Device: " + ChatFormatting.RESET + tag.getString("name")));
+                tooltip.add(Component.literal(ChatFormatting.RED.toString() + ChatFormatting.BOLD + "ID: " + ChatFormatting.RESET + tag.getUUID("id")));
+                tooltip.add(Component.literal(ChatFormatting.RED.toString() + ChatFormatting.BOLD + "Device: " + ChatFormatting.RESET + tag.getString("name")));
 
                 BlockPos devicePos = BlockPos.of(tag.getLong("pos"));
                 String text = ChatFormatting.RED.toString() + ChatFormatting.BOLD + "X: " + ChatFormatting.RESET + devicePos.getX() + " " +
                         ChatFormatting.RED + ChatFormatting.BOLD + "Y: " + ChatFormatting.RESET + devicePos.getY() + " " +
                         ChatFormatting.RED + ChatFormatting.BOLD + "Z: " + ChatFormatting.RESET + devicePos.getZ();
-                tooltip.add(net.minecraft.network.chat.Component.literal(text));
+                tooltip.add(Component.literal(text));
             }
         } else {
             if (!KeyboardHelper.isShiftDown()) {
-                tooltip.add(net.minecraft.network.chat.Component.literal(ChatFormatting.GRAY + "Use this cable to connect"));
-                tooltip.add(net.minecraft.network.chat.Component.literal(ChatFormatting.GRAY + "a device to a router."));
-                tooltip.add(net.minecraft.network.chat.Component.literal(ChatFormatting.YELLOW + "Hold SHIFT for How-To"));
+                tooltip.add(Component.literal(ChatFormatting.GRAY + "Use this cable to connect"));
+                tooltip.add(Component.literal(ChatFormatting.GRAY + "a device to a router."));
+                tooltip.add(Component.literal(ChatFormatting.YELLOW + "Hold SHIFT for How-To"));
                 return;
             }
 
-            tooltip.add(net.minecraft.network.chat.Component.literal(ChatFormatting.GRAY + "Start by right clicking a"));
-            tooltip.add(net.minecraft.network.chat.Component.literal(ChatFormatting.GRAY + "device with this cable"));
-            tooltip.add(net.minecraft.network.chat.Component.literal(ChatFormatting.GRAY + "then right click the "));
-            tooltip.add(net.minecraft.network.chat.Component.literal(ChatFormatting.GRAY + "router you want to"));
-            tooltip.add(net.minecraft.network.chat.Component.literal(ChatFormatting.GRAY + "connect this device to."));
+            tooltip.add(Component.literal(ChatFormatting.GRAY + "Start by right clicking a"));
+            tooltip.add(Component.literal(ChatFormatting.GRAY + "device with this cable"));
+            tooltip.add(Component.literal(ChatFormatting.GRAY + "then right click the "));
+            tooltip.add(Component.literal(ChatFormatting.GRAY + "router you want to"));
+            tooltip.add(Component.literal(ChatFormatting.GRAY + "connect this device to."));
         }
         super.appendHoverText(stack, level, tooltip, isAdvanced);
     }

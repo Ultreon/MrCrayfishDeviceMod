@@ -1,7 +1,6 @@
 package com.ultreon.devices.programs.email;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.Resources;
 import com.ultreon.devices.api.ApplicationManager;
 import com.ultreon.devices.api.app.Component;
@@ -17,14 +16,13 @@ import com.ultreon.devices.api.app.renderer.ListItemRenderer;
 import com.ultreon.devices.api.io.File;
 import com.ultreon.devices.api.task.TaskManager;
 import com.ultreon.devices.api.utils.RenderUtil;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.mineos.client.MineOS;
 import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.programs.email.object.Contact;
 import com.ultreon.devices.programs.email.object.Email;
 import com.ultreon.devices.programs.email.task.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -144,7 +142,7 @@ public class EmailApp extends Application {
         layoutMainMenu.addComponent(image);
 
         logo = new Image.AppImage(86, 20, 28, 28, info);
-        //logo = new Image(86, 20, 28, 28, info.getIconU(), info.getIconV(), 14, 14, 224, 224, Laptop.ICON_TEXTURES);
+        //logo = new Image(86, 20, 28, 28, info.getIconU(), info.getIconV(), 14, 14, 224, 224, MineOS.ICON_TEXTURES);
         layoutMainMenu.addComponent(logo);
 
         labelLogo = new Label("Ender Mail", 100, 46);
@@ -214,7 +212,7 @@ public class EmailApp extends Application {
             RenderSystem.setShaderTexture(0, ENDER_MAIL_BACKGROUND);
             RenderUtil.drawRectWithTexture(ENDER_MAIL_BACKGROUND, graphics, x, y, 0, 0, width, height, 640, 360, 640, 360);
 
-            Color temp = new Color(Laptop.getSystem().getSettings().getColorScheme().getBackgroundColor());
+            Color temp = new Color(MineOS.getOpened().getSettings().getColorScheme().getBackgroundColor());
             Color color = new Color(temp.getRed(), temp.getGreen(), temp.getBlue(), 150);
             graphics.fill(x, y, x + 125, y + height, color.getRGB());
             graphics.fill(x + 125, y, x + 126, y + height, color.darker().getRGB());
@@ -226,7 +224,7 @@ public class EmailApp extends Application {
                 graphics.fill(x + 130, y + 35, x + width - 5, y + height - 5, new Color(1f, 1f, 1f, 0.25f).getRGB());
                 RenderUtil.drawStringClipped(graphics, e.getSubject(), x + 135, y + 10, 120, Color.WHITE.getRGB(), true);
                 RenderUtil.drawStringClipped(graphics, e.getAuthor() + "@endermail.official", x + 135, y + 22, 120, Color.LIGHT_GRAY.getRGB(), false);
-                graphics.drawWordWrap(Laptop.getFont(), FormattedText.of(e.getMessage()), x + 135, y + 40, 115, Color.WHITE.getRGB());
+                graphics.drawWordWrap(MineOS.getFont(), FormattedText.of(e.getMessage()), x + 135, y + 40, 115, Color.WHITE.getRGB());
             }
         });
 

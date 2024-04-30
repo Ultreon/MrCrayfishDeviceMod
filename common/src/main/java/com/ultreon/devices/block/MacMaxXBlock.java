@@ -153,6 +153,7 @@ public class MacMaxXBlock extends ComputerBlock {
         return !(level.getBlockState(pos).isAir() || level.getBlockState(pos).canBeReplaced(new FakeBlockPlaceContext(level, hand, itemInHand, new BlockHitResult(Vec3.atCenterOf(pos), face, pos, false))));
     }
 
+    @Override
     public void setPlacedBy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, LivingEntity placer, @NotNull ItemStack stack) {
         if (state.isAir()) return;
         BlockState partState = DeviceBlocks.MAC_MAX_X_PART.get().defaultBlockState();

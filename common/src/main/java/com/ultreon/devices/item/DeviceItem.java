@@ -32,6 +32,7 @@ public class DeviceItem extends BlockItem implements IDeviceType {
         return tag;
     }
 
+    @Override
     public ModDeviceTypes getDeviceType() {
         return deviceType;
     }

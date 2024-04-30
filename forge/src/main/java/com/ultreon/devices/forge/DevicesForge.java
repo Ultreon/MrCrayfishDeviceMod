@@ -2,13 +2,13 @@ package com.ultreon.devices.forge;
 
 import com.mojang.logging.LogUtils;
 import com.ultreon.devices.DeviceConfig;
-import com.ultreon.devices.Devices;
+import com.ultreon.devices.UltreonDevicesMod;
 import com.ultreon.devices.LaunchException;
 import com.ultreon.devices.Reference;
 import com.ultreon.devices.api.app.Application;
 import com.ultreon.devices.api.print.IPrint;
 import com.ultreon.devices.api.print.PrintingManager;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.mineos.client.MineOS;
 import com.ultreon.devices.event.WorldDataHandler;
 import com.ultreon.devices.init.RegistrationHandler;
 import dev.architectury.platform.forge.EventBuses;
@@ -18,11 +18,8 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.MavenVersionStringHelper;
 import net.minecraftforge.data.loading.DatagenModLoader;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -31,7 +28,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
-import net.minecraftforge.forgespi.language.IModInfo;
 import org.slf4j.Logger;
 
 import java.util.List;
@@ -41,7 +37,7 @@ import java.util.Map;
 @Mod(Reference.MOD_ID)
 public final class DevicesForge {
     public static final Logger LOGGER = LogUtils.getLogger();
-    private final Devices instance = new Devices() {
+    private final UltreonDevicesMod instance = new UltreonDevicesMod() {
         @Override
         protected void registerApplicationEvent() {
             DevicesForge.this.modEventBus.post(new ForgeApplicationRegistration());
@@ -54,7 +50,7 @@ public final class DevicesForge {
 
         @Override
         protected List<Application> getApplications() {
-            return ObfuscationReflectionHelper.getPrivateValue(Laptop.class, null, "APPLICATIONS");
+            return ObfuscationReflectionHelper.getPrivateValue(MineOS.class, null, "APPLICATIONS");
         }
 
         @Override
@@ -76,11 +72,11 @@ public final class DevicesForge {
     public DevicesForge() throws LaunchException {
         super();
 
-        EventBuses.registerModEventBus(Devices.MOD_ID, FMLJavaModLoadingContext.get().getModEventBus());
+        EventBuses.registerModEventBus(UltreonDevicesMod.MOD_ID, FMLJavaModLoadingContext.get().getModEventBus());
         this.modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         this.modEventBus.register(BuiltinAppsRegistration.class);
 
-        Devices.preInit();
+        UltreonDevicesMod.preInit();
 
         ModLoadingContext context = ModLoadingContext.get();
         IEventBus forgeEventBus = MinecraftForge.EVENT_BUS;

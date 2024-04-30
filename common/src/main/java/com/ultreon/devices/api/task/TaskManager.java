@@ -1,11 +1,10 @@
 package com.ultreon.devices.api.task;
 
-import com.ultreon.devices.Devices;
+import com.ultreon.devices.UltreonDevicesMod;
 import com.ultreon.devices.network.PacketHandler;
 import com.ultreon.devices.network.task.RequestPacket;
 import net.minecraft.client.Minecraft;
 
-import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -30,7 +29,7 @@ public final class TaskManager {
     public static void registerTask(Supplier<Task> clazz) {
         var task = clazz.get();
         try {
-            Devices.LOGGER.info("Registering task '" + task.getName() + "'");
+            UltreonDevicesMod.LOGGER.info("Registering task '" + task.getName() + "'");
             get().registeredRequests.put(task.getName(), task);
         } catch (Exception e) {
             e.printStackTrace();

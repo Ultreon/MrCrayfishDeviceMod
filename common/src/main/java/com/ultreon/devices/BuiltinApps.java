@@ -24,7 +24,7 @@ public class BuiltinApps {
         ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "ender_mail"), () -> EmailApp::new, false);
         ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "app_store"), () -> AppStore::new, true);
 
-        if (Platform.isDevelopmentEnvironment() || Devices.EARLY_CONFIG.enableBetaApps) {
+        if (Platform.isDevelopmentEnvironment() || UltreonDevicesMod.EARLY_CONFIG.enableBetaApps) {
             ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "bank"), () -> BankApp::new, false);
             ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "boat_racers"), () -> BoatRacersApp::new, false);
             ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "mine_bay"), () -> MineBayApp::new, false);

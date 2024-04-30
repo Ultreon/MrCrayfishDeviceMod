@@ -1,10 +1,8 @@
 package com.ultreon.devices.programs.system;
 
-import com.ultreon.devices.core.Laptop;
-import net.minecraft.network.chat.Component;
+import com.ultreon.devices.mineos.client.MineOS;
 
 import java.util.Collection;
-import java.util.Collections;
 
 public enum PredefinedResolution implements DisplayResolution {
     PREDEFINED_31360x17280(31360, 17280),
@@ -41,7 +39,7 @@ public enum PredefinedResolution implements DisplayResolution {
     }
 
     public static PredefinedResolution[] getResolutionList() {
-        Collection<PredefinedResolution> resolutionList = Laptop.getInstance().getVideoInfo().getResolutionList();
+        Collection<PredefinedResolution> resolutionList = MineOS.getOpened().getVideoInfo().getResolutionList();
 
         if (resolutionList == null) {
             return new PredefinedResolution[0];

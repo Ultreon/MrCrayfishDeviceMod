@@ -1,6 +1,7 @@
 package com.ultreon.devices.api.app;
 
-public interface SystemAccessor {
+import com.ultreon.devices.mineos.MineOSSystem;
 
-    public void sendSystem(System system);
+public interface SystemAccessor {
+    void sendSystem(MineOSSystem system);
 }

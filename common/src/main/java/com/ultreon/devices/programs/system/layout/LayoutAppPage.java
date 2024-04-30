@@ -1,14 +1,13 @@
 package com.ultreon.devices.programs.system.layout;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.ScrollableLayout;
 import com.ultreon.devices.api.app.component.Button;
 import com.ultreon.devices.api.app.component.Image;
 import com.ultreon.devices.api.app.component.Label;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.mineos.client.MineOS;
 import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.programs.gitweb.component.GitWebFrame;
@@ -21,7 +20,6 @@ import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -32,7 +30,7 @@ import java.awt.*;
  * @author MrCrayfish
  */
 public class LayoutAppPage extends Layout {
-    private final Laptop laptop;
+    private final MineOS laptop;
     private final AppEntry entry;
     private final AppStore store;
 
@@ -43,7 +41,7 @@ public class LayoutAppPage extends Layout {
 
     private boolean installed;
 
-    public LayoutAppPage(Laptop laptop, AppEntry entry, AppStore store) {
+    public LayoutAppPage(MineOS laptop, AppEntry entry, AppStore store) {
         super(250, 150);
         this.laptop = laptop;
         this.entry = entry;
@@ -53,12 +51,12 @@ public class LayoutAppPage extends Layout {
     @Override
     public void init() {
         if (entry instanceof LocalEntry) {
-            installed = Laptop.getSystem().getInstalledApplications().contains(((LocalEntry) entry).info());
+            installed = MineOS.getOpened().getInstalledApplications().contains(((LocalEntry) entry).info());
         }
 
         this.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) ->
         {
-            Color color = new Color(Laptop.getSystem().getSettings().getColorScheme().getBackgroundColor());
+            Color color = new Color(MineOS.getOpened().getSettings().getColorScheme().getBackgroundColor());
             graphics.fill(x, y + 40, x + width, y + 41, color.brighter().getRGB());
             graphics.fill(x, y + 41, x + width, y + 60, color.getRGB());
             graphics.fill(x, y + 60, x + width, y + 61, color.darker().getRGB());
@@ -81,14 +79,14 @@ public class LayoutAppPage extends Layout {
             LocalEntry localEntry = (LocalEntry) entry;
             AppInfo info = localEntry.info();
             imageIcon = new Image.AppImage(5, 26, 28, 28, info);
-          //  imageIcon = new com.ultreon.devices.api.app.component.Image(5, 26, 28, 28, info.getIconU(), info.getIconV(), 14, 14, 224, 224, Laptop.ICON_TEXTURES);
+          //  imageIcon = new com.ultreon.devices.api.app.component.Image(5, 26, 28, 28, info.getIconU(), info.getIconV(), 14, 14, 224, 224, MineOS.ICON_TEXTURES);
         } else if (entry instanceof RemoteEntry) {
             imageIcon = new com.ultreon.devices.api.app.component.Image(5, 26, 28, 28, AppStore.CERTIFICATES_BASE_URL + "/assets/" + resource.getNamespace() + "/" + resource.getPath() + "/icon.png");
         }
         this.addComponent(imageIcon);
 
         if (store.certifiedApps.contains(entry)) {
-            int width = Laptop.getFont().width(entry.name()) * 2;
+            int width = MineOS.getFont().width(entry.name()) * 2;
             com.ultreon.devices.api.app.component.Image certifiedIcon = new com.ultreon.devices.api.app.component.Image(38 + width + 3, 29, 20, 20, Icons.VERIFIED);
             this.addComponent(certifiedIcon);
         }
@@ -167,12 +165,12 @@ public class LayoutAppPage extends Layout {
     }
 
     @Override
-    public void renderOverlay(GuiGraphics graphics, Laptop laptop, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
+    public void renderOverlay(GuiGraphics graphics, MineOS laptop, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
         super.renderOverlay(graphics, laptop, mc, mouseX, mouseY, windowActive);
         if (store.certifiedApps.contains(entry)) {
-            int width = Laptop.getFont().width(entry.name()) * 2;
+            int width = MineOS.getFont().width(entry.name()) * 2;
             if (GuiHelper.isMouseWithin(mouseX, mouseY, xPosition + 38 + width + 3, yPosition + 29, 20, 20)) {
-                laptop.renderComponentTooltip(graphics, Lists.newArrayList(Component.literal("Certified App").withStyle(ChatFormatting.GREEN)), mouseX, mouseY);
+                graphics.renderComponentTooltip(MineOS.getFont(), Lists.newArrayList(Component.literal("Certified App").withStyle(ChatFormatting.GREEN)), mouseX, mouseY);
             }
         }
     }

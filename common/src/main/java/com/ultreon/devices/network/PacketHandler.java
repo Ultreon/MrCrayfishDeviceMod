@@ -1,6 +1,6 @@
 package com.ultreon.devices.network;
 
-import com.ultreon.devices.Devices;
+import com.ultreon.devices.UltreonDevicesMod;
 import com.ultreon.devices.core.laptop.common.C2SUpdatePacket;
 import com.ultreon.devices.core.laptop.common.S2CUpdatePacket;
 import com.ultreon.devices.network.task.*;
@@ -16,7 +16,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
 public class PacketHandler {
-    public static final NetworkChannel INSTANCE = NetworkChannel.create(Devices.id("main_channel"));
+    public static final NetworkChannel INSTANCE = NetworkChannel.create(UltreonDevicesMod.id("main_channel"));
     private static int id = 0;
 
     public static void init() {

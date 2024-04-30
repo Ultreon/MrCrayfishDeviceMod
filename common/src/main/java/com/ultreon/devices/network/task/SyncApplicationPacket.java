@@ -1,7 +1,7 @@
 package com.ultreon.devices.network.task;
 
 import com.google.common.collect.ImmutableList;
-import com.ultreon.devices.Devices;
+import com.ultreon.devices.UltreonDevicesMod;
 import com.ultreon.devices.api.ApplicationManager;
 import com.ultreon.devices.network.Packet;
 import com.ultreon.devices.object.AppInfo;
@@ -27,7 +27,7 @@ public class SyncApplicationPacket extends Packet<SyncApplicationPacket> {
             if (info != null) {
                 builder.add(info);
             } else {
-                Devices.LOGGER.error("Missing application '" + appId + "'");
+                UltreonDevicesMod.LOGGER.error("Missing application '" + appId + "'");
             }
         }
 
@@ -48,7 +48,7 @@ public class SyncApplicationPacket extends Packet<SyncApplicationPacket> {
 
     @Override
     public boolean onMessage(Supplier<NetworkManager.PacketContext> ctx) {
-        Devices.setAllowedApps(allowedApps);
+        UltreonDevicesMod.setAllowedApps(allowedApps);
         return true;
     }
 }

@@ -44,7 +44,7 @@ public class AppLinkModule extends Module {
                 gitWeb.getSystem().ifPresent(a -> {
                     DebugLog.log("OPENING APP");
                     var b = a.openApplication(ApplicationManager.getApplication(ResourceLocation.tryParse("devices:app_store")));
-                    if (b != null && b instanceof AppStore store) {
+                    if (b instanceof AppStore store) {
                         store.queueOpen(info);
                     }
                 });

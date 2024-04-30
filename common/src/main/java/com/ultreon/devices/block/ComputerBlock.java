@@ -51,24 +51,21 @@ public abstract class ComputerBlock extends DeviceBlock {
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof LaptopBlockEntity laptop) {
             if (player.isCrouching()) {
-                if (!level.isClientSide) {
-                    laptop.openClose(player);
-                }
+                if (!level.isClientSide) laptop.openClose(player);
                 return InteractionResult.SUCCESS;
             } else {
                 InteractionResult result = doAttachment(state, level, pos, player, hand, hit, laptop);
                 if (result != null) return result;
 
-                if (laptop.isOpen()) {
-                    if (level.isClientSide) {
-                        EnvExecutor.runInEnv(Env.CLIENT, () -> () -> ClientLaptopWrapper.execute(laptop));
-                    }
-                    return InteractionResult.sidedSuccess(level.isClientSide);
-                }
+                if (!laptop.isOpen()) return InteractionResult.PASS;
+                if (!level.isClientSide) return InteractionResult.sidedSuccess(false);
+                if (!laptop.isPoweredOn()) laptop.powerOn();
+                EnvExecutor.runInEnv(Env.CLIENT, () -> () -> ClientLaptopWrapper.execute(player, laptop));
+                return InteractionResult.sidedSuccess(true);
             }
         } else if (blockEntity instanceof ComputerBlockEntity computer) {
             if (level.isClientSide) {
-                EnvExecutor.runInEnv(Env.CLIENT, () -> () -> ClientLaptopWrapper.execute(computer));
+                EnvExecutor.runInEnv(Env.CLIENT, () -> () -> ClientLaptopWrapper.execute(player, computer));
             }
 
             return InteractionResult.sidedSuccess(level.isClientSide);
@@ -76,7 +73,6 @@ public abstract class ComputerBlock extends DeviceBlock {
             throw new IllegalStateException("Unexpected block entity: " + blockEntity);
         }
 
-        return InteractionResult.PASS;
     }
 
     private static @Nullable InteractionResult doAttachment(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit, LaptopBlockEntity laptop) {

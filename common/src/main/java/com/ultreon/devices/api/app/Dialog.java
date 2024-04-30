@@ -1,9 +1,11 @@
 package com.ultreon.devices.api.app;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.app.component.Button;
+import com.ultreon.devices.api.app.component.Image;
 import com.ultreon.devices.api.app.component.ItemList;
+import com.ultreon.devices.api.app.component.Label;
 import com.ultreon.devices.api.app.component.Text;
+import com.ultreon.devices.api.app.component.TextField;
 import com.ultreon.devices.api.app.listener.ClickListener;
 import com.ultreon.devices.api.app.renderer.ListItemRenderer;
 import com.ultreon.devices.api.io.File;
@@ -12,7 +14,8 @@ import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.api.task.TaskManager;
 import com.ultreon.devices.api.utils.RenderUtil;
 import com.ultreon.devices.block.entity.PrinterBlockEntity;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.init.DeviceBlockEntities;
+import com.ultreon.devices.mineos.client.MineOS;
 import com.ultreon.devices.core.Wrappable;
 import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.core.network.NetworkDevice;
@@ -23,12 +26,12 @@ import com.ultreon.devices.programs.system.object.ColorScheme;
 import com.ultreon.devices.util.GLHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.awt.*;
@@ -78,8 +81,8 @@ public abstract class Dialog extends Wrappable {
     }
 
     @Override
-    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
-        GLHelper.pushScissor(x, y, width, height);
+    public void render(GuiGraphics graphics, MineOS laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
+        GLHelper.pushScissor(graphics, x, y, width, height);
         customLayout.render(graphics, laptop, mc, x, y, mouseX, mouseY, active, partialTicks);
         GLHelper.popScissor();
 
@@ -341,7 +344,7 @@ public abstract class Dialog extends Wrappable {
 
         private ResponseHandler<String> responseListener;
 
-        private com.ultreon.devices.api.app.component.TextField textFieldInput;
+        private TextField textFieldInput;
         private com.ultreon.devices.api.app.component.Button buttonPositive;
         private com.ultreon.devices.api.app.component.Button buttonNegative;
 
@@ -373,7 +376,7 @@ public abstract class Dialog extends Wrappable {
                 this.addComponent(message);
             }
 
-            textFieldInput = new com.ultreon.devices.api.app.component.TextField(5, 5 + offset, getWidth() - 10);
+            textFieldInput = new TextField(5, 5 + offset, getWidth() - 10);
             textFieldInput.setText(inputText);
             textFieldInput.setFocused(true);
             this.addComponent(textFieldInput);
@@ -418,7 +421,7 @@ public abstract class Dialog extends Wrappable {
          * @return the input text field
          */
         @Nullable
-        public com.ultreon.devices.api.app.component.TextField getTextFieldInput() {
+        public TextField getTextFieldInput() {
             return textFieldInput;
         }
 
@@ -590,7 +593,7 @@ public abstract class Dialog extends Wrappable {
         private String negativeText = "Cancel";
         private Layout main;
         private FileBrowser browser;
-        private com.ultreon.devices.api.app.component.TextField textFieldFileName;
+        private TextField textFieldFileName;
         private com.ultreon.devices.api.app.component.Button buttonPositive;
         private com.ultreon.devices.api.app.component.Button buttonNegative;
         private Predicate<File> filter;
@@ -668,7 +671,7 @@ public abstract class Dialog extends Wrappable {
             buttonNegative.setClickListener((mouseX, mouseY, mouseButton) -> close());
             main.addComponent(buttonNegative);
 
-            textFieldFileName = new com.ultreon.devices.api.app.component.TextField(26, 105, 180);
+            textFieldFileName = new TextField(26, 105, 180);
             textFieldFileName.setFocused(true);
             if (name != null) textFieldFileName.setText(name);
             main.addComponent(textFieldFileName);
@@ -747,7 +750,7 @@ public abstract class Dialog extends Wrappable {
         private final IPrint print;
 
         private Layout layoutMain;
-        private com.ultreon.devices.api.app.component.Label labelMessage;
+        private Label labelMessage;
         private com.ultreon.devices.api.app.component.Button buttonRefresh;
         private ItemList<NetworkDevice> itemListPrinters;
         private com.ultreon.devices.api.app.component.Button buttonPrint;
@@ -765,7 +768,7 @@ public abstract class Dialog extends Wrappable {
 
             layoutMain = new Layout(150, 132);
 
-            labelMessage = new com.ultreon.devices.api.app.component.Label("Select a Printer", 5, 5);
+            labelMessage = new Label("Select a Printer", 5, 5);
             layoutMain.addComponent(labelMessage);
 
             buttonRefresh = new com.ultreon.devices.api.app.component.Button(131, 2, Icons.RELOAD);
@@ -783,10 +786,10 @@ public abstract class Dialog extends Wrappable {
             itemListPrinters.setListItemRenderer(new ListItemRenderer<>(16) {
                 @Override
                 public void render(GuiGraphics graphics, NetworkDevice networkDevice, Minecraft mc, int x, int y, int width, int height, boolean selected) {
-                    ColorScheme colorScheme = Laptop.getSystem().getSettings().getColorScheme();
+                    ColorScheme colorScheme = MineOS.getOpened().getSettings().getColorScheme();
                     graphics.fill(x, y, x + width, y + height, selected ? colorScheme.getItemHighlightColor() : colorScheme.getItemBackgroundColor());
                     Icons.PRINTER.draw(graphics, mc, x + 3, y + 3);
-                    RenderUtil.drawStringClipped(graphics, networkDevice.getName(), x + 18, y + 4, 118, Laptop.getSystem().getSettings().getColorScheme().getTextColor(), true);
+                    RenderUtil.drawStringClipped(graphics, networkDevice.getName(), x + 18, y + 4, 118, MineOS.getOpened().getSettings().getColorScheme().getTextColor(), true);
                 }
             });
             itemListPrinters.setItemClickListener((blockPos, index, mouseButton) -> {
@@ -796,7 +799,7 @@ public abstract class Dialog extends Wrappable {
                 }
             });
             itemListPrinters.sortBy((o1, o2) -> {
-                BlockPos laptopPos = Laptop.getPos();
+                BlockPos laptopPos = MineOS.getOpened().getPos();
                 assert laptopPos != null;
 
                 BlockPos pos1 = o1.getPos();
@@ -818,7 +821,7 @@ public abstract class Dialog extends Wrappable {
                 if (mouseButton == 0) {
                     NetworkDevice networkDevice = itemListPrinters.getSelectedItem();
                     if (networkDevice != null) {
-                        TaskPrint task = new TaskPrint(Laptop.getPos(), networkDevice, print);
+                        TaskPrint task = new TaskPrint(MineOS.getOpened().getPos(), networkDevice, print);
                         task.setCallback((tag, success) -> {
                             if (success) {
                                 close();
@@ -861,7 +864,7 @@ public abstract class Dialog extends Wrappable {
         private void getPrinters(ItemList<NetworkDevice> itemList) {
             itemList.removeAll();
             itemList.setLoading(true);
-            Task task = new TaskGetDevices(Laptop.getPos(), PrinterBlockEntity.class);
+            Task task = new TaskGetDevices(MineOS.getOpened().getPos(), DeviceBlockEntities.PRINTER.get());
             task.setCallback((tag, success) -> {
                 if (success) {
                     assert tag != null;
@@ -883,10 +886,10 @@ public abstract class Dialog extends Wrappable {
             private final NetworkDevice entry;
 
             private Layout layoutMain;
-            private com.ultreon.devices.api.app.component.Label labelName;
-            private com.ultreon.devices.api.app.component.Image imagePaper;
-            private com.ultreon.devices.api.app.component.Label labelPaper;
-            private com.ultreon.devices.api.app.component.Label labelPosition;
+            private Label labelName;
+            private Image imagePaper;
+            private Label labelPaper;
+            private Label labelPosition;
             private com.ultreon.devices.api.app.component.Button buttonClose;
 
             private Info(NetworkDevice entry) {
@@ -900,17 +903,17 @@ public abstract class Dialog extends Wrappable {
 
                 layoutMain = new Layout(120, 70);
 
-                labelName = new com.ultreon.devices.api.app.component.Label(ChatFormatting.GOLD.toString() + ChatFormatting.BOLD + entry.getName(), 5, 5);
+                labelName = new Label(ChatFormatting.GOLD.toString() + ChatFormatting.BOLD + entry.getName(), 5, 5);
                 layoutMain.addComponent(labelName);
 
-                labelPaper = new com.ultreon.devices.api.app.component.Label(ChatFormatting.DARK_GRAY + "Paper: " + ChatFormatting.RESET + 0, 5, 18); //TODO fix paper count
+                labelPaper = new Label(ChatFormatting.DARK_GRAY + "Paper: " + ChatFormatting.RESET + 0, 5, 18); //TODO fix paper count
                 labelPaper.setAlignment(Component.ALIGN_LEFT);
                 labelPaper.setShadow(false);
                 layoutMain.addComponent(labelPaper);
 
                 assert entry.getPos() != null;
                 String position = ChatFormatting.DARK_GRAY + "X: " + ChatFormatting.RESET + entry.getPos().getX() + " " + ChatFormatting.DARK_GRAY + "Y: " + ChatFormatting.RESET + entry.getPos().getY() + " " + ChatFormatting.DARK_GRAY + "Z: " + ChatFormatting.RESET + entry.getPos().getZ();
-                labelPosition = new com.ultreon.devices.api.app.component.Label(position, 5, 30);
+                labelPosition = new Label(position, 5, 30);
                 labelPosition.setShadow(false);
                 layoutMain.addComponent(labelPosition);
 

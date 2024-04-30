@@ -26,6 +26,7 @@ public abstract class NetworkDeviceBlockEntity extends DeviceBlockEntity impleme
         super(pType, pWorldPosition, pBlockState);
     }
 
+    @Override
     public void tick() {
         assert level != null;
         if (level.isClientSide)

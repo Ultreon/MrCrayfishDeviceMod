@@ -1,11 +1,10 @@
 package com.ultreon.devices.block.entity.renderer;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import com.ultreon.devices.Devices;
+import com.ultreon.devices.UltreonDevicesMod;
 import com.ultreon.devices.Reference;
 import com.ultreon.devices.block.PrinterBlock;
 import com.ultreon.devices.block.entity.PrinterBlockEntity;
@@ -23,9 +22,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
@@ -136,7 +133,7 @@ public record PrinterRenderer(
               //  pose.translate(0, 3, 0);
                 pose.pushPose();
                 pose.mulPose(Axis.of(new Vector3f(22.5f, 180, 0)).rotationDegrees(0));
-              //  pose.pushPose();
+              //  pose.pose().pushPose();
              //   pose.scale(0.1f, -0.1f, 0.1f);
                 pose.scale(0.010416667f, -0.010416667f, 0.010416667f);
                 Minecraft.getInstance().font.drawInBatch(Integer.toString(blockEntity.getPaperCount()), Minecraft.getInstance().font.width("00")-Minecraft.getInstance().font.width(Integer.toString(blockEntity.getPaperCount())), 0, Color.WHITE.getRGB(), false, pose.last().pose(), bufferSource, Font.DisplayMode.NORMAL, 0x00000000, packedLight);
@@ -148,7 +145,7 @@ public record PrinterRenderer(
         }
         pose.popPose();
 
-//        pose.pushPose();
+//        pose.pose().pushPose();
 //        {
 //            pose.translate(0, -0.5, 0);
 //            Minecraft.getInstance().getBlockRenderer().renderSingleBlock(state, pose, bufferSource, packedLight, packedOverlay, EmptyModelData.INSTANCE);
@@ -159,7 +156,7 @@ public record PrinterRenderer(
 
     public static class PaperModel extends Model {
         public static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/model/paper.png");
-        public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(Devices.id("paper_model"), "main");
+        public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(UltreonDevicesMod.id("paper_model"), "main");
         private final ModelPart root;
 //        private final ModelPart main;
 

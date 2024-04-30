@@ -1,8 +1,7 @@
 package com.ultreon.devices.datagen;
 
-import com.ultreon.devices.Devices;
+import com.ultreon.devices.UltreonDevicesMod;
 import com.ultreon.devices.init.DeviceBlocks;
-import com.ultreon.devices.init.DeviceItems;
 import com.ultreon.devices.init.ModTags;
 import dev.architectury.registry.registries.Registrar;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -11,7 +10,6 @@ import net.minecraft.Util;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.registries.VanillaRegistries;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
 import java.util.Objects;
@@ -24,7 +22,7 @@ public class DevicesBlockTagProvider extends FabricTagProvider<Block> {
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
-        Registrar<Block> blocks = Devices.REGISTRIES.get().get(Registries.BLOCK);
+        Registrar<Block> blocks = UltreonDevicesMod.REGISTRIES.get().get(Registries.BLOCK);
         TagAppender<Block> laptops = this.tag(ModTags.Blocks.LAPTOPS);
         TagAppender<Block> printers = this.tag(ModTags.Blocks.PRINTERS);
         TagAppender<Block> routers = this.tag(ModTags.Blocks.ROUTERS);

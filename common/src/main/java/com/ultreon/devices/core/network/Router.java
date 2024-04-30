@@ -153,9 +153,7 @@ public class Router {
         tag.putUUID("id", getId());
 
         ListTag deviceList = new ListTag();
-        NETWORK_DEVICES.forEach((id, device) -> {
-            deviceList.add(device.toTag(includePos));
-        });
+        NETWORK_DEVICES.forEach((id, device) -> deviceList.add(device.toTag(includePos)));
         tag.put("network_devices", deviceList);
 
         return tag;

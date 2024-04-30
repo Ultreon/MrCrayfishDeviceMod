@@ -1,8 +1,7 @@
 package com.ultreon.devices.programs.gitweb.component.container;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.mineos.client.MineOS;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.ItemStack;
@@ -44,7 +43,7 @@ public class BrewingBox extends ContainerBox {
     }
 
     @Override
-    protected void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    protected void render(GuiGraphics graphics, MineOS laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         super.render(graphics, laptop, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
 
         RenderSystem.setShaderTexture(0, CONTAINER_BOXES_TEXTURE);

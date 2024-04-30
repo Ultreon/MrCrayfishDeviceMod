@@ -1,7 +1,8 @@
 package com.ultreon.devices.core;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.app.Dialog;
+import com.ultreon.devices.mineos.client.MineOS;
+import com.ultreon.devices.mineos.client.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
@@ -40,7 +41,7 @@ public abstract class Wrappable {
      * @param active       if the window active
      * @param partialTicks time passed since tick
      */
-    public abstract void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks);
+    public abstract void render(GuiGraphics graphics, MineOS laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks);
 
     /**
      * Called when a key is typed from your keyboard. Note if you override, make

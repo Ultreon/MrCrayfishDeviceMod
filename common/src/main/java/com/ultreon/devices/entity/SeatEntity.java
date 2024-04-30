@@ -69,6 +69,7 @@ public class SeatEntity extends Entity
     }
 
 
+    @Override
     public LivingEntity getControllingPassenger()
     {
         List<Entity> list = this.getPassengers();

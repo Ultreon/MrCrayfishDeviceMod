@@ -1,22 +1,18 @@
 package com.ultreon.devices;
 
-import com.ultreon.devices.init.DeviceBlocks;
 import com.ultreon.devices.init.DeviceItems;
 import dev.architectury.registry.CreativeTabRegistry;
 import dev.architectury.registry.registries.DeferredSupplier;
 import dev.architectury.registry.registries.RegistrySupplier;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 
-import static com.ultreon.devices.Devices.id;
+import static com.ultreon.devices.UltreonDevicesMod.id;
 
 public class DeviceTab {
     @SuppressWarnings("UnstableApiUsage")
     public static DeferredSupplier<CreativeModeTab> create() {
-        Devices.LOGGER.info("Creating Creative Tab...");
+        UltreonDevicesMod.LOGGER.info("Creating Creative Tab...");
         DeferredSupplier<CreativeModeTab> devicesTabDevice = CreativeTabRegistry.defer(id("devices_tab_device")); //TODO () -> new ItemStack(DeviceBlocks.LAPTOPS.of(DyeColor.RED).get()
         CreativeTabRegistry.modify(devicesTabDevice, (flags, output, canUseGameMasterBlocks) -> {
             for (RegistrySupplier<Item> laptop : DeviceItems.LAPTOPS) {

@@ -1,5 +1,6 @@
 package com.ultreon.devices.api.utils;
 
+import com.ultreon.devices.UltreonDevicesMod;
 import com.ultreon.devices.util.StreamUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -48,25 +49,26 @@ public class OnlineRequest {
     }
 
     public static void checkURLForSuspicions(URL url) throws IOException {
-        if (!isSafe(url.getHost()) || !url.getProtocol().equals("https")) {
+        if (isUnsafe(url.getHost()) || !url.getProtocol().equals("https")) {
             throw new IOException("Unsafe URL");
         }
     }
 
-    public static boolean isSafeAddress(String address) {
+    public static boolean isUnsafeAddress(String address) {
         try {
             URL url = new URL(address);
-            return isSafe(url.getHost());
+            return isUnsafe(url.getHost());
         } catch (Exception e) {
-            return false;
+            return true;
         }
     }
 
     // ignore that
-    private static boolean isSafe(String host) {
+    private static boolean isUnsafe(String host) {
         return switch (host) {
-            case "ultreon.gitlab.io", "cdn.discordapp.com", "jab125.com", "jab125.dev", "raw.githubusercontent.com", "github.com", "i.imgur.com", "i.giphy.com", "avatars1.githubusercontent.com" -> true;
-            default -> false;
+            case "ultreon.gitlab.io", "cdn.discordapp.com", "jab125.com", "jab125.dev", "raw.githubusercontent.com",
+                 "github.com", "i.imgur.com", "i.giphy.com", "avatars1.githubusercontent.com" -> false;
+            default -> true;
         };
     }
 
@@ -125,7 +127,7 @@ public class OnlineRequest {
                         URL url = new URL(wrapper.url);
                         checkURLForSuspicions(url);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        UltreonDevicesMod.LOGGER.error("Error parsing URL: {}", wrapper.url);
                         wrapper.handler.handle(false, "DOMAIN NOT BLACKLISTED/ERROR PARSING DOMAIN");
                         continue;
                     }
@@ -136,7 +138,7 @@ public class OnlineRequest {
                             wrapper.handler.handle(true, raw);
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        UltreonDevicesMod.LOGGER.error("Error making request: {}", wrapper.url, e);
                         wrapper.handler.handle(false, "");
                     }
                 }

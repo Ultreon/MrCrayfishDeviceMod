@@ -130,10 +130,12 @@ public abstract class DeviceBlockEntity extends SyncBlockEntity implements Ticka
             return tag;
         }
 
+        @Override
         public DyeColor getColor() {
             return color;
         }
 
+        @Override
         public void setColor(DyeColor color) {
             this.color = color;
         }

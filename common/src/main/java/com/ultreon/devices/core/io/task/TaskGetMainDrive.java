@@ -1,10 +1,11 @@
 package com.ultreon.devices.core.io.task;
 
+import com.ultreon.devices.api.bios.Bios;
 import com.ultreon.devices.api.io.Drive;
 import com.ultreon.devices.api.io.Folder;
 import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.block.entity.ComputerBlockEntity;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.mineos.client.MineOS;
 import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.core.io.drive.AbstractDrive;
 import net.minecraft.client.Minecraft;
@@ -61,14 +62,15 @@ public class TaskGetMainDrive extends Task {
     @Override
     public void processResponse(CompoundTag tag) {
         if (this.isSucessful()) {
-            if (Minecraft.getInstance().screen instanceof Laptop) {
+            if (Minecraft.getInstance().screen instanceof MineOS) {
                 CompoundTag structureTag = tag.getCompound("structure");
                 Drive drive = new Drive(tag.getCompound("main_drive"));
                 drive.syncRoot(Folder.fromTag(FileSystem.LAPTOP_DRIVE_NAME, structureTag));
                 drive.getRoot().validate();
 
-                if (Laptop.getMainDrive() == null) {
-                    Laptop.setMainDrive(drive);
+                Bios bios = MineOS.getOpened().getBios();
+                if (bios.getMainDrive() == null) {
+                    bios.setMainDrive(drive);
                 }
             }
         }

@@ -2,19 +2,17 @@ package com.ultreon.devices.api.app.component;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.interfaces.IHighlight;
 import com.ultreon.devices.api.app.listener.KeyListener;
 import com.ultreon.devices.api.utils.RenderUtil;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.mineos.client.MineOS;
 import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.util.GLHelper;
 import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.util.Mth;
@@ -83,7 +81,7 @@ public class TextArea extends Component {
      */
     public TextArea(int left, int top, int width, int height) {
         super(left, top);
-        this.font = Laptop.getFont();
+        this.font = MineOS.getFont();
         this.width = width;
         this.height = height;
         this.visibleLines = (int) Math.floor((float) ((height - padding * 2 + 1) / font.lineHeight));
@@ -96,7 +94,7 @@ public class TextArea extends Component {
     }
 
     @Override
-    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(GuiGraphics graphics, MineOS laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         if (this.visible) {
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 
@@ -109,7 +107,7 @@ public class TextArea extends Component {
                 RenderUtil.drawStringClipped(graphics, placeholder, x + padding, y + padding, width - padding * 2, placeholderColor, false);
             }
 
-            GLHelper.pushScissor(x + padding, y + padding, width - padding * 2, height - padding * 2);
+            GLHelper.pushScissor(graphics, x + padding, y + padding, width - padding * 2, height - padding * 2);
             for (int i = 0; i < visibleLines && i + verticalScroll < lines.size(); i++) {
                 float scrollPercentage = (verticalScroll + verticalOffset) / (float) (lines.size() - visibleLines);
                 float pixelsPerUnit = (float) maxLineWidth / (float) (width - padding * 2);
@@ -134,7 +132,7 @@ public class TextArea extends Component {
             }
             GLHelper.popScissor();
 
-            GLHelper.pushScissor(x + padding, y + padding - 1, width - padding * 2 + 1, height - padding * 2 + 1);
+            GLHelper.pushScissor(graphics, x + padding, y + padding - 1, width - padding * 2 + 1, height - padding * 2 + 1);
             if (editable && isFocused) {
                 float linesPerUnit = (float) lines.size() / (float) visibleLines;
                 int scroll = Mth.clamp(verticalScroll + verticalOffset * (int) linesPerUnit, 0, Math.max(0, lines.size() - visibleLines));
@@ -637,7 +635,7 @@ public class TextArea extends Component {
                 for (int j = 0; j < split.size() - 1; j++) {
                     updatedLines.add(split.get(j));
                 }
-                if (split.size() > 0) {
+                if (!split.isEmpty()) {
                     updatedLines.add(split.get(split.size() - 1) + "\n");
                 }
             }
@@ -646,7 +644,7 @@ public class TextArea extends Component {
             for (int i = 0; i < split.size() - 1; i++) {
                 updatedLines.add(split.get(i));
             }
-            if (split.size() > 0) {
+            if (!split.isEmpty()) {
                 updatedLines.add(split.get(split.size() - 1));
             }
 

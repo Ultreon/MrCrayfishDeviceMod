@@ -3,14 +3,13 @@ package com.ultreon.devices.api.app.component;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.platform.TextureUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.ultreon.devices.Devices;
+import com.ultreon.devices.UltreonDevicesMod;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.IIcon;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.utils.OnlineRequest;
 import com.ultreon.devices.api.utils.RenderUtil;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.mineos.client.MineOS;
 import com.ultreon.devices.object.AppInfo;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -62,13 +61,13 @@ public class Image extends Component {
         public void init(Layout layout) {
             super.init(layout);
             if (appInfo.getIcon().getBase().getU() == -1 && appInfo.getIcon().getBase().getV() == -1) {
-                var image = new Image(0, 0, componentWidth, componentHeight, 0, 0, 14, 14, 224, 224, Laptop.ICON_TEXTURES);
+                var image = new Image(0, 0, componentWidth, componentHeight, 0, 0, 14, 14, 224, 224, MineOS.ICON_TEXTURES);
                 this.addComponent(image);
                 return;
             }
             for (AppInfo.Icon.Glyph glyph : glyphs) {
                 if (glyph.getU() == -1 || glyph.getV() == -1) continue;
-                var image = new Image(0, 0, componentWidth, componentHeight, glyph.getU(), glyph.getV(), 14, 14, 224, 224, Laptop.ICON_TEXTURES);
+                var image = new Image(0, 0, componentWidth, componentHeight, glyph.getU(), glyph.getV(), 14, 14, 224, 224, MineOS.ICON_TEXTURES);
                 Supplier<ColorSupplier> suscs = () -> {
                     int tint = appInfo.getTint(glyph.getType());
                     var col = new Color(tint);
@@ -249,7 +248,7 @@ public class Image extends Component {
     }
 
     @Override
-    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(GuiGraphics graphics, MineOS laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         if (this.visible) {
             if (loader != null && loader.setup) {
                 image = loader.load(this);
@@ -313,9 +312,9 @@ public class Image extends Component {
         this.drawFull = true;
     }
 
-    public void setImage(Laptop.Wallpaper wallpaper) {
+    public void setImage(MineOS.Wallpaper wallpaper) {
         if (wallpaper.isBuiltIn()) {
-            setImage(Laptop.getWallpapers().get(wallpaper.getLocation()));
+            setImage(MineOS.getWallpapers().get(wallpaper.getLocation()));
         } else {
             setImage(wallpaper.getUrl());
         }
@@ -467,8 +466,8 @@ public class Image extends Component {
 
                     NativeImage nativeImage = NativeImage.read(in);
 
-                    Laptop.runLater(() -> {
-                        Devices.LOGGER.debug("Loaded image: " + url);
+                    MineOS.runLater(() -> {
+                        UltreonDevicesMod.LOGGER.debug("Loaded image: " + url);
                         texture = new DynamicTexture(nativeImage);
                         setup = true;
                     });
@@ -517,7 +516,7 @@ public class Image extends Component {
         @Override
         public void load(@NotNull ResourceManager resourceManager) throws IOException {
             NativeImage nativeImage = NativeImage.read(in);
-            Minecraft.getInstance().getTextureManager().register(Devices.id("dynamic_loaded/" + getId()), this);
+            Minecraft.getInstance().getTextureManager().register(UltreonDevicesMod.id("dynamic_loaded/" + getId()), this);
             this.upload(nativeImage);
         }
 

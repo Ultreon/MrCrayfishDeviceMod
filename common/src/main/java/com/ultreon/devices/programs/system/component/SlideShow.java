@@ -1,18 +1,18 @@
 package com.ultreon.devices.programs.system.component;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.component.Image;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.mineos.client.MineOS;
 import com.ultreon.devices.programs.system.object.ImageEntry;
 import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
+
+import java.awt.Color;
 
 
 /**
@@ -20,8 +20,8 @@ import net.minecraft.resources.ResourceLocation;
  */
 @SuppressWarnings("unused")
 public class SlideShow extends Component {
-    private static final java.awt.Color OVERLAY = new java.awt.Color(0f, 0f, 0f, 0.15f);
-    private static final java.awt.Color OVERLAY_HOVER = new java.awt.Color(0.35f, 0.35f, 0.35f, 0.15f);
+    private static final Color OVERLAY = new Color(0f, 0f, 0f, 0.15f);
+    private static final Color OVERLAY_HOVER = new Color(0.35f, 0.35f, 0.35f, 0.15f);
 
     private final int width;
     private final int height;
@@ -60,7 +60,7 @@ public class SlideShow extends Component {
     }
 
     @Override
-    protected void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    protected void render(GuiGraphics graphics, MineOS laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         if (!this.visible) return;
         image.render(graphics, laptop, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
 

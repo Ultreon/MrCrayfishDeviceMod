@@ -17,8 +17,8 @@ import com.ultreon.devices.api.task.Callback;
 import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.api.task.TaskManager;
 import com.ultreon.devices.api.utils.RenderUtil;
-import com.ultreon.devices.core.Laptop;
-import com.ultreon.devices.core.Window;
+import com.ultreon.devices.mineos.client.MineOS;
+import com.ultreon.devices.mineos.client.Window;
 import com.ultreon.devices.core.Wrappable;
 import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.core.io.task.TaskGetFiles;
@@ -52,15 +52,12 @@ import java.util.stream.Collectors;
 public class FileBrowser extends Component {
     private static final ResourceLocation ASSETS = new ResourceLocation("devices:textures/gui/file_browser.png");
 
-    private static final Color HEADER_BACKGROUND = Color.decode("0x535861");
-    private static final Color ITEM_BACKGROUND = Color.decode("0x9E9E9E");
-    private static final Color ITEM_SELECTED = Color.decode("0x757575");
     private static final Color PROTECTED_FILE = new Color(155, 237, 242);
 
     private static final ListItemRenderer<File> ITEM_RENDERER = new ListItemRenderer<>(18) {
         @Override
         public void render(GuiGraphics graphics, File file, Minecraft mc, int x, int y, int width, int height, boolean selected) {
-            Color bgColor = new Color(Laptop.getSystem().getSettings().getColorScheme().getBackgroundColor());
+            Color bgColor = new Color(MineOS.getOpened().getSettings().getColorScheme().getBackgroundColor());
             graphics.fill(x, y, x + width, y + height, selected ? bgColor.brighter().brighter().getRGB() : bgColor.brighter().getRGB());
 
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
@@ -72,7 +69,7 @@ public class FileBrowser extends Component {
                 AppInfo info = ApplicationManager.getApplication(ResourceLocation.tryParse(file.getOpeningApp()));
                 RenderUtil.drawApplicationIcon(graphics, info, x + 3, y + 2);
             }
-            graphics.drawString(Minecraft.getInstance().font, file.getName(), x + 22, y + 5, file.isProtected() ? PROTECTED_FILE.getRGB() : Laptop.getSystem().getSettings().getColorScheme().getTextColor());
+            graphics.drawString(Minecraft.getInstance().font, file.getName(), x + 22, y + 5, file.isProtected() ? PROTECTED_FILE.getRGB() : MineOS.getOpened().getSettings().getColorScheme().getTextColor());
         }
     };
 
@@ -137,7 +134,7 @@ public class FileBrowser extends Component {
     public void init(Layout layout) {
         layoutMain = new Layout(mode.getWidth(), mode.getHeight());
         layoutMain.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
-            Color color = new Color(Laptop.getSystem().getSettings().getColorScheme().getHeaderColor());
+            Color color = new Color(MineOS.getOpened().getSettings().getColorScheme().getHeaderColor());
             graphics.fill(x, y, x + width, y + 20, color.getRGB());
             graphics.fill(x, y + 20, x + width, y + 21, color.darker().getRGB());
         });
@@ -248,13 +245,13 @@ public class FileBrowser extends Component {
                             }
                         });
                     } else if (mode == Mode.FULL && wrappable instanceof SystemApp systemApp) {
-                        Laptop laptop = systemApp.getLaptop();
+                        MineOS laptop = systemApp.getOS();
                         if (laptop != null) {
                             //TODO change to check if application is installed
                             Application targetApp = laptop.getApplication(file.getOpeningApp());
                             if (targetApp != null) {
                                 if (laptop.isApplicationInstalled(targetApp.getInfo())) {
-                                    if (!laptop.openApplication(targetApp.getInfo(), file).right()) {
+                                    if (!laptop.openApplication(targetApp.getInfo(), file).getSecond()) {
                                         laptop.sendApplicationToFront(systemApp.getInfo());
                                         createErrorDialog(targetApp.getInfo().getName() + " was unable to open the file.");
                                     }
@@ -314,22 +311,22 @@ public class FileBrowser extends Component {
     public void handleLoad() {
         if (!loadedStructure) {
             setLoading(true);
-            Task task = new TaskSetupFileBrowser(Laptop.getPos(), Laptop.getMainDrive() == null);
+            Task task = new TaskSetupFileBrowser(MineOS.getOpened().getPos(), MineOS.getOpened().getMainDrive() == null);
             task.setCallback((tag, success) -> {
                 if (success) {
-                    if (Laptop.getMainDrive() == null) {
+                    if (MineOS.getOpened().getMainDrive() == null) {
                         assert tag != null;
                         CompoundTag structureTag = tag.getCompound("structure");
                         Drive drive = new Drive(tag.getCompound("main_drive"));
                         drive.syncRoot(Folder.fromTag(FileSystem.LAPTOP_DRIVE_NAME, structureTag));
                         drive.getRoot().validate();
-                        Laptop.setMainDrive(drive);
+                        MineOS.getOpened().setMainDrive(drive);
                     }
 
                     assert tag != null;
                     ListTag driveList = tag.getList("available_drives", Tag.TAG_COMPOUND);
                     Drive[] drives = new Drive[driveList.size() + 1];
-                    drives[0] = currentDrive = Laptop.getMainDrive();
+                    drives[0] = currentDrive = MineOS.getOpened().getMainDrive();
                     for (int i = 0; i < driveList.size(); i++) {
                         CompoundTag driveTag = driveList.getCompound(i);
                         drives[i + 1] = new Drive(driveTag);
@@ -386,7 +383,7 @@ public class FileBrowser extends Component {
             });
         } else {
             setLoading(true);
-            TaskGetStructure task = new TaskGetStructure(drive, Laptop.getPos());
+            TaskGetStructure task = new TaskGetStructure(drive, MineOS.getOpened().getPos());
             task.setCallback((tag, success) -> {
                 setLoading(false);
                 if (success) {
@@ -409,7 +406,7 @@ public class FileBrowser extends Component {
     private void openFolder(Folder folder, boolean push, Callback<Folder> callback) {
         DebugLog.log("Opening Folder");
         if (!folder.isSynced()) {
-            BlockPos pos = Laptop.getPos();
+            BlockPos pos = MineOS.getOpened().getPos();
             DebugLog.log("Open Folder: " + pos);
             if (pos == null) {
                 if (callback != null) {
@@ -471,7 +468,7 @@ public class FileBrowser extends Component {
         }
         Collections.reverse(predecessors);
         predecessors.forEach(predecessor::push);
-        if (predecessor.size() > 0) {
+        if (!predecessor.isEmpty()) {
             btnPreviousFolder.setEnabled(true);
         }
     }
@@ -490,7 +487,7 @@ public class FileBrowser extends Component {
     }
 
     private void goToPreviousFolder() {
-        if (predecessor.size() > 0) {
+        if (!predecessor.isEmpty()) {
             setLoading(true);
             Folder folder = predecessor.pop();
             openFolder(folder, false, (folder2, success) -> {
@@ -725,7 +722,7 @@ public class FileBrowser extends Component {
     }
 
     private boolean isRootFolder() {
-        return predecessor.size() == 0;
+        return predecessor.isEmpty();
     }
 
     private void updatePath() {

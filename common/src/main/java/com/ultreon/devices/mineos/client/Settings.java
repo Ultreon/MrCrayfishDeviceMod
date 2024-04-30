@@ -1,12 +1,10 @@
-package com.ultreon.devices.core;
+package com.ultreon.devices.mineos.client;
 
 import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.programs.system.object.ColorScheme;
 import com.ultreon.devices.programs.system.object.Preset;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
-import org.intellij.lang.annotations.Identifier;
 
 /**
  * @author MrCrayfish
@@ -53,7 +51,7 @@ public class Settings {
 
     private CompoundTag appTintInfo() {
         var ct = new CompoundTag();
-        for (AppInfo installedApplication : Laptop.getSystem().getInstalledApplications()) {
+        for (AppInfo installedApplication : MineOS.getOpened().getInstalledApplications()) {
             ct.put(installedApplication.getId().toString(), installedApplication.getTintProvider().toTag());
         }
         return ct;

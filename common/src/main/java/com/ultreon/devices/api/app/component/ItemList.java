@@ -1,15 +1,13 @@
 package com.ultreon.devices.api.app.component;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.listener.ItemClickListener;
 import com.ultreon.devices.api.app.renderer.ListItemRenderer;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.mineos.client.MineOS;
 import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.NonNullList;
 
@@ -99,7 +97,7 @@ public class ItemList<E> extends Component implements Iterable<E> {
     }
 
     @Override
-    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(GuiGraphics graphics, MineOS laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         if (this.visible) {
             int height = 13;
             if (renderer != null) {
@@ -143,7 +141,7 @@ public class ItemList<E> extends Component implements Iterable<E> {
                     drawHorizontalLine(graphics, xPosition + 1, xPosition + width - 1, yPosition + (i * height) + i + height + 1, borderColor.getRGB());
                 } else {
                     graphics.fill(xPosition + 1, yPosition + (i * 14) + 1, xPosition + width - 1, yPosition + 13 + (i * 14) + 1, (i + offset) != selected ? bgColor.brighter().getRGB() : bgColor.brighter().brighter().getRGB());
-                    graphics.drawString(Laptop.getFont(), item.toString(), xPosition + 3, yPosition + 3 + (i * 14), textColor);
+                    graphics.drawString(MineOS.getFont(), item.toString(), xPosition + 3, yPosition + 3 + (i * 14), textColor);
                 }
             }
 

@@ -3,7 +3,7 @@ package com.ultreon.devices.core.io.task;
 import com.ultreon.devices.api.io.Drive;
 import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.block.entity.ComputerBlockEntity;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.mineos.client.MineOS;
 import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.core.io.action.FileAction;
 import net.minecraft.core.BlockPos;
@@ -31,7 +31,7 @@ public class TaskSendAction extends Task {
         this();
         this.uuid = drive.getUUID().toString();
         this.action = action;
-        this.pos = Laptop.getPos();
+        this.pos = MineOS.getOpened().getPos();
     }
 
     @Override

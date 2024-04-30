@@ -22,6 +22,10 @@ Object getModDescription() {
 }
 
 subprojects {
+    if (project.name == "api") {
+        return
+    }
+
     apply plugin: "dev.architectury.loom"
 
     loom {
@@ -86,8 +90,11 @@ subprojects {
 
 allprojects {
     apply plugin: "java"
-    apply plugin: "architectury-plugin"
     apply plugin: "maven-publish"
+
+    if (project.name != "api") {
+        apply plugin: "architectury-plugin"
+    }
 
     archivesBaseName = rootProject.archives_base_name
     version = rootProject.version
@@ -105,6 +112,8 @@ allprojects {
         maven { url "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" }
         maven { url "https://cursemaven.com" }
         maven { url "https://maven.terraformersmc.com/releases" }
+        maven { url "https://github.com/Ultreon/ultreon-data/raw/main/.mvnrepo" }
+        maven { url "https://github.com/Ultreon/corelibs/raw/main/.mvnrepo" }
         flatDir { dir "$rootProject.projectDir/libs/" }
     }
 

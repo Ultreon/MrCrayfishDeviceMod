@@ -1,7 +1,7 @@
 package com.ultreon.devices.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.ultreon.devices.core.Window;
+import com.ultreon.devices.mineos.client.Window;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
@@ -30,6 +30,7 @@ public class GuiButtonClose extends Button {
         }
     }
 
+    @Override
     public boolean isHovered() {
         return isHovered;
     }

@@ -1,6 +1,6 @@
 package com.ultreon.devices.item;
 
-import com.ultreon.devices.Devices;
+import com.ultreon.devices.UltreonDevicesMod;
 import com.ultreon.devices.IDeviceType;
 import com.ultreon.devices.ModDeviceTypes;
 import com.ultreon.devices.Reference;
@@ -27,7 +27,7 @@ public class FlashDriveItem extends Item implements Colored, SubItems, IDeviceTy
     private final DyeColor color;
 
     public FlashDriveItem(DyeColor color) {
-        super(new Properties().arch$tab(Devices.TAB_DEVICE).rarity(Rarity.UNCOMMON).stacksTo(1));
+        super(new Properties().arch$tab(UltreonDevicesMod.TAB_DEVICE).rarity(Rarity.UNCOMMON).stacksTo(1));
         this.color = color;
     }
 

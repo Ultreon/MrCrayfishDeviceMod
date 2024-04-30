@@ -52,7 +52,7 @@ public class DeviceConfig {
         RENDER_PRINTED_3D = builder.comment("Should the pixels on printed pictures be render in 3D? Warning, this will decrease the performance of the game. You shouldn't enable it if you have a slow computer.")
                 .define(CATEGORY_PIXEL_PAINTER + ".renderPrintedIn3d", false);
 
-        DEBUG_BUTTON = builder.comment("Display a button to access a worldless laptop")
+        DEBUG_BUTTON = builder.comment("GuiGraphics a button to access a worldless laptop")
                 .define(CATEGORY_DEBUG + ".debugButton", Platform.isDevelopmentEnvironment());
 
         CONFIG = builder.build();

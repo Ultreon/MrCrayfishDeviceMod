@@ -1,6 +1,6 @@
 package com.ultreon.devices.network.task;
 
-import com.ultreon.devices.Devices;
+import com.ultreon.devices.UltreonDevicesMod;
 import com.ultreon.devices.api.app.Notification;
 import com.ultreon.devices.network.Packet;
 import dev.architectury.networking.NetworkManager;
@@ -30,7 +30,7 @@ public class NotificationPacket extends Packet<NotificationPacket> {
 
     @Override
     public boolean onMessage(Supplier<NetworkManager.PacketContext> ctx) {
-        Devices.showNotification(notificationTag);
+        UltreonDevicesMod.showNotification(notificationTag);
         return true;
     }
 }

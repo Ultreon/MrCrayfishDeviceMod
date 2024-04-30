@@ -1,29 +1,26 @@
 package com.ultreon.devices.programs.themes;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.ultreon.devices.UltreonDevicesMod;
 import com.ultreon.devices.api.app.*;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Dialog;
-import com.ultreon.devices.api.app.System;
 import com.ultreon.devices.api.app.component.Button;
 import com.ultreon.devices.api.app.component.TextField;
 import com.ultreon.devices.api.utils.RenderUtil;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.mineos.MineOSSystem;
+import com.ultreon.devices.mineos.client.MineOS;
 import com.ultreon.devices.object.AppInfo;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
-import org.apache.commons.codec.binary.Hex;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.math.BigInteger;
 import java.util.Arrays;
-import java.util.HexFormat;
 
 public class ThemesApp extends Application implements SystemAccessor {
-    private System system;
+    private MineOSSystem system;
     private int[] lastMousePositionsX = null;
     private int[] lastMousePositionsY = null;
 
@@ -45,12 +42,12 @@ public class ThemesApp extends Application implements SystemAccessor {
     }
 
     @Override
-    public void sendSystem(System system) {
+    public void sendSystem(MineOSSystem system) {
         this.system = system;
     }
 
     @Override
-    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
+    public void render(GuiGraphics graphics, MineOS laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
         super.render(graphics, laptop, mc, x, y, mouseX, mouseY, active, partialTicks);
     }
 
@@ -109,9 +106,7 @@ public class ThemesApp extends Application implements SystemAccessor {
 
     private Button createTintButton() {
         var button = new Button(marginX, marginY + 16 + paddingY, "Tints");
-        button.setClickListener((mouseX, mouseY, btn) -> {
-            setCurrentLayout(createTintMenu());
-        });
+        button.setClickListener((mouseX, mouseY, btn) -> setCurrentLayout(createTintMenu()));
         return button;
     }
 
@@ -207,7 +202,7 @@ public class ThemesApp extends Application implements SystemAccessor {
                     this.info.setTintProvider(new ThemeTintProvider(l, ll));
                     resetButton.setEnabled(true);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    UltreonDevicesMod.LOGGER.error("Failed to set tint", e);
                     openDialog(new Dialog.Message("Failed to set tint"));
                 }
              //   okButton.setEnabled();
@@ -238,12 +233,11 @@ public class ThemesApp extends Application implements SystemAccessor {
         }
 
         private String toColorHex(int b) {
-            String hexColor = String.format("#%06X", (0xFFFFFF & b));
-            return hexColor;
+            return String.format("#%06X", (0xFFFFFF & b));
         }
 
         @Override
-        protected void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+        protected void render(GuiGraphics graphics, MineOS laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
             super.render(graphics, laptop, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
             graphics.pose().pushPose();
             RenderUtil.drawIcon(graphics, x, y, info, height, height); // height is intended
@@ -251,34 +245,23 @@ public class ThemesApp extends Application implements SystemAccessor {
         }
     }
 
-    private static void createCTP() {
-
-    }
-
-    private static class ThemeTintProvider implements AppInfo.TintProvider {
-        private final Color l;
-        private final Color ll;
-        ThemeTintProvider(Color l, Color ll) {
-            this.l = l;
-            this.ll = ll;
-        }
+    private record ThemeTintProvider(Color l, Color ll) implements AppInfo.TintProvider {
         @Override
-        public int getTintColor(AppInfo info, int i) {
-            return switch (i) {
-                case 0 -> new Color(255, 255, 255).getRGB();
-                case 1 -> l.getRGB();
-                case 2 -> ll.getRGB();
-                default -> new Color(255, 255, 255).getRGB();
-            };
-        }
+            public int getTintColor(AppInfo info, int i) {
+                return switch (i) {
+                    case 1 -> l.getRGB();
+                    case 2 -> ll.getRGB();
+                    default -> new Color(255, 255, 255).getRGB();
+                };
+            }
 
-        @Override
-        public CompoundTag toTag() {
-            var l = new CompoundTag();
-            l.putInt("0", getTintColor(null, 0));
-            l.putInt("1", getTintColor(null, 1));
-            l.putInt("2", getTintColor(null, 2));
-            return l;
+            @Override
+            public CompoundTag toTag() {
+                var l = new CompoundTag();
+                l.putInt("0", getTintColor(null, 0));
+                l.putInt("1", getTintColor(null, 1));
+                l.putInt("2", getTintColor(null, 2));
+                return l;
+            }
         }
-    }
 }

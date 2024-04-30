@@ -2,9 +2,8 @@ package com.ultreon.devices.object;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.mineos.client.MineOS;
 import com.ultreon.devices.object.tiles.Tile;
 import com.ultreon.devices.util.KeyboardHelper;
 import com.ultreon.devices.util.Vec2d;
@@ -51,7 +50,7 @@ public class Player {
         this.boatModel = new BoatRenderer(createEntityRendererContext(), false);
 		assert Minecraft.getInstance().player != null;
 		boolean slim = Minecraft.getInstance().player.getSkin().model() == PlayerSkin.Model.SLIM;
-        if (!Laptop.isWorldLess()) {
+        if (!MineOS.getOpened().isWorldLess()) {
             boat = new Boat(Objects.requireNonNull(Minecraft.getInstance().level), 0, 0, 0);
         }
 //        this.playerModel = new ModelDummyPlayer(0f, slim);

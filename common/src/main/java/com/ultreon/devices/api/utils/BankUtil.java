@@ -94,6 +94,7 @@ public class BankUtil implements WorldSavedData {
         return uuidToAccount.get(uuid);
     }
 
+    @Override
     public void save(CompoundTag tag) {
         ListTag accountList = new ListTag();
         for (UUID uuid : uuidToAccount.keySet()) {
@@ -106,6 +107,7 @@ public class BankUtil implements WorldSavedData {
         tag.put("accounts", accountList);
     }
 
+    @Override
     public void load(CompoundTag tag) {
         ListTag accountList = (ListTag) tag.get("accounts");
         for (int i = 0; i < accountList.size(); i++) {

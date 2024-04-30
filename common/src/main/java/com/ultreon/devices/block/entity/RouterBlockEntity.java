@@ -29,6 +29,7 @@ public class RouterBlockEntity extends DeviceBlockEntity.Colored {
         return router;
     }
 
+    @Override
     public void tick() {
         assert level != null;
         if (!level.isClientSide) {
@@ -52,6 +53,7 @@ public class RouterBlockEntity extends DeviceBlockEntity.Colored {
         }
     }
 
+    @Override
     public String getDeviceName() {
         return "Router";
     }

@@ -5,13 +5,13 @@ import com.ultreon.devices.api.app.*;
 import com.ultreon.devices.api.app.component.Button;
 import com.ultreon.devices.api.app.component.Spinner;
 import com.ultreon.devices.api.app.component.TextField;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.mineos.MineOSSystem;
+import com.ultreon.devices.mineos.client.MineOS;
 import com.ultreon.devices.programs.gitweb.component.GitWebFrame;
 import com.ultreon.devices.programs.gitweb.layout.TextLayout;
 import com.ultreon.devices.programs.system.SettingsApp;
 import com.ultreon.devices.programs.system.layout.StandardLayout;
 import com.ultreon.devices.util.DataHandler;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.nbt.CompoundTag;
 
 import org.jetbrains.annotations.Nullable;
@@ -35,9 +35,9 @@ public class GitWebApp extends Application implements SystemAccessor, DataHandle
     private Spinner spinnerLoading;
     private TextLayout scrollable;
 
-    private System system;
+    private MineOSSystem system;
 
-    public Optional<System> getSystem() {
+    public Optional<MineOSSystem> getSystem() {
         return Optional.ofNullable(system);
     }
 
@@ -45,7 +45,7 @@ public class GitWebApp extends Application implements SystemAccessor, DataHandle
     public void init(@Nullable CompoundTag intent) {
         layoutBrowser = new StandardLayout(null, 362, 240, this, null);
         layoutBrowser.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
-            Color color = new Color(Laptop.getSystem().getSettings().getColorScheme().getItemBackgroundColor());
+            Color color = new Color(MineOS.getOpened().getSettings().getColorScheme().getItemBackgroundColor());
             graphics.fill(x, y + 21, x + width, y + 164, color.getRGB());
         });
 
@@ -132,7 +132,7 @@ public class GitWebApp extends Application implements SystemAccessor, DataHandle
     }
 
     @Override
-    public void sendSystem(System system) {
+    public void sendSystem(MineOSSystem system) {
         this.system = system;
     }
 }

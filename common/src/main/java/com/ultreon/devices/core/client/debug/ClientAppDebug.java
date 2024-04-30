@@ -2,7 +2,8 @@ package com.ultreon.devices.core.client.debug;
 
 import com.ultreon.devices.DeviceConfig;
 import com.ultreon.devices.block.entity.LaptopBlockEntity;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.WorldLessBiosImpl;
+import com.ultreon.devices.mineos.client.MineOS;
 import com.ultreon.devices.core.laptop.client.ClientLaptop;
 import com.ultreon.devices.core.laptop.client.ClientLaptopScreen;
 import com.ultreon.devices.core.laptop.server.ServerLaptop;
@@ -15,6 +16,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.DyeColor;
 
+import static com.ultreon.devices.OperatingSystems.MINE_OS;
+
 /**
  * Adds a button to the title screen to test system applications that don't require the system
  */
@@ -26,7 +29,7 @@ public class ClientAppDebug {
                 var rowHeight = 24;
                 var y = screen.height / 4 + 48;
 
-                var a = Button.builder(Component.literal("DV TEST"), (button) -> Minecraft.getInstance().setScreen(new Laptop(new LaptopBlockEntity(new BlockPos(0, 0, 0), DeviceBlocks.LAPTOPS.of(DyeColor.WHITE).get().defaultBlockState()), true))).bounds(screen.width / 2 - 100, y + rowHeight * -1, 200, 20)
+                var a = Button.builder(Component.literal("DV TEST"), (button) -> Minecraft.getInstance().setScreen(new MineOS(new LaptopBlockEntity(new BlockPos(0, 0, 0), DeviceBlocks.LAPTOPS.of(DyeColor.WHITE).get().defaultBlockState()), new WorldLessBiosImpl(MINE_OS.get()), true))).bounds(screen.width / 2 - 100, y + rowHeight * -1, 200, 20)
                         .createNarration((output) -> Component.empty())
                         .build();
                 access.addRenderableWidget(a);

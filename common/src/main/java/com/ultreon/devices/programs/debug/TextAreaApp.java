@@ -57,7 +57,7 @@ public class TextAreaApp extends Application {
         buttonDebug.setToolTip("Debug Mode", "Show invisible characters");
         buttonDebug.setClickListener((mouseX, mouseY, mouseButton) -> {
 //            if (mouseButton == 0) {
-//                Laptop.font.setDebug(!buttonDebug.isSelected());
+//                MineOS.font.setDebug(!buttonDebug.isSelected());
 //            }
         });
         layout.addComponent(buttonDebug);

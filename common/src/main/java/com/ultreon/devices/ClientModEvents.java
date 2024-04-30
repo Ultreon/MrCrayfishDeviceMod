@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.NativeImage;
 import com.ultreon.devices.api.ApplicationManager;
 import com.ultreon.devices.block.entity.renderer.*;
 import com.ultreon.devices.client.RenderRegistry;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.mineos.client.MineOS;
 import com.ultreon.devices.debug.DebugFlags;
 import com.ultreon.devices.debug.DebugUtils;
 import com.ultreon.devices.debug.DumpType;
@@ -44,26 +44,28 @@ import java.util.concurrent.Executor;
 
 public class ClientModEvents {
     private static final Marker SETUP = MarkerFactory.getMarker("SETUP");
-    private static final Logger LOGGER = Devices.LOGGER;
+    private static final Logger LOGGER = UltreonDevicesMod.LOGGER;
 
     public static void clientSetup() {
         LOGGER.info("Doing some client setup.");
 
-        if (Devices.DEVELOPER_MODE) {
+        if (UltreonDevicesMod.DEVELOPER_MODE) {
             LOGGER.info(SETUP, "Adding developer wallpaper.");
-            Laptop.addWallpaper(new ResourceLocation("devices:textures/gui/developer_wallpaper.png"));
+            MineOS.addWallpaper(new ResourceLocation("devices:textures/gui/developer_wallpaper.png"));
+            MineOS.addWallpaper(new ResourceLocation("devices:textures/gui/laptop_wallpaper_11.png"));
         } else {
             LOGGER.info(SETUP, "Adding default wallpapers.");
-            Laptop.addWallpaper(new ResourceLocation("devices:textures/gui/laptop_wallpaper_1.png"));
-            Laptop.addWallpaper(new ResourceLocation("devices:textures/gui/laptop_wallpaper_2.png"));
-            Laptop.addWallpaper(new ResourceLocation("devices:textures/gui/laptop_wallpaper_3.png"));
-            Laptop.addWallpaper(new ResourceLocation("devices:textures/gui/laptop_wallpaper_4.png"));
-            Laptop.addWallpaper(new ResourceLocation("devices:textures/gui/laptop_wallpaper_5.png"));
-            Laptop.addWallpaper(new ResourceLocation("devices:textures/gui/laptop_wallpaper_6.png"));
-            Laptop.addWallpaper(new ResourceLocation("devices:textures/gui/laptop_wallpaper_7.png"));
-            Laptop.addWallpaper(new ResourceLocation("devices:textures/gui/laptop_wallpaper_8.png"));
-            Laptop.addWallpaper(new ResourceLocation("devices:textures/gui/laptop_wallpaper_9.png"));
-            Laptop.addWallpaper(new ResourceLocation("devices:textures/gui/laptop_wallpaper_10.png"));
+            MineOS.addWallpaper(new ResourceLocation("devices:textures/gui/laptop_wallpaper_1.png"));
+            MineOS.addWallpaper(new ResourceLocation("devices:textures/gui/laptop_wallpaper_2.png"));
+            MineOS.addWallpaper(new ResourceLocation("devices:textures/gui/laptop_wallpaper_3.png"));
+            MineOS.addWallpaper(new ResourceLocation("devices:textures/gui/laptop_wallpaper_4.png"));
+            MineOS.addWallpaper(new ResourceLocation("devices:textures/gui/laptop_wallpaper_5.png"));
+            MineOS.addWallpaper(new ResourceLocation("devices:textures/gui/laptop_wallpaper_6.png"));
+            MineOS.addWallpaper(new ResourceLocation("devices:textures/gui/laptop_wallpaper_7.png"));
+            MineOS.addWallpaper(new ResourceLocation("devices:textures/gui/laptop_wallpaper_8.png"));
+            MineOS.addWallpaper(new ResourceLocation("devices:textures/gui/laptop_wallpaper_9.png"));
+            MineOS.addWallpaper(new ResourceLocation("devices:textures/gui/laptop_wallpaper_10.png"));
+            MineOS.addWallpaper(new ResourceLocation("devices:textures/gui/laptop_wallpaper_11.png"));
         }
 
 
@@ -93,7 +95,7 @@ public class ClientModEvents {
             LOGGER.debug("Reloading resources from the Device Mod.");
 
             return CompletableFuture.runAsync(() -> {
-                if (ApplicationManager.getAllApplications().size() > 0) {
+                if (!ApplicationManager.getAllApplications().isEmpty()) {
                     ApplicationManager.getAllApplications().forEach(AppInfo::reload);
                     generateIconAtlas(resourceManager); // FIXME: Broken resource reloading, can't find image resource while definitely exists.
                 }
@@ -153,7 +155,7 @@ public class ClientModEvents {
                     }
                     BufferedImage icon = ImageIO.read(input);
                     if (icon.getWidth() != ICON_SIZE || icon.getHeight() != ICON_SIZE) {
-                        Devices.LOGGER.error("Incorrect icon size for " + (info == null ? null : info.getId()) + " (Must be 14 by 14 pixels)");
+                        UltreonDevicesMod.LOGGER.error("Incorrect icon size for " + (info == null ? null : info.getId()) + " (Must be 14 by 14 pixels)");
                         return false;
                     }
                     int iconU = (index % 16) * ICON_SIZE;
@@ -171,16 +173,16 @@ public class ClientModEvents {
                     }
                     index++;
                     if (DebugFlags.LOG_APP_ICON_STITCHES) {
-                        Devices.LOGGER.info("Stitching texture: " + location);
+                        UltreonDevicesMod.LOGGER.info("Stitching texture: " + location);
                     }
                     return true;
                 } catch (FileNotFoundException e) {
-                    Devices.LOGGER.error("Unable to load icon for '" + (info == null ? null : info.getId()) + "': " + e.getMessage());
+                    UltreonDevicesMod.LOGGER.error("Unable to load icon for '" + (info == null ? null : info.getId()) + "': " + e.getMessage());
                     if (DebugFlags.PRINT_MISSING_APP_ICONS_STACK_TRACES) {
                         e.printStackTrace();
                     }
                 } catch (Exception e) {
-                    Devices.LOGGER.error("Unable to load icon for " + (info == null ? null : info.getId()));
+                    UltreonDevicesMod.LOGGER.error("Unable to load icon for " + (info == null ? null : info.getId()));
                     if (DebugFlags.PRINT_APP_ICONS_STACK_TRACES) {
                         e.printStackTrace();
                     }
@@ -193,7 +195,7 @@ public class ClientModEvents {
 
                 if (DebugFlags.DUMP_APP_ICON_ATLAS) {
                     try {
-                        DebugUtils.dump(DumpType.ATLAS, Laptop.ICON_TEXTURES, (stream) -> ImageIO.write(atlas, "png", stream));
+                        DebugUtils.dump(DumpType.ATLAS, MineOS.ICON_TEXTURES, (stream) -> ImageIO.write(atlas, "png", stream));
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -206,7 +208,7 @@ public class ClientModEvents {
                     ByteArrayInputStream input = new ByteArrayInputStream(bytes);
                     Minecraft.getInstance().submit(() -> {
                         try {
-                            Minecraft.getInstance().getTextureManager().register(Laptop.ICON_TEXTURES, new DynamicTexture(NativeImage.read(input)));
+                            Minecraft.getInstance().getTextureManager().register(MineOS.ICON_TEXTURES, new DynamicTexture(NativeImage.read(input)));
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }

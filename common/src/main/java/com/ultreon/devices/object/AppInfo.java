@@ -2,22 +2,19 @@ package com.ultreon.devices.object;
 
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
-import com.ultreon.devices.Devices;
+import com.ultreon.devices.UltreonDevicesMod;
 import com.ultreon.devices.Reference;
-import com.ultreon.devices.core.Laptop;
-import dev.architectury.injectables.annotations.PlatformOnly;
+import com.ultreon.devices.client.Display;
+import com.ultreon.devices.mineos.client.MineOS;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.awt.*;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -39,8 +36,8 @@ public class AppInfo {
         @Override
         public int getTintColor(AppInfo info, int o) {
             return switch (o) {
-                case 1 -> Laptop.getSystem().getSettings().getColorScheme().getBackgroundColor();
-                case 2 -> Laptop.getSystem().getSettings().getColorScheme().getBackgroundSecondaryColor();
+                case 1 -> ((MineOS) Display.get().getOS()).getSettings().getColorScheme().getBackgroundColor();
+                case 2 -> ((MineOS) Display.get().getOS()).getSettings().getColorScheme().getBackgroundSecondaryColor();
                 default -> new Color(255, 255, 255).getRGB();
             };
         }
@@ -300,7 +297,7 @@ public class AppInfo {
                     default -> throw new RuntimeException("Schema " + getSchemaVersion(json) + " is not implemented in " + Reference.VERSION + "!");
                 }
             } catch (JsonParseException e) {
-                Devices.LOGGER.error("Malformed app info json for '" + info.getFormattedId() + "'");
+                UltreonDevicesMod.LOGGER.error("Malformed app info json for '" + info.getFormattedId() + "'");
             }
 
             return info;
@@ -327,7 +324,7 @@ public class AppInfo {
                 info.icon.overlay1.type = 2;
             }
 
-            if (json.getAsJsonObject().has("support") && json.getAsJsonObject().get("support").getAsJsonObject().size() > 0) {
+            if (json.getAsJsonObject().has("support") && !json.getAsJsonObject().get("support").getAsJsonObject().isEmpty()) {
                 JsonObject supportObj = json.getAsJsonObject().get("support").getAsJsonObject();
                 Support support = new Support();
 
@@ -359,10 +356,10 @@ public class AppInfo {
             }
 
             if (json.getAsJsonObject().has("icon") && json.getAsJsonObject().get("icon").isJsonPrimitive()) {
-                Devices.LOGGER.warn("{} uses removed \"icon\"! Please advise {} to fix the icon!", info.name, info.authors[0]);
+                UltreonDevicesMod.LOGGER.warn("{} uses removed \"icon\"! Please advise {} to fix the icon!", info.name, info.authors[0]);
             }
 
-            if (json.getAsJsonObject().has("support") && json.getAsJsonObject().get("support").getAsJsonObject().size() > 0) {
+            if (json.getAsJsonObject().has("support") && !json.getAsJsonObject().get("support").getAsJsonObject().isEmpty()) {
                 JsonObject supportObj = json.getAsJsonObject().get("support").getAsJsonObject();
                 Support support = new Support();
 
@@ -407,7 +404,7 @@ public class AppInfo {
             if (json.getAsJsonObject().has("author") && json.getAsJsonObject().get("author").isJsonPrimitive()) {
                 if (info.authors == null) {
                     info.authors = new String[]{convertToLocal(json.getAsJsonObject().get("author").getAsString())};
-                    Devices.LOGGER.warn("{} uses deprecated \"author\"!, Please advise {} to replace \"author\": \"{}\" with the \"authors\": [] format", info.name, info.authors[0], info.authors[0]);
+                    UltreonDevicesMod.LOGGER.warn("{} uses deprecated \"author\"!, Please advise {} to replace \"author\": \"{}\" with the \"authors\": [] format", info.name, info.authors[0], info.authors[0]);
                 }
             }
 
@@ -419,14 +416,14 @@ public class AppInfo {
             }
 
             if (json.getAsJsonObject().has("icon") && json.getAsJsonObject().get("icon").isJsonPrimitive()) {
-                Devices.LOGGER.warn("{} uses removed \"icon\"! Please advise {} to fix the icon!", info.name, info.authors[0]);
+                UltreonDevicesMod.LOGGER.warn("{} uses removed \"icon\"! Please advise {} to fix the icon!", info.name, info.authors[0]);
             }
 
             if (d) info.authors = new String[0];
             var l = new ArrayList<String>(List.of(info.authors));l.addAll(contributors);
             info.contributors = l.toArray(new String[0]);
 
-            if (json.getAsJsonObject().has("support") && json.getAsJsonObject().get("support").getAsJsonObject().size() > 0) {
+            if (json.getAsJsonObject().has("support") && !json.getAsJsonObject().get("support").getAsJsonObject().isEmpty()) {
                 JsonObject supportObj = json.getAsJsonObject().get("support").getAsJsonObject();
                 Support support = new Support();
 
@@ -476,7 +473,7 @@ public class AppInfo {
             var l = new ArrayList<String>(List.of(info.authors));l.addAll(contributors);
             info.contributors = l.toArray(new String[0]);
 
-            if (json.getAsJsonObject().has("support") && json.getAsJsonObject().get("support").getAsJsonObject().size() > 0) {
+            if (json.getAsJsonObject().has("support") && !json.getAsJsonObject().get("support").getAsJsonObject().isEmpty()) {
                 JsonObject supportObj = json.getAsJsonObject().get("support").getAsJsonObject();
                 Support support = new Support();
 

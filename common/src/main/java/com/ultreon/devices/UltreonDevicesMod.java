@@ -5,20 +5,23 @@ import com.google.common.collect.ImmutableList;
 import com.google.gson.*;
 import com.mojang.serialization.Lifecycle;
 import com.ultreon.devices.api.ApplicationManager;
+import com.ultreon.devices.api.ApplicationSupplier;
 import com.ultreon.devices.api.app.Application;
+import com.ultreon.devices.api.os.OperatingSystem;
 import com.ultreon.devices.api.print.IPrint;
 import com.ultreon.devices.api.print.PrintingManager;
 import com.ultreon.devices.api.task.TaskManager;
+import com.ultreon.devices.api.util.Vulnerability;
 import com.ultreon.devices.api.utils.OnlineRequest;
-import com.ultreon.devices.block.PrinterBlock;
+import com.ultreon.devices.core.BootLoader;
 import com.ultreon.devices.core.client.ClientNotification;
-import com.ultreon.devices.core.client.debug.ClientAppDebug;
-import com.ultreon.devices.core.io.task.*;
 import com.ultreon.devices.core.network.task.TaskConnect;
 import com.ultreon.devices.core.network.task.TaskGetDevices;
 import com.ultreon.devices.core.network.task.TaskPing;
 import com.ultreon.devices.core.print.task.TaskPrint;
 import com.ultreon.devices.core.task.TaskInstallApp;
+import com.ultreon.devices.block.PrinterBlock;
+import com.ultreon.devices.core.io.task.*;
 import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.network.PacketHandler;
 import com.ultreon.devices.network.task.SyncApplicationPacket;
@@ -38,7 +41,7 @@ import com.ultreon.devices.programs.example.task.TaskNotificationTest;
 import com.ultreon.devices.programs.system.SystemApp;
 import com.ultreon.devices.programs.system.task.*;
 import com.ultreon.devices.util.SiteRegistration;
-import com.ultreon.devices.util.Vulnerability;
+import com.ultreon.devices.util.VulnerabilityUtil;
 import dev.architectury.event.EventResult;
 import dev.architectury.event.events.client.ClientPlayerEvent;
 import dev.architectury.event.events.common.InteractionEvent;
@@ -47,11 +50,13 @@ import dev.architectury.event.events.common.PlayerEvent;
 import dev.architectury.injectables.targets.ArchitecturyTarget;
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.registries.DeferredSupplier;
+import dev.architectury.registry.registries.Registrar;
 import dev.architectury.registry.registries.RegistrarManager;
 import dev.architectury.utils.Env;
 import dev.architectury.utils.EnvExecutor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
@@ -76,7 +81,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
-public abstract class Devices {
+public abstract class UltreonDevicesMod {
     public static final boolean DEVELOPER_MODE = Platform.isDevelopmentEnvironment();
     public static final String MOD_ID = "devices";
     public static final Logger LOGGER = LoggerFactory.getLogger("Devices Mod");
@@ -86,11 +91,14 @@ public abstract class Devices {
     public static final List<SiteRegistration> SITE_REGISTRATIONS = new ProtectedArrayList<>();
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     public static final DevicesEarlyConfig EARLY_CONFIG = DevicesEarlyConfig.load();
+    public static final Registrar<BootLoader<?>> OPERATING_SYSTEM = REGISTRIES.get().<BootLoader<?>>builder(res("operating_system")).syncToClients().build();
+
     private static final Pattern DEV_PREVIEW_PATTERN = Pattern.compile("\\d+\\.\\d+\\.\\d+-dev\\d+");
     private static final boolean IS_DEV_PREVIEW = DEV_PREVIEW_PATTERN.matcher(Reference.VERSION).matches();
-    private static final String GITWEB_REGISTER_URL = "https://ultreon.gitlab.io/gitweb/site_register.json";
+
+    public static final String GITWEB_REGISTER_URL = "https://ultreon.gitlab.io/gitweb/site_register.json";
     public static final String VULNERABILITIES_URL = "https://jab125.com/gitweb/vulnerabilities.php";
-    //    private static final Logger ULTRAN_LANG_LOGGER = LoggerFactory.getLogger("UltranLang");
+
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private static final SiteRegisterStack SITE_REGISTER_STACK = new SiteRegisterStack();
 
@@ -100,7 +108,7 @@ public abstract class Devices {
 
     static List<AppInfo> allowedApps = new ArrayList<>();
     private static List<Vulnerability> vulnerabilities = new ArrayList<>();
-    private static Devices instance;
+    private static UltreonDevicesMod instance;
 
     public static List<Vulnerability> getVulnerabilities() {
         return vulnerabilities;
@@ -108,11 +116,11 @@ public abstract class Devices {
     private static MinecraftServer server;
     private static TestManager tests;
 
-    protected Devices() {
-        Devices.instance = this;
+    protected UltreonDevicesMod() {
+        UltreonDevicesMod.instance = this;
     }
 
-    public static Devices getInstance() {
+    public static UltreonDevicesMod get() {
         return instance;
     }
 
@@ -138,16 +146,17 @@ public abstract class Devices {
 
         registerApplications();
 
+        OperatingSystems.init();
+
         EnvExecutor.runInEnv(Env.CLIENT, () -> () -> {
-            ClientAppDebug.register();
             ClientModEvents.clientSetup(); //todo
-            Devices.setupSiteRegistrations();
-            Devices.checkForVulnerabilities();
+            UltreonDevicesMod.setupSiteRegistrations();
+            UltreonDevicesMod.checkForVulnerabilities();
         });
 
         setupEvents();
 
-        EnvExecutor.runInEnv(Env.CLIENT, () -> Devices::setupClientEvents); //todo
+        EnvExecutor.runInEnv(Env.CLIENT, () -> UltreonDevicesMod::setupClientEvents); //todo
         if (!ArchitecturyTarget.getCurrentTarget().equals("forge")) {
             loadComplete();
         }
@@ -213,7 +222,7 @@ public abstract class Devices {
         TaskManager.registerTask(TaskDeleteEmail::new);
         TaskManager.registerTask(TaskViewEmail::new);
 
-        if (Platform.isDevelopmentEnvironment() || Devices.EARLY_CONFIG.enableBetaApps) {
+        if (Platform.isDevelopmentEnvironment() || UltreonDevicesMod.EARLY_CONFIG.enableBetaApps) {
             // Auction
             TaskManager.registerTask(TaskAddAuction::new);
             TaskManager.registerTask(TaskGetAuctions::new);
@@ -228,7 +237,7 @@ public abstract class Devices {
             TaskManager.registerTask(TaskRemove::new);
         }
 
-        if (Platform.isDevelopmentEnvironment() || Devices.EARLY_CONFIG.enableDebugApps) {
+        if (Platform.isDevelopmentEnvironment() || UltreonDevicesMod.EARLY_CONFIG.enableDebugApps) {
             // Applications (Developers)
             ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "example"), () -> ExampleApp::new, false);
             ApplicationManager.registerApplication(new ResourceLocation(Reference.MOD_ID, "icons"), () -> IconsApp::new, false);
@@ -249,23 +258,11 @@ public abstract class Devices {
     protected abstract List<Application> getApplications();
 
     public static void setAllowedApps(List<AppInfo> allowedApps) {
-        Devices.allowedApps = allowedApps;
+        UltreonDevicesMod.allowedApps = allowedApps;
     }
 
     public static String getModVersion() {
         return Platform.getMod(MOD_ID).getVersion();
-    }
-
-    public interface ApplicationSupplier {
-
-        /**
-         * Gets a result.
-         *
-         * @return a result
-         */
-        Supplier<Application> get();
-
-        boolean isSystem();
     }
 
     /**
@@ -291,7 +288,7 @@ public abstract class Devices {
         AtomicReference<Application> application = new AtomicReference<>(null);
         EnvExecutor.runInEnv(Env.CLIENT, () -> () -> {
             Application appl = app.get().get();
-            List<Application> apps = getApplications(); /*ObfuscationReflectionHelper.getPrivateValue(Laptop.class, null, "APPLICATIONS");*/
+            List<Application> apps = getApplications(); /*ObfuscationReflectionHelper.getPrivateValue(MineOS.class, null, "APPLICATIONS");*/
             assert apps != null;
             apps.add(appl);
 
@@ -336,12 +333,12 @@ public abstract class Devices {
                 }
                 idToRenderer.put(identifier.toString(), renderer);
             } catch (InstantiationException e) {
-                Devices.LOGGER.error("The print renderer '" + classRenderer.getName() + "' is missing an empty constructor and could not be registered!");
+                UltreonDevicesMod.LOGGER.error("The print renderer '" + classRenderer.getName() + "' is missing an empty constructor and could not be registered!");
                 return false;
             }
             return true;
         } catch (Exception e) {
-            Devices.LOGGER.error("The print '" + classPrint.getName() + "' is missing an empty constructor and could not be registered!");
+            UltreonDevicesMod.LOGGER.error("The print '" + classPrint.getName() + "' is missing an empty constructor and could not be registered!");
         }
         return false;
     }
@@ -367,7 +364,7 @@ public abstract class Devices {
     }
 
     public static ResourceLocation res(String path) {
-        return new ResourceLocation(Devices.MOD_ID, path);
+        return new ResourceLocation(UltreonDevicesMod.MOD_ID, path);
     }
 
     private static void setupClientEvents() {
@@ -416,7 +413,7 @@ public abstract class Devices {
             }
 
             JsonArray array = JsonParser.parseString(response).getAsJsonArray();
-            vulnerabilities = Vulnerability.parseArray(array);
+            vulnerabilities = VulnerabilityUtil.parseArray(array);
             vulnerabilities.forEach(vul -> {
                 String s = vul.toPrettyString();
                 s.lines().toList().forEach(line -> LOGGER.debug("[VulChecker] {}", line));
@@ -501,8 +498,13 @@ public abstract class Devices {
         return future;
     }
 
-    public static ResourceLocation id(String id) {
-        return new ResourceLocation(MOD_ID, id);
+    @ApiStatus.Obsolete // Jab125 wanted this...
+    public static ResourceLocation id(String path) {
+        return res(path);
+    }
+
+    public boolean isDebug() {
+        return Platform.isDevelopmentEnvironment();
     }
 
     private static class ProtectedArrayList<T> extends ArrayList<T> {
@@ -520,7 +522,7 @@ public abstract class Devices {
         @Override
         public boolean add(T t) {
             freezeCheck();
-            if (stackWalker.getCallerClass() != Devices.class) {
+            if (stackWalker.getCallerClass() != UltreonDevicesMod.class) {
                 throw new IllegalCallerException("Should be called from Devices Mod main class.");
             }
             return super.add(t);
@@ -529,7 +531,7 @@ public abstract class Devices {
         @Override
         public boolean addAll(Collection<? extends T> c) {
             freezeCheck();
-            if (stackWalker.getCallerClass() != Devices.class) {
+            if (stackWalker.getCallerClass() != UltreonDevicesMod.class) {
                 throw new IllegalCallerException("Should be called from Devices Mod main class.");
             }
             return super.addAll(c);
@@ -538,7 +540,7 @@ public abstract class Devices {
         @Override
         public void add(int index, T element) {
             freezeCheck();
-            if (stackWalker.getCallerClass() != Devices.class) {
+            if (stackWalker.getCallerClass() != UltreonDevicesMod.class) {
                 throw new IllegalCallerException("Should be called from Devices Mod main class.");
             }
             super.add(index, element);
@@ -547,7 +549,7 @@ public abstract class Devices {
         @Override
         protected void removeRange(int fromIndex, int toIndex) {
             freezeCheck();
-            if (stackWalker.getCallerClass() != Devices.class) {
+            if (stackWalker.getCallerClass() != UltreonDevicesMod.class) {
                 throw new IllegalCallerException("Should be called from Devices Mod main class.");
             }
             super.removeRange(fromIndex, toIndex);
@@ -556,7 +558,7 @@ public abstract class Devices {
         @Override
         public boolean remove(Object o) {
             freezeCheck();
-            if (stackWalker.getCallerClass() != Devices.class) {
+            if (stackWalker.getCallerClass() != UltreonDevicesMod.class) {
                 throw new IllegalCallerException("Should be called from Devices Mod main class.");
             }
             return super.remove(o);
@@ -565,7 +567,7 @@ public abstract class Devices {
         @Override
         public boolean removeAll(Collection<?> c) {
             freezeCheck();
-            if (stackWalker.getCallerClass() != Devices.class) {
+            if (stackWalker.getCallerClass() != UltreonDevicesMod.class) {
                 throw new IllegalCallerException("Should be called from Devices Mod main class.");
             }
             return super.removeAll(c);
@@ -574,7 +576,7 @@ public abstract class Devices {
         @Override
         public boolean removeIf(Predicate<? super T> filter) {
             freezeCheck();
-            if (stackWalker.getCallerClass() != Devices.class) {
+            if (stackWalker.getCallerClass() != UltreonDevicesMod.class) {
                 throw new IllegalCallerException("Should be called from Devices Mod main class.");
             }
             return super.removeIf(filter);
@@ -583,7 +585,7 @@ public abstract class Devices {
         @Override
         public T remove(int index) {
             freezeCheck();
-            if (stackWalker.getCallerClass() != Devices.class) {
+            if (stackWalker.getCallerClass() != UltreonDevicesMod.class) {
                 throw new IllegalCallerException("Should be called from Devices Mod main class.");
             }
             return super.remove(index);

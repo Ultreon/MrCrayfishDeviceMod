@@ -13,3 +13,5 @@ include("forge")
 include("neoforge")
 include("fabric-datagen-helper")
 include("fabric-testmod")
+include 'api'
+

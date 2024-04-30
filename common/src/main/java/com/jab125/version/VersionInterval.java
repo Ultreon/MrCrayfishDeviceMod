@@ -39,30 +39,30 @@ public interface VersionInterval {
 	/**
 	 * Get the lower limit of the version interval.
 	 *
-	 * @return Version's lower limit or null if none, inclusive depending on {@link #isMinInclusive()}
+	 * @return Version's lower limit or null if none, inclusive depending on {@link #minInclusive()}
 	 */
-	Version getMin();
+	Version min();
 
 	/**
 	 * Get whether the lower limit of the version interval is inclusive.
 	 *
 	 * @return True if inclusive, false otherwise
 	 */
-	boolean isMinInclusive();
+	boolean minInclusive();
 
 	/**
 	 * Get the upper limit of the version interval.
 	 *
-	 * @return Version's upper limit or null if none, inclusive depending on {@link #isMaxInclusive()}
+	 * @return Version's upper limit or null if none, inclusive depending on {@link #maxInclusive()}
 	 */
-	Version getMax();
+	Version max();
 
 	/**
 	 * Get whether the upper limit of the version interval is inclusive.
 	 *
 	 * @return True if inclusive, false otherwise
 	 */
-	boolean isMaxInclusive();
+	boolean maxInclusive();
 
 	default VersionInterval and(VersionInterval o) {
 		return and(this, o);

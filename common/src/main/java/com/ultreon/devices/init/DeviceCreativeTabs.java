@@ -1,8 +1,7 @@
 package com.ultreon.devices.init;
 
-import com.ultreon.devices.Devices;
+import com.ultreon.devices.UltreonDevicesMod;
 import dev.architectury.registry.CreativeTabRegistry;
-import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.Registrar;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -12,7 +11,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 
 public class DeviceCreativeTabs {
-    private static final Registrar<CreativeModeTab> REGISTER = Devices.REGISTRIES.get().get(Registries.CREATIVE_MODE_TAB);
+    private static final Registrar<CreativeModeTab> REGISTER = UltreonDevicesMod.REGISTRIES.get().get(Registries.CREATIVE_MODE_TAB);
 
     public static void register() {
     }

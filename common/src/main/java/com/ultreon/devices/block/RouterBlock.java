@@ -105,7 +105,7 @@ public class RouterBlock extends DeviceBlock.Colored {
     }
 
     @Override
-    public @org.jetbrains.annotations.Nullable BlockState getStateForPlacement(@NotNull BlockPlaceContext pContext) {
+    public @Nullable BlockState getStateForPlacement(@NotNull BlockPlaceContext pContext) {
         BlockState state = super.getStateForPlacement(pContext);
         return state != null ? state.setValue(FACING, pContext.getHorizontalDirection().getOpposite()).setValue(VERTICAL, pContext.getClickLocation().y - pContext.getClickLocation().y > 0.5) : null;
     }

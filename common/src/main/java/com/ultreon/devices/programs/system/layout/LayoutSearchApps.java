@@ -1,7 +1,6 @@
 package com.ultreon.devices.programs.system.layout;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.ApplicationManager;
 import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Layout;
@@ -15,7 +14,6 @@ import com.ultreon.devices.programs.system.AppStore;
 import com.ultreon.devices.programs.system.object.LocalEntry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import org.apache.commons.lang3.StringUtils;
 
@@ -80,7 +78,7 @@ public class LayoutSearchApps extends StandardLayout {
     }
 
     private void openApplication(AppInfo info) {
-        Layout layout = new LayoutAppPage(appStore.getLaptop(), new LocalEntry(info), appStore);
+        Layout layout = new LayoutAppPage(appStore.getOS(), new LocalEntry(info), appStore);
         app.setCurrentLayout(layout);
         Button btnPrevious = new Button(2, 2, Icons.ARROW_LEFT);
         btnPrevious.setClickListener((mouseX1, mouseY1, mouseButton1) -> app.setCurrentLayout(this));

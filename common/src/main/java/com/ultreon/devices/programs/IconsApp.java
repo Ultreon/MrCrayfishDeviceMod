@@ -59,7 +59,7 @@ public class IconsApp extends Application {
         btnNextPage.setClickListener((mouseX, mouseY, mouseButton) ->
         {
             if (mouseButton == 0) {
-                if (offset < (iconSetComboBox.getSelectedItem().getIcons().length / 126)) offset++;
+                if (offset < (iconSetComboBox.getSelectedItem().icons().length / 126)) offset++;
                 updateIcons();
             }
         });
@@ -72,8 +72,8 @@ public class IconsApp extends Application {
     private void updateIcons() {
         layoutContainer.clear();
         IconSet set = iconSetComboBox.getSelectedItem();
-        for (int i = 0; i < 126 && i < set.getIcons().length - (offset * 126); i++) {
-            Enum<? extends IIcon> anEnum = set.getIcons()[i + (offset * 126)];
+        for (int i = 0; i < 126 && i < set.icons().length - (offset * 126); i++) {
+            Enum<? extends IIcon> anEnum = set.icons()[i + (offset * 126)];
             IIcon icon = (IIcon) anEnum;
             int posX = (i % 18) * 18 - 1;
             int posY = (i / 18) * 18 + 20;
@@ -103,26 +103,11 @@ public class IconsApp extends Application {
 
     }
 
-    public static class IconSet {
-        private final String name;
-        private final Enum<? extends IIcon>[] icons;
-
-        public IconSet(String name, Enum<? extends IIcon>[] icons) {
-            this.name = name;
-            this.icons = icons;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public Enum<? extends IIcon>[] getIcons() {
-            return icons;
-        }
+    public record IconSet(String name, Enum<? extends IIcon>[] icons) {
 
         @Override
-        public String toString() {
-            return name;
+            public String toString() {
+                return name;
+            }
         }
-    }
 }

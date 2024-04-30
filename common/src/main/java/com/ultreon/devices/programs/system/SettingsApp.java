@@ -1,7 +1,7 @@
 package com.ultreon.devices.programs.system;
 
 import com.google.common.base.CaseFormat;
-import com.ultreon.devices.Devices;
+import com.ultreon.devices.UltreonDevicesMod;
 import com.ultreon.devices.Reference;
 import com.ultreon.devices.api.ApplicationManager;
 import com.ultreon.devices.api.app.Dialog;
@@ -10,11 +10,12 @@ import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.ScrollableLayout;
 import com.ultreon.devices.api.app.component.*;
 import com.ultreon.devices.api.app.component.Button;
+import com.ultreon.devices.api.app.component.Image;
 import com.ultreon.devices.api.app.renderer.ItemRenderer;
 import com.ultreon.devices.api.app.renderer.ListItemRenderer;
 import com.ultreon.devices.api.utils.OnlineRequest;
-import com.ultreon.devices.core.Laptop;
-import com.ultreon.devices.core.Settings;
+import com.ultreon.devices.mineos.client.MineOS;
+import com.ultreon.devices.mineos.client.Settings;
 import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.object.TrayItem;
 import com.ultreon.devices.programs.system.component.Palette;
@@ -56,7 +57,7 @@ public class SettingsApp extends SystemApp {
 
     private void resetColorSchemeClick(int mouseX, int mouseY, int mouseButton) {
         if (mouseButton == 0) {
-            Laptop.getSystem().getSettings().getColorScheme().resetDefault();
+            MineOS.getOpened().getSettings().getColorScheme().resetDefault();
         }
     }
 
@@ -182,7 +183,7 @@ public class SettingsApp extends SystemApp {
         });
         comboDisplayResolutions.setChangeListener((oldValue, newValue) -> {
             if (newValue != null) {
-                getLaptop().setDisplayResolution(newValue);
+                getOS().setDisplayResolution(newValue);
             }
         });
 
@@ -238,7 +239,7 @@ public class SettingsApp extends SystemApp {
         final Layout layoutColorSchemes = new Menu("Themes");
         layoutColorSchemes.addComponent(backBtn);
 
-        Preset custom = new Preset(null, Devices.id("custom"));
+        Preset custom = new Preset(null, UltreonDevicesMod.id("custom"));
 
         ItemList<Preset> list = new ItemList<>(0, 21, layoutColorSchemes.width, layoutColorSchemes.height - 21);
         for (Preset colorScheme : ColorSchemePresetRegistry.getValues()) {
@@ -248,14 +249,14 @@ public class SettingsApp extends SystemApp {
 
         list.setItemClickListener((preset, index, button) -> {
             if (preset == custom) preset = null;
-            Laptop.getSystem().getSettings().setPreset(preset);
+            MineOS.getOpened().getSettings().setPreset(preset);
         });
 
         list.setListItemRenderer(new ListItemRenderer<>(20) {
             @Override
             public void render(GuiGraphics graphics, Preset scheme, Minecraft mc, int x, int y, int width, int height, boolean selected) {
                 ResourceLocation key = ColorSchemePresetRegistry.getKey(scheme);
-                if (key == null) key = Devices.id("custom");
+                if (key == null) key = UltreonDevicesMod.id("custom");
                 graphics.drawString(mc.font, CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, key.getPath()).replaceAll("[A-Z]", " $0").substring(1), x + 5, y + 5, Color.WHITE.getRGB());
             }
         });
@@ -275,31 +276,31 @@ public class SettingsApp extends SystemApp {
         layoutColorScheme.addComponent(backBtn);
 
         ComboBox.Custom<Integer> comboBoxTextColor = createColorPicker(145, 26);
-        comboBoxTextColor.setValue(Laptop.getSystem().getSettings().getColorScheme().getTextColor());
+        comboBoxTextColor.setValue(MineOS.getOpened().getSettings().getColorScheme().getTextColor());
         layoutColorScheme.addComponent(comboBoxTextColor);
 
         ComboBox.Custom<Integer> comboBoxTextSecondaryColor = createColorPicker(145, 44);
-        comboBoxTextSecondaryColor.setValue(Laptop.getSystem().getSettings().getColorScheme().getTextSecondaryColor());
+        comboBoxTextSecondaryColor.setValue(MineOS.getOpened().getSettings().getColorScheme().getTextSecondaryColor());
         layoutColorScheme.addComponent(comboBoxTextSecondaryColor);
 
         ComboBox.Custom<Integer> comboBoxHeaderColor = createColorPicker(145, 62);
-        comboBoxHeaderColor.setValue(Laptop.getSystem().getSettings().getColorScheme().getHeaderColor());
+        comboBoxHeaderColor.setValue(MineOS.getOpened().getSettings().getColorScheme().getHeaderColor());
         layoutColorScheme.addComponent(comboBoxHeaderColor);
 
         ComboBox.Custom<Integer> comboBoxBackgroundColor = createColorPicker(145, 80);
-        comboBoxBackgroundColor.setValue(Laptop.getSystem().getSettings().getColorScheme().getBackgroundColor());
+        comboBoxBackgroundColor.setValue(MineOS.getOpened().getSettings().getColorScheme().getBackgroundColor());
         layoutColorScheme.addComponent(comboBoxBackgroundColor);
 
         ComboBox.Custom<Integer> comboBoxBackgroundSecondaryColor = createColorPicker(145, 98);
-        comboBoxBackgroundSecondaryColor.setValue(Laptop.getSystem().getSettings().getColorScheme().getBackgroundSecondaryColor());
+        comboBoxBackgroundSecondaryColor.setValue(MineOS.getOpened().getSettings().getColorScheme().getBackgroundSecondaryColor());
         layoutColorScheme.addComponent(comboBoxBackgroundSecondaryColor);
 
         ComboBox.Custom<Integer> comboBoxItemBackgroundColor = createColorPicker(145, 116);
-        comboBoxItemBackgroundColor.setValue(Laptop.getSystem().getSettings().getColorScheme().getItemBackgroundColor());
+        comboBoxItemBackgroundColor.setValue(MineOS.getOpened().getSettings().getColorScheme().getItemBackgroundColor());
         layoutColorScheme.addComponent(comboBoxItemBackgroundColor);
 
         ComboBox.Custom<Integer> comboBoxItemHighlightColor = createColorPicker(145, 134);
-        comboBoxItemHighlightColor.setValue(Laptop.getSystem().getSettings().getColorScheme().getItemHighlightColor());
+        comboBoxItemHighlightColor.setValue(MineOS.getOpened().getSettings().getColorScheme().getItemHighlightColor());
         layoutColorScheme.addComponent(comboBoxItemHighlightColor);
 
         buttonColorSchemeApply = new Button(5, 79, Icons.CHECK);
@@ -308,7 +309,7 @@ public class SettingsApp extends SystemApp {
         buttonColorSchemeApply.setClickListener((mouseX, mouseY, mouseButton) ->
         {
             if (mouseButton == 0) {
-                ColorScheme colorScheme = Laptop.getSystem().getSettings().getColorScheme();
+                ColorScheme colorScheme = MineOS.getOpened().getSettings().getColorScheme();
                 colorScheme.setTextColor(comboBoxTextColor.getValue());
                 colorScheme.setTextSecondaryColor(comboBoxTextSecondaryColor.getValue());
                 colorScheme.setHeaderColor(comboBoxHeaderColor.getValue());
@@ -334,10 +335,10 @@ public class SettingsApp extends SystemApp {
         Layout wallpaperLayout = new Menu("Wallpaper");
 
         // Wallpaper image.
-        var image = new com.ultreon.devices.api.app.component.Image(6, 29, 6+122, 29+70);
+        var image = new Image(6, 29, 6+122, 29+70);
         image.setBorderThickness(1);
         image.setBorderVisible(true);
-        image.setImage(Objects.requireNonNull(getLaptop()).getCurrentWallpaper());
+        image.setImage(Objects.requireNonNull(getOS()).getCurrentWallpaper());
         wallpaperLayout.addComponent(image);
 
         // Previous wallpaper button.
@@ -347,13 +348,13 @@ public class SettingsApp extends SystemApp {
             if (mouseButton != 0)
                 return;
 
-            Laptop laptop = getLaptop();
+            MineOS laptop = getOS();
             if (laptop != null) {
                 laptop.prevWallpaper();
-                image.setImage(getLaptop().getCurrentWallpaper());
+                image.setImage(getOS().getCurrentWallpaper());
             }
         });
-        prevWallpaperBtn.setEnabled(getLaptop().getCurrentWallpaper().isBuiltIn());
+        prevWallpaperBtn.setEnabled(getOS().getCurrentWallpaper().isBuiltIn());
         wallpaperLayout.addComponent(prevWallpaperBtn);
 
         // Next wallpaper button.
@@ -363,23 +364,23 @@ public class SettingsApp extends SystemApp {
             if (mouseButton != 0)
                 return;
 
-            Laptop laptop = getLaptop();
+            MineOS laptop = getOS();
             if (laptop != null) {
                 laptop.nextWallpaper();
-                image.setImage(getLaptop().getCurrentWallpaper());
+                image.setImage(getOS().getCurrentWallpaper());
             }
         });
-        nextWallpaperBtn.setEnabled(getLaptop().getCurrentWallpaper().isBuiltIn());
+        nextWallpaperBtn.setEnabled(getOS().getCurrentWallpaper().isBuiltIn());
         wallpaperLayout.addComponent(nextWallpaperBtn);
 
         // Reset wallpaper button.
         Button resetWallpaperBtn = new Button(6, 100, "Reset Wallpaper");
         resetWallpaperBtn.setClickListener((mouseX, mouseY, mouseButton) -> {
             if (mouseButton == 0) {
-                getLaptop().setWallpaper(0);
-                image.setImage(getLaptop().getCurrentWallpaper());
-                prevWallpaperBtn.setEnabled(getLaptop().getCurrentWallpaper().isBuiltIn());
-                nextWallpaperBtn.setEnabled(getLaptop().getCurrentWallpaper().isBuiltIn());
+                getOS().setWallpaper(0);
+                image.setImage(getOS().getCurrentWallpaper());
+                prevWallpaperBtn.setEnabled(getOS().getCurrentWallpaper().isBuiltIn());
+                nextWallpaperBtn.setEnabled(getOS().getCurrentWallpaper().isBuiltIn());
             }
         });
         resetWallpaperBtn.top = wallpaperLayout.height - resetWallpaperBtn.getHeight() - 5;
@@ -397,15 +398,15 @@ public class SettingsApp extends SystemApp {
 
             Dialog.Input dialog = new Dialog.Input("Enter the URL of the image");
             dialog.setResponseHandler((success, string) -> {
-                if (getLaptop() != null) {
-                    if (!OnlineRequest.isSafeAddress(string)) {
+                if (getOS() != null) {
+                    if (OnlineRequest.isUnsafeAddress(string)) {
                         openDialog(new Dialog.Message("Unsafe website."));
                         return false;
                     }
-                    getLaptop().setWallpaper(string);
-                    image.setImage(getLaptop().getCurrentWallpaper());
-                    prevWallpaperBtn.setEnabled(getLaptop().getCurrentWallpaper().isBuiltIn());
-                    nextWallpaperBtn.setEnabled(getLaptop().getCurrentWallpaper().isBuiltIn());
+                    getOS().setWallpaper(string);
+                    image.setImage(getOS().getCurrentWallpaper());
+                    prevWallpaperBtn.setEnabled(getOS().getCurrentWallpaper().isBuiltIn());
+                    nextWallpaperBtn.setEnabled(getOS().getCurrentWallpaper().isBuiltIn());
                 }
                 return success;
             });
@@ -414,7 +415,7 @@ public class SettingsApp extends SystemApp {
         wallpaperLayout.addComponent(urlWallpaperBtn);
         var wallpaperText = new Text("Wallpaper", image.left+3, image.top+3, image.componentWidth-6);
         wallpaperText.setShadow(true);
-        wallpaperText.setTextColor(new Color(getLaptop().getSettings().getColorScheme().getTextColor()));
+        wallpaperText.setTextColor(new Color(getOS().getSettings().getColorScheme().getTextColor()));
         wallpaperLayout.addComponent(wallpaperText);
 
         return wallpaperLayout;
@@ -456,9 +457,9 @@ public class SettingsApp extends SystemApp {
 
     private void showAllAppsClick(int mouseX, int mouseY, int mouseButton) {
         Settings.setShowAllApps(checkBoxShowApps.isSelected());
-        Laptop laptop = getLaptop();
+        MineOS laptop = getOS();
         assert laptop != null;
-        laptop.getTaskBar().setupApplications(laptop.getApplications());
+        laptop.getTaskBar().setupApplications();
     }
 
     public static class Menu extends Layout {
@@ -470,8 +471,8 @@ public class SettingsApp extends SystemApp {
         }
 
         @Override
-        public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
-            Color color = new Color(Laptop.getSystem().getSettings().getColorScheme().getHeaderColor());
+        public void render(GuiGraphics graphics, MineOS laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+            Color color = new Color(MineOS.getOpened().getSettings().getColorScheme().getHeaderColor());
             graphics.fill(x, y, x + width, y + 20, color.getRGB());
             graphics.fill(x, y + 20, x + width, y + 21, color.darker().getRGB());
             graphics.drawString(mc.font, title, x + 22, y + 6, Color.WHITE.getRGB());
@@ -502,14 +503,14 @@ public class SettingsApp extends SystemApp {
 
     public static class SettingsTrayItem extends TrayItem {
         public SettingsTrayItem() {
-            super(Icons.WRENCH, Devices.id("settings"));
+            super(Icons.WRENCH, UltreonDevicesMod.id("settings"));
         }
 
         @Override
         public void handleClick(int mouseX, int mouseY, int mouseButton) {
-            AppInfo info = ApplicationManager.getApplication(Devices.id("settings"));
+            AppInfo info = ApplicationManager.getApplication(UltreonDevicesMod.id("settings"));
             if (info != null) {
-                Laptop.getSystem().openApplication(info);
+                MineOS.getOpened().openApplication(info);
             }
         }
     }

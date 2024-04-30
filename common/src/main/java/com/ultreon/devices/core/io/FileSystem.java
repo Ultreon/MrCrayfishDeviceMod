@@ -1,6 +1,6 @@
 package com.ultreon.devices.core.io;
 
-import com.ultreon.devices.Devices;
+import com.ultreon.devices.UltreonDevicesMod;
 import com.ultreon.devices.api.app.Application;
 import com.ultreon.devices.api.io.Drive;
 import com.ultreon.devices.api.io.Folder;
@@ -8,7 +8,7 @@ import com.ultreon.devices.api.task.Callback;
 import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.api.task.TaskManager;
 import com.ultreon.devices.block.entity.ComputerBlockEntity;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.mineos.client.MineOS;
 import com.ultreon.devices.core.io.action.FileAction;
 import com.ultreon.devices.core.io.drive.AbstractDrive;
 import com.ultreon.devices.core.io.drive.ExternalDrive;
@@ -62,7 +62,7 @@ public class FileSystem {
 
     @Environment(EnvType.CLIENT)
     public static void sendAction(Drive drive, FileAction action, @Nullable Callback<Response> callback) {
-        if (Laptop.getPos() != null) {
+        if (MineOS.getOpened().getPos() != null) {
             DebugLog.log("Sending action " + action + " to " + drive);
             Task task = new TaskSendAction(drive, action);
             task.setCallback((tag, success) -> {
@@ -75,20 +75,20 @@ public class FileSystem {
             });
             TaskManager.sendTask(task);
         } else {
-            DebugLog.log("Sending action " + action + " to " + drive + " failed: Laptop not found");
+            DebugLog.log("Sending action " + action + " to " + drive + " failed: MineOS not found");
         }
     }
 
     public static void getApplicationFolder(Application app, Callback<Folder> callback) {
-        if (Devices.hasAllowedApplications()) { // in arch we do not do instances
-            if (!Devices.getAllowedApplications().contains(app.getInfo())) {
+        if (UltreonDevicesMod.hasAllowedApplications()) { // in arch we do not do instances
+            if (!UltreonDevicesMod.getAllowedApplications().contains(app.getInfo())) {
                 callback.execute(null, false);
                 return;
             }
         }
 
-        if (Laptop.getMainDrive() == null) {
-            Task task = new TaskGetMainDrive(Laptop.getPos());
+        if (MineOS.getOpened().getMainDrive() == null) {
+            Task task = new TaskGetMainDrive(MineOS.getOpened().getPos());
             task.setCallback((tag, success) -> {
                 if (success) {
                     setupApplicationFolder(app, callback);
@@ -104,8 +104,8 @@ public class FileSystem {
     }
 
     private static void setupApplicationFolder(Application app, Callback<Folder> callback) {
-        assert Laptop.getMainDrive() != null;
-        Folder folder = Laptop.getMainDrive().getFolder(FileSystem.DIR_APPLICATION_DATA);
+        assert MineOS.getOpened().getMainDrive() != null;
+        Folder folder = MineOS.getOpened().getMainDrive().getFolder(FileSystem.DIR_APPLICATION_DATA);
         if (folder != null) {
             if (folder.hasFolder(app.getInfo().getFormattedId())) {
                 Folder appFolder = folder.getFolder(app.getInfo().getFormattedId());
@@ -113,7 +113,7 @@ public class FileSystem {
                 if (appFolder.isSynced()) {
                     callback.execute(appFolder, true);
                 } else {
-                    Task task = new TaskGetFiles(appFolder, Laptop.getPos());
+                    Task task = new TaskGetFiles(appFolder, MineOS.getOpened().getPos());
                     task.setCallback((tag, success) -> {
                         assert tag != null;
                         if (success && tag.contains("files", Tag.TAG_LIST)) {

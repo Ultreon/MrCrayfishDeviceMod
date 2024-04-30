@@ -16,7 +16,7 @@ import com.ultreon.devices.api.app.renderer.ListItemRenderer;
 import com.ultreon.devices.api.io.File;
 import com.ultreon.devices.api.print.IPrint;
 import com.ultreon.devices.api.utils.RenderUtil;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.mineos.client.MineOS;
 import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.object.Canvas;
@@ -24,7 +24,6 @@ import com.ultreon.devices.object.ColorGrid;
 import com.ultreon.devices.object.Picture;
 import com.ultreon.devices.programs.system.layout.StandardLayout;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -33,7 +32,6 @@ import org.joml.Quaternionf;
 
 import org.jetbrains.annotations.Nullable;
 import java.awt.*;
-import java.lang.System;
 import java.util.Objects;
 
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
@@ -383,7 +381,7 @@ public class PixelPainterApp extends Application {
 
         colorDisplay = new Component(158, 5) {
             @Override
-            public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+            public void render(GuiGraphics graphics, MineOS laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
                 graphics.fill(xPosition, yPosition, xPosition + 50, yPosition + 20, Color.DARK_GRAY.getRGB());
                 graphics.fill(xPosition + 1, yPosition + 1, xPosition + 49, yPosition + 19, canvas.getCurrentColor());
             }

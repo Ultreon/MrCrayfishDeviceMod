@@ -1,7 +1,7 @@
 package com.ultreon.devices.api.app;
 
 import com.ultreon.devices.api.io.File;
-import com.ultreon.devices.core.Settings;
+import com.ultreon.devices.mineos.client.Settings;
 import com.ultreon.devices.object.AppInfo;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.nbt.CompoundTag;

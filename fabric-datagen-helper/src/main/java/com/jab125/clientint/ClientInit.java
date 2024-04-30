@@ -68,9 +68,7 @@ public class ClientInit implements ClientModInitializer {
     }
 
     private void extractAllFrom(Map<String, LanguageInfo> languages, Stream<PackResources> packResourcesStream, ResourceManager resourceManager) {
-        languages.forEach(((s, languageInfo) -> {
-            LOGGER.info(s + ", " + languageInfo);
-        }));
+        languages.forEach(((s, languageInfo) -> LOGGER.info(s + ", " + languageInfo)));
         var map = new HashMap<String, LanguageInfo>();
         packResourcesStream.forEach((packResources -> {
                     try {

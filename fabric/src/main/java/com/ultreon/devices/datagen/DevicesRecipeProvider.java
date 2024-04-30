@@ -1,6 +1,6 @@
 package com.ultreon.devices.datagen;
 
-import com.ultreon.devices.Devices;
+import com.ultreon.devices.UltreonDevicesMod;
 import com.ultreon.devices.block.OfficeChairBlock;
 import com.ultreon.devices.block.PrinterBlock;
 import com.ultreon.devices.block.RouterBlock;
@@ -43,7 +43,7 @@ public class DevicesRecipeProvider extends FabricRecipeProvider {
                     .define('f', DeviceItems.COMPONENT_FLASH_CHIP.get())
                     .define('c', DeviceItems.COMPONENT_CIRCUIT_BOARD.get())
                     .unlockedBy("has_flash_chip", has(DeviceItems.COMPONENT_FLASH_CHIP.get()))
-                    .group(Devices.MOD_ID + ":laptop")
+                    .group(UltreonDevicesMod.MOD_ID + ":laptop")
                     .save(exporter);
         }
 
@@ -62,7 +62,7 @@ public class DevicesRecipeProvider extends FabricRecipeProvider {
                     .define('c', DeviceItems.COMPONENT_CARRIAGE.get())
                     .define('b', DeviceItems.COMPONENT_CONTROLLER_UNIT.get())
                     .unlockedBy("has_carriage", has(DeviceItems.COMPONENT_CARRIAGE.get()))
-                    .group(Devices.MOD_ID + ":printer")
+                    .group(UltreonDevicesMod.MOD_ID + ":printer")
                     .save(exporter);
         }
 
@@ -81,7 +81,7 @@ public class DevicesRecipeProvider extends FabricRecipeProvider {
                     .define('c', DeviceItems.COMPONENT_CIRCUIT_BOARD.get())
                     .define('b', DeviceItems.COMPONENT_BATTERY.get())
                     .unlockedBy("has_circuit_board", has(DeviceItems.COMPONENT_CIRCUIT_BOARD.get()))
-                    .group(Devices.MOD_ID + ":router")
+                    .group(UltreonDevicesMod.MOD_ID + ":router")
                     .save(exporter);
         }
 
@@ -99,7 +99,7 @@ public class DevicesRecipeProvider extends FabricRecipeProvider {
                     .define('w', DeviceItems.WHEEL.get())
                     .define('f', Items.COBBLESTONE_WALL)
                     .unlockedBy("has_wheel", has(DeviceItems.WHEEL.get()))
-                    .group(Devices.MOD_ID + ":office_chair")
+                    .group(UltreonDevicesMod.MOD_ID + ":office_chair")
                     .save(exporter);
         }
 

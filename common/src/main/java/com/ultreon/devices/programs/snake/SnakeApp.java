@@ -1,11 +1,10 @@
 package com.ultreon.devices.programs.snake;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.app.Application;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.component.Button;
 import com.ultreon.devices.api.app.component.Label;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.mineos.client.MineOS;
 import com.ultreon.devices.programs.snake.layout.SnakeLayout;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -32,7 +31,7 @@ public class SnakeApp extends Application {
     }
 
     @Override
-    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
+    public void render(GuiGraphics graphics, MineOS laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
         super.render(graphics, laptop, mc, x, y, mouseX, mouseY, active, partialTicks);
 //        for (Component component : this.titleScreen.components) {
 //            DebugLog.log(component + "lt: " + component.left + ", " + component.top);

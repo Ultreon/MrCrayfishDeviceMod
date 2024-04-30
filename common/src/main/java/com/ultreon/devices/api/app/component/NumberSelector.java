@@ -1,9 +1,8 @@
 package com.ultreon.devices.api.app.component;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Layout;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.mineos.client.MineOS;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 
@@ -17,7 +16,7 @@ public class NumberSelector extends Component {
     protected int min = 1;
     protected int max = 100;
 
-    /* Display Properties */
+    /* GuiGraphics Properties */
     protected int width;
 
     /* Sub Components */
@@ -71,7 +70,7 @@ public class NumberSelector extends Component {
     }
 
     @Override
-    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(GuiGraphics graphics, MineOS laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
     }
 
     @Override

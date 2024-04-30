@@ -1,19 +1,18 @@
 package com.ultreon.devices.core;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.ultreon.devices.Devices;
+import com.ultreon.devices.UltreonDevicesMod;
 import com.ultreon.devices.api.TrayItemAdder;
-import com.ultreon.devices.api.app.Application;
 import com.ultreon.devices.api.event.LaptopEvent;
 import com.ultreon.devices.api.utils.RenderUtil;
 import com.ultreon.devices.core.network.TrayItemWifi;
+import com.ultreon.devices.api.util.Vulnerability;
+import com.ultreon.devices.mineos.client.MineOS;
 import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.object.TrayItem;
 import com.ultreon.devices.programs.system.AppStore;
 import com.ultreon.devices.programs.system.FileBrowserApp;
 import com.ultreon.devices.programs.system.SettingsApp;
-import com.ultreon.devices.programs.system.SystemApp;
-import com.ultreon.devices.util.Vulnerability;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
@@ -26,16 +25,15 @@ import org.slf4j.MarkerFactory;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 public class TaskBar {
     public static final ResourceLocation APP_BAR_GUI = new ResourceLocation("devices:textures/gui/application_bar.png");
     public static final int BAR_HEIGHT = 18;
-    private static final int APPS_DISPLAYED = Devices.DEVELOPER_MODE ? 18 : 10;
+    private static final int APPS_DISPLAYED = UltreonDevicesMod.DEVELOPER_MODE ? 18 : 10;
 
     private final CompoundTag tag;
 
-    private final Laptop laptop;
+    private final MineOS laptop;
 
     private final int offset = 0;
 
@@ -43,14 +41,14 @@ public class TaskBar {
     private static final Marker MARKER = MarkerFactory.getMarker("TaskBar");
 
     /**
-     * @deprecated use {@link #TaskBar(Laptop, CompoundTag)} instead.
+     * @deprecated use {@link #TaskBar(MineOS, CompoundTag)} instead.
      */
     @Deprecated
-    public TaskBar(Laptop laptop) {
+    public TaskBar(MineOS laptop) {
         this(laptop, new CompoundTag());
     }
 
-    public TaskBar(Laptop laptop, CompoundTag tag) {
+    public TaskBar(MineOS laptop, CompoundTag tag) {
         this.laptop = laptop;
         this.tag = tag;
 
@@ -79,23 +77,6 @@ public class TaskBar {
         this.trayItems.forEach(TrayItem::init);
     }
 
-    public void setupApplications(List<Application> applications) {
-        final Predicate<Application> VALID_APPS = app -> {
-            if (app instanceof SystemApp) {
-                return true;
-            }
-            if (Devices.hasAllowedApplications()) {
-                if (Devices.getAllowedApplications().contains(app.getInfo())) {
-                    return !Devices.DEVELOPER_MODE || Settings.isShowAllApps();
-                }
-                return false;
-            } else if (Devices.DEVELOPER_MODE) {
-                return Settings.isShowAllApps();
-            }
-            return true;
-        };
-    }
-
     public void init(int posX, int posY) {
         init();
     }
@@ -104,7 +85,7 @@ public class TaskBar {
         trayItems.forEach(TrayItem::tick);
     }
 
-    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, float partialTicks) {
+    public void render(GuiGraphics graphics, MineOS laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, float partialTicks) {
         RenderSystem.setShaderColor(1f, 1f, 1f, 0.75f);
         RenderSystem.enableBlend();
         RenderSystem.setShaderTexture(0, APP_BAR_GUI);
@@ -117,14 +98,14 @@ public class TaskBar {
 
         int trayItemsWidth = trayItems.size() * 14;
         graphics.blit(APP_BAR_GUI, x, y, 1, 18, 0, 0, 1, 18, 256, 256);
-        graphics.blit(APP_BAR_GUI, x + 1, y, Laptop.getScreenWidth() - 36 - trayItemsWidth, 18, 1, 0, 1, 18, 256, 256);
-        graphics.blit(APP_BAR_GUI, x + Laptop.getScreenWidth() - 35 - trayItemsWidth, y, 35 + trayItemsWidth, 18, 2, 0, 1, 18, 256, 256);
+        graphics.blit(APP_BAR_GUI, x + 1, y, MineOS.getOpened().getScreenWidth() - 36 - trayItemsWidth, 18, 1, 0, 1, 18, 256, 256);
+        graphics.blit(APP_BAR_GUI, x + MineOS.getOpened().getScreenWidth() - 35 - trayItemsWidth, y, 35 + trayItemsWidth, 18, 2, 0, 1, 18, 256, 256);
 
         RenderSystem.disableBlend();
 
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-        for (int i = 0; i < APPS_DISPLAYED && i < laptop.installedApps.size(); i++) {
-            AppInfo info = laptop.installedApps.get(i + offset);
+        for (int i = 0; i < APPS_DISPLAYED && i < laptop.getInstalledApplications().size(); i++) {
+            AppInfo info = laptop.getInstalledApplications().get(i + offset);
             RenderUtil.drawApplicationIcon(graphics, info, x + 2 + i * 16, y + 2);
             if (laptop.isApplicationRunning(info)) {
                 RenderSystem.setShaderTexture(0, APP_BAR_GUI);
@@ -134,10 +115,10 @@ public class TaskBar {
 
         assert mc.level == null || mc.player != null;
        // assert mc.level != null; //can no longer assume
-        graphics.drawString(mc.font, timeToString(mc.level != null ? mc.level.getDayTime() : 0), x + Laptop.getScreenWidth() - 31, y + 5, Color.WHITE.getRGB(), true);
+        graphics.drawString(mc.font, timeToString(mc.level != null ? mc.level.getDayTime() : 0), x + MineOS.getOpened().getScreenWidth() - 31, y + 5, Color.WHITE.getRGB(), true);
 
         /* Settings App */
-        int startX = x + Laptop.getScreenWidth() - 48;
+        int startX = x + MineOS.getOpened().getScreenWidth() - 48;
         for (int i = 0; i < trayItems.size(); i++) {
             int posX = startX - (trayItems.size() - 1 - i) * 14;
             if (isMouseInside(mouseX, mouseY, posX, y + 2, posX + 13, y + 15)) {
@@ -151,32 +132,32 @@ public class TaskBar {
         /* Other Apps */
         if (isMouseInside(mouseX, mouseY, x + 1, y + 1, x + 236, y + 16)) {
             int appIndex = (mouseX - x - 1) / 16;
-            if (appIndex >= 0 && appIndex < offset + APPS_DISPLAYED && appIndex < laptop.installedApps.size()) {
+            if (appIndex >= 0 && appIndex < offset + APPS_DISPLAYED && appIndex < laptop.getInstalledApplications().size()) {
                 graphics.blit(APP_BAR_GUI, x + appIndex * 16 + 1, y + 1, 35, 0, 16, 16);
-                laptop.renderComponentTooltip(graphics, List.of(Component.literal(laptop.installedApps.get(appIndex).getName())), mouseX, mouseY);
+                laptop.renderComponentTooltip(graphics, List.of(Component.literal(laptop.getInstalledApplications().get(appIndex).getName())), mouseX, mouseY);
             }
         }
 
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
     }
 
-    public void handleClick(Laptop laptop, int x, int y, int mouseX, int mouseY, int mouseButton) {
+    public void handleClick(MineOS laptop, int x, int y, int mouseX, int mouseY, int mouseButton) {
         if (isMouseInside(mouseX, mouseY, x + 1, y + 1, x + 236, y + 16)) {
-            Devices.LOGGER.debug(MARKER, "Clicked on task bar");
+            UltreonDevicesMod.LOGGER.debug(MARKER, "Clicked on task bar");
             int appIndex = (mouseX - x - 1) / 16;
-            if (appIndex >= 0 && appIndex <= offset + APPS_DISPLAYED && appIndex < laptop.installedApps.size()) {
-                laptop.openApplication(laptop.installedApps.get(appIndex));
+            if (appIndex >= 0 && appIndex <= offset + APPS_DISPLAYED && appIndex < laptop.getInstalledApplications().size()) {
+                laptop.openApplication(laptop.getInstalledApplications().get(appIndex));
                 return;
             }
         }
 
-        int startX = x + Laptop.getScreenWidth() - 48;
+        int startX = x + MineOS.getOpened().getScreenWidth() - 48;
         for (int i = 0; i < trayItems.size(); i++) {
             int posX = startX - (trayItems.size() - 1 - i) * 14;
             if (isMouseInside(mouseX, mouseY, posX, y + 2, posX + 13, y + 15)) {
                 TrayItem trayItem = trayItems.get(i);
                 trayItem.handleClick(mouseX, mouseY, mouseButton);
-                Devices.LOGGER.debug(MARKER, "Clicked on tray item (%d): %s".formatted(i, trayItem.getClass().getSimpleName()));
+                UltreonDevicesMod.LOGGER.debug(MARKER, "Clicked on tray item (%d): %s".formatted(i, trayItem.getClass().getSimpleName()));
                 break;
             }
         }
@@ -192,7 +173,7 @@ public class TaskBar {
         return String.format("%02d:%02d", hours, minutes);
     }
 
-    public Laptop getLaptop() {
+    public MineOS getLaptop() {
         return laptop;
     }
 

@@ -1,11 +1,10 @@
 package com.ultreon.devices.api.app;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.ultreon.devices.Devices;
+import com.ultreon.devices.UltreonDevicesMod;
 import com.ultreon.devices.api.io.File;
-import com.ultreon.devices.core.Laptop;
-import com.ultreon.devices.core.Window;
+import com.ultreon.devices.mineos.client.MineOS;
+import com.ultreon.devices.mineos.client.Window;
 import com.ultreon.devices.core.Wrappable;
 import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.object.AppInfo;
@@ -29,7 +28,7 @@ public abstract class Application extends Wrappable implements DataHandler {
     @SuppressWarnings("FieldMayBeFinal")
     protected AppInfo info = null;
     public void setInfo(AppInfo info) {
-        if (StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass().equals(Devices.class)) {
+        if (StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass().equals(UltreonDevicesMod.class)) {
             this.info = info;
             return;
         }
@@ -133,10 +132,10 @@ public abstract class Application extends Wrappable implements DataHandler {
      * @param partialTicks the render partial ticks.
      */
     @Override
-    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
+    public void render(GuiGraphics graphics, MineOS laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
 //        GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
-        GLHelper.pushScissor(x, y, width, height);
+        GLHelper.pushScissor(graphics, x, y, width, height);
         currentLayout.render(graphics, laptop, mc, x, y, mouseX, mouseY, active, partialTicks);
         GLHelper.popScissor();
 
@@ -281,6 +280,7 @@ public abstract class Application extends Wrappable implements DataHandler {
      *
      * @param tag the tag compound where you saved data is
      */
+    @Override
     public abstract void load(CompoundTag tag);
 
     /**
@@ -290,6 +290,7 @@ public abstract class Application extends Wrappable implements DataHandler {
      *
      * @param tag the tag compound to save your data to
      */
+    @Override
     public abstract void save(CompoundTag tag);
 
     /**
@@ -338,6 +339,7 @@ public abstract class Application extends Wrappable implements DataHandler {
         needsDataUpdate = false;
     }
 
+    @Override
     public final void markForLayoutUpdate() {
         this.pendingLayoutUpdate = true;
     }
