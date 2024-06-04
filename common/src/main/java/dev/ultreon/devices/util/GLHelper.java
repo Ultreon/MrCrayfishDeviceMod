@@ -19,8 +19,11 @@ import java.util.Stack;
 public class GLHelper {
     public static Stack<Scissor> scissorStack = new Stack<>();
     private static final Vector3f tmp = new Vector3f();
+    private static boolean scissorEnabled = true;
 
     public static boolean pushScissor(GuiGraphics graphics, int x, int y, int width, int height) {
+        if (!scissorEnabled) return true;
+
         if (width <= 0 || height <= 0) {
             return false;
         }
@@ -48,6 +51,8 @@ public class GLHelper {
     }
 
     public static void popScissor() {
+        if (!scissorEnabled) return;
+
         if (!scissorStack.isEmpty()) {
             scissorStack.pop();
         }
@@ -55,6 +60,8 @@ public class GLHelper {
     }
 
     private static void restoreScissor() {
+        if (!scissorEnabled) return;
+
         if (!scissorStack.isEmpty()) {
             Scissor scissor = scissorStack.peek();
             Minecraft mc = Minecraft.getInstance();
@@ -76,6 +83,8 @@ public class GLHelper {
      * @return true if the scissor stack was cleared
      */
     public static boolean clearScissorStack() {
+        if (!scissorEnabled) return false;
+
         if (scissorStack.isEmpty()) return false;
         scissorStack.clear();
         return true;
@@ -88,6 +97,14 @@ public class GLHelper {
         ByteBuffer buffer = BufferUtils.createByteBuffer(3);
         RenderSystem.readPixels((int) (x * scale), (int) (mc.getWindow().getHeight() - y * scale - scale), 1, 1, GL11.GL_RGB, GL11.GL_BYTE, buffer);
         return new Color(Math.min(255, buffer.get(0) % 256*2), Math.min(255, buffer.get(1) % 256*2), Math.min(255, buffer.get(2) % 256*2));
+    }
+
+    public static void disableScissor() {
+        scissorEnabled = false;
+    }
+
+    public static void enableScissor() {
+        scissorEnabled = true;
     }
 
     public static class Scissor {

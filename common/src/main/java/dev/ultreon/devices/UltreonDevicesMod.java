@@ -12,6 +12,7 @@ import dev.ultreon.devices.api.print.PrintingManager;
 import dev.ultreon.devices.api.task.TaskManager;
 import dev.ultreon.devices.api.util.Vulnerability;
 import dev.ultreon.devices.api.utils.OnlineRequest;
+import dev.ultreon.devices.client.ClientModEvents;
 import dev.ultreon.devices.mineos.apps.email.task.TaskRegisterEmailAccount;
 import dev.ultreon.devices.mineos.apps.email.task.*;
 import dev.ultreon.devices.mineos.apps.system.task.TaskAdd;

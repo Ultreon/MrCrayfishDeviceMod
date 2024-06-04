@@ -1,7 +1,7 @@
 package dev.ultreon.devices.minephone;
 
 import dev.ultreon.devices.UltreonDevicesMod;
-import dev.ultreon.devices.client.Display;
+import dev.ultreon.devices.client.DisplayGui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 
@@ -12,7 +12,7 @@ public class PhoneBootScreen implements PosRenderable {
 
     @Override
     public void render(GuiGraphics guiGraphics, MinePhoneOS phoneOS, int mouseX, int mouseY, float partialTick) {
-        Display display = phoneOS.getDisplay();
+        DisplayGui display = phoneOS.getDisplay();
 
         int screenWidth = display.getScreenWidth();
         int screenHeight = display.getScreenHeight();

@@ -1,14 +1,22 @@
 package dev.ultreon.devices.block.entity.renderer;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import dev.ultreon.devices.Display;
 import dev.ultreon.devices.block.ComputerBlock;
 import dev.ultreon.devices.block.LaptopBlock;
 import dev.ultreon.devices.block.entity.LaptopBlockEntity;
+import dev.ultreon.devices.client.DisplayGui;
 import dev.ultreon.devices.init.DeviceItems;
+import dev.ultreon.devices.util.GLHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -20,6 +28,11 @@ import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Quaternionf;
+
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 public class LaptopRenderer implements BlockEntityRenderer<LaptopBlockEntity> {
     private final BlockEntityRendererProvider.Context context;
@@ -97,6 +110,33 @@ public class LaptopRenderer implements BlockEntityRenderer<LaptopBlockEntity> {
                 //poseStack.mulPose(Vector3f.XP.rotationDegrees(180));
                 //poseStack.mulPose(Vector3f.ZP.rotationDegrees(180));
                 dispatcher.renderSingleBlock(state, poseStack, bufferSource, packedLight, packedOverlay);//.renderModel(poseStack.last(), bufferSource.getBuffer(RenderType.cutout()), state, ibakedmodel, 1, 1, 1, packedLight, packedOverlay);
+
+                if (blockEntity.isPoweredOn()) {
+                    GuiGraphics guiGraphics = new GuiGraphics(Minecraft.getInstance(), new FakeBufferSource(bufferSource));
+                    guiGraphics.pose().pushPose();
+
+                    poseStack.scale(1 / 320f, 1 / 320f, 1 / 320f);
+                    poseStack.translate(0.5f, 0.5f, 0.0f);
+                    poseStack.mulPose(Axis.XP.rotationDegrees(-90));
+                    poseStack.translate(0, 0, 0);
+
+                    guiGraphics.pose().last().pose().set(poseStack.last().pose());
+                    guiGraphics.pose().last().normal().set(poseStack.last().normal());
+
+                    DisplayGui open = (DisplayGui) DisplayGui.openInWorld(blockEntity);
+
+                    GLHelper.disableScissor();
+
+                    open.init(Minecraft.getInstance(), 1, 1);
+                    open.renderOS(guiGraphics, Integer.MAX_VALUE, Integer.MAX_VALUE, partialTick);
+
+                    GLHelper.enableScissor();
+
+                    guiGraphics.pose().popPose();
+
+                    DisplayGui.closeInWorld();
+                }
+
                 poseStack.popPose();
                 //poseStack.popPose();
                 //    tessellator.end();
@@ -105,5 +145,60 @@ public class LaptopRenderer implements BlockEntityRenderer<LaptopBlockEntity> {
             poseStack.popPose();
         }
         poseStack.popPose();
+    }
+
+    private static class FakeBufferSource extends MultiBufferSource.BufferSource {
+        private final MultiBufferSource bufferSource;
+
+        public FakeBufferSource(MultiBufferSource bufferSource) {
+            super(null, Map.of());
+            this.bufferSource = bufferSource;
+        }
+
+        public VertexConsumer getBuffer(RenderType renderType) {
+            return bufferSource.getBuffer(renderType);
+        }
+
+        public void endLastBatch() {
+//                            if (this.lastState.isPresent()) {
+//                                RenderType renderType = (RenderType)this.lastState.get();
+//                                if (!this.fixedBuffers.containsKey(renderType)) {
+//                                    this.endBatch(renderType);
+//                                }
+//
+//                                this.lastState = Optional.empty();
+//                            }
+        }
+
+        public void endBatch() {
+//                            this.lastState.ifPresent((renderTypex) -> {
+//                                VertexConsumer vertexConsumer = this.getBuffer(renderTypex);
+//                                if (vertexConsumer == this.builder) {
+//                                    this.endBatch(renderTypex);
+//                                }
+//
+//                            });
+//                            Iterator var1 = this.fixedBuffers.keySet().iterator();
+//
+//                            while(var1.hasNext()) {
+//                                RenderType renderType = (RenderType)var1.next();
+//                                this.endBatch(renderType);
+//                            }
+
+        }
+
+        public void endBatch(RenderType renderType) {
+//            BufferBuilder bufferBuilder = this.getBuilderRaw(renderType);
+//            boolean bl = Objects.equals(this.lastState, renderType.asOptional());
+//            if (bl || bufferBuilder != this.builder) {
+//                if (this.startedBuffers.remove(bufferBuilder)) {
+//                    renderType.end(bufferBuilder, RenderSystem.getVertexSorting());
+//                    if (bl) {
+//                        this.lastState = Optional.empty();
+//                    }
+//
+//                }
+//            }
+        }
     }
 }

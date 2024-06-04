@@ -4,12 +4,15 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import dev.ultreon.devices.Display;
 import dev.ultreon.devices.UltreonDevicesMod;
 import dev.ultreon.devices.api.os.OperatingSystem;
-import dev.ultreon.devices.core.BiosImpl;
+import dev.ultreon.devices.block.entity.LaptopBlockEntity;
+import dev.ultreon.devices.core.DefaultBios;
 import dev.ultreon.devices.mineos.apps.system.DisplayResolution;
 import dev.ultreon.devices.mineos.apps.system.PredefinedResolution;
 import dev.ultreon.devices.block.entity.ComputerBlockEntity;
+import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.client.gui.GuiGraphics;
 import dev.ultreon.devices.util.GLHelper;
@@ -19,10 +22,11 @@ import net.minecraft.network.chat.Component;
 
 import java.util.function.Consumer;
 
-public class Display extends Screen {
+public class DisplayGui extends Screen implements Display {
     public static final ResourceLocation LAPTOP_GUI = UltreonDevicesMod.res("textures/gui/laptop.png");
     public static final int BORDER = 10;
-    private static Display instance;
+    private static DisplayGui instance;
+    private static DisplayGui worldInstance;
     private final Window window;
     private ComputerBlockEntity computer = null;
 
@@ -32,13 +36,13 @@ public class Display extends Screen {
     private float partialTicks;
     private int screenWidth;
     private int screenHeight;
-    private Consumer<Display> disconnectListener;
-    private Consumer<Display> connectListener;
+    private Consumer<DisplayGui> disconnectListener;
+    private Consumer<DisplayGui> connectListener;
     private boolean connected;
-    private BiosImpl bios;
+    private DefaultBios bios;
     private OperatingSystem os;
 
-    private Display(DisplayResolution resolution) {
+    private DisplayGui(DisplayResolution resolution) {
         super(Component.literal("MineOS GuiGraphics"));
 
         this.screenWidth = resolution.width();
@@ -47,7 +51,7 @@ public class Display extends Screen {
         this.window = Minecraft.getInstance().getWindow();
     }
 
-    private Display(ComputerBlockEntity computer) {
+    private DisplayGui(ComputerBlockEntity computer) {
         this(PredefinedResolution.PREDEFINED_384x216);
         this.computer = computer;
         this.bios = computer.getBios();
@@ -55,23 +59,45 @@ public class Display extends Screen {
     }
 
     public static Screen open(ComputerBlockEntity computer) {
-        instance = new Display(computer);
+        if (worldInstance != null) {
+            return worldInstance;
+        }
+        instance = new DisplayGui(computer);
         instance.os.connectDisplay(instance);
+        worldInstance = instance;
         return instance;
     }
 
     public static void open(DisplayResolution resolution) {
-        instance = new Display(resolution);
+        instance = new DisplayGui(resolution);
     }
 
-    public static Display get() {
+    public static DisplayGui get() {
         return instance;
     }
 
     public static void close() {
-        instance.onClose();
-        instance.os.disconnectDisplay();
-        instance = null;
+        if (instance != worldInstance) {
+            instance.onClose();
+        } else {
+            instance.onClose();
+            instance.init(Minecraft.getInstance(), 1, 1);
+        }
+    }
+
+    public static void closeInWorld() {
+        if (worldInstance == null) {
+            return;
+        }
+
+        worldInstance.os.disconnectDisplay();
+        worldInstance = null;
+    }
+
+    public static Screen openInWorld(LaptopBlockEntity blockEntity) {
+        worldInstance = new DisplayGui(blockEntity);
+        worldInstance.os.connectDisplay(instance);
+        return worldInstance;
     }
 
     void begin(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
@@ -88,43 +114,53 @@ public class Display extends Screen {
         this.partialTicks = 0;
     }
 
+    @Override
     public void setResolution(DisplayResolution resolution) {
         this.screenWidth = resolution.width();
         this.screenHeight = resolution.height();
     }
 
+    @Override
     public boolean isPresent() {
         return true;
     }
 
+    @Override
     public boolean isConnected() {
         return this.connected;
     }
 
+    @Override
     public int getScreenWidth() {
         return screenWidth;
     }
 
+    @Override
     public int getScreenHeight() {
         return screenHeight;
     }
 
+    @Override
     public int getMouseX() {
         return mouseX;
     }
 
+    @Override
     public int getMouseY() {
         return mouseY;
     }
 
+    @Override
     public float getPartialTicks() {
         return partialTicks;
     }
 
+    @Override
     public int getMaxWidth() {
         return window.getGuiScaledWidth();
     }
 
+    @Override
     public int getMaxHeight() {
         return window.getGuiScaledHeight();
     }
@@ -134,6 +170,10 @@ public class Display extends Screen {
         this.begin(graphics, mouseX, mouseY, partialTick);
         this.renderBezels();
 
+        renderOS(graphics, mouseX, mouseY, partialTick);
+    }
+
+    public void renderOS(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         int x = getX();
         int y = getY();
         graphics.pose().pushPose();
@@ -142,54 +182,70 @@ public class Display extends Screen {
 
         try {
             if (GLHelper.pushScissor(graphics, x, y, screenWidth, screenHeight)) {
-                OperatingSystem runningOS = this.bios.getRunningOS();
-                if (mouseX < x || mouseX > x + screenWidth) {
-                    mouseX = Integer.MAX_VALUE;
-                }
-                if (mouseY < y || mouseY > y + screenHeight) {
-                    mouseY = Integer.MAX_VALUE;
-                }
-
-                var posX = mouseX - getX();
-                var posY = mouseY - getY();
-
-                if (runningOS != null) {
-                    graphics.pose().translate(x, y, 0);
-                    runningOS.getScreen().render(graphics, posX, posY, partialTick);
-                }
-                GLHelper.popScissor();
+                actuallyRender(graphics, mouseX, mouseY, partialTick, x, y);
             }
         } catch (Exception e) {
-            while (graphics.pose().last() != last) {
-                graphics.pose().popPose();
-            }
-
-            GLHelper.clearScissorStack();
-            RenderSystem.disableScissor();
-
-            bios.onFault(e);
+            handleCrash(graphics, e, last);
 
             return;
         }
 
         if (graphics.pose().last() != last) {
-            UltreonDevicesMod.LOGGER.error("Pose stack leakage!");
-
-            do {
-                graphics.pose().popPose();
-            } while (graphics.pose().last() != last);
-
-            bios.onFault(new IllegalStateException("Pose stack leakage!"));
+            handlePoseStackLeak(graphics, last);
         }
 
         if (GLHelper.clearScissorStack()) {
-            UltreonDevicesMod.LOGGER.error("Scissor stack leakage!");
-            bios.onFault(new IllegalStateException("Scissor stack leakage!"));
+            handleScissorStackLeak();
         }
         RenderSystem.disableScissor();
 
         graphics.pose().popPose();
         this.end();
+    }
+
+    private void handleScissorStackLeak() {
+        UltreonDevicesMod.LOGGER.error("Scissor stack leakage!");
+        bios.onFault(new IllegalStateException("Scissor stack leakage!"));
+    }
+
+    private void handlePoseStackLeak(GuiGraphics graphics, PoseStack.Pose last) {
+        UltreonDevicesMod.LOGGER.error("Pose stack leakage!");
+
+        do {
+            graphics.pose().popPose();
+        } while (graphics.pose().last() != last);
+
+        bios.onFault(new IllegalStateException("Pose stack leakage!"));
+    }
+
+    private void handleCrash(GuiGraphics graphics, Exception e, PoseStack.Pose last) {
+        while (graphics.pose().last() != last) {
+            graphics.pose().popPose();
+        }
+
+        GLHelper.clearScissorStack();
+        RenderSystem.disableScissor();
+
+        bios.onFault(e);
+    }
+
+    private void actuallyRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTick, int x, int y) {
+        OperatingSystem runningOS = this.bios.getRunningOS();
+        if (mouseX < x || mouseX > x + screenWidth) {
+            mouseX = Integer.MAX_VALUE;
+        }
+        if (mouseY < y || mouseY > y + screenHeight) {
+            mouseY = Integer.MAX_VALUE;
+        }
+
+        var posX = mouseX - getX();
+        var posY = mouseY - getY();
+
+        if (runningOS != null) {
+            graphics.pose().translate(x, y, 0);
+            runningOS.getScreen().render(graphics, posX, posY, partialTick);
+        }
+        GLHelper.popScissor();
     }
 
     @Override
@@ -289,7 +345,11 @@ public class Display extends Screen {
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (keyCode == InputConstants.KEY_ESCAPE) {
-            close();
+            this.onClose();
+            if (worldInstance == instance) {
+                instance.init(Minecraft.getInstance(), 1, 1);
+                return true;
+            }
             return true;
         }
 
@@ -407,6 +467,7 @@ public class Display extends Screen {
         os.connectDisplay(this);
     }
 
+    @Override
     public void renderBezels() {
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 
@@ -434,14 +495,15 @@ public class Display extends Screen {
         this.graphics.blit(LAPTOP_GUI, posX + BORDER, posY + BORDER, this.screenWidth, this.screenHeight, 10, 10, 1, 1, 256, 256);
     }
 
-    public void setDisconnectListener(Consumer<Display> disconnectListener) {
+    public void setDisconnectListener(Consumer<DisplayGui> disconnectListener) {
         this.disconnectListener = disconnectListener;
     }
 
-    public void setConnectListener(Consumer<Display> connectListener) {
+    public void setConnectListener(Consumer<DisplayGui> connectListener) {
         this.connectListener = connectListener;
     }
 
+    @Override
     public ComputerBlockEntity getComputer() {
         return computer;
     }
@@ -454,7 +516,15 @@ public class Display extends Screen {
         return graphics.pose();
     }
 
+    @Override
     public OperatingSystem getOS() {
         return os;
+    }
+
+    @Override
+    public void onClose() {
+        super.onClose();
+
+        this.bios.syncChanges();
     }
 }

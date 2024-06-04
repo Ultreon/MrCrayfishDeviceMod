@@ -14,6 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -270,6 +271,15 @@ public abstract class Application extends Wrappable implements DataHandler {
     public void onClose() {
         defaultLayout.clear();
         currentLayout = null;
+    }
+
+    @Override
+    public CompoundTag writeState() {
+        CompoundTag tag = super.writeState();
+        tag.put("layout", currentLayout.writeState());
+        tag.put("defaultLayout", defaultLayout.writeState());
+
+        return tag;
     }
 
     /**

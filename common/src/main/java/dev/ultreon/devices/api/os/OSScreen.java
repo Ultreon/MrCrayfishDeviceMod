@@ -3,17 +3,15 @@ package dev.ultreon.devices.api.os;
 import dev.ultreon.devices.api.app.Application;
 import dev.ultreon.devices.api.bios.Bios;
 import dev.ultreon.devices.api.bios.InterruptData;
-import dev.ultreon.devices.client.Display;
+import dev.ultreon.devices.client.DisplayGui;
 import dev.ultreon.devices.object.AppInfo;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 
-import java.util.concurrent.CompletableFuture;
-
 public abstract class OSScreen extends Screen implements OperatingSystem {
-    private Display display;
+    private DisplayGui display;
 
     protected OSScreen() {
         super(Component.literal("Virtual Display"));
@@ -70,7 +68,7 @@ public abstract class OSScreen extends Screen implements OperatingSystem {
     }
 
     @Override
-    public void connectDisplay(Display display) {
+    public void connectDisplay(DisplayGui display) {
         this.display = display;
         this.width = display.getScreenWidth();
         this.height = display.getScreenHeight();
@@ -81,7 +79,7 @@ public abstract class OSScreen extends Screen implements OperatingSystem {
         this.display = null;
     }
 
-    public Display getDisplay() {
+    public DisplayGui getDisplay() {
         return display;
     }
 

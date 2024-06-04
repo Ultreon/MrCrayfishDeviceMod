@@ -3,7 +3,7 @@ package dev.ultreon.devices.object;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.ultreon.devices.api.app.Component;
-import dev.ultreon.devices.client.Display;
+import dev.ultreon.devices.client.DisplayGui;
 import dev.ultreon.devices.mineos.client.MineOS;
 import dev.ultreon.devices.exception.WorldLessException;
 import dev.ultreon.devices.object.tiles.Tile;
@@ -36,7 +36,7 @@ public class Game extends Component {
     public Game(int left, int top, int mapWidth, int mapHeight) throws Exception {
         super(left, top);
 
-        if (Display.get().getOS().isWorldLess()) throw new WorldLessException("The game can only exist if the universe exists.");
+        if (DisplayGui.get().getOS().isWorldLess()) throw new WorldLessException("The game can only exist if the universe exists.");
 
         if (mapWidth % Tile.WIDTH != 0 || mapHeight % Tile.HEIGHT != 0)
             throw new Exception("Width and height need to be a multiple of " + Tile.WIDTH);

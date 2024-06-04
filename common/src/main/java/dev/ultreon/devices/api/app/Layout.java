@@ -8,6 +8,7 @@ import dev.ultreon.devices.util.GLHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -79,21 +80,21 @@ public class Layout extends dev.ultreon.devices.api.app.Component {
      * noted that the width must be in the range of 20 to 362 and
      * the height 20 to 164.
      *
-     * @param width
-     * @param height
+     * @param width  the width of the layout
+     * @param height the height of the layout
      */
     public Layout(int left, int top, int width, int height) {
         super(left, top);
 
-        if (width < 13 && false)
-            throw new IllegalArgumentException("Width can not be less than 13 wide");
-
-        if (height < 1 && false)
-            throw new IllegalArgumentException("Height can not be less than 1 tall");
-
         this.components = new CopyOnWriteArrayList<>();
         this.width = width;
         this.height = height;
+    }
+
+    public Layout(CompoundTag tag) {
+        super(tag);
+        title = tag.getString("title");
+        components = Component.readComponents(tag.getList("components", Tag.TAG_COMPOUND));
     }
 
     /**
@@ -306,6 +307,16 @@ public class Layout extends dev.ultreon.devices.api.app.Component {
         }
     }
 
+    @Override
+    public CompoundTag writeState() {
+        CompoundTag tag = super.writeState();
+        tag.putString("title", title == null ? "" : title);
+        tag.put("components", Component.writeComponents(components));
+        tag.put("background", background == null ? null : background.writeState());
+
+        return tag;
+    }
+
     /**
      * Sets the initialization listener for this layout.
      * See {@link InitListener}.
@@ -370,6 +381,10 @@ public class Layout extends dev.ultreon.devices.api.app.Component {
          * @param height the height of the layout
          */
         void render(GuiGraphics graphics, Minecraft mc, int x, int y, int width, int height, int mouseX, int mouseY, boolean windowActive);
+
+        default CompoundTag writeState() {
+            return new CompoundTag();
+        }
     }
 
     public static class Context extends Layout {

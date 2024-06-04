@@ -1,6 +1,6 @@
 package dev.ultreon.devices.api.os;
 
-import dev.ultreon.devices.client.Display;
+import dev.ultreon.devices.client.DisplayGui;
 import dev.ultreon.devices.object.AppInfo;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.nbt.CompoundTag;
@@ -38,7 +38,9 @@ public interface OperatingSystem {
 
     Screen getScreen();
 
-    void connectDisplay(Display display);
+    void connectDisplay(DisplayGui display);
 
     void disconnectDisplay();
+
+    CompoundTag writeState();
 }

@@ -2,7 +2,7 @@ package dev.ultreon.devices.core.client.debug;
 
 import dev.ultreon.devices.DeviceConfig;
 import dev.ultreon.devices.block.entity.LaptopBlockEntity;
-import dev.ultreon.devices.core.WorldLessBiosImpl;
+import dev.ultreon.devices.core.WorldLessBios;
 import dev.ultreon.devices.mineos.client.MineOS;
 import dev.ultreon.devices.core.laptop.client.ClientLaptop;
 import dev.ultreon.devices.core.laptop.client.ClientLaptopScreen;
@@ -29,7 +29,7 @@ public class ClientAppDebug {
                 var rowHeight = 24;
                 var y = screen.height / 4 + 48;
 
-                var a = Button.builder(Component.literal("DV TEST"), (button) -> Minecraft.getInstance().setScreen(new MineOS(new LaptopBlockEntity(new BlockPos(0, 0, 0), DeviceBlocks.LAPTOPS.of(DyeColor.WHITE).get().defaultBlockState()), new WorldLessBiosImpl(MINE_OS.get()), true))).bounds(screen.width / 2 - 100, y + rowHeight * -1, 200, 20)
+                var a = Button.builder(Component.literal("DV TEST"), (button) -> Minecraft.getInstance().setScreen(new MineOS(new LaptopBlockEntity(new BlockPos(0, 0, 0), DeviceBlocks.LAPTOPS.of(DyeColor.WHITE).get().defaultBlockState()), new WorldLessBios(MINE_OS.get()), true))).bounds(screen.width / 2 - 100, y + rowHeight * -1, 200, 20)
                         .createNarration((output) -> Component.empty())
                         .build();
                 access.addRenderableWidget(a);

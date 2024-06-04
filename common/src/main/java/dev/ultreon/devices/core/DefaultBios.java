@@ -13,13 +13,13 @@ import net.minecraft.network.chat.Component;
 import java.util.List;
 import java.util.UUID;
 
-public class BiosImpl implements Bios {
+public class DefaultBios implements Bios {
     private final ComputerBlockEntity computer;
     private final List<BootLoader<?>> bootLoaders;
     private OperatingSystem runningOS;
     private Drive mainDrive;
 
-    public BiosImpl(ComputerBlockEntity computer, List<BootLoader<?>> bootLoaders) {
+    public DefaultBios(ComputerBlockEntity computer, List<BootLoader<?>> bootLoaders) {
         this.computer = computer;
         this.bootLoaders = bootLoaders;
     }
@@ -65,7 +65,7 @@ public class BiosImpl implements Bios {
     }
 
     @Override
-    public void addOperatingSystem(BootLoader<?> operatingSystem) {
+    public void addBootLoader(BootLoader<?> operatingSystem) {
         this.bootLoaders.add(operatingSystem);
     }
 
@@ -107,5 +107,9 @@ public class BiosImpl implements Bios {
 
     public void onFault(Exception e) {
         this.handleFault(e);
+    }
+
+    public void syncChanges() {
+        this.runningOS.writeState();
     }
 }

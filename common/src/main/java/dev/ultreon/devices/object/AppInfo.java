@@ -4,7 +4,7 @@ import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import dev.ultreon.devices.UltreonDevicesMod;
 import dev.ultreon.devices.Reference;
-import dev.ultreon.devices.client.Display;
+import dev.ultreon.devices.client.DisplayGui;
 import dev.ultreon.devices.mineos.client.MineOS;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
@@ -36,8 +36,8 @@ public class AppInfo {
         @Override
         public int getTintColor(AppInfo info, int o) {
             return switch (o) {
-                case 1 -> ((MineOS) Display.get().getOS()).getSettings().getColorScheme().getBackgroundColor();
-                case 2 -> ((MineOS) Display.get().getOS()).getSettings().getColorScheme().getBackgroundSecondaryColor();
+                case 1 -> ((MineOS) DisplayGui.get().getOS()).getSettings().getColorScheme().getBackgroundColor();
+                case 2 -> ((MineOS) DisplayGui.get().getOS()).getSettings().getColorScheme().getBackgroundSecondaryColor();
                 default -> new Color(255, 255, 255).getRGB();
             };
         }

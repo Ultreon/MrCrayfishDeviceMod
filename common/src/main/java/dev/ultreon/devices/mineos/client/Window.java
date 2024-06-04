@@ -11,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import dev.ultreon.devices.api.util.Color;
 import org.jetbrains.annotations.Nullable;
@@ -305,5 +306,15 @@ public class Window<T extends Wrappable> {
 
     public FrameBuffer getFrameBuffer() {
         return frameBuffer;
+    }
+
+    public Tag writeState() {
+        CompoundTag tag = new CompoundTag();
+        tag.putInt("width", width);
+        tag.putInt("height", height);
+        tag.putInt("offsetX", offsetX);
+        tag.putInt("offsetY", offsetY);
+        tag.put("content", content.writeState());
+        return tag;
     }
 }

@@ -9,12 +9,12 @@ import dev.ultreon.devices.core.client.ClientNotification;
 
 import java.util.UUID;
 
-public class WorldLessBiosImpl implements Bios {
+public class WorldLessBios implements Bios {
     private static final UUID VIRTUAL_ID = new UUID(0xaa7bcf606c8c4f13L, 0x8f2fc2359c6b2543L);
     private OperatingSystem runningOS;
     private final BootLoader<?> os;
 
-    public WorldLessBiosImpl(BootLoader<?> os) {
+    public WorldLessBios(BootLoader<?> os) {
         this.os = os;
     }
 
@@ -34,13 +34,13 @@ public class WorldLessBiosImpl implements Bios {
     }
 
     @Override
-    public void addOperatingSystem(BootLoader<?> operatingSystem) {
+    public void addBootLoader(BootLoader<?> operatingSystem) {
         // No-op
     }
 
     @Override
     public OperatingSystem getRunningOS() {
-        return null;
+        return runningOS;
     }
 
     @Override

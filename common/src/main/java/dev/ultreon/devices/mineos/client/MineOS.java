@@ -14,7 +14,7 @@ import dev.ultreon.devices.api.task.Task;
 import dev.ultreon.devices.api.task.TaskManager;
 import dev.ultreon.devices.api.video.VideoInfo;
 import dev.ultreon.devices.block.entity.ComputerBlockEntity;
-import dev.ultreon.devices.client.Display;
+import dev.ultreon.devices.client.DisplayGui;
 import dev.ultreon.devices.core.task.TaskInstallApp;
 import dev.ultreon.devices.api.bios.InterruptData;
 import dev.ultreon.devices.api.util.Color;
@@ -27,7 +27,6 @@ import dev.ultreon.devices.mineos.apps.system.SystemApp;
 import dev.ultreon.devices.mineos.apps.system.component.FileBrowser;
 import dev.ultreon.devices.mineos.apps.system.task.TaskUpdateApplicationData;
 import dev.ultreon.devices.mineos.apps.system.task.TaskUpdateSystemData;
-import dev.ultreon.devices.util.FrameBuffer;
 import dev.ultreon.devices.util.GLHelper;
 import dev.architectury.injectables.annotations.PlatformOnly;
 import dev.architectury.platform.Mod;
@@ -107,7 +106,7 @@ public class MineOS extends Screen implements OperatingSystem, MineOSSystem {
     private Image wallpaper;
     private Layout wallpaperLayout;
     private BSOD bsod;
-    private Display display;
+    private DisplayGui display;
 
     /**
      * Creates a new laptop GUI.
@@ -155,7 +154,7 @@ public class MineOS extends Screen implements OperatingSystem, MineOSSystem {
     }
 
     public static MineOS getOpened() {
-        OperatingSystem os = Display.get().getOS();
+        OperatingSystem os = DisplayGui.get().getOS();
         if (os instanceof MineOS mineOS) {
             return mineOS;
         }
@@ -634,13 +633,25 @@ public class MineOS extends Screen implements OperatingSystem, MineOSSystem {
     }
 
     @Override
-    public void connectDisplay(Display display) {
+    public void connectDisplay(DisplayGui display) {
         this.display = display;
     }
 
     @Override
     public void disconnectDisplay() {
         this.display = null;
+    }
+
+    @Override
+    public CompoundTag writeState() {
+        CompoundTag tag = new CompoundTag();
+        for (Window<?> window : windows) {
+            if (window != null) {
+                tag.put(window.windowId.toString(), window.writeState());
+            }
+        }
+
+        return null;
     }
 
     public UUID generateWindowId() {

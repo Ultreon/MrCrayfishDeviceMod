@@ -4,9 +4,10 @@ import dev.ultreon.devices.api.bios.Bios;
 import dev.ultreon.devices.api.os.OSScreen;
 import dev.ultreon.devices.api.video.CustomResolution;
 import dev.ultreon.devices.block.entity.ComputerBlockEntity;
-import dev.ultreon.devices.client.Display;
+import dev.ultreon.devices.client.DisplayGui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.nbt.CompoundTag;
 
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -67,7 +68,7 @@ public final class MinePhoneOS extends OSScreen {
     }
 
     @Override
-    public void connectDisplay(Display display) {
+    public void connectDisplay(DisplayGui display) {
         display.setResolution(new CustomResolution(116, 216));
 
         super.connectDisplay(display);
@@ -78,6 +79,11 @@ public final class MinePhoneOS extends OSScreen {
         bios.powerOff();
 
         super.disconnectDisplay();
+    }
+
+    @Override
+    public CompoundTag writeState() {
+        return new CompoundTag();
     }
 
     public ComputerBlockEntity getComputer() {

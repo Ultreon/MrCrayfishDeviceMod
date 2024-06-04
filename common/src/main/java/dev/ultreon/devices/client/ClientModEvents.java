@@ -1,9 +1,9 @@
-package dev.ultreon.devices;
+package dev.ultreon.devices.client;
 
 import com.mojang.blaze3d.platform.NativeImage;
+import dev.ultreon.devices.UltreonDevicesMod;
 import dev.ultreon.devices.api.ApplicationManager;
 import dev.ultreon.devices.block.entity.renderer.*;
-import dev.ultreon.devices.client.RenderRegistry;
 import dev.ultreon.devices.mineos.client.MineOS;
 import dev.ultreon.devices.debug.DebugFlags;
 import dev.ultreon.devices.debug.DebugUtils;

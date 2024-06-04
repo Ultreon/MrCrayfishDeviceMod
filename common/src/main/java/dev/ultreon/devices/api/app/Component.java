@@ -1,10 +1,18 @@
 package dev.ultreon.devices.api.app;
 
+import dev.ultreon.devices.UltreonDevicesMod;
 import dev.ultreon.devices.mineos.client.MineOS;
 import dev.ultreon.devices.mineos.apps.system.object.ColorScheme;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public abstract class Component {
     /**
@@ -31,20 +39,21 @@ public abstract class Component {
      */
     public int top;
     /**
-     * Is the component enabled
+     * Is the component enabled?
      */
     protected boolean enabled = true;
     /**
-     * Is the component visible
+     * Is the component visible?
      */
     protected boolean visible = true;
 
     /**
      * The default constructor for a component.
      * <p>
-     * Laying out components is simply relative positioning. So for left (x position),
-     * specific how many pixels from the left of the application window you want
-     * it to be positioned at. The top is the same, but instead from the top (y position).
+     * Laying out components is simply relative positioning.
+     * So for "left" (x position),
+     * specifically how many pixels from the left of the application window you want it to be positioned at.
+     * The top is the same, but instead of the top (y position).
      *
      * @param left how many pixels from the left
      * @param top  how many pixels from the top
@@ -55,13 +64,72 @@ public abstract class Component {
         this.top = top;
     }
 
+    public Component(CompoundTag tag) {
+        this.xPosition = tag.getInt("x");
+        this.yPosition = tag.getInt("y");
+        this.left = tag.getInt("left");
+        this.top = tag.getInt("top");
+        this.visible = tag.getBoolean("visible");
+        this.enabled = tag.getBoolean("enabled");
+    }
+
     protected static int color(int personalColor, int systemColor) {
         return personalColor >= 0 ? personalColor : systemColor;
     }
 
+    protected static ListTag writeComponents(List<Component> components) {
+        ListTag tag = new ListTag();
+        for (Component component : components) {
+            tag.add(component.writeState());
+        }
+        return tag;
+    }
+
+    protected static List<Component> readComponents(ListTag components) {
+        List<Component> list = new java.util.ArrayList<>();
+        for (Tag tag : components) {
+            if (!(tag instanceof CompoundTag compoundTag)) continue;
+            Component e = Component.readState(compoundTag);
+            if (e == null) continue; // Failed to load
+            list.add(e);
+        }
+
+        return list;
+    }
+
+    private static @Nullable Component readState(CompoundTag tag) {
+        String className = tag.getString("type");
+
+        // Load the class in an uninitialized state
+        Class<?> uninitClass;
+        try {
+            uninitClass = Class.forName(className, false, MineOS.getOpened().getClass().getClassLoader());
+        } catch (ClassNotFoundException e) {
+            UltreonDevicesMod.LOGGER.warn("Failed to load component: class {} doesn't exist.", className, e);
+            return null;
+        }
+
+        // Check if the class extends Component
+        Class<?> superClass = uninitClass.getSuperclass();
+        while (superClass != null) {
+            if (superClass == Component.class) break;
+            superClass = superClass.getSuperclass();
+        }
+        if (superClass == null) {
+            UltreonDevicesMod.LOGGER.warn("Class security check failed: class {} does not extend Component, ignoring class.", className);
+            return null;
+        }
+        try {
+            return (Component) uninitClass.getConstructor(CompoundTag.class).newInstance(tag);
+        } catch (Exception e) {
+            UltreonDevicesMod.LOGGER.warn("Failed to load component: class {} failed to initialize.", className, e);
+            return null;
+        }
+    }
+
     /**
      * Called when this component is added to a Layout. You can add
-     * sub-components through this method. Use {@link Layout#addComponent(Component)}
+     * subcomponents through this method. Use {@link Layout#addComponent(Component)}
      *
      * @param layout the layout this component is added to
      */
@@ -69,7 +137,7 @@ public abstract class Component {
     }
 
     /**
-     * Called when the Layout this component is bound to is set as the current layout in an
+     * Called when the Layout, this component is bound to is set as the current layout in an
      * application.
      */
     protected void handleLoad() {
@@ -211,8 +279,9 @@ public abstract class Component {
 
     /**
      * This method should be ignored. Used for the core.
-     * Will probably be removed in the future.
+     * It will probably be removed in the future.
      */
+    @ApiStatus.Internal
     protected void updateComponents(int x, int y) {
         this.xPosition = x + left;
         this.yPosition = y + top;
@@ -241,7 +310,7 @@ public abstract class Component {
     /**
      * Gets the laptop's Color scheme. A simple helper method to clean up code.
      *
-     * @return
+     * @return the color scheme
      */
     protected ColorScheme getColorScheme() {
         return MineOS.getOpened().getSettings().getColorScheme();
@@ -253,5 +322,17 @@ public abstract class Component {
 
     public void drawHorizontalLine(GuiGraphics graphics, int x1, int x2, int y, int rgb) {
         graphics.fill(x1, y, x2, y + 1, rgb);
+    }
+
+    public CompoundTag writeState() {
+        CompoundTag tag = new CompoundTag();
+        tag.putString("type", getClass().getName());
+        tag.putInt("x", xPosition);
+        tag.putInt("y", yPosition);
+        tag.putInt("left", left);
+        tag.putInt("top", top);
+        tag.putBoolean("visible", visible);
+        tag.putBoolean("enabled", enabled);
+        return tag;
     }
 }

@@ -207,4 +207,7 @@ public abstract class Wrappable {
         window.openDialog(dialog);
     }
 
+    public CompoundTag writeState() {
+        return new CompoundTag();
+    }
 }

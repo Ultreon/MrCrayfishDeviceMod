@@ -263,7 +263,9 @@ public class ItemList<E> extends Component implements Iterable<E> {
      *
      * @param e the item
      */
-    public void addItem(@NotNull E e) {
+    public void addItem(@Nullable E e) {
+        if (e == null)
+            return;
         items.add(e);
         sort();
         if (initialized) {
