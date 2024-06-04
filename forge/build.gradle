@@ -71,11 +71,11 @@ shadowJar {
     configurations = [project.configurations.shadowCommon]
     archiveClassifier = "dev-shadow"
 
-//    relocate 'org.jetbrains.kotlin', "com.ultreon.devices.shadow.org.jetbrains.kotlin"
-//    relocate 'org.jetbrains.kotlinx', "com.ultreon.devices.shadow.org.jetbrains.kotlinx"
+//    relocate 'org.jetbrains.kotlin', "dev.ultreon.devices.shadow.org.jetbrains.kotlin"
+//    relocate 'org.jetbrains.kotlinx', "dev.ultreon.devices.shadow.org.jetbrains.kotlinx"
 //
-//    relocate 'kotlin', "com.ultreon.devices.shadow.kotlin"
-//    relocate 'kotlinx', "com.ultreon.devices.shadow.kotlinx"
+//    relocate 'kotlin', "dev.ultreon.devices.shadow.kotlin"
+//    relocate 'kotlinx', "dev.ultreon.devices.shadow.kotlinx"
 }
 
 remapJar {

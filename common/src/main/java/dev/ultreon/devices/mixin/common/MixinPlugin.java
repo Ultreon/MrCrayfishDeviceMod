@@ -39,7 +39,7 @@ public class MixinPlugin implements IMixinConfigPlugin {
     }
 
     private static String getTrueName(String internalName) {
-        if (internalName.startsWith("com/ultreon/devices")) {
+        if (internalName.startsWith("dev/ultreon/devices")) {
             return ArchitecturyTarget.getCurrentTarget() + "/" + internalName;
         }
         return internalName;
