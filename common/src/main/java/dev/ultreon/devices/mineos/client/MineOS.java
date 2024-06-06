@@ -65,8 +65,6 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-//TODO Intro message (created by mrcrayfish, donate here)
-
 /**
  * MineOS GUI class.
  *
@@ -108,6 +106,7 @@ public class MineOS extends Screen implements OperatingSystem, MineOSSystem {
     private Layout wallpaperLayout;
     private BSOD bsod;
     private Display display;
+    private boolean initialized;
 
     /**
      * Creates a new laptop GUI.
@@ -271,6 +270,11 @@ public class MineOS extends Screen implements OperatingSystem, MineOSSystem {
         // MineOS data.
         this.appData = computer.getApplicationData();
         this.systemData = computer.getSystemData();
+
+        if (!systemData.contains("Initialized", Tag.TAG_BYTE)) {
+            systemData.putBoolean("Initialized", false);
+            this.initialized = false;
+        }
 
         CompoundTag videoInfoData = this.systemData.getCompound("videoInfo");
         this.videoInfo = new VideoInfo(videoInfoData);
