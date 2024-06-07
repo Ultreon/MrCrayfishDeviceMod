@@ -125,14 +125,14 @@ public record PrinterRenderer(
             {
                 RenderSystem.depthMask(false);
                 pose.translate(0.5, 0.5, 0.5);
-             //   pose.mulPose(state.getValue(PrinterBlock.FACING).getRotation());
+                pose.mulPose(state.getValue(PrinterBlock.FACING).getRotation());
            //     pose.mulPose(new Quaternion(180, 0, 0, 0));
                 pose.translate(-0.0675, 0.005, -0.032);
                 pose.translate(0.8125, 0, -0.315);
-                pose.translate(-6.5 * 0.0625, -3.5 * 0.0625, 3.01 * 0.0625);
+                pose.translate( -17.9 * 0.0625, 2.4 * 0.0625, 8.9 * 0.0625);
               //  pose.translate(0, 3, 0);
                 pose.pushPose();
-                pose.mulPose(Axis.of(new Vector3f(22.5f, 180, 0)).rotationDegrees(0));
+                pose.mulPose(Axis.of(new Vector3f(-90, 0, 0)).rotationDegrees(115));
               //  pose.pose().pushPose();
              //   pose.scale(0.1f, -0.1f, 0.1f);
                 pose.scale(0.010416667f, -0.010416667f, 0.010416667f);
