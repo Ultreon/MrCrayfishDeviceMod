@@ -35,8 +35,7 @@ public class ClassScanner extends ClassVisitor {
 
     @Override
     public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
-        var method = super.visitMethod(access, name, descriptor, signature, exceptions);
-        return method;
+        return super.visitMethod(access, name, descriptor, signature, exceptions);
     }
 
     @Override

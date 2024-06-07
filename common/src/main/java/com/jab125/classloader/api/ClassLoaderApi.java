@@ -11,7 +11,7 @@ import java.util.jar.JarFile;
 
 public class ClassLoaderApi {
     public static ClassLoaderApi INSTANCE = new ClassLoaderApi();
-    public void init() throws IOException {
+    public void init() {
         var d = new CustomClassLoader();
         d.cl.getExecutionClasses().forEach((a) -> {
             try {

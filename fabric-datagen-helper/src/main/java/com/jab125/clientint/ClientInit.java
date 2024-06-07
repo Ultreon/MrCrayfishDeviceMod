@@ -15,6 +15,7 @@ import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +42,7 @@ public class ClientInit implements ClientModInitializer {
             private String currentCode = "en_us";
             private LanguageInfo currentLanguage;
             @Override
-            public CompletableFuture<Void> reload(PreparationBarrier preparationBarrier, ResourceManager resourceManager, ProfilerFiller preparationsProfiler, ProfilerFiller reloadProfiler, Executor backgroundExecutor, Executor gameExecutor) {
+            public @NotNull CompletableFuture<Void> reload(PreparationBarrier preparationBarrier, ResourceManager resourceManager, ProfilerFiller preparationsProfiler, ProfilerFiller reloadProfiler, Executor backgroundExecutor, Executor gameExecutor) {
                 return CompletableFuture.runAsync(() -> {
                     this.languages = extractLanguages(resourceManager.listPacks());
                    // extractAllFrom(languages, resourceManager.listPacks(), resourceManager);
@@ -67,9 +68,7 @@ public class ClientInit implements ClientModInitializer {
     }
 
     private void extractAllFrom(Map<String, LanguageInfo> languages, Stream<PackResources> packResourcesStream, ResourceManager resourceManager) {
-        languages.forEach(((s, languageInfo) -> {
-            LOGGER.info(s + ", " + languageInfo);
-        }));
+        languages.forEach(((s, languageInfo) -> LOGGER.info(s + ", " + languageInfo)));
         var map = new HashMap<String, LanguageInfo>();
         packResourcesStream.forEach((packResources -> {
                     try {

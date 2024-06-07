@@ -1,0 +1,107 @@
+//file:noinspection GrDeprecatedAPIUsage
+//file:noinspection GroovyAssignabilityCheck
+plugins {
+    id "com.github.johnrengelman.shadow" version "7.1.2"
+}
+
+version rootProject.version
+
+architectury {
+    platformSetupLoomIde()
+    neoForge()
+}
+
+loom {
+    accessWidenerPath = project(":common").loom.accessWidenerPath
+}
+
+configurations {
+    common
+    shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
+    compileClasspath.extendsFrom common
+    runtimeClasspath.extendsFrom common
+    developmentNeoForge.extendsFrom common
+}
+
+repositories {
+    maven { url "https://maven.neoforged.net/releases/" }
+}
+
+dependencies {
+    neoForge "net.neoforged:neoforge:$neoforge_version"
+    // Remove the next line if you don't want to depend on the API
+    modApi "dev.architectury:architectury-neoforge:$architectury_version"
+
+    include forgeRuntimeLibrary("io.github.ultreon:ubo:1.3.0")
+    include forgeRuntimeLibrary("io.github.ultreon.corelibs:commons-v0:0.2.0")
+
+    forgeRuntimeLibrary project(":api")
+
+    common(project(path: ":common", configuration: "namedElements")) { transitive false }
+    shadowCommon(project(path: ":common", configuration: "transformProductionNeoForge")) { transitive = false }
+}
+
+processResources {
+    inputs.property "version", rootProject.getIngameVersion()
+    inputs.property "description", rootProject.getModDescription()
+    System.out.println(inputs.getProperties())
+
+    filesMatching("META-INF/neoforge.mods.toml") {
+        HashMap<String, ?> p = new HashMap<>()
+        p.put("version", rootProject.getIngameVersion())
+        p.put("description", rootProject.getModDescription())
+        //noinspection GroovyAssignabilityCheck
+        p.put("loaderVersion", rootProject.neoforge_version.split("\\.")[0])
+        p.put("forgeVersion", rootProject.neoforge_version)
+        p.put("minecraftVersion", rootProject.architectury.minecraft)
+        expand(p)
+    }
+}
+
+shadowJar {
+    exclude "fabric.mod.json"
+    exclude "architectury.common.json"
+
+    configurations = [project.configurations.shadowCommon]
+    archiveClassifier = "dev-shadow"
+}
+
+remapJar {
+    input.set shadowJar.archiveFile
+    dependsOn shadowJar
+    archiveClassifier = null
+}
+
+jar {
+    archiveClassifier = "dev"
+}
+
+sourcesJar {
+    def commonSources = project(":common").sourcesJar
+    dependsOn commonSources
+    from commonSources.archiveFile.map { zipTree(it) }
+}
+
+components.java {
+    withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
+        skip()
+    }
+}
+
+publishing {
+    publications {
+        mavenNeoForge(MavenPublication) {
+            System.out.println(artifactId)
+            artifactId = rootProject.archivesBaseName + "-neoForge"
+            //artifactId = rootProject.archivesBaseName + "-neoForge" + //project.name
+            from components.java
+        }
+    }
+
+    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
+    repositories {
+        // Add repositories to publish to here.
+    }
+    rootProject.setupRepositories(repositories)
+}
+
