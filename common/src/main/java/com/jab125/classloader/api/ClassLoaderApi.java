@@ -1,17 +1,12 @@
 package com.jab125.classloader.api;
 
 import com.jab125.classloader.impl.CustomClassLoader;
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.impl.launch.knot.Knot;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.file.Paths;
-import java.util.jar.JarFile;
 
 public class ClassLoaderApi {
     public static ClassLoaderApi INSTANCE = new ClassLoaderApi();
-    public void init() throws IOException {
+    public void init() {
         var d = new CustomClassLoader();
         d.cl.getExecutionClasses().forEach((a) -> {
             try {

@@ -7,6 +7,8 @@
 *.ipr
 *.iws
 
+local/
+
 # IntelliJ
 out/
 # mpeltonen/sbt-idea plugin
@@ -133,3 +135,6 @@ run/
 
 # Ignore datagen cache.
 /common/src/main/generated/resources/.cache/
+
+/*/bin/
+/.vscode/

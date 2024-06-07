@@ -250,7 +250,7 @@ public final class VersionPredicateParser {
 			StringBuilder ret = new StringBuilder();
 
 			for (SingleVersionPredicate predicate : predicates) {
-				if (ret.length() > 0) ret.append(' ');
+				if (!ret.isEmpty()) ret.append(' ');
 				ret.append(predicate.toString());
 			}
 
