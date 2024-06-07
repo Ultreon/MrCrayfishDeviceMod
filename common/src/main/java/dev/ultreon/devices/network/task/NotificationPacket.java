@@ -1,9 +1,9 @@
 package dev.ultreon.devices.network.task;
 
+import dev.architectury.networking.NetworkManager;
 import dev.ultreon.devices.UltreonDevicesMod;
 import dev.ultreon.devices.api.app.Notification;
 import dev.ultreon.devices.network.Packet;
-import dev.architectury.networking.NetworkManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 

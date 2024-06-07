@@ -5,9 +5,9 @@ import dev.ultreon.devices.api.io.Drive;
 import dev.ultreon.devices.api.io.Folder;
 import dev.ultreon.devices.api.task.Task;
 import dev.ultreon.devices.block.entity.ComputerBlockEntity;
-import dev.ultreon.devices.mineos.client.MineOS;
 import dev.ultreon.devices.core.io.FileSystem;
 import dev.ultreon.devices.core.io.drive.AbstractDrive;
+import dev.ultreon.devices.mineos.client.MineOS;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -49,7 +49,7 @@ public class TaskGetMainDrive extends Task {
 
     @Override
     public void prepareResponse(CompoundTag tag) {
-        if (this.isSucessful()) {
+        if (this.isSuccessful()) {
             CompoundTag mainDriveTag = new CompoundTag();
             mainDriveTag.putString("name", mainDrive.getName());
             mainDriveTag.putString("uuid", mainDrive.getUuid().toString());
@@ -61,7 +61,7 @@ public class TaskGetMainDrive extends Task {
 
     @Override
     public void processResponse(CompoundTag tag) {
-        if (this.isSucessful()) {
+        if (this.isSuccessful()) {
             if (Minecraft.getInstance().screen instanceof MineOS) {
                 CompoundTag structureTag = tag.getCompound("structure");
                 Drive drive = new Drive(tag.getCompound("main_drive"));

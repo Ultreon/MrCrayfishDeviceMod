@@ -1,9 +1,9 @@
 package dev.ultreon.devices.api.video;
 
 import com.mojang.blaze3d.platform.Window;
-import dev.ultreon.devices.mineos.client.MineOS;
 import dev.ultreon.devices.mineos.apps.system.DisplayResolution;
 import dev.ultreon.devices.mineos.apps.system.PredefinedResolution;
+import dev.ultreon.devices.mineos.client.MineOS;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 

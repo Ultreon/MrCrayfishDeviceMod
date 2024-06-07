@@ -1,14 +1,12 @@
 package dev.ultreon.devices.network.task;
 
-import dev.ultreon.devices.UltreonDevicesMod
+import dev.architectury.networking.NetworkManager;
 import dev.ultreon.devices.api.task.Task;
 import dev.ultreon.devices.api.task.TaskManager;
 import dev.ultreon.devices.network.Packet;
 import dev.ultreon.devices.network.PacketHandler;
-import dev.architectury.networking.NetworkManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.Objects;

@@ -1,9 +1,9 @@
 package dev.ultreon.devices.init;
 
-import dev.ultreon.devices.UltreonDevicesMod;
-import dev.ultreon.devices.entity.SeatEntity;
 import dev.architectury.registry.registries.Registrar;
 import dev.architectury.registry.registries.RegistrySupplier;
+import dev.ultreon.devices.UltreonDevicesMod;
+import dev.ultreon.devices.entity.SeatEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;

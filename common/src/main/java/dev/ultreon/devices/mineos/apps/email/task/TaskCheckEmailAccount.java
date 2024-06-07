@@ -30,7 +30,7 @@ public class TaskCheckEmailAccount extends Task {
 
     @Override
     public void prepareResponse(CompoundTag tag) {
-        if (this.isSucessful()) tag.putString("Name", this.name);
+        if (this.isSuccessful()) tag.putString("Name", this.name);
     }
 
     @Override

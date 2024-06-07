@@ -15,7 +15,6 @@ public class DevicesDataGenerator implements DataGeneratorEntrypoint {
 //        pack.addProvider((FabricDataOutput output) -> new DevicesLanguageGenerator(output, "ja_jp"));
         pack.addProvider(DevicesRecipeProvider::new);
         pack.addProvider(DevicesLootTableGenerator::new);
-        pack.addProvider(DevicesBlockEntityTagProvider::new);
         pack.addProvider(DevicesBlockTagProvider::new);
         pack.addProvider(DevicesItemTagProvider::new);
     }

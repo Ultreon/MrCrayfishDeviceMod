@@ -1,9 +1,9 @@
 package dev.ultreon.devices.network.task;
 
+import dev.architectury.networking.NetworkManager;
 import dev.ultreon.devices.api.task.Task;
 import dev.ultreon.devices.api.task.TaskManager;
 import dev.ultreon.devices.network.Packet;
-import dev.architectury.networking.NetworkManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 
@@ -31,7 +31,7 @@ public class ResponsePacket extends Packet<ResponsePacket> {
     @Override
     public void toBytes(FriendlyByteBuf buf) {
         buf.writeInt(this.id);
-        buf.writeBoolean(this.request.isSucessful());
+        buf.writeBoolean(this.request.isSuccessful());
         buf.writeUtf(this.request.getName());
         CompoundTag tag = new CompoundTag();
         this.request.prepareResponse(tag);

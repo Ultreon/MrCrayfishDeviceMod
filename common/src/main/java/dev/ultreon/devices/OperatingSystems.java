@@ -1,9 +1,9 @@
 package dev.ultreon.devices;
 
+import dev.architectury.registry.registries.RegistrySupplier;
 import dev.ultreon.devices.api.os.OperatingSystem;
 import dev.ultreon.devices.core.BootLoader;
 import dev.ultreon.devices.mineos.client.MineOS;
-import dev.architectury.registry.registries.RegistrySupplier;
 
 import java.util.function.Supplier;
 

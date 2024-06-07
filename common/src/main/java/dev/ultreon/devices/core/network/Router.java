@@ -2,7 +2,6 @@ package dev.ultreon.devices.core.network;
 
 import dev.ultreon.devices.DeviceConfig;
 import dev.ultreon.devices.block.entity.NetworkDeviceBlockEntity;
-import com.ultreon.devices.debug.DebugLog;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;

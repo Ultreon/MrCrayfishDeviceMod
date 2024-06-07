@@ -1,9 +1,9 @@
 package dev.ultreon.devices.init;
 
-import dev.ultreon.devices.UltreonDevicesMod;
-import dev.ultreon.devices.block.entity.*;
 import dev.architectury.registry.registries.Registrar;
 import dev.architectury.registry.registries.RegistrySupplier;
+import dev.ultreon.devices.UltreonDevicesMod;
+import dev.ultreon.devices.block.entity.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;

@@ -62,14 +62,14 @@ public class TaskAddAuction extends Task {
 
     @Override
     public void prepareResponse(CompoundTag nbt) {
-        if (isSucessful()) {
+        if (isSuccessful()) {
             item.writeToNBT(nbt);
         }
     }
 
     @Override
     public void processResponse(CompoundTag nbt) {
-        if (isSucessful()) {
+        if (isSuccessful()) {
             AuctionManager.INSTANCE.addItem(AuctionItem.readFromNBT(nbt));
         }
     }

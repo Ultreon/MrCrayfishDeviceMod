@@ -1,7 +1,12 @@
 package dev.ultreon.devices.api.task;
 
+import dev.architectury.utils.Env;
+import dev.architectury.utils.EnvExecutor;
+import dev.ultreon.devices.UltreonDevicesMod;
+import dev.ultreon.devices.client.Display;
 import dev.ultreon.devices.core.task.TaskInstallApp;
 import dev.ultreon.devices.debug.DebugLog;
+import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -32,7 +37,7 @@ public abstract class Task {
 
     /**
      * Sets the callback for task. Used for processing responses,
-     * such as updating UI with new data.
+     * such as updating the UI with new data.
      *
      * @param callback the callback instance for response processing
      * @return this Task instance
@@ -49,7 +54,15 @@ public abstract class Task {
      */
     public final void callback(CompoundTag tag) {
         if (callback != null) {
-            callback.execute(tag, success);
+            EnvExecutor.runInEnv(Env.CLIENT, () -> () -> {
+                if (!Display.isOpen()) {
+                    UltreonDevicesMod.LOGGER.warn("DEBUG CHECK: Task callback executed while no display is open!");
+                    return;
+                }
+
+                Minecraft instance = Minecraft.getInstance();
+                instance.submit(() -> callback.execute(tag, success));
+            });
         }
     }
 
@@ -68,7 +81,7 @@ public abstract class Task {
      *
      * @return if this task was successful
      */
-    public final boolean isSucessful() {
+    public final boolean isSuccessful() {
         return this.success;
     }
 

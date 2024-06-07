@@ -3,7 +3,6 @@ package dev.ultreon.devices.mineos.apps.email.object;
 import dev.ultreon.devices.api.io.File;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-
 import org.jetbrains.annotations.Nullable;
 
 /**

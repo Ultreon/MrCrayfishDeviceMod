@@ -3,8 +3,8 @@ package dev.ultreon.devices.mineos.apps.gitweb.module;
 import dev.ultreon.devices.api.app.Component;
 import dev.ultreon.devices.api.app.Layout;
 import dev.ultreon.devices.api.app.component.Label;
-import dev.ultreon.devices.mineos.client.MineOS;
 import dev.ultreon.devices.mineos.apps.gitweb.component.GitWebFrame;
+import dev.ultreon.devices.mineos.client.MineOS;
 
 import java.util.Map;
 

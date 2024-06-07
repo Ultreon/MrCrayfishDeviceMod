@@ -1,19 +1,22 @@
 package dev.ultreon.devices.mineos.apps.gitweb;
 
-import dev.ultreon.devices.api.app.*;
+import dev.ultreon.devices.api.app.Application;
+import dev.ultreon.devices.api.app.Icons;
+import dev.ultreon.devices.api.app.Layout;
+import dev.ultreon.devices.api.app.SystemAccessor;
 import dev.ultreon.devices.api.app.component.Button;
 import dev.ultreon.devices.api.app.component.Spinner;
 import dev.ultreon.devices.api.app.component.TextField;
-import dev.ultreon.devices.mineos.apps.system.SettingsApp;
-import dev.ultreon.devices.mineos.apps.system.layout.StandardLayout;
 import dev.ultreon.devices.mineos.MineOSSystem;
-import dev.ultreon.devices.mineos.client.MineOS;
 import dev.ultreon.devices.mineos.apps.gitweb.component.GitWebFrame;
 import dev.ultreon.devices.mineos.apps.gitweb.layout.TextLayout;
+import dev.ultreon.devices.mineos.apps.system.SettingsApp;
+import dev.ultreon.devices.mineos.apps.system.layout.StandardLayout;
+import dev.ultreon.devices.mineos.client.MineOS;
 import dev.ultreon.devices.util.DataHandler;
 import net.minecraft.nbt.CompoundTag;
-
 import org.jetbrains.annotations.Nullable;
+
 import java.awt.*;
 import java.util.Optional;
 

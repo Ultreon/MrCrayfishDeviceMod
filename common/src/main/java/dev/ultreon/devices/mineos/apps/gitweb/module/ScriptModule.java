@@ -1,9 +1,9 @@
 package dev.ultreon.devices.mineos.apps.gitweb.module;
 
 import dev.ultreon.devices.api.app.Layout;
-import dev.ultreon.devices.mineos.apps.gitweb.layout.ModuleLayout;
 import dev.ultreon.devices.debug.DebugLog;
 import dev.ultreon.devices.mineos.apps.gitweb.component.GitWebFrame;
+import dev.ultreon.devices.mineos.apps.gitweb.layout.ModuleLayout;
 
 import java.util.Map;
 

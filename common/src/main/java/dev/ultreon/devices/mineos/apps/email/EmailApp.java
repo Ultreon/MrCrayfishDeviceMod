@@ -16,12 +16,11 @@ import dev.ultreon.devices.api.app.renderer.ListItemRenderer;
 import dev.ultreon.devices.api.io.File;
 import dev.ultreon.devices.api.task.TaskManager;
 import dev.ultreon.devices.api.utils.RenderUtil;
-import dev.ultreon.devices.mineos.apps.email.task.TaskRegisterEmailAccount;
+import dev.ultreon.devices.mineos.apps.email.object.Contact;
+import dev.ultreon.devices.mineos.apps.email.object.Email;
 import dev.ultreon.devices.mineos.apps.email.task.*;
 import dev.ultreon.devices.mineos.client.MineOS;
 import dev.ultreon.devices.object.AppInfo;
-import dev.ultreon.devices.mineos.apps.email.object.Contact;
-import dev.ultreon.devices.mineos.apps.email.object.Email;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -29,8 +28,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceLocation;
-
 import org.jetbrains.annotations.Nullable;
+
 import java.awt.*;
 import java.util.List;
 import java.util.Objects;

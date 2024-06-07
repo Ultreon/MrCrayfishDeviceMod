@@ -1,9 +1,9 @@
 package dev.ultreon.devices.impl.storage;
 
 import com.google.gson.Gson;
-import net.minecraft.nbt.CompoundTag;
 import dev.ultreon.devices.api.SystemException;
 import dev.ultreon.devices.api.storage.FileHandle;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtIo;
 

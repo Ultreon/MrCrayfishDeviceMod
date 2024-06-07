@@ -1,7 +1,7 @@
 package dev.ultreon.devices.init;
 
-import dev.ultreon.devices.entity.renderer.SeatEntityRenderer;
 import dev.architectury.registry.client.level.entity.EntityRendererRegistry;
+import dev.ultreon.devices.entity.renderer.SeatEntityRenderer;
 
 public class DeviceEntityRenderers {
     static {

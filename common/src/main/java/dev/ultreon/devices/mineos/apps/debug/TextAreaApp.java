@@ -8,7 +8,6 @@ import dev.ultreon.devices.api.app.component.TextArea;
 import dev.ultreon.devices.api.app.interfaces.IHighlight;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
-
 import org.jetbrains.annotations.Nullable;
 
 /**

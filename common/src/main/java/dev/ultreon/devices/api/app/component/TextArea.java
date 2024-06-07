@@ -6,8 +6,8 @@ import dev.ultreon.devices.api.app.Component;
 import dev.ultreon.devices.api.app.interfaces.IHighlight;
 import dev.ultreon.devices.api.app.listener.KeyListener;
 import dev.ultreon.devices.api.utils.RenderUtil;
-import dev.ultreon.devices.mineos.client.MineOS;
 import dev.ultreon.devices.debug.DebugLog;
+import dev.ultreon.devices.mineos.client.MineOS;
 import dev.ultreon.devices.util.GLHelper;
 import dev.ultreon.devices.util.GuiHelper;
 import net.minecraft.ChatFormatting;
@@ -16,8 +16,8 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.util.Mth;
-
 import org.jetbrains.annotations.Nullable;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;

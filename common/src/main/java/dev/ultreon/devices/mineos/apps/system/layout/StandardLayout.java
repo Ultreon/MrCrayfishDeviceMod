@@ -7,9 +7,9 @@ import dev.ultreon.devices.api.app.Layout;
 import dev.ultreon.devices.api.app.component.Button;
 import dev.ultreon.devices.mineos.client.MineOS;
 import net.minecraft.client.Minecraft;
-
 import net.minecraft.client.gui.GuiGraphics;
 import org.jetbrains.annotations.Nullable;
+
 import java.awt.*;
 
 /**

@@ -1,8 +1,8 @@
 package dev.ultreon.devices.item;
 
-import dev.ultreon.devices.ModDeviceTypes;
-import dev.ultreon.devices.IDeviceType;
 import dev.architectury.injectables.annotations.PlatformOnly;
+import dev.ultreon.devices.IDeviceType;
+import dev.ultreon.devices.ModDeviceTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.BlockItem;

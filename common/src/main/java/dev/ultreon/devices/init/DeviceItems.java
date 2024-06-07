@@ -1,12 +1,12 @@
 package dev.ultreon.devices.init;
 
-import dev.ultreon.devices.UltreonDevicesMod;
-import dev.ultreon.devices.ModDeviceTypes;
-import dev.ultreon.devices.item.*;
-import dev.ultreon.devices.util.DyeableRegistration;
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.registries.Registrar;
 import dev.architectury.registry.registries.RegistrySupplier;
+import dev.ultreon.devices.ModDeviceTypes;
+import dev.ultreon.devices.UltreonDevicesMod;
+import dev.ultreon.devices.item.*;
+import dev.ultreon.devices.util.DyeableRegistration;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;

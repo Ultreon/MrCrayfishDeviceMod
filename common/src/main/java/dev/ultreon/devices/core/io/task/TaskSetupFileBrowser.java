@@ -57,7 +57,7 @@ public class TaskSetupFileBrowser extends Task {
 
     @Override
     public void prepareResponse(CompoundTag tag) {
-        if (this.isSucessful()) {
+        if (this.isSuccessful()) {
             if (mainDrive != null) {
                 CompoundTag mainDriveTag = new CompoundTag();
                 mainDriveTag.putString("name", mainDrive.getName());

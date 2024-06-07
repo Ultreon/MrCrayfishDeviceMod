@@ -4,11 +4,11 @@ import dev.ultreon.devices.api.ApplicationManager;
 import dev.ultreon.devices.api.app.Icons;
 import dev.ultreon.devices.api.app.Layout;
 import dev.ultreon.devices.api.app.component.Button;
-import dev.ultreon.devices.mineos.apps.gitweb.GitWebApp;
-import dev.ultreon.devices.mineos.apps.system.AppStore;
 import dev.ultreon.devices.debug.DebugLog;
-import dev.ultreon.devices.object.AppInfo;
+import dev.ultreon.devices.mineos.apps.gitweb.GitWebApp;
 import dev.ultreon.devices.mineos.apps.gitweb.component.GitWebFrame;
+import dev.ultreon.devices.mineos.apps.system.AppStore;
+import dev.ultreon.devices.object.AppInfo;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.Map;

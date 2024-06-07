@@ -1,6 +1,5 @@
 package dev.ultreon.devices.block;
 
-import com.mojang.serialization.MapCodec;
 import dev.ultreon.devices.IDeviceType;
 import dev.ultreon.devices.ModDeviceTypes;
 import dev.ultreon.devices.block.entity.DeviceBlockEntity;
@@ -17,7 +16,6 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;

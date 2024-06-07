@@ -6,8 +6,8 @@ import dev.ultreon.devices.core.io.FileSystem;
 import dev.ultreon.devices.core.io.action.FileAction;
 import dev.ultreon.devices.mineos.apps.system.component.FileBrowser;
 import net.minecraft.nbt.CompoundTag;
-
 import org.jetbrains.annotations.Nullable;
+
 import java.util.Comparator;
 import java.util.Objects;
 

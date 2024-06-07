@@ -1,9 +1,9 @@
 package dev.ultreon.devices.block;
 
 import com.mojang.serialization.MapCodec;
+import dev.architectury.platform.Platform;
 import dev.ultreon.devices.block.entity.MacMaxXBlockEntity;
 import dev.ultreon.devices.init.DeviceBlocks;
-import dev.architectury.platform.Platform;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;

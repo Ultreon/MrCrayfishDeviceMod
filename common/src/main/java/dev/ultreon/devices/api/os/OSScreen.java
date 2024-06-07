@@ -10,8 +10,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 
-import java.util.concurrent.CompletableFuture;
-
 public abstract class OSScreen extends Screen implements OperatingSystem {
     private Display display;
 

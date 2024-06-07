@@ -1,9 +1,9 @@
 package dev.ultreon.devices;
 
-import dev.ultreon.devices.init.DeviceItems;
 import dev.architectury.registry.CreativeTabRegistry;
 import dev.architectury.registry.registries.DeferredSupplier;
 import dev.architectury.registry.registries.RegistrySupplier;
+import dev.ultreon.devices.init.DeviceItems;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 

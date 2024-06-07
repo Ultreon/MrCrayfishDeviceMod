@@ -1,8 +1,8 @@
 package dev.ultreon.devices.mineos.apps.gitweb.layout;
 
 import dev.ultreon.devices.api.app.Layout;
-import dev.ultreon.devices.mineos.apps.gitweb.module.ModuleEntry;
 import dev.ultreon.devices.mineos.apps.gitweb.component.GitWebFrame;
+import dev.ultreon.devices.mineos.apps.gitweb.module.ModuleEntry;
 
 public class ModuleLayout extends Layout {
     public ModuleEntry entry;

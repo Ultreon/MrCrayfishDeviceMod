@@ -43,7 +43,7 @@ public class TaskPing extends Task {
 
     @Override
     public void prepareResponse(CompoundTag tag) {
-        if (this.isSucessful()) {
+        if (this.isSuccessful()) {
             tag.putInt("strength", strength);
         }
     }

@@ -5,21 +5,17 @@ import dev.ultreon.devices.OperatingSystems;
 import dev.ultreon.devices.core.BiosImpl;
 import dev.ultreon.devices.core.BootLoader;
 import dev.ultreon.devices.core.io.FileSystem;
-import dev.ultreon.devices.api.bios.Bios;
 import dev.ultreon.devices.util.BlockEntityUtil;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public abstract class ComputerBlockEntity extends NetworkDeviceBlockEntity.Colored {

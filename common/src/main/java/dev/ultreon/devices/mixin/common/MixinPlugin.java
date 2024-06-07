@@ -1,9 +1,8 @@
 package dev.ultreon.devices.mixin.common;
 
 
-import dev.ultreon.devices.debug.DebugLog;
 import dev.architectury.injectables.targets.ArchitecturyTarget;
-import org.objectweb.asm.Opcodes;
+import dev.ultreon.devices.debug.DebugLog;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;

@@ -123,7 +123,7 @@ public class TaskGetDevices extends Task {
 
     @Override
     public void prepareResponse(CompoundTag tag) {
-        if (this.isSucessful()) {
+        if (this.isSuccessful()) {
             ListTag deviceList = new ListTag();
             foundDevices.forEach(device -> deviceList.add(device.toTag(true)));
             tag.put("network_devices", deviceList);

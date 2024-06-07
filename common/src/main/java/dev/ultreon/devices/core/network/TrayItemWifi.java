@@ -12,35 +12,14 @@ import dev.ultreon.devices.api.utils.RenderUtil;
 import dev.ultreon.devices.block.entity.DeviceBlockEntity;
 import dev.ultreon.devices.block.entity.RouterBlockEntity;
 import dev.ultreon.devices.core.Device;
+import dev.ultreon.devices.core.network.task.TaskConnect;
+import dev.ultreon.devices.core.network.task.TaskPing;
 import dev.ultreon.devices.mineos.client.MineOS;
-import dev.ultreon.devices.core.network.task.TaskConnect;
-import dev.ultreon.devices.core.network.task.TaskPing;
-import dev.ultreon.devices.object.TrayItem;
-import com.mojang.blaze3d.vertex.PoseStack;
-import dev.ultreon.devices.DeviceConfig;
-import dev.ultreon.devices.Devices;
-import dev.ultreon.devices.api.app.Icons;
-import dev.ultreon.devices.api.app.Layout;
-import dev.ultreon.devices.api.app.component.Button;
-import dev.ultreon.devices.api.app.component.ItemList;
-import dev.ultreon.devices.api.app.renderer.ListItemRenderer;
-import dev.ultreon.devices.api.task.Task;
-import dev.ultreon.devices.api.task.TaskManager;
-import dev.ultreon.devices.api.utils.RenderUtil;
-import dev.ultreon.devices.block.entity.DeviceBlockEntity;
-import dev.ultreon.devices.block.entity.RouterBlockEntity;
-import dev.ultreon.devices.core.Device;
-import dev.ultreon.devices.core.Laptop;
-import dev.ultreon.devices.core.network.task.TaskConnect;
-import dev.ultreon.devices.core.network.task.TaskGetRouters;
-import dev.ultreon.devices.core.network.task.TaskPing;
 import dev.ultreon.devices.object.TrayItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.apache.commons.lang3.EnumUtils;
@@ -118,23 +97,28 @@ public class TrayItemWifi extends TrayItem {
     }
 
     private static List<Device> getRouters() {
-        Task task = new TaskGetRouters(Laptop.getPos());
-        CompoundTag[] result = new CompoundTag[1];
-        boolean[] complete = new boolean[]{false};
-        task.setCallback((compoundTag, success) -> {
-            result[0] = compoundTag;
-            complete[0] = true;
-        });
-        TaskManager.sendTask(task);
-        while (true) {
-            synchronized (complete) {
-                if (complete[0]) break;
-            }
+        List<Device> routers = new ArrayList<>();
+
+        Level level = Minecraft.getInstance().level;
+        if (MineOS.getOpened().isWorldLess()) {
+            return new ArrayList<>();
         }
-        ListTag routersList = result[0].getList("routers", 0);
-        ArrayList<Device> routers = new ArrayList<>();
-        for (Tag tag : routersList) {
-            routers.add(Device.fromTag((CompoundTag) tag));
+
+        BlockPos laptopPos = MineOS.getOpened().getPos();
+        int range = DeviceConfig.SIGNAL_RANGE.get();
+
+        for (int y = -range; y < range + 1; y++) {
+            for (int z = -range; z < range + 1; z++) {
+                for (int x = -range; x < range + 1; x++) {
+                    assert laptopPos != null;
+                    BlockPos pos = new BlockPos(laptopPos.getX() + x, laptopPos.getY() + y, laptopPos.getZ() + z);
+                    assert level != null;
+                    BlockEntity tileEntity = level.getBlockEntity(pos);
+                    if (tileEntity instanceof RouterBlockEntity) {
+                        routers.add(new Device((DeviceBlockEntity) tileEntity));
+                    }
+                }
+            }
         }
         return routers;
     }

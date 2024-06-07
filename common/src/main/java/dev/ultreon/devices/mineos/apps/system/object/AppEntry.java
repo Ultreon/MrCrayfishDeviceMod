@@ -1,8 +1,8 @@
 package dev.ultreon.devices.mineos.apps.system.object;
 
 import dev.ultreon.devices.object.AppInfo;
-
 import org.jetbrains.annotations.Nullable;
+
 import java.util.Arrays;
 
 /**

@@ -1,7 +1,7 @@
 package dev.ultreon.devices.core.laptop.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ultreon.devices.core.laptop.common.C2SUpdatePacket;
 import dev.ultreon.devices.core.laptop.common.TaskBar;
 import dev.ultreon.devices.debug.DebugLog;

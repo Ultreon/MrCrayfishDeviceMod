@@ -2,7 +2,6 @@ package dev.ultreon.devices.device;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 
 import static org.lwjgl.opengl.EXTFramebufferObject.*;

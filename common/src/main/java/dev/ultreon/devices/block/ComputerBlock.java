@@ -1,5 +1,7 @@
 package dev.ultreon.devices.block;
 
+import dev.architectury.utils.Env;
+import dev.architectury.utils.EnvExecutor;
 import dev.ultreon.devices.ModDeviceTypes;
 import dev.ultreon.devices.block.entity.ComputerBlockEntity;
 import dev.ultreon.devices.block.entity.LaptopBlockEntity;
@@ -7,8 +9,6 @@ import dev.ultreon.devices.debug.DebugLog;
 import dev.ultreon.devices.item.FlashDriveItem;
 import dev.ultreon.devices.util.BlockEntityUtil;
 import dev.ultreon.devices.util.Colorable;
-import dev.architectury.utils.Env;
-import dev.architectury.utils.EnvExecutor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;

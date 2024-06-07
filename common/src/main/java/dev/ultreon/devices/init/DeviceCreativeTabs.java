@@ -1,8 +1,8 @@
 package dev.ultreon.devices.init;
 
-import dev.ultreon.devices.UltreonDevicesMod;
 import dev.architectury.registry.CreativeTabRegistry;
 import dev.architectury.registry.registries.Registrar;
+import dev.ultreon.devices.UltreonDevicesMod;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;

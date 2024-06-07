@@ -2,8 +2,8 @@ package dev.ultreon.devices.api.app;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.ultreon.devices.api.app.listener.InitListener;
-import dev.ultreon.devices.mineos.client.MineOS;
 import dev.ultreon.devices.core.Wrappable;
+import dev.ultreon.devices.mineos.client.MineOS;
 import dev.ultreon.devices.util.GLHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;

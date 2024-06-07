@@ -1,8 +1,8 @@
 package dev.ultreon.devices.init;
 
-import dev.ultreon.devices.UltreonDevicesMod;
 import dev.architectury.registry.registries.Registrar;
 import dev.architectury.registry.registries.RegistrySupplier;
+import dev.ultreon.devices.UltreonDevicesMod;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvent;
 

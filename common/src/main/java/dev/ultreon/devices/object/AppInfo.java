@@ -2,8 +2,8 @@ package dev.ultreon.devices.object;
 
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
-import dev.ultreon.devices.UltreonDevicesMod;
 import dev.ultreon.devices.Reference;
+import dev.ultreon.devices.UltreonDevicesMod;
 import dev.ultreon.devices.client.Display;
 import dev.ultreon.devices.mineos.client.MineOS;
 import net.minecraft.client.Minecraft;

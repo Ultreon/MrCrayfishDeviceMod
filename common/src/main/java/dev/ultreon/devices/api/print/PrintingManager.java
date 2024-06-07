@@ -1,13 +1,13 @@
 package dev.ultreon.devices.api.print;
 
 import com.google.common.collect.HashBiMap;
-import dev.ultreon.devices.UltreonDevicesMod;
 import dev.architectury.injectables.annotations.PlatformOnly;
+import dev.ultreon.devices.UltreonDevicesMod;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
-
 import org.jetbrains.annotations.Nullable;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 

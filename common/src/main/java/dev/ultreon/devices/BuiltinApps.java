@@ -1,5 +1,6 @@
 package dev.ultreon.devices;
 
+import dev.architectury.platform.Platform;
 import dev.ultreon.devices.api.ApplicationManager;
 import dev.ultreon.devices.mineos.apps.BoatRacersApp;
 import dev.ultreon.devices.mineos.apps.NoteStashApp;
@@ -8,10 +9,8 @@ import dev.ultreon.devices.mineos.apps.auction.MineBayApp;
 import dev.ultreon.devices.mineos.apps.email.EmailApp;
 import dev.ultreon.devices.mineos.apps.gitweb.GitWebApp;
 import dev.ultreon.devices.mineos.apps.snake.SnakeApp;
-import dev.ultreon.devices.mineos.apps.system.VulnerabilityApp;
-import dev.ultreon.devices.mineos.apps.themes.ThemesApp;
 import dev.ultreon.devices.mineos.apps.system.*;
-import dev.architectury.platform.Platform;
+import dev.ultreon.devices.mineos.apps.themes.ThemesApp;
 import net.minecraft.resources.ResourceLocation;
 
 public class BuiltinApps {

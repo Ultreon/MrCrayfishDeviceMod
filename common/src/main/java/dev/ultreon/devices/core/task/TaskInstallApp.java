@@ -74,7 +74,7 @@ public class TaskInstallApp extends Task {
             }
             systemData.put("InstalledApps", list);
         }
-        if (!this.isSucessful()) {
+        if (!this.isSuccessful()) {
             UltreonDevicesMod.LOGGER.info("Installing {} unsuccessful", appId);
         }
     }

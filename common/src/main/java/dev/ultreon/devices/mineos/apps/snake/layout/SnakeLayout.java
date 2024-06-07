@@ -5,9 +5,9 @@ import dev.ultreon.devices.api.app.Component;
 import dev.ultreon.devices.api.app.Icons;
 import dev.ultreon.devices.api.app.Layout;
 import dev.ultreon.devices.api.app.component.Button;
-import dev.ultreon.devices.mineos.client.MineOS;
 import dev.ultreon.devices.debug.DebugLog;
 import dev.ultreon.devices.mineos.apps.snake.SnakeApp;
+import dev.ultreon.devices.mineos.client.MineOS;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 

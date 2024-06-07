@@ -1,13 +1,11 @@
 package dev.ultreon.devices.block.entity.renderer;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import dev.ultreon.devices.block.OfficeChairBlock;
 import dev.ultreon.devices.block.entity.OfficeChairBlockEntity;
-import dev.ultreon.devices.init.DeviceBlocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;

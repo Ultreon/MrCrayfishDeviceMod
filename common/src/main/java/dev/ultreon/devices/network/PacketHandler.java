@@ -1,12 +1,12 @@
 package dev.ultreon.devices.network;
 
+import dev.architectury.networking.NetworkChannel;
+import dev.architectury.networking.NetworkManager;
+import dev.architectury.utils.Env;
 import dev.ultreon.devices.UltreonDevicesMod;
 import dev.ultreon.devices.core.laptop.common.C2SUpdatePacket;
 import dev.ultreon.devices.core.laptop.common.S2CUpdatePacket;
 import dev.ultreon.devices.network.task.*;
-import dev.architectury.networking.NetworkChannel;
-import dev.architectury.networking.NetworkManager;
-import dev.architectury.utils.Env;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;

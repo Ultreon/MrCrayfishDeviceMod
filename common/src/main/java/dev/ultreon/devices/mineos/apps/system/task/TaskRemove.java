@@ -36,7 +36,7 @@ public class TaskRemove extends Task {
 
     @Override
     public void prepareResponse(CompoundTag tag) {
-        if (isSucessful()) {
+        if (isSuccessful()) {
             tag.putInt("balance", this.amount);
         }
     }

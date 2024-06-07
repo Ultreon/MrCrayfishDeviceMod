@@ -4,10 +4,10 @@ import dev.ultreon.devices.UltreonDevicesMod;
 import dev.ultreon.devices.api.app.Application;
 import dev.ultreon.devices.object.AppInfo;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

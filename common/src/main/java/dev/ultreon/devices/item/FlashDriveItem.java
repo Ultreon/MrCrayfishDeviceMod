@@ -1,11 +1,11 @@
 package dev.ultreon.devices.item;
 
-import dev.ultreon.devices.UltreonDevicesMod;
+import dev.architectury.registry.registries.RegistrarManager;
 import dev.ultreon.devices.IDeviceType;
 import dev.ultreon.devices.ModDeviceTypes;
 import dev.ultreon.devices.Reference;
+import dev.ultreon.devices.UltreonDevicesMod;
 import dev.ultreon.devices.util.Colored;
-import dev.architectury.registry.registries.RegistrarManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.Registries;

@@ -21,6 +21,12 @@ public class Drive {
         this.type = Type.fromString(driveTag.getString("type"));
     }
 
+    public Drive(Type type, UUID uuid, String name) {
+        this.type = type;
+        this.uuid = uuid;
+        this.name = name;
+    }
+
     /**
      * Gets the name of the Drive.
      *

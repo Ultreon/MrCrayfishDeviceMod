@@ -1,8 +1,8 @@
 package dev.ultreon.devices.network.task;
 
+import dev.architectury.networking.NetworkManager;
 import dev.ultreon.devices.DeviceConfig;
 import dev.ultreon.devices.network.Packet;
-import dev.architectury.networking.NetworkManager;
 import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.Objects;

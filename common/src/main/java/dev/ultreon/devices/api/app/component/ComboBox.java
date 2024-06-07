@@ -9,10 +9,10 @@ import dev.ultreon.devices.api.app.renderer.ListItemRenderer;
 import dev.ultreon.devices.api.utils.RenderUtil;
 import dev.ultreon.devices.mineos.client.MineOS;
 import net.minecraft.client.Minecraft;
-
 import net.minecraft.client.gui.GuiGraphics;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 import java.awt.*;
 
 /**

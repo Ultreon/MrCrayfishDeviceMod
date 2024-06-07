@@ -1,7 +1,7 @@
 package dev.ultreon.devices.api.app;
 
-import dev.ultreon.devices.mineos.client.MineOS;
 import dev.ultreon.devices.mineos.apps.system.object.ColorScheme;
+import dev.ultreon.devices.mineos.client.MineOS;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;

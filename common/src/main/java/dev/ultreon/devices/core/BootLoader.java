@@ -1,11 +1,10 @@
 package dev.ultreon.devices.core;
 
+import dev.architectury.extensions.injected.InjectedRegistryEntryExtension;
 import dev.ultreon.devices.UltreonDevicesMod;
 import dev.ultreon.devices.api.bios.Bios;
 import dev.ultreon.devices.api.os.OperatingSystem;
 import dev.ultreon.devices.block.entity.ComputerBlockEntity;
-import dev.architectury.extensions.injected.InjectedRegistryEntryExtension;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;

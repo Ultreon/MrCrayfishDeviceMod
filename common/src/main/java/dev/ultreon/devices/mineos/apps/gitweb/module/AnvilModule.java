@@ -1,7 +1,7 @@
 package dev.ultreon.devices.mineos.apps.gitweb.module;
 
-import dev.ultreon.devices.mineos.apps.gitweb.component.container.ContainerBox;
 import dev.ultreon.devices.mineos.apps.gitweb.component.container.AnvilBox;
+import dev.ultreon.devices.mineos.apps.gitweb.component.container.ContainerBox;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;

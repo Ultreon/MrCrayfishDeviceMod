@@ -1,10 +1,10 @@
 package dev.ultreon.devices.init;
 
+import dev.architectury.registry.registries.Registrar;
+import dev.architectury.registry.registries.RegistrySupplier;
 import dev.ultreon.devices.UltreonDevicesMod;
 import dev.ultreon.devices.block.*;
 import dev.ultreon.devices.util.DyeableRegistration;
-import dev.architectury.registry.registries.Registrar;
-import dev.architectury.registry.registries.RegistrySupplier;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;

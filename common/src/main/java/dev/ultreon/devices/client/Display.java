@@ -3,19 +3,21 @@ package dev.ultreon.devices.client;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.PoseStack;
+import dev.architectury.event.events.client.ClientLifecycleEvent;
+import dev.architectury.event.events.common.LifecycleEvent;
 import dev.ultreon.devices.UltreonDevicesMod;
 import dev.ultreon.devices.api.os.OperatingSystem;
+import dev.ultreon.devices.block.entity.ComputerBlockEntity;
 import dev.ultreon.devices.core.BiosImpl;
 import dev.ultreon.devices.mineos.apps.system.DisplayResolution;
 import dev.ultreon.devices.mineos.apps.system.PredefinedResolution;
-import dev.ultreon.devices.block.entity.ComputerBlockEntity;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.client.gui.GuiGraphics;
 import dev.ultreon.devices.util.GLHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.Consumer;
 
@@ -37,6 +39,12 @@ public class Display extends Screen {
     private boolean connected;
     private BiosImpl bios;
     private OperatingSystem os;
+
+    static {
+        LifecycleEvent.SERVER_STOPPING.register(instance1 -> {
+            close();
+        });
+    }
 
     private Display(DisplayResolution resolution) {
         super(Component.literal("MineOS GuiGraphics"));
@@ -69,9 +77,15 @@ public class Display extends Screen {
     }
 
     public static void close() {
+        if (instance == null) return;
+
         instance.onClose();
         instance.os.disconnectDisplay();
         instance = null;
+    }
+
+    public static boolean isOpen() {
+        return instance != null;
     }
 
     void begin(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {

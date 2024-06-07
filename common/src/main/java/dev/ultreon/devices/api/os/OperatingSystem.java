@@ -1,13 +1,13 @@
 package dev.ultreon.devices.api.os;
 
-import dev.ultreon.devices.client.Display;
-import dev.ultreon.devices.object.AppInfo;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.nbt.CompoundTag;
+import dev.ultreon.devices.api.app.Application;
 import dev.ultreon.devices.api.bios.Bios;
 import dev.ultreon.devices.api.bios.InterruptData;
+import dev.ultreon.devices.client.Display;
+import dev.ultreon.devices.object.AppInfo;
 import net.minecraft.client.gui.GuiGraphics;
-import dev.ultreon.devices.api.app.Application;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.nbt.CompoundTag;
 
 public interface OperatingSystem {
     void init(GuiGraphics graphics);
