@@ -325,13 +325,18 @@ public class FileBrowser extends Component {
 
                     assert tag != null;
                     ListTag driveList = tag.getList("available_drives", Tag.TAG_COMPOUND);
-                    Drive[] drives = new Drive[driveList.size() + 1];
-                    drives[0] = currentDrive = MineOS.getOpened().getMainDrive();
+                    List<Drive> drives = new ArrayList<>(driveList.size() + 1);
+                    Drive mainDrive = MineOS.getOpened().getMainDrive();
+                    if (mainDrive != null) {
+                        currentDrive = mainDrive;
+                        drives.add(mainDrive);
+                    }
+
                     for (int i = 0; i < driveList.size(); i++) {
                         CompoundTag driveTag = driveList.getCompound(i);
-                        drives[i + 1] = new Drive(driveTag);
+                        drives.add(new Drive(driveTag));
                     }
-                    comboBoxDrive.setItems(drives);
+                    comboBoxDrive.setItems(drives.toArray(Drive[]::new));
 
                     Folder folder = currentDrive.getFolder(initialFolder);
                     if (folder != null) {

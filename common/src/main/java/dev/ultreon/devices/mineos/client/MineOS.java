@@ -231,9 +231,7 @@ public class MineOS extends Screen implements OperatingSystem, MineOSSystem {
 
     @Deprecated
     public void setMainDrive(Drive mainDrive) {
-        if (this.mainDrive == null) {
-            this.mainDrive = mainDrive;
-        }
+        bios.setMainDrive(mainDrive);
     }
 
     /**
