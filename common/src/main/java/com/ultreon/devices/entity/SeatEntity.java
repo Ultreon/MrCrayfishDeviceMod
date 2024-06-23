@@ -1,19 +1,19 @@
 package com.ultreon.devices.entity;
 
 import com.ultreon.devices.init.DeviceEntities;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityDimensions;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Pose;
-import net.minecraft.world.entity.decoration.ArmorStand;
-import net.minecraft.world.entity.vehicle.Boat;
-import net.minecraft.world.entity.vehicle.Minecart;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityDimensions;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.Pose;
+import net.minecraft.entity.decoration.ArmorStand;
+import net.minecraft.entity.vehicle.Boat;
+import net.minecraft.entity.vehicle.Minecart;
+import net.minecraft.world.World;
+import net.minecraft.util.math.AxisAlignedBB;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -21,10 +21,10 @@ import java.util.List;
 public class SeatEntity extends Entity
 {
     private double yOffset;
-    public SeatEntity(EntityType<SeatEntity> type, Level worldIn)
+    public SeatEntity(EntityType<SeatEntity> type, World worldIn)
     {
         super(type, worldIn);
-        this.setBoundingBox(new AABB(0.001F, 0.001F, 0.001F, -0.001F, -0.001F, -0.001F));
+        this.setBoundingBox(new AxisAlignedBB(0.001F, 0.001F, 0.001F, -0.001F, -0.001F, -0.001F));
         this.setInvisible(true);
     }
 
@@ -33,7 +33,7 @@ public class SeatEntity extends Entity
         return 0;
     }
 
-    public SeatEntity(Level worldIn, BlockPos pos, double yOffset)
+    public SeatEntity(World worldIn, BlockPos pos, double yOffset)
     {
         this(DeviceEntities.SEAT.get(), worldIn);
         this.setPos(pos.getX() + 0.5, pos.getY() + yOffset, pos.getZ() + 0.5);
@@ -86,8 +86,8 @@ public class SeatEntity extends Entity
 //    protected void init() {}
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag compound) {}
+    protected void readAdditionalSaveData(CompoundNBT compound) {}
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag compound) {}
+    protected void addAdditionalSaveData(CompoundNBT compound) {}
 }

@@ -1,25 +1,25 @@
 package com.ultreon.devices;
 
 import com.ultreon.devices.block.entity.renderer.*;
-import com.mojang.blaze3d.platform.NativeImage;
+import net.minecraft.client.renderer.texture.NativeImage;
 import com.ultreon.devices.api.ApplicationManager;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.init.DeviceBlockEntities;
 import com.ultreon.devices.init.DeviceBlocks;
 import com.ultreon.devices.object.AppInfo;
 import dev.architectury.injectables.annotations.ExpectPlatform;
-import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
+import dev.architectury.registry.client.rendering.TileEntityRendererRegistry;
 import dev.architectury.registry.client.rendering.RenderTypeRegistry;
 import dev.architectury.registry.registries.Registries;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.PreparableReloadListener;
-import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.Registry;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.PreparableReloadListener;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.block.Block;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
@@ -70,7 +70,7 @@ public class ClientModEvents {
     public static class ReloaderListener implements PreparableReloadListener {
         @NotNull
         @Override
-        public CompletableFuture<Void> reload(@NotNull PreparableReloadListener.PreparationBarrier preparationBarrier, @NotNull ResourceManager resourceManager, @NotNull ProfilerFiller preparationsProfiler, @NotNull ProfilerFiller reloadProfiler, @NotNull Executor backgroundExecutor, @NotNull Executor gameExecutor) {
+        public CompletableFuture<Void> reload(@NotNull PreparableReloadListener.PreparationBarrier preparationBarrier, @NotNull IResourceManager resourceManager, @NotNull ProfilerFiller preparationsProfiler, @NotNull ProfilerFiller reloadProfiler, @NotNull Executor backgroundExecutor, @NotNull Executor gameExecutor) {
             LOGGER.debug("Reloading resources from the Device Mod.");
 
             return CompletableFuture.runAsync(() -> {
@@ -206,11 +206,11 @@ public class ClientModEvents {
     public static void registerRenderers() {
         LOGGER.info("Registering renderers.");
 
-        BlockEntityRendererRegistry.register(DeviceBlockEntities.LAPTOP.get(), LaptopRenderer::new);
-        BlockEntityRendererRegistry.register(DeviceBlockEntities.PRINTER.get(), PrinterRenderer::new);
-        BlockEntityRendererRegistry.register(DeviceBlockEntities.PAPER.get(), PaperRenderer::new);
-        BlockEntityRendererRegistry.register(DeviceBlockEntities.ROUTER.get(), RouterRenderer::new);
-        BlockEntityRendererRegistry.register(DeviceBlockEntities.SEAT.get(), OfficeChairRenderer::new);
+        TileEntityRendererRegistry.register(DeviceBlockEntities.LAPTOP.get(), LaptopRenderer::new);
+        TileEntityRendererRegistry.register(DeviceBlockEntities.PRINTER.get(), PrinterRenderer::new);
+        TileEntityRendererRegistry.register(DeviceBlockEntities.PAPER.get(), PaperRenderer::new);
+        TileEntityRendererRegistry.register(DeviceBlockEntities.ROUTER.get(), RouterRenderer::new);
+        TileEntityRendererRegistry.register(DeviceBlockEntities.SEAT.get(), OfficeChairRenderer::new);
     }
 
     public static void registerLayerDefinitions() {

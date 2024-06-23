@@ -6,14 +6,14 @@ import com.ultreon.devices.IDeviceType;
 import com.ultreon.devices.Reference;
 import com.ultreon.devices.util.Colored;
 import dev.architectury.registry.registries.Registries;
-import net.minecraft.ChatFormatting;
-import net.minecraft.core.NonNullList;
-import net.minecraft.core.Registry;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.*;
-import net.minecraft.world.level.Level;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.Registry;
+import net.minecraft.util.text.Component;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.item.*;
+import net.minecraft.world.World;
 import org.apache.commons.lang3.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,35 +26,35 @@ public class FlashDriveItem extends Item implements Colored, SubItems, IDeviceTy
     private final DyeColor color;
 
     public FlashDriveItem(DyeColor color) {
-        super(new Properties().tab(Devices.TAB_DEVICE).rarity(Rarity.UNCOMMON).stacksTo(1));
+        super(new Properties().tab(Devices.GROUP_DEVICE).rarity(Rarity.UNCOMMON).stacksTo(1));
         this.color = color;
     }
 
-    private static ChatFormatting getFromColor(DyeColor color) {
+    private static TextFormatting getFromColor(DyeColor color) {
         return switch (color) {
-            case ORANGE, BROWN -> ChatFormatting.GOLD;
-            case MAGENTA, PINK -> ChatFormatting.LIGHT_PURPLE;
-            case LIGHT_BLUE -> ChatFormatting.BLUE;
-            case YELLOW -> ChatFormatting.YELLOW;
-            case LIME -> ChatFormatting.GREEN;
-            case GRAY -> ChatFormatting.DARK_GRAY;
-            case LIGHT_GRAY -> ChatFormatting.GRAY;
-            case CYAN -> ChatFormatting.DARK_AQUA;
-            case PURPLE -> ChatFormatting.DARK_PURPLE;
-            case BLUE -> ChatFormatting.DARK_BLUE;
-            case GREEN -> ChatFormatting.DARK_GREEN;
-            case RED -> ChatFormatting.DARK_RED;
-            case BLACK -> ChatFormatting.BLACK;
-            default -> ChatFormatting.WHITE;
+            case ORANGE, BROWN -> TextFormatting.GOLD;
+            case MAGENTA, PINK -> TextFormatting.LIGHT_PURPLE;
+            case LIGHT_BLUE -> TextFormatting.BLUE;
+            case YELLOW -> TextFormatting.YELLOW;
+            case LIME -> TextFormatting.GREEN;
+            case GRAY -> TextFormatting.DARK_GRAY;
+            case LIGHT_GRAY -> TextFormatting.GRAY;
+            case CYAN -> TextFormatting.DARK_AQUA;
+            case PURPLE -> TextFormatting.DARK_PURPLE;
+            case BLUE -> TextFormatting.DARK_BLUE;
+            case GREEN -> TextFormatting.DARK_GREEN;
+            case RED -> TextFormatting.DARK_RED;
+            case BLACK -> TextFormatting.BLACK;
+            default -> TextFormatting.WHITE;
         };
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltip, @NotNull TooltipFlag isAdvanced) {
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable World level, List<Component> tooltip, @NotNull TooltipFlag isAdvanced) {
         String colorName = color.getName().replace("_", " ");
         colorName = WordUtils.capitalize(colorName);
-        tooltip.add(new TextComponent("Color: " + ChatFormatting.BOLD + getFromColor(color).toString() + colorName));
+        tooltip.add(new StringTextComponent("Color: " + TextFormatting.BOLD + getFromColor(color).toString() + colorName));
     }
 
     @Override

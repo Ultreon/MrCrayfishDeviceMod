@@ -5,35 +5,34 @@ import com.ultreon.devices.IDeviceType;
 import com.ultreon.devices.block.entity.DeviceBlockEntity;
 import com.ultreon.devices.util.BlockEntityUtil;
 import com.ultreon.devices.util.Colorable;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.item.DyeColor;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.world.IBlockReader;
+import net.minecraft.world.World;
+import net.minecraft.world.IWorld;
+import net.minecraft.block.Block;
+import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.block.HorizontalBlock;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.block.BlockState;
+import net.minecraft.state.StateContainer;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShapes;
+import net.minecraft.util.math.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
 @SuppressWarnings("deprecation")
-public abstract class DeviceBlock extends HorizontalDirectionalBlock implements EntityBlock, IDeviceType {
+public abstract class DeviceBlock extends HorizontalBlock implements ITileEntityProvider, IDeviceType {
     private final ModDeviceTypes deviceType;
 
     public DeviceBlock(Properties properties, ModDeviceTypes deviceType) {
@@ -48,22 +47,22 @@ public abstract class DeviceBlock extends HorizontalDirectionalBlock implements 
 
     @NotNull
     @Override
-    public VoxelShape getShape(@NotNull BlockState pState, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos, @NotNull CollisionContext pContext) {
-        return Shapes.empty();
+    public VoxelShape getShape(@NotNull BlockState pState, @NotNull IBlockReader pLevel, @NotNull BlockPos pPos, @NotNull ISelectionContext pContext) {
+        return VoxelShapes.empty();
     }
 
     @Nullable
     @Override
-    public BlockState getStateForPlacement(@NotNull BlockPlaceContext pContext) {
+    public BlockState getStateForPlacement(@NotNull BlockItemUseContext pContext) {
         BlockState state = super.getStateForPlacement(pContext);
         return state != null ? state.setValue(FACING, Objects.requireNonNull(pContext.getPlayer(), "Player in block placement context is null.").getDirection().getOpposite()) : null;
     }
 
     @Override
-    public void setPlacedBy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity placer, @NotNull ItemStack stack) {
+    public void setPlacedBy(@NotNull World level, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity placer, @NotNull ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
 
-        BlockEntity blockEntity = level.getBlockEntity(pos);
+        TileEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof DeviceBlockEntity deviceBlockEntity) {
             if (stack.hasCustomHoverName()) {
                 deviceBlockEntity.setCustomName(stack.getHoverName().getString());
@@ -73,17 +72,17 @@ public abstract class DeviceBlock extends HorizontalDirectionalBlock implements 
 
 
     @Override
-    public void destroy(LevelAccessor level, BlockPos pos, BlockState state) {
+    public void destroy(IWorld level, BlockPos pos, BlockState state) {
         if (!level.isClientSide()) {
-            BlockEntity blockEntity = level.getBlockEntity(pos);
+            TileEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof DeviceBlockEntity device) {
-                CompoundTag blockEntityTag = new CompoundTag();
+                CompoundNBT blockEntityTag = new CompoundNBT();
                 blockEntity.saveWithoutMetadata();
                 blockEntityTag.remove("id");
 
                 removeTagsForDrop(blockEntityTag);
 
-                CompoundTag tag = new CompoundTag();
+                CompoundNBT tag = new CompoundNBT();
                 tag.put("BlockEntityTag", blockEntityTag);
 
                 ItemStack drop;
@@ -95,10 +94,10 @@ public abstract class DeviceBlock extends HorizontalDirectionalBlock implements 
                 drop.setTag(tag);
 
                 if (device.hasCustomName()) {
-                    drop.setHoverName(new TextComponent(device.getCustomName()));
+                    drop.setHoverName(new StringTextComponent(device.getCustomName()));
                 }
 
-                level.addFreshEntity(new ItemEntity((Level) level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, drop));
+                level.addFreshEntity(new ItemEntity((World) level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, drop));
 
                 level.removeBlock(pos, false);
                 return;
@@ -107,23 +106,23 @@ public abstract class DeviceBlock extends HorizontalDirectionalBlock implements 
         super.destroy(level, pos, state);
     }
 
-    protected void removeTagsForDrop(CompoundTag blockEntityTag) {
+    protected void removeTagsForDrop(CompoundNBT blockEntityTag) {
 
     }
 
     @Nullable
     @Override
-    public abstract BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state);
+    public abstract TileEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state);
 
     @Nullable
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> blockEntityType) {
+    public <T extends TileEntity> BlockEntityTicker<T> getTicker(@NotNull World level, @NotNull BlockState state, @NotNull TileEntityType<T> blockEntityType) {
         return BlockEntityUtil.getTicker();
     }
 
     @Override
-    public boolean triggerEvent(@NotNull BlockState state, Level level, @NotNull BlockPos pos, int id, int param) {
-        BlockEntity blockEntity = level.getBlockEntity(pos);
+    public boolean triggerEvent(@NotNull BlockState state, World level, @NotNull BlockPos pos, int id, int param) {
+        TileEntity blockEntity = level.getBlockEntity(pos);
         return blockEntity != null && blockEntity.triggerEvent(id, param);
     }
 
@@ -145,9 +144,9 @@ public abstract class DeviceBlock extends HorizontalDirectionalBlock implements 
         }
 
         @Override
-        public void setPlacedBy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity placer, @NotNull ItemStack stack) {
+        public void setPlacedBy(@NotNull World level, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity placer, @NotNull ItemStack stack) {
             super.setPlacedBy(level, pos, state, placer, stack);
-            BlockEntity blockEntity = level.getBlockEntity(pos);
+            TileEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof Colorable colored) {
                 colored.setColor(color);
             }
@@ -157,7 +156,7 @@ public abstract class DeviceBlock extends HorizontalDirectionalBlock implements 
 
 
         @Override
-        protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> pBuilder) {
+        protected void createBlockStateDefinition(StateContainer.@NotNull Builder<Block, BlockState> pBuilder) {
             super.createBlockStateDefinition(pBuilder);
             pBuilder.add(FACING);
         }

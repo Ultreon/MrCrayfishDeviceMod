@@ -1,13 +1,13 @@
 package com.ultreon.devices.api.app.component;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.util.GuiHelper;
-import net.minecraft.ChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.network.chat.Style;
+import net.minecraft.util.text.ITextProperties;
+import net.minecraft.util.text.Style;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ public class Text extends Component {
     }
 
     @Override
-    public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(MatrixStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
 //        System.out.println(lines.size() + ", " + rawText + ", " + lines);
         if (this.visible) {
             for (int i = 0; i < lines.size(); i++) {
@@ -65,7 +65,7 @@ public class Text extends Component {
         text = text.replace("\\n", "\n");
         System.out.println(Laptop.getFont().plainSubstrByWidth(text, width - padding * 2));
         var a = new ArrayList<String>();
-        Laptop.getFont().getSplitter().splitLines(FormattedText.of(text), width - padding * 2, Style.EMPTY).forEach(b -> a.add(b.getString()));
+        Laptop.getFont().getSplitter().splitLines(ITextProperties.of(text), width - padding * 2, Style.EMPTY).forEach(b -> a.add(b.getString()));
         this.lines = a;
     }
 
@@ -128,7 +128,7 @@ public class Text extends Component {
 
         endIndex = Math.min(endIndex + 1, line.length());
 
-        return ChatFormatting.stripFormatting(line.substring(startIndex, endIndex));
+        return TextFormatting.stripFormatting(line.substring(startIndex, endIndex));
     }
 
     public int getWidth() {

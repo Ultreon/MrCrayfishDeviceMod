@@ -1,6 +1,6 @@
 package com.ultreon.devices.programs.system.component;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Layout;
@@ -9,9 +9,9 @@ import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.programs.system.object.ImageEntry;
 import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.core.NonNullList;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.gui.IngameGui;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 
 
 /**
@@ -59,24 +59,24 @@ public class SlideShow extends Component {
     }
 
     @Override
-    protected void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    protected void render(MatrixStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         if (!this.visible) return;
         image.render(pose, laptop, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
 
         if (currentImage > 0) {
             if (GuiHelper.isMouseWithin(mouseX, mouseY, x, y, 15, height)) {
-                Gui.fill(pose, x, y, x + 15, y + height, OVERLAY_HOVER.getRGB());
+                IngameGui.fill(pose, x, y, x + 15, y + height, OVERLAY_HOVER.getRGB());
             } else {
-                Gui.fill(pose, x, y, x + 15, y + height, OVERLAY.getRGB());
+                IngameGui.fill(pose, x, y, x + 15, y + height, OVERLAY.getRGB());
             }
             Icons.CHEVRON_LEFT.draw(pose, mc, x + 2, y + (height - 10) / 2);
         }
 
         if (currentImage < IMAGES.size() - 1) {
             if (GuiHelper.isMouseWithin(mouseX, mouseY, x + width - 15, y, 15, height)) {
-                Gui.fill(pose, x + width - 15, y, x + width, y + height, OVERLAY_HOVER.getRGB());
+                IngameGui.fill(pose, x + width - 15, y, x + width, y + height, OVERLAY_HOVER.getRGB());
             } else {
-                Gui.fill(pose, x + width - 15, y, x + width, y + height, OVERLAY.getRGB());
+                IngameGui.fill(pose, x + width - 15, y, x + width, y + height, OVERLAY.getRGB());
             }
             Icons.CHEVRON_RIGHT.draw(pose, mc, x + 3 + width - 15, y + (height - 10) / 2);
         }

@@ -11,8 +11,8 @@ import com.ultreon.devices.programs.gitweb.layout.TextLayout;
 import com.ultreon.devices.programs.system.SettingsApp;
 import com.ultreon.devices.programs.system.layout.StandardLayout;
 import com.ultreon.devices.util.DataHandler;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.client.gui.IngameGui;
+import net.minecraft.nbt.CompoundNBT;
 
 import javax.annotation.Nullable;
 import java.awt.*;
@@ -42,11 +42,11 @@ public class GitWebApp extends Application implements SystemAccessor, DataHandle
     }
 
     @Override
-    public void init(@Nullable CompoundTag intent) {
+    public void init(@Nullable CompoundNBT intent) {
         layoutBrowser = new StandardLayout(null, 362, 240, this, null);
         layoutBrowser.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
             Color color = new Color(Laptop.getSystem().getSettings().getColorScheme().getItemBackgroundColor());
-            Gui.fill(pose, x, y + 21, x + width, y + 164, color.getRGB());
+            IngameGui.fill(pose, x, y + 21, x + width, y + 164, color.getRGB());
         });
 
         layoutPref = new SettingsApp.Menu("Preferences");
@@ -124,11 +124,11 @@ public class GitWebApp extends Application implements SystemAccessor, DataHandle
     }
 
     @Override
-    public void load(CompoundTag tag) {
+    public void load(CompoundNBT tag) {
     }
 
     @Override
-    public void save(CompoundTag tag) {
+    public void save(CompoundNBT tag) {
     }
 
     @Override

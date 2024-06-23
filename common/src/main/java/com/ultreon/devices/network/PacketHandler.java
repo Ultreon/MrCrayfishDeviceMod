@@ -5,15 +5,15 @@ import com.ultreon.devices.core.laptop.common.C2SUpdatePacket;
 import com.ultreon.devices.core.laptop.common.S2CUpdatePacket;
 import com.ultreon.devices.network.task.*;
 import dev.architectury.networking.NetworkChannel;
-import dev.architectury.networking.NetworkManager;
-import dev.architectury.utils.Env;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.World;
 
 public class PacketHandler {
     public static final NetworkChannel INSTANCE = NetworkChannel.create(Devices.id("main_channel"));
@@ -34,16 +34,16 @@ public class PacketHandler {
         return id++;
     }
 
-    @Environment(EnvType.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public static <T extends Packet<T>> void sendToServer(T message) {
         if (Minecraft.getInstance().getConnection() != null) {
             INSTANCE.sendToServer(message);
         } else {
             Minecraft.getInstance().doRunTask(() ->
-            message.onMessage(() -> new NetworkManager.PacketContext() {
+            message.onMessage(() -> new NetworkEvent.Context() {
 
                 @Override
-                public Player getPlayer() {
+                public PlayerEntity getPlayer() {
                     return Minecraft.getInstance().player;
                 }
 
@@ -53,18 +53,18 @@ public class PacketHandler {
                 }
 
                 @Override
-                public Env getEnvironment() {
-                    return Env.SERVER;
+                public Dist getOnlyIn() {
+                    return Dist.SERVER;
                 }
             }));
         }
     }
 
-    public static <T extends Packet<T>> void sendToClient(Packet<T> messageNotification, Player player) { // has to be ServerPlayer if world is not null
+    public static <T extends Packet<T>> void sendToClient(Packet<T> messageNotification, PlayerEntity player) { // has to be ServerPlayer if world is not null
         if (player == null || player.level == null) {
-            messageNotification.onMessage(() -> new NetworkManager.PacketContext() {
+            messageNotification.onMessage(() -> new NetworkEvent.Context() {
                 @Override
-                public Player getPlayer() {
+                public PlayerEntity getPlayer() {
                     return player;
                 }
 
@@ -74,23 +74,23 @@ public class PacketHandler {
                 }
 
                 @Override
-                public Env getEnvironment() {
-                    return Env.CLIENT;
+                public Dist getOnlyIn() {
+                    return Dist.CLIENT;
                 }
             });
             return;
         }
-        INSTANCE.sendToPlayer((ServerPlayer) player, messageNotification);
+        INSTANCE.sendToPlayer((ServerPlayerEntity) player, messageNotification);
         //INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), messageNotification);
     }
 
     // seems to be unused
-    public static <T extends Packet<T>> void sendToDimension(Packet<T> messageNotification, ResourceKey<Level> level) {
+    public static <T extends Packet<T>> void sendToDimension(Packet<T> messageNotification, RegistryKey<World> level) {
         //INSTANCE.sendToServer();
         //INSTANCE.send(PacketDistributor.DIMENSION.with(() -> level), messageNotification);
     }
 
-//    public static <T extends Packet<T>> void sendToDimension(Packet<T> messageNotification, Level level) {
+//    public static <T extends Packet<T>> void sendToDimension(Packet<T> messageNotification, World level) {
 //        INSTANCE.send(PacketDistributor.DIMENSION.with(level::dimension), messageNotification);
 //    }
 //
@@ -102,11 +102,11 @@ public class PacketHandler {
 //        INSTANCE.send(PacketDistributor.ALL.noArg(), messageNotification);
 //    }
 //
-//    public static <T extends Packet<T>> void sendToAllAround(Packet<T> messageNotification, ResourceKey<Level> level, double x, double y, double z, double radius) {
+//    public static <T extends Packet<T>> void sendToAllAround(Packet<T> messageNotification, ResourceKey<World> level, double x, double y, double z, double radius) {
 //        INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(x, y, z, radius, level)), messageNotification);
 //    }
 //
-//    public static <T extends Packet<T>> void sendToAllAround(Packet<T> messageNotification, Level level, double x, double y, double z, double radius) {
+//    public static <T extends Packet<T>> void sendToAllAround(Packet<T> messageNotification, World level, double x, double y, double z, double radius) {
 //        INSTANCE.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(x, y, z, radius, level.dimension())), messageNotification);
 //    }
 //
@@ -114,7 +114,7 @@ public class PacketHandler {
 //        INSTANCE.send(PacketDistributor.TRACKING_CHUNK.with(() -> chunk), messageNotification);
 //    }
 //
-//    public static <T extends Packet<T>> void sendToTrackingChunk(Packet<T> messageNotification, Level level, int x, int z) {
+//    public static <T extends Packet<T>> void sendToTrackingChunk(Packet<T> messageNotification, World level, int x, int z) {
 //        INSTANCE.send(PacketDistributor.TRACKING_CHUNK.with(() -> level.getChunk(x, z)), messageNotification);
 //    }
 //
@@ -122,7 +122,7 @@ public class PacketHandler {
 //        INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> entity), messageNotification);
 //    }
 //
-//    public static <T extends Packet<T>> void sendToTrackingEntity(Packet<T> messageNotification, Level level, int entityId) {
+//    public static <T extends Packet<T>> void sendToTrackingEntity(Packet<T> messageNotification, World level, int entityId) {
 //        INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> level.getEntity(entityId)), messageNotification);
 //    }
 //
@@ -130,7 +130,7 @@ public class PacketHandler {
 //        INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), messageNotification);
 //    }
 //
-//    public static <T extends Packet<T>> void sendToTrackingEntityAndSelf(Packet<T> messageNotification, Level level, int entityId) {
+//    public static <T extends Packet<T>> void sendToTrackingEntityAndSelf(Packet<T> messageNotification, World level, int entityId) {
 //        INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> level.getEntity(entityId)), messageNotification);
 //    }
 }

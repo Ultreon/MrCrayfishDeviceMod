@@ -1,13 +1,13 @@
 package com.ultreon.devices.item;
 
 import com.ultreon.devices.util.KeyboardHelper;
-import net.minecraft.ChatFormatting;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.TooltipFlag;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,30 +22,30 @@ public class MotherboardItem extends ComponentItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, @NotNull List<net.minecraft.network.chat.Component> tooltip, @NotNull TooltipFlag isAdvanced) {
-        CompoundTag tag = stack.getTag();
+    public void appendHoverText(ItemStack stack, @Nullable World level, @NotNull List<net.minecraft.util.text.Component> tooltip, @NotNull TooltipFlag isAdvanced) {
+        CompoundNBT tag = stack.getTag();
         if (!KeyboardHelper.isShiftDown()) {
-            tooltip.add(new TextComponent("CPU: " + getComponentStatus(tag, "cpu")));
-            tooltip.add(new TextComponent("RAM: " + getComponentStatus(tag, "ram")));
-            tooltip.add(new TextComponent("GPU: " + getComponentStatus(tag, "gpu")));
-            tooltip.add(new TextComponent("WIFI: " + getComponentStatus(tag, "wifi")));
-            tooltip.add(new TextComponent(ChatFormatting.YELLOW + "Hold shift for help"));
+            tooltip.add(new StringTextComponent("CPU: " + getComponentStatus(tag, "cpu")));
+            tooltip.add(new StringTextComponent("RAM: " + getComponentStatus(tag, "ram")));
+            tooltip.add(new StringTextComponent("GPU: " + getComponentStatus(tag, "gpu")));
+            tooltip.add(new StringTextComponent("WIFI: " + getComponentStatus(tag, "wifi")));
+            tooltip.add(new StringTextComponent(TextFormatting.YELLOW + "Hold shift for help"));
         } else {
-            tooltip.add(new TextComponent("To add the required components"));
-            tooltip.add(new TextComponent("place the motherboard and the"));
-            tooltip.add(new TextComponent("corresponding component into a"));
-            tooltip.add(new TextComponent("crafting table to combine them."));
+            tooltip.add(new StringTextComponent("To add the required components"));
+            tooltip.add(new StringTextComponent("place the motherboard and the"));
+            tooltip.add(new StringTextComponent("corresponding component into a"));
+            tooltip.add(new StringTextComponent("crafting table to combine them."));
         }
     }
 
-    private String getComponentStatus(CompoundTag tag, String component) {
-        if (tag != null && tag.contains("components", Tag.TAG_COMPOUND)) {
-            CompoundTag components = tag.getCompound("components");
-            if (components.contains(component, Tag.TAG_BYTE)) {
-                return ChatFormatting.GREEN + "Added";
+    private String getComponentStatus(CompoundNBT tag, String component) {
+        if (tag != null && tag.contains("components", Constants.NBT.TAG_COMPOUND)) {
+            CompoundNBT components = tag.getCompound("components");
+            if (components.contains(component, Constants.NBT.TAG_BYTE)) {
+                return TextFormatting.GREEN + "Added";
             }
         }
-        return ChatFormatting.RED + "Missing";
+        return TextFormatting.RED + "Missing";
     }
 
     public static class Component extends ComponentItem {

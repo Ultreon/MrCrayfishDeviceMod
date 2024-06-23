@@ -1,7 +1,7 @@
 package com.ultreon.devices.api.app.component;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.listener.ChangeListener;
@@ -10,7 +10,7 @@ import com.ultreon.devices.api.app.renderer.ListItemRenderer;
 import com.ultreon.devices.api.utils.RenderUtil;
 import com.ultreon.devices.core.Laptop;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.IngameGui;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -49,13 +49,13 @@ public abstract class ComboBox<T> extends Component {
 
     @Override
     public void init(Layout layout) {
-        this.layout.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> Gui.fill(pose, x, y, x + width, y + height, Color.GRAY.getRGB()));
+        this.layout.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> IngameGui.fill(pose, x, y, x + width, y + height, Color.GRAY.getRGB()));
     }
 
     @Override
-    public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(MatrixStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         if (this.visible) {
-            RenderSystem.setShaderTexture(0, Component.COMPONENTS_GUI);
+            mc.textureManager.bind(Component.COMPONENTS_GUI);
 
             RenderSystem.enableBlend();
             RenderSystem.blendFuncSeparate(770, 771, 1, 0);
@@ -64,7 +64,7 @@ public abstract class ComboBox<T> extends Component {
             Color bgColor = new Color(getColorScheme().getBackgroundColor()).brighter().brighter();
             float[] hsb = Color.RGBtoHSB(bgColor.getRed(), bgColor.getGreen(), bgColor.getBlue(), null);
             bgColor = new Color(Color.HSBtoRGB(hsb[0], hsb[1], 1f));
-            RenderSystem.setShaderColor(bgColor.getRed() / 255f, bgColor.getGreen() / 255f, bgColor.getBlue() / 255f, 1f);
+            RenderSystem.blendColor(bgColor.getRed() / 255f, bgColor.getGreen() / 255f, bgColor.getBlue() / 255f, 1f);
 
             this.hovered = isInside(mouseX, mouseY) && windowActive;
             int i = this.getHoverState(this.hovered);
@@ -85,7 +85,7 @@ public abstract class ComboBox<T> extends Component {
             /* Center */
             RenderUtil.drawRectWithTexture(pose, xPosition + 2 + xOffset, yPosition + 2, 98 + i * 5, 14, height - 4, height - 4, 1, 1);
 
-            RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+            RenderSystem.blendColor(1f, 1f, 1f, 1f);
 
             /* Icons */
             RenderUtil.drawRectWithTexture(pose, xPosition + xOffset + 3, yPosition + 5, 111, 12, 8, 5, 8, 5);
@@ -105,7 +105,7 @@ public abstract class ComboBox<T> extends Component {
                 RenderUtil.drawStringClipped(pose, value.toString(), xPosition + 3, yPosition + 3, width - 15, Color.WHITE.getRGB(), true);
             }
 
-            RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+            RenderSystem.blendColor(1f, 1f, 1f, 1f);
         }
     }
 

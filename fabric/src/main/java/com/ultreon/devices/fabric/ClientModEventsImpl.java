@@ -3,7 +3,7 @@ package com.ultreon.devices.fabric;
 import com.ultreon.devices.object.AppInfo;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.block.Block;
 
 public class ClientModEventsImpl {
     public static void setRenderLayer(Block block, RenderType renderType) {

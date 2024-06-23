@@ -1,9 +1,9 @@
 package com.ultreon.devices.programs.system.component;
 
 import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.platform.Lighting;
+import net.minecraft.client.renderer.RenderHelper;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.matrix.*;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.component.ComboBox;
@@ -12,7 +12,7 @@ import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.util.GLHelper;
 import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.IngameGui;
 import net.minecraft.client.renderer.GameRenderer;
 
 import java.awt.*;
@@ -64,11 +64,11 @@ public class Palette extends Component {
     }
 
     @Override
-    protected void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
-        Gui.fill(pose, x, y, x + 52, y + 52, Color.DARK_GRAY.getRGB());
+    protected void render(MatrixStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+        IngameGui.fill(pose, x, y, x + 52, y + 52, Color.DARK_GRAY.getRGB());
 
         // Todo: Disable lighting somehow.
-        Lighting.setupForFlatItems();
+        RenderHelper.setupForFlatItems();
 //        RenderSystem.disableLighting();
         RenderSystem.disableTexture();
         RenderSystem.enableBlend();
@@ -79,9 +79,9 @@ public class Palette extends Component {
        // RenderSystem.setShaderTexture(0, GameRenderer.());
 //        RenderSystem.shadeModel(GL11.GL_SMOOTH);
 
-        Tesselator tessellator = Tesselator.getInstance();
+        Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuilder();
-        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        buffer.begin(GL20.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
         buffer.vertex((double) x + 1, y + 1 + 50, 1).color(0f, 0f, 0f, 1f).endVertex();
         buffer.vertex(x + 1 + 50, y + 1 + 50, 1).color(0f, 0f, 0f, 1f).endVertex();
         buffer.vertex(x + 1 + 50, (double) y + 1, 1).color(currentColor.getRed() / 255f, currentColor.getGreen() / 255f, currentColor.getBlue() / 255f, 1f).endVertex();
@@ -94,7 +94,7 @@ public class Palette extends Component {
         // Todo: Make enabling alpha possible.
 //        RenderSystem.enableAlpha();
         RenderSystem.enableTexture();
-        Lighting.setupFor3DItems();
+        RenderHelper.setupFor3DItems();
     }
 
     @Override

@@ -1,10 +1,10 @@
 package com.ultreon.devices.programs;
 
-import com.mojang.blaze3d.platform.NativeImage;
-import com.mojang.blaze3d.platform.TextureUtil;
+import net.minecraft.client.renderer.texture.NativeImage;
+import net.minecraft.client.renderer.texture.TextureUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Quaternion;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.util.math.vector.Quaternion;
 import com.ultreon.devices.Reference;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Dialog;
@@ -24,11 +24,11 @@ import com.ultreon.devices.object.ColorGrid;
 import com.ultreon.devices.object.Picture;
 import com.ultreon.devices.programs.system.layout.StandardLayout;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.gui.IngameGui;
+import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
 import java.awt.*;
@@ -89,7 +89,7 @@ public class PixelPainterApp extends Application {
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public void init(@Nullable CompoundTag intent) {
+    public void init(@Nullable CompoundNBT intent) {
         /* Main Menu */
         layoutMainMenu = new StandardLayout("Main Menu", 201, 125, this, null);
         layoutMainMenu.setIcon(Icons.HOME);
@@ -97,7 +97,7 @@ public class PixelPainterApp extends Application {
         ItemList<Picture> pictureList = new ItemList<>(5, 43, 80, 4);
         pictureList.setListItemRenderer(new ListItemRenderer<>(18) {
             @Override
-            public void render(PoseStack pose, Picture picture, GuiComponent gui, Minecraft mc, int x, int y, int width, int height, boolean selected) {
+            public void render(MatrixStack pose, Picture picture, AbstractGui gui, Minecraft mc, int x, int y, int width, int height, boolean selected) {
                 RenderUtil.drawStringClipped(pose, "Henlo", x, y, 100, AUTHOR_TEXT.getRGB(), true);
             }
         });
@@ -186,8 +186,8 @@ public class PixelPainterApp extends Application {
         listPictures = new ItemList<>(5, 5, 80, 5);
         listPictures.setListItemRenderer(new ListItemRenderer<>(20) {
             @Override
-            public void render(PoseStack pose, Picture picture, GuiComponent gui, Minecraft mc, int x, int y, int width, int height, boolean selected) {
-                Gui.fill(pose, x, y, x + width, y + height, selected ? ITEM_SELECTED.getRGB() : ITEM_BACKGROUND.getRGB());
+            public void render(MatrixStack pose, Picture picture, AbstractGui gui, Minecraft mc, int x, int y, int width, int height, boolean selected) {
+                IngameGui.fill(pose, x, y, x + width, y + height, selected ? ITEM_SELECTED.getRGB() : ITEM_BACKGROUND.getRGB());
                 mc.font.draw(pose, picture.getName(), x + 2, y + 2, Color.WHITE.getRGB());
                 mc.font.draw(pose, picture.getAuthor(), x + 2, y + 11, AUTHOR_TEXT.getRGB());
             }
@@ -331,7 +331,7 @@ public class PixelPainterApp extends Application {
         {
             canvas.picture.pixels = canvas.copyPixels();
 
-            CompoundTag pictureTag = new CompoundTag();
+            CompoundNBT pictureTag = new CompoundNBT();
             canvas.picture.writeToNBT(pictureTag);
 
             if (canvas.isExistingImage()) {
@@ -380,7 +380,7 @@ public class PixelPainterApp extends Application {
 
         colorDisplay = new Component(158, 5) {
             @Override
-            public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+            public void render(MatrixStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
                 fill(pose, xPosition, yPosition, xPosition + 50, yPosition + 20, Color.DARK_GRAY.getRGB());
                 fill(pose, xPosition + 1, yPosition + 1, xPosition + 49, yPosition + 19, canvas.getCurrentColor());
             }
@@ -398,12 +398,12 @@ public class PixelPainterApp extends Application {
     }
 
     @Override
-    public void load(CompoundTag tagCompound) {
+    public void load(CompoundNBT tagCompound) {
 
     }
 
     @Override
-    public void save(CompoundTag tagCompound) {
+    public void save(CompoundNBT tagCompound) {
 
     }
 
@@ -461,8 +461,8 @@ public class PixelPainterApp extends Application {
         }
 
         @Override
-        public CompoundTag toTag() {
-            CompoundTag tag = new CompoundTag();
+        public CompoundNBT toTag() {
+            CompoundNBT tag = new CompoundNBT();
             tag.putString("name", name);
             tag.putIntArray("pixels", pixels);
             tag.putInt("resolution", resolution);
@@ -471,7 +471,7 @@ public class PixelPainterApp extends Application {
         }
 
         @Override
-        public void fromTag(CompoundTag tag) {
+        public void fromTag(CompoundNBT tag) {
             name = tag.getString("name");
             cut = tag.getBoolean("cut");
             setPicture(tag.getIntArray("pixels"));
@@ -488,8 +488,8 @@ public class PixelPainterApp extends Application {
 
         @SuppressWarnings("resource")
         @Override
-        public boolean render(PoseStack pose, CompoundTag data) {
-            if (data.contains("pixels", Tag.TAG_INT_ARRAY) && data.contains("resolution", Tag.TAG_INT)) {
+        public boolean render(MatrixStack pose, CompoundNBT data) {
+            if (data.contains("pixels", Constants.NBT.TAG_INT_ARRAY) && data.contains("resolution", Constants.NBT.TAG_INT)) {
                 int[] pixels = data.getIntArray("pixels");
                 int resolution = data.getInt("resolution");
                 boolean cut = data.getBoolean("cut");
@@ -504,7 +504,7 @@ public class PixelPainterApp extends Application {
 
                 // This is for the paper background
                 if (!cut) {
-                    RenderSystem.setShaderTexture(0, TEXTURE);
+                    mc.textureManager.bind(TEXTURE);
                     RenderUtil.drawRectWithTexture(pose, -1, 0, 0, 0, 1, 1, resolution, resolution, resolution, resolution);
                 }
 
@@ -520,7 +520,7 @@ public class PixelPainterApp extends Application {
                 int textureId = TextureUtil.generateTextureId();
                 TextureUtil.prepareImage(textureId, resolution, resolution);
 
-                RenderSystem.setShaderTexture(0, textureId);
+                mc.textureManager.bind(textureId);
                 RenderUtil.drawRectWithTexture(pose, -1, 0, 0, 0, 1, 1, resolution, resolution, resolution, resolution);
                 RenderSystem.deleteTexture(textureId);
 

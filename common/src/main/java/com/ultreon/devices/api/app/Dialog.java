@@ -1,6 +1,6 @@
 package com.ultreon.devices.api.app;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.ultreon.devices.api.app.component.Button;
 import com.ultreon.devices.api.app.component.ItemList;
 import com.ultreon.devices.api.app.component.Text;
@@ -21,14 +21,14 @@ import com.ultreon.devices.core.print.task.TaskPrint;
 import com.ultreon.devices.programs.system.component.FileBrowser;
 import com.ultreon.devices.programs.system.object.ColorScheme;
 import com.ultreon.devices.util.GLHelper;
-import net.minecraft.ChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.client.gui.IngameGui;
+import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.INBT;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -66,7 +66,7 @@ public abstract class Dialog extends Wrappable {
     }
 
     @Override
-    public void init(@Nullable CompoundTag intent) {
+    public void init(@Nullable CompoundNBT intent) {
         this.defaultLayout.clear();
         this.setLayout(defaultLayout);
     }
@@ -80,7 +80,7 @@ public abstract class Dialog extends Wrappable {
     }
 
     @Override
-    public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
+    public void render(MatrixStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
         GLHelper.pushScissor(x, y, width, height);
         customLayout.render(pose, laptop, mc, x, y, mouseX, mouseY, active, partialTicks);
         GLHelper.popScissor();
@@ -200,7 +200,7 @@ public abstract class Dialog extends Wrappable {
         }
 
         @Override
-        public void init(@Nullable CompoundTag intent) {
+        public void init(@Nullable CompoundNBT intent) {
             super.init(intent);
 
             int textHeight = Minecraft.getInstance().font.wordWrapHeight(messageText, getWidth() - 10);
@@ -208,7 +208,7 @@ public abstract class Dialog extends Wrappable {
 
             super.init(intent);
 
-            defaultLayout.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> Gui.fill(pose, x, y, x + width, y + height, Color.LIGHT_GRAY.getRGB()));
+            defaultLayout.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> IngameGui.fill(pose, x, y, x + width, y + height, Color.LIGHT_GRAY.getRGB()));
 
             Text message = new Text(messageText, 5, 5, getWidth() - 10);
             this.addComponent(message);
@@ -256,7 +256,7 @@ public abstract class Dialog extends Wrappable {
         }
 
         @Override
-        public void init(@Nullable CompoundTag intent) {
+        public void init(@Nullable CompoundNBT intent) {
             super.init(intent);
 
             int lines = Minecraft.getInstance().font.wordWrapHeight(messageText, getWidth() - 10);
@@ -264,7 +264,7 @@ public abstract class Dialog extends Wrappable {
 
             super.init(intent);
 
-            defaultLayout.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> Gui.fill(pose, x, y, x + width, y + height, Color.LIGHT_GRAY.getRGB()));
+            defaultLayout.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> IngameGui.fill(pose, x, y, x + width, y + height, Color.LIGHT_GRAY.getRGB()));
 
             Text message = new Text(messageText, 5, 5, getWidth() - 10);
             this.addComponent(message);
@@ -355,7 +355,7 @@ public abstract class Dialog extends Wrappable {
         }
 
         @Override
-        public void init(@Nullable CompoundTag intent) {
+        public void init(@Nullable CompoundNBT intent) {
             super.init(intent);
 
             int offset = 0;
@@ -368,7 +368,7 @@ public abstract class Dialog extends Wrappable {
 
             super.init(intent);
 
-            defaultLayout.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> Gui.fill(pose, x, y, x + width, y + height, Color.LIGHT_GRAY.getRGB()));
+            defaultLayout.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> IngameGui.fill(pose, x, y, x + width, y + height, Color.LIGHT_GRAY.getRGB()));
 
             if (messageText != null) {
                 Text message = new Text(messageText, 5, 5, getWidth() - 10);
@@ -483,7 +483,7 @@ public abstract class Dialog extends Wrappable {
         }
 
         @Override
-        public void init(@Nullable CompoundTag intent) {
+        public void init(@Nullable CompoundNBT intent) {
             super.init(intent);
 
             main = new Layout(211, 126);
@@ -585,7 +585,7 @@ public abstract class Dialog extends Wrappable {
     @SuppressWarnings({"FieldCanBeLocal", "unused"})
     public static class SaveFile extends Dialog {
         private final Application app;
-        private final CompoundTag data;
+        private final CompoundNBT data;
         public ResponseHandler<File> responseHandler;
         private String name;
         private String positiveText = "Save";
@@ -599,7 +599,7 @@ public abstract class Dialog extends Wrappable {
 
         private String path = FileSystem.DIR_HOME;
 
-        public SaveFile(Application app, CompoundTag data) {
+        public SaveFile(Application app, CompoundNBT data) {
             this.app = app;
             this.data = data;
             this.setTitle("Save File");
@@ -613,7 +613,7 @@ public abstract class Dialog extends Wrappable {
         }
 
         @Override
-        public void init(@Nullable CompoundTag intent) {
+        public void init(@Nullable CompoundNBT intent) {
             super.init(intent);
             main = new Layout(211, 145);
 
@@ -762,7 +762,7 @@ public abstract class Dialog extends Wrappable {
         }
 
         @Override
-        public void init(@Nullable CompoundTag intent) {
+        public void init(@Nullable CompoundNBT intent) {
             super.init(intent);
 
             layoutMain = new Layout(150, 132);
@@ -784,9 +784,9 @@ public abstract class Dialog extends Wrappable {
             itemListPrinters = new ItemList<>(5, 18, 140, 5);
             itemListPrinters.setListItemRenderer(new ListItemRenderer<>(16) {
                 @Override
-                public void render(PoseStack pose, NetworkDevice networkDevice, GuiComponent gui, Minecraft mc, int x, int y, int width, int height, boolean selected) {
+                public void render(MatrixStack pose, NetworkDevice networkDevice, AbstractGui gui, Minecraft mc, int x, int y, int width, int height, boolean selected) {
                     ColorScheme colorScheme = Laptop.getSystem().getSettings().getColorScheme();
-                    Gui.fill(pose, x, y, x + width, y + height, selected ? colorScheme.getItemHighlightColor() : colorScheme.getItemBackgroundColor());
+                    IngameGui.fill(pose, x, y, x + width, y + height, selected ? colorScheme.getItemHighlightColor() : colorScheme.getItemBackgroundColor());
                     Icons.PRINTER.draw(pose, mc, x + 3, y + 3);
                     RenderUtil.drawStringClipped(pose, networkDevice.getName(), x + 18, y + 4, 118, Laptop.getSystem().getSettings().getColorScheme().getTextColor(), true);
                 }
@@ -867,7 +867,7 @@ public abstract class Dialog extends Wrappable {
             task.setCallback((tag, success) -> {
                 if (success) {
                     assert tag != null;
-                    ListTag list = tag.getList("network_devices", Tag.TAG_COMPOUND);
+                    ListNBT list = tag.getList("network_devices", Constants.NBT.TAG_COMPOUND);
                     for (int i = 0; i < list.size(); i++) {
                         itemList.addItem(NetworkDevice.fromTag(list.getCompound(i)));
                     }
@@ -894,21 +894,21 @@ public abstract class Dialog extends Wrappable {
             }
 
             @Override
-            public void init(@Nullable CompoundTag intent) {
+            public void init(@Nullable CompoundNBT intent) {
                 super.init(intent);
 
                 layoutMain = new Layout(120, 70);
 
-                labelName = new com.ultreon.devices.api.app.component.Label(ChatFormatting.GOLD.toString() + ChatFormatting.BOLD + entry.getName(), 5, 5);
+                labelName = new com.ultreon.devices.api.app.component.Label(TextFormatting.GOLD.toString() + TextFormatting.BOLD + entry.getName(), 5, 5);
                 layoutMain.addComponent(labelName);
 
-                labelPaper = new com.ultreon.devices.api.app.component.Label(ChatFormatting.DARK_GRAY + "Paper: " + ChatFormatting.RESET + 0, 5, 18); //TODO fix paper count
+                labelPaper = new com.ultreon.devices.api.app.component.Label(TextFormatting.DARK_GRAY + "Paper: " + TextFormatting.RESET + 0, 5, 18); //TODO fix paper count
                 labelPaper.setAlignment(Component.ALIGN_LEFT);
                 labelPaper.setShadow(false);
                 layoutMain.addComponent(labelPaper);
 
                 assert entry.getPos() != null;
-                String position = ChatFormatting.DARK_GRAY + "X: " + ChatFormatting.RESET + entry.getPos().getX() + " " + ChatFormatting.DARK_GRAY + "Y: " + ChatFormatting.RESET + entry.getPos().getY() + " " + ChatFormatting.DARK_GRAY + "Z: " + ChatFormatting.RESET + entry.getPos().getZ();
+                String position = TextFormatting.DARK_GRAY + "X: " + TextFormatting.RESET + entry.getPos().getX() + " " + TextFormatting.DARK_GRAY + "Y: " + TextFormatting.RESET + entry.getPos().getY() + " " + TextFormatting.DARK_GRAY + "Z: " + TextFormatting.RESET + entry.getPos().getZ();
                 labelPosition = new com.ultreon.devices.api.app.component.Label(position, 5, 30);
                 labelPosition.setShadow(false);
                 layoutMain.addComponent(labelPosition);

@@ -6,11 +6,11 @@ import com.ultreon.devices.block.entity.LaptopBlockEntity;
 import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.core.io.ServerFolder;
 import com.ultreon.devices.core.io.drive.AbstractDrive;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.World;
+import net.minecraft.tileentity.TileEntity;
 
 import java.util.UUID;
 
@@ -34,14 +34,14 @@ public class TaskGetStructure extends Task {
     }
 
     @Override
-    public void prepareRequest(CompoundTag tag) {
+    public void prepareRequest(CompoundNBT tag) {
         tag.putString("uuid", uuid);
         tag.putLong("pos", pos.asLong());
     }
 
     @Override
-    public void processRequest(CompoundTag tag, Level level, Player player) {
-        BlockEntity tileEntity = level.getBlockEntity(BlockPos.of(tag.getLong("pos")));
+    public void processRequest(CompoundNBT tag, World level, PlayerEntity player) {
+        TileEntity tileEntity = level.getBlockEntity(BlockPos.of(tag.getLong("pos")));
         if (tileEntity instanceof LaptopBlockEntity laptop) {
             FileSystem fileSystem = laptop.getFileSystem();
             UUID uuid = UUID.fromString(tag.getString("uuid"));
@@ -54,7 +54,7 @@ public class TaskGetStructure extends Task {
     }
 
     @Override
-    public void prepareResponse(CompoundTag tag) {
+    public void prepareResponse(CompoundNBT tag) {
         if (folder != null) {
             tag.putString("file_name", folder.getName());
             tag.put("structure", folder.toTag());
@@ -62,7 +62,7 @@ public class TaskGetStructure extends Task {
     }
 
     @Override
-    public void processResponse(CompoundTag tag) {
+    public void processResponse(CompoundNBT tag) {
 
     }
 }

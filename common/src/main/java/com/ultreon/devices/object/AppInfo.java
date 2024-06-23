@@ -5,8 +5,8 @@ import com.google.gson.reflect.TypeToken;
 import com.ultreon.devices.Devices;
 import com.ultreon.devices.core.Laptop;
 import dev.architectury.injectables.annotations.PlatformOnly;
-import net.minecraft.client.resources.language.I18n;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.awt.*;

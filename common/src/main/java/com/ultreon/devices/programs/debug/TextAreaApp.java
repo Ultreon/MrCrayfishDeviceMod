@@ -6,8 +6,8 @@ import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.component.ButtonToggle;
 import com.ultreon.devices.api.app.component.TextArea;
 import com.ultreon.devices.api.app.interfaces.IHighlight;
-import net.minecraft.ChatFormatting;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.nbt.CompoundNBT;
 
 import javax.annotation.Nullable;
 
@@ -16,9 +16,9 @@ import javax.annotation.Nullable;
  */
 public class TextAreaApp extends Application {
     public static final IHighlight JAVA_HIGHLIGHT = text -> {
-        if (text.startsWith("@")) return asArray(ChatFormatting.YELLOW);
+        if (text.startsWith("@")) return asArray(TextFormatting.YELLOW);
 
-        if (text.startsWith("\"") && text.endsWith("\"")) return asArray(ChatFormatting.AQUA);
+        if (text.startsWith("\"") && text.endsWith("\"")) return asArray(TextFormatting.AQUA);
 
         return switch (text) {
             case "abstract", "continue", "for", "new", "switch", "assert", "default", "goto", "package", "synchronized",
@@ -26,8 +26,8 @@ public class TextAreaApp extends Application {
                     "byte", "else", "import", "public", "throws", "case", "enum", "instanceof", "return", "transient",
                     "catch", "extends", "int", "short", "try", "char", "final", "interface", "static", "void", "class",
                     "finally", "long", "strictfp", "volatile", "const", "float", "native", "super", "while", "null",
-                    "record", "sealed" -> asArray(ChatFormatting.BLUE);
-            default -> asArray(ChatFormatting.WHITE);
+                    "record", "sealed" -> asArray(TextFormatting.BLUE);
+            default -> asArray(TextFormatting.WHITE);
         };
     };
 
@@ -37,7 +37,7 @@ public class TextAreaApp extends Application {
     }
 
     @Override
-    public void init(@Nullable CompoundTag intent) {
+    public void init(@Nullable CompoundNBT intent) {
         Layout layout = new Layout(250, 150);
 
         TextArea textArea = new TextArea(5, 25, 240, 120);
@@ -79,12 +79,12 @@ public class TextAreaApp extends Application {
     }
 
     @Override
-    public void load(CompoundTag tagCompound) {
+    public void load(CompoundNBT tagCompound) {
 
     }
 
     @Override
-    public void save(CompoundTag tagCompound) {
+    public void save(CompoundNBT tagCompound) {
 
     }
 }

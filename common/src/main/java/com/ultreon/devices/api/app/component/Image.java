@@ -1,9 +1,9 @@
 package com.ultreon.devices.api.app.component;
 
-import com.mojang.blaze3d.platform.NativeImage;
-import com.mojang.blaze3d.platform.TextureUtil;
+import net.minecraft.client.renderer.texture.NativeImage;
+import net.minecraft.client.renderer.texture.TextureUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.ultreon.devices.Devices;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.IIcon;
@@ -11,14 +11,14 @@ import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.utils.RenderUtil;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.object.AppInfo;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.AbstractTexture;
+import net.minecraft.client.renderer.texture.Texture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
+import net.minecraft.client.renderer.texture.MissingTextureSprite;
 import net.minecraft.client.renderer.texture.SimpleTexture;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.IResourceManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -242,7 +242,7 @@ public class Image extends Component {
     }
 
     @Override
-    public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(MatrixStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         if (this.visible) {
             if (loader != null && loader.setup) {
                 image = loader.load(this);
@@ -254,14 +254,14 @@ public class Image extends Component {
                 fill(pose, x, y, x + componentWidth, y + componentHeight, borderColor);
             }
 
-            RenderSystem.setShaderColor(tint.get().r/255f, tint.get().g/255f, tint.get().b/255f, alpha);
+            RenderSystem.blendColor(tint.get().r/255f, tint.get().g/255f, tint.get().b/255f, alpha);
 
             if (image != null && image.textureId != -1) {
                 image.restore();
 
-                RenderSystem.setShaderColor(tint.get().r/255f, tint.get().g/255f, tint.get().b/255f, alpha);
+                RenderSystem.blendColor(tint.get().r/255f, tint.get().g/255f, tint.get().b/255f, alpha);
                 RenderSystem.enableBlend();
-                RenderSystem.setShaderTexture(0, image.textureId);
+                mc.textureManager.bind(image.textureId);
 
                 if (/*hasBorder*/true) {
                     if (drawFull) {
@@ -291,7 +291,7 @@ public class Image extends Component {
                     fill(pose, x, y, x + componentWidth, y + componentHeight, Color.LIGHT_GRAY.getRGB());
                 }
             }
-            RenderSystem.setShaderColor(1f, 1f, 1f, alpha);
+            RenderSystem.blendColor(1f, 1f, 1f, alpha);
         }
     }
 
@@ -398,7 +398,7 @@ public class Image extends Component {
     }
 
     private static class StandardLoader extends ImageLoader {
-        private final AbstractTexture texture;
+        private final Texture texture;
         private final ResourceLocation resource;
 
         public StandardLoader(ResourceLocation resource) {
@@ -414,24 +414,24 @@ public class Image extends Component {
         @Override
         @SuppressWarnings("ConstantConditions")
         public CachedImage load(Image image) {
-            @Nullable AbstractTexture textureObj = Minecraft.getInstance().getTextureManager().getTexture(resource, null);
+            @Nullable Texture textureObj = Minecraft.getInstance().getTextureManager().getTexture(resource, null);
             if (textureObj != null) {
                 return new CachedImage(textureObj.getId(), 0, 0, false);
             } else {
-                AbstractTexture texture = new SimpleTexture(resource);
+                Texture texture = new SimpleTexture(resource);
                 Minecraft.getInstance().getTextureManager().register(resource, texture);
                 return new CachedImage(texture.getId(), 0, 0, false);
             }
         }
 
-        public AbstractTexture getTexture() {
+        public Texture getTexture() {
             return texture;
         }
     }
 
     private static class DynamicLoader extends ImageLoader {
         private final String url;
-        private AbstractTexture texture;
+        private Texture texture;
 
         public DynamicLoader(String url) {
             this.url = url;
@@ -465,7 +465,7 @@ public class Image extends Component {
                         setup = true;
                     });
                 } catch (IOException e) {
-                    texture = MissingTextureAtlasSprite.getTexture();
+                    texture = MissingTextureSprite.getTexture();
                     setup = true;
                     e.printStackTrace();
                 }
@@ -489,12 +489,12 @@ public class Image extends Component {
                 CACHE.put(url, cachedImage);
                 return cachedImage;
             } catch (IOException e) {
-                return new CachedImage(MissingTextureAtlasSprite.getTexture().getId(), 0, 0, true);
+                return new CachedImage(MissingTextureSprite.getTexture().getId(), 0, 0, true);
             }
         }
     }
 
-    private static class DynamicLoadedTexture extends AbstractTexture {
+    private static class DynamicLoadedTexture extends Texture {
         private final InputStream in;
         private final BufferedImage image;
 
@@ -506,7 +506,7 @@ public class Image extends Component {
         }
 
         @Override
-        public void load(@NotNull ResourceManager resourceManager) throws IOException {
+        public void load(@NotNull IResourceManager resourceManager) throws IOException {
             NativeImage nativeImage = NativeImage.read(in);
             Minecraft.getInstance().getTextureManager().register(Devices.id("dynamic_loaded/" + getId()), this);
             this.upload(nativeImage);

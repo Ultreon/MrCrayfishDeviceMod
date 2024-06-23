@@ -6,12 +6,12 @@ import com.ultreon.devices.block.entity.NetworkDeviceBlockEntity;
 import com.ultreon.devices.block.entity.PrinterBlockEntity;
 import com.ultreon.devices.core.network.NetworkDevice;
 import com.ultreon.devices.core.network.Router;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.World;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.chunk.Chunk;
 
 import java.util.UUID;
 
@@ -35,15 +35,15 @@ public class TaskPrint extends Task {
     }
 
     @Override
-    public void prepareRequest(CompoundTag tag) {
+    public void prepareRequest(CompoundNBT tag) {
         tag.putLong("devicePos", devicePos.asLong());
         tag.putUUID("printerId", printerId);
         tag.put("print", IPrint.save(print));
     }
 
     @Override
-    public void processRequest(CompoundTag tag, Level level, Player player) {
-        BlockEntity tileEntity = level.getChunkAt(BlockPos.of(tag.getLong("devicePos"))).getBlockEntity(BlockPos.of(tag.getLong("devicePos")), LevelChunk.EntityCreationType.IMMEDIATE);
+    public void processRequest(CompoundNBT tag, World level, PlayerEntity player) {
+        TileEntity tileEntity = level.getChunkAt(BlockPos.of(tag.getLong("devicePos"))).getBlockEntity(BlockPos.of(tag.getLong("devicePos")), Chunk.CreateEntityType.IMMEDIATE);
         if (tileEntity instanceof NetworkDeviceBlockEntity device) {
             Router router = device.getRouter();
             if (router != null) {
@@ -58,12 +58,12 @@ public class TaskPrint extends Task {
     }
 
     @Override
-    public void prepareResponse(CompoundTag tag) {
+    public void prepareResponse(CompoundNBT tag) {
 
     }
 
     @Override
-    public void processResponse(CompoundTag tag) {
+    public void processResponse(CompoundNBT tag) {
 
     }
 }

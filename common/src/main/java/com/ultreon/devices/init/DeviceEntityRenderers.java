@@ -5,8 +5,8 @@ import com.ultreon.devices.entity.renderer.SeatEntityRenderer;
 import dev.architectury.registry.client.level.entity.EntityRendererRegistry;
 import dev.architectury.registry.registries.Registrar;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.core.Registry;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.util.Registry;
+import net.minecraft.block.Block;
 
 public class DeviceEntityRenderers {
     static {

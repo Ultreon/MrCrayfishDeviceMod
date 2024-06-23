@@ -2,49 +2,49 @@ package com.ultreon.devices.programs.system.task;
 
 import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.block.entity.LaptopBlockEntity;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.World;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.chunk.Chunk;
 
 public class TaskUpdateSystemData extends Task {
     private BlockPos pos;
-    private CompoundTag data;
+    private CompoundNBT data;
 
     public TaskUpdateSystemData() {
         super("update_system_data");
     }
 
-    public TaskUpdateSystemData(BlockPos pos, CompoundTag data) {
+    public TaskUpdateSystemData(BlockPos pos, CompoundNBT data) {
         this();
         this.pos = pos;
         this.data = data;
     }
 
     @Override
-    public void prepareRequest(CompoundTag tag) {
+    public void prepareRequest(CompoundNBT tag) {
         tag.putLong("pos", pos.asLong());
         tag.put("data", this.data);
     }
 
     @Override
-    public void processRequest(CompoundTag tag, Level level, Player player) {
+    public void processRequest(CompoundNBT tag, World level, PlayerEntity player) {
         BlockPos pos = BlockPos.of(tag.getLong("pos"));
-        BlockEntity tileEntity = level.getChunkAt(pos).getBlockEntity(pos, LevelChunk.EntityCreationType.IMMEDIATE);
+        TileEntity tileEntity = level.getChunkAt(pos).getBlockEntity(pos, Chunk.CreateEntityType.IMMEDIATE);
         if (tileEntity instanceof LaptopBlockEntity laptop)
             laptop.setSystemData(tag.getCompound("data"));
         this.setSuccessful();
     }
 
     @Override
-    public void prepareResponse(CompoundTag tag) {
+    public void prepareResponse(CompoundNBT tag) {
 
     }
 
     @Override
-    public void processResponse(CompoundTag tag) {
+    public void processResponse(CompoundNBT tag) {
 
     }
 }

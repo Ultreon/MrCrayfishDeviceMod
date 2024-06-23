@@ -52,15 +52,15 @@ import dev.architectury.injectables.targets.ArchitecturyTarget;
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.CreativeTabRegistry;
 import dev.architectury.registry.registries.Registries;
-import dev.architectury.utils.Env;
-import dev.architectury.utils.EnvExecutor;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.DistExecutor;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.Level;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -80,7 +80,7 @@ import java.util.regex.Pattern;
 
 public class Devices {
     public static final String MOD_ID = "devices";
-    public static final CreativeModeTab TAB_DEVICE = CreativeTabRegistry.create(id("devices_tab_device"), () -> new ItemStack(DeviceItems.RED_LAPTOP.get()));
+    public static final ItemGroup GROUP_DEVICE = CreativeTabRegistry.create(id("devices_tab_device"), () -> new ItemStack(DeviceItems.RED_LAPTOP.get()));
     public static final Supplier<Registries> REGISTRIES = Suppliers.memoize(() -> Registries.get(MOD_ID));
     public static final List<SiteRegistration> SITE_REGISTRATIONS = new ProtectedArrayList<>();
     public static final Logger LOGGER = LoggerFactory.getLogger("Devices Mod");
@@ -106,16 +106,16 @@ public class Devices {
 
         registerApplications();
 
-        EnvExecutor.runInEnv(Env.CLIENT, () -> () -> {
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             ClientAppDebug.register();
             ClientModEvents.clientSetup(); //todo
         });
 
-        EnvExecutor.runInEnv(Env.CLIENT, () -> Devices::setupSiteRegistrations);
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> Devices::setupSiteRegistrations);
 
         setupEvents();
 
-        EnvExecutor.runInEnv(Env.CLIENT, () -> Devices::setupClientEvents); //todo
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> Devices::setupClientEvents); //todo
         if (!ArchitecturyTarget.getCurrentTarget().equals("forge")) {
             loadComplete();
         }
@@ -227,7 +227,7 @@ public class Devices {
 //    }
 
     public static void preInit() {
-        if (DEVELOPER_MODE && Platform.isDevelopmentEnvironment()) {
+        if (DEVELOPER_MODE && Platform.isDevelopmentOnlyIn()) {
             throw new LaunchException();
         }
 
@@ -319,7 +319,7 @@ public class Devices {
             TaskManager.registerTask(TaskNotificationTest::new);
         }
 
-        EnvExecutor.runInEnv(Env.CLIENT, () -> () -> PrintingManager.registerPrint(new ResourceLocation(Reference.MOD_ID, "picture"), PixelPainterApp.PicturePrint.class));
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> PrintingManager.registerPrint(new ResourceLocation(Reference.MOD_ID, "picture"), PixelPainterApp.PicturePrint.class));
     }
 
     @ExpectPlatform
@@ -349,7 +349,7 @@ public class Devices {
         }
 
         AtomicReference<Application> application = new AtomicReference<>(null);
-        EnvExecutor.runInEnv(Env.CLIENT, () -> () -> {
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             List<Application> apps = getAPPLICATIONS(); /*ObfuscationReflectionHelper.getPrivateValue(Laptop.class, null, "APPLICATIONS");*/
             assert apps != null;
             apps.add(appl);
@@ -407,10 +407,10 @@ public class Devices {
         return false;
     }
 
-    public static void showNotification(CompoundTag tag) {
+    public static void showNotification(CompoundNBT tag) {
         LOGGER.debug("Showing notification");
 
-        EnvExecutor.runInEnv(Env.CLIENT, () -> () -> {
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             ClientNotification notification = ClientNotification.loadFromTag(tag);
             notification.push();
         });
@@ -461,7 +461,7 @@ public class Devices {
         LifecycleEvent.SERVER_STARTING.register((instance -> server = instance));
         LifecycleEvent.SERVER_STOPPED.register(instance -> server = null);
         InteractionEvent.RIGHT_CLICK_BLOCK.register(((player, hand, pos, face) -> {
-            Level level = player.getLevel();
+            World level = player.getLevel();
             if (!player.getItemInHand(hand).isEmpty() && player.getItemInHand(hand).getItem() == Items.PAPER) {
                 if (level.getBlockState(pos).getBlock() instanceof PrinterBlock) {
                     return EventResult.interruptTrue();

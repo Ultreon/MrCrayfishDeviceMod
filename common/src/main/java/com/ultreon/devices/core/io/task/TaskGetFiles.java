@@ -7,13 +7,13 @@ import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.core.io.ServerFile;
 import com.ultreon.devices.core.io.ServerFolder;
 import com.ultreon.devices.core.io.drive.AbstractDrive;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.World;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.chunk.Chunk;
 
 import java.util.List;
 import java.util.UUID;
@@ -56,15 +56,15 @@ public class TaskGetFiles extends Task {
     }
 
     @Override
-    public void prepareRequest(CompoundTag tag) {
+    public void prepareRequest(CompoundNBT tag) {
         tag.putString("uuid", uuid);
         tag.putString("path", path);
         tag.putLong("pos", pos.asLong());
     }
 
     @Override
-    public void processRequest(CompoundTag tag, Level level, Player player) {
-        BlockEntity tileEntity = level.getChunkAt(BlockPos.of(tag.getLong("pos"))).getBlockEntity(BlockPos.of(tag.getLong("pos")), LevelChunk.EntityCreationType.IMMEDIATE);
+    public void processRequest(CompoundNBT tag, World level, PlayerEntity player) {
+        TileEntity tileEntity = level.getChunkAt(BlockPos.of(tag.getLong("pos"))).getBlockEntity(BlockPos.of(tag.getLong("pos")), Chunk.CreateEntityType.IMMEDIATE);
         if (tileEntity instanceof LaptopBlockEntity laptop) {
             FileSystem fileSystem = laptop.getFileSystem();
             UUID uuid = UUID.fromString(tag.getString("uuid"));
@@ -80,11 +80,11 @@ public class TaskGetFiles extends Task {
     }
 
     @Override
-    public void prepareResponse(CompoundTag tag) {
+    public void prepareResponse(CompoundNBT tag) {
         if (this.files != null) {
-            ListTag list = new ListTag();
+            ListNBT list = new ListNBT();
             this.files.forEach(f -> {
-                CompoundTag fileTag = new CompoundTag();
+                CompoundNBT fileTag = new CompoundNBT();
                 fileTag.putString("file_name", f.getName());
                 fileTag.put("data", f.toTag());
                 list.add(fileTag);
@@ -94,7 +94,7 @@ public class TaskGetFiles extends Task {
     }
 
     @Override
-    public void processResponse(CompoundTag tag) {
+    public void processResponse(CompoundNBT tag) {
 
     }
 }

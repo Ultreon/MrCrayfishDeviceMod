@@ -6,12 +6,12 @@ import com.ultreon.devices.block.entity.LaptopBlockEntity;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.core.io.action.FileAction;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.World;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.chunk.Chunk;
 
 /**
  * @author MrCrayfish
@@ -35,16 +35,16 @@ public class TaskSendAction extends Task {
     }
 
     @Override
-    public void prepareRequest(CompoundTag tag) {
+    public void prepareRequest(CompoundNBT tag) {
         tag.putString("uuid", uuid);
         tag.put("action", action.toTag());
         tag.putLong("pos", pos.asLong());
     }
 
     @Override
-    public void processRequest(CompoundTag tag, Level level, Player player) {
+    public void processRequest(CompoundNBT tag, World level, PlayerEntity player) {
         FileAction action = FileAction.fromTag(tag.getCompound("action"));
-        BlockEntity tileEntity = level.getChunkAt(BlockPos.of(tag.getLong("pos"))).getBlockEntity(BlockPos.of(tag.getLong("pos")), LevelChunk.EntityCreationType.IMMEDIATE);
+        TileEntity tileEntity = level.getChunkAt(BlockPos.of(tag.getLong("pos"))).getBlockEntity(BlockPos.of(tag.getLong("pos")), Chunk.CreateEntityType.IMMEDIATE);
         if (tileEntity instanceof LaptopBlockEntity laptop) {
             response = laptop.getFileSystem().readAction(tag.getString("uuid"), action, level);
             this.setSuccessful();
@@ -52,12 +52,12 @@ public class TaskSendAction extends Task {
     }
 
     @Override
-    public void prepareResponse(CompoundTag tag) {
+    public void prepareResponse(CompoundNBT tag) {
         tag.put("response", response.toTag());
     }
 
     @Override
-    public void processResponse(CompoundTag tag) {
+    public void processResponse(CompoundNBT tag) {
 
     }
 }

@@ -4,32 +4,32 @@ import com.ultreon.devices.ModDeviceTypes;
 import com.ultreon.devices.block.entity.LaptopBlockEntity;
 import com.ultreon.devices.item.FlashDriveItem;
 import com.ultreon.devices.util.BlockEntityUtil;
-import dev.architectury.utils.Env;
-import dev.architectury.utils.EnvExecutor;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.StringRepresentable;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.DistExecutor;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.Direction;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.Hand;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.DyeColor;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.IBlockReader;
+import net.minecraft.world.World;
+import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.block.BlockState;
+import net.minecraft.state.StateContainer;
+import net.minecraft.state.BooleanProperty;
+import net.minecraft.state.EnumProperty;
+import net.minecraft.block.material.Material;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShapes;
+import net.minecraft.util.math.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,10 +39,10 @@ public class LaptopBlock extends DeviceBlock.Colored {
     public static final EnumProperty<Type> TYPE = EnumProperty.create("type", Type.class);
     public static final BooleanProperty OPEN = BooleanProperty.create("open");
 
-    private static final VoxelShape SHAPE_OPEN_NORTH = Shapes.or(Block.box(1, 0, 12.5, 15, 11.4, 17), Block.box(1, 0, 1, 15, 1.3, 12.5));
-    private static final VoxelShape SHAPE_OPEN_EAST = Shapes.or(Block.box(-1, 0, 1, 3.5, 11.4, 15), Block.box(3.5, 0, 1, 15, 1.3, 15));
-    private static final VoxelShape SHAPE_OPEN_SOUTH = Shapes.or(Block.box(1, 0, -1, 15, 11.4, 3.5), Block.box(1, 0, 3.5, 15, 1.3, 15));
-    private static final VoxelShape SHAPE_OPEN_WEST = Shapes.or(Block.box(12.5, 0, 1, 17, 11.4, 15), Block.box(1, 0, 1, 12.5, 1.3, 15));
+    private static final VoxelShape SHAPE_OPEN_NORTH = VoxelShapes.or(Block.box(1, 0, 12.5, 15, 11.4, 17), Block.box(1, 0, 1, 15, 1.3, 12.5));
+    private static final VoxelShape SHAPE_OPEN_EAST = VoxelShapes.or(Block.box(-1, 0, 1, 3.5, 11.4, 15), Block.box(3.5, 0, 1, 15, 1.3, 15));
+    private static final VoxelShape SHAPE_OPEN_SOUTH = VoxelShapes.or(Block.box(1, 0, -1, 15, 11.4, 3.5), Block.box(1, 0, 3.5, 15, 1.3, 15));
+    private static final VoxelShape SHAPE_OPEN_WEST = VoxelShapes.or(Block.box(12.5, 0, 1, 17, 11.4, 15), Block.box(1, 0, 1, 12.5, 1.3, 15));
     private static final VoxelShape SHAPE_CLOSED_NORTH = Block.box(1, 0, 1, 15, 2, 13);
     private static final VoxelShape SHAPE_CLOSED_EAST = Block.box(3, 0, 1, 15, 2, 15);
     private static final VoxelShape SHAPE_CLOSED_SOUTH = Block.box(1, 0, 3, 15, 2, 15);
@@ -54,7 +54,7 @@ public class LaptopBlock extends DeviceBlock.Colored {
     }
 
     @Override
-    public @NotNull VoxelShape getShape(@NotNull BlockState pState, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos, @NotNull CollisionContext pContext) {
+    public @NotNull VoxelShape getShape(@NotNull BlockState pState, @NotNull IBlockReader pLevel, @NotNull BlockPos pPos, @NotNull ISelectionContext pContext) {
         return pState.getValue(OPEN) ? switch (pState.getValue(FACING)) {
             case NORTH -> SHAPE_OPEN_NORTH;
             case EAST -> SHAPE_OPEN_EAST;
@@ -73,70 +73,70 @@ public class LaptopBlock extends DeviceBlock.Colored {
     @NotNull
     @Override
     @SuppressWarnings("deprecation")
-    public InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
+    public ActionResultType use(@NotNull BlockState state, @NotNull World level, @NotNull BlockPos pos, @NotNull PlayerEntity player, @NotNull Hand hand, @NotNull BlockRayTraceResult hit) {
 
-        BlockEntity blockEntity = level.getBlockEntity(pos);
+        TileEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof LaptopBlockEntity laptop) {
             if (player.isCrouching()) {
                 if (!level.isClientSide) {
                     laptop.openClose(player);
                 }
-                return InteractionResult.SUCCESS;
+                return ActionResultType.SUCCESS;
             } else {
-                if (hit.getDirection() == state.getValue(FACING).getCounterClockWise(Direction.Axis.Y)) {
+                if (hit.getDirection() == state.getValue(FACING).getCounterClockWise()) {
                     ItemStack heldItem = player.getItemInHand(hand);
                     if (!heldItem.isEmpty() && heldItem.getItem() instanceof FlashDriveItem) {
                         if (!level.isClientSide) {
                             if (laptop.getFileSystem().setAttachedDrive(heldItem.copy())) {
                                 heldItem.shrink(1);
-                                return InteractionResult.CONSUME;
+                                return ActionResultType.CONSUME;
                             } else {
-                                return InteractionResult.FAIL;
+                                return ActionResultType.FAIL;
                             }
                         }
-                        return InteractionResult.PASS;
+                        return ActionResultType.PASS;
                     }
 
                     if (!level.isClientSide) {
                         ItemStack stack = laptop.getFileSystem().removeAttachedDrive();
                         if (stack != null) {
-                            BlockPos summonPos = pos.relative(state.getValue(FACING).getCounterClockWise(Direction.Axis.Y));
+                            BlockPos summonPos = pos.relative(state.getValue(FACING).getCounterClockWise());
                             level.addFreshEntity(new ItemEntity(level, summonPos.getX() + 0.5, summonPos.getY(), summonPos.getZ() + 0.5, stack));
                             BlockEntityUtil.markBlockForUpdate(level, pos);
                         }
                     }
-                    return InteractionResult.SUCCESS;
+                    return ActionResultType.SUCCESS;
                 }
 
                 if (laptop.isOpen() && level.isClientSide) {
-                    EnvExecutor.runInEnv(Env.CLIENT, () -> () -> {
+                    DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
                         ClientLaptopWrapper.execute(laptop);
                     });
-                    return InteractionResult.SUCCESS;
+                    return ActionResultType.SUCCESS;
                 }
             }
         }
 
-        return InteractionResult.PASS;
+        return ActionResultType.PASS;
     }
 
     @Override
-    protected void removeTagsForDrop(CompoundTag tileEntityTag) {
+    protected void removeTagsForDrop(CompoundNBT tileEntityTag) {
         tileEntityTag.remove("open");
     }
 
     @Override
-    public @Nullable BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
-        return new LaptopBlockEntity(pos, state);
+    public @Nullable TileEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
+        return new LaptopBlockEntity();
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> pBuilder) {
+    protected void createBlockStateDefinition(StateContainer.@NotNull Builder<Block, BlockState> pBuilder) {
         super.createBlockStateDefinition(pBuilder);
         pBuilder.add(TYPE, OPEN);
     }
 
-    public enum Type implements StringRepresentable {
+    public enum Type implements IStringSerializable {
         BASE, SCREEN;
 
         @NotNull

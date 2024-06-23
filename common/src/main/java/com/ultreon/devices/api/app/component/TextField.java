@@ -1,11 +1,11 @@
 package com.ultreon.devices.api.app.component;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.ultreon.devices.api.app.IIcon;
 import com.ultreon.devices.core.Laptop;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.IngameGui;
 
 import java.awt.*;
 
@@ -26,12 +26,12 @@ public class TextField extends TextArea {
     }
 
     @Override
-    public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(MatrixStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         if (icon != null) {
-            RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+            RenderSystem.blendColor(1f, 1f, 1f, 1f);
             Color bgColor = new Color(color(backgroundColor, getColorScheme().getBackgroundColor()));
-            Gui.fill(pose, x, y, x + 15, y + 16, bgColor.darker().darker().getRGB());
-            Gui.fill(pose, x + 1, y + 1, x + 15, y + 15, bgColor.brighter().getRGB());
+            IngameGui.fill(pose, x, y, x + 15, y + 16, bgColor.darker().darker().getRGB());
+            IngameGui.fill(pose, x + 1, y + 1, x + 15, y + 15, bgColor.brighter().getRGB());
             icon.draw(pose, mc, x + 3, y + 3);
         }
         super.render(pose, laptop, mc, x + (icon != null ? 15 : 0), y, mouseX, mouseY, windowActive, partialTicks);

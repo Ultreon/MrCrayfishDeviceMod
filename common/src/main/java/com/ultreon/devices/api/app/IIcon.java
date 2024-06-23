@@ -1,10 +1,10 @@
 package com.ultreon.devices.api.app;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.util.ResourceLocation;
 
 public interface IIcon {
     ResourceLocation getIconAsset();
@@ -35,15 +35,15 @@ public interface IIcon {
 
     int getOrdinal();
 
-    default void draw(PoseStack pose, Minecraft mc, int x, int y) {
-        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-        RenderSystem.setShaderTexture(0, getIconAsset());
+    default void draw(MatrixStack pose, Minecraft mc, int x, int y) {
+        RenderSystem.blendColor(1f, 1f, 1f, 1f);
+        mc.textureManager.bind(getIconAsset());
         int size = getIconSize();
         int assetWidth = getGridWidth() * size;
 //        java.lang.System.out.println("assetWidth = " + assetWidth);
         int assetHeight = getGridHeight() * size;
 //        java.lang.System.out.println("assetHeight = " + assetHeight);
 //        GuiComponent.blit(pose, x + contentX, y + iconY, iconWidth, iconHeight, iconU, iconV, iconWidth, iconHeight, iconSourceWidth, iconSourceHeight);
-        GuiComponent.blit(pose, x, y, size, size, getU(), getV(), size, size, assetWidth, assetHeight);
+        AbstractGui.blit(pose, x, y, size, size, getU(), getV(), size, size, assetWidth, assetHeight);
     }
 }

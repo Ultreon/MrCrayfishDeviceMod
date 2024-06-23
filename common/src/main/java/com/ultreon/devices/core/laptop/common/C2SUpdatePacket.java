@@ -3,37 +3,37 @@ package com.ultreon.devices.core.laptop.common;
 import com.ultreon.devices.core.laptop.client.ClientLaptop;
 import com.ultreon.devices.core.laptop.server.ServerLaptop;
 import com.ultreon.devices.network.Packet;
-import dev.architectury.networking.NetworkManager;
-import net.fabricmc.api.EnvType;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 
 import java.util.UUID;
 import java.util.function.Supplier;
 
 public class C2SUpdatePacket extends Packet<C2SUpdatePacket> {
-    private final CompoundTag nbt;
+    private final CompoundNBT nbt;
 
-    public C2SUpdatePacket(UUID laptop, String type, CompoundTag nbt) {
-        this.nbt = new CompoundTag();
+    public C2SUpdatePacket(UUID laptop, String type, CompoundNBT nbt) {
+        this.nbt = new CompoundNBT();
         this.nbt.putUUID("uuid", laptop); // laptop uuid
         this.nbt.putString("type", type);
         this.nbt.put("data", nbt);
     }
 
     @Deprecated // do not call
-    public C2SUpdatePacket(FriendlyByteBuf buf) {
+    public C2SUpdatePacket(PacketBuffer buf) {
         this.nbt = buf.readNbt();
     }
     @Override
-    public void toBytes(FriendlyByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         buf.writeNbt(nbt);
     }
 
     @Override
-    public boolean onMessage(Supplier<NetworkManager.PacketContext> ctx) {
-        if (ctx.get().getEnv().equals(EnvType.SERVER)) {
-            ServerLaptop.laptops.get(this.nbt.getUUID("uuid")).handlePacket(ctx.get().getPlayer(), this.nbt.getString("type"), this.nbt.getCompound("data"));
+    public boolean onMessage(Supplier<NetworkEvent.Context> ctx) {
+        if (ctx.get().getDirection().getReceptionSide().equals(LogicalSide.SERVER)) {
+            ServerLaptop.laptops.get(this.nbt.getUUID("uuid")).handlePacket(ctx.get().getSender(), this.nbt.getString("type"), this.nbt.getCompound("data"));
         }
         return false;
     }

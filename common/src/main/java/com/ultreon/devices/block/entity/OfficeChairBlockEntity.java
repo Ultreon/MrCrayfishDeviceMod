@@ -4,17 +4,17 @@ import com.ultreon.devices.block.LaptopBlock;
 import com.ultreon.devices.entity.SeatEntity;
 import com.ultreon.devices.init.DeviceBlockEntities;
 import com.ultreon.devices.util.Colorable;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.vehicle.Boat;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.vehicle.Boat;
+import net.minecraft.item.DyeColor;
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.block.BlockState;
+import net.minecraft.util.math.AxisAlignedBB;
 
 import java.util.List;
 
@@ -22,8 +22,8 @@ public class OfficeChairBlockEntity extends SyncBlockEntity implements Colorable
 {
     private DyeColor color = DyeColor.RED;
 
-    public OfficeChairBlockEntity(BlockPos pWorldPosition, BlockState pBlockState) {
-        super(DeviceBlockEntities.SEAT.get(), pWorldPosition, pBlockState);
+    public OfficeChairBlockEntity() {
+        super(DeviceBlockEntities.SEAT.get());
     }
 
     @Override
@@ -39,34 +39,34 @@ public class OfficeChairBlockEntity extends SyncBlockEntity implements Colorable
     }
 
     @Override
-    public void load(CompoundTag compound)
+    public void load(CompoundNBT compound)
     {
-        super.load(compound);
-        if(compound.contains("color", Tag.TAG_BYTE))
+        super.load(state, compound);
+        if(compound.contains("color", Constants.NBT.TAG_BYTE))
         {
             color = DyeColor.byId(compound.getByte("color"));
         }
     }
 
     @Override
-    public void saveAdditional(CompoundTag compound)
+    public void save(CompoundNBT compound)
     {
-        super.saveAdditional(compound);
+        super.save(compound);
         compound.putByte("color", (byte) color.getId());
     }
 
     @Override
-    public CompoundTag saveSyncTag()
+    public CompoundNBT saveSyncTag()
     {
-        CompoundTag tag = new CompoundTag();
+        CompoundNBT tag = new CompoundNBT();
         tag.putByte("color", (byte) color.getId());
         return tag;
     }
 
-    @Environment(EnvType.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public float getRotation()
     {
-        List<SeatEntity> seats = level.getEntitiesOfClass(SeatEntity.class, new AABB(getBlockPos()));
+        List<SeatEntity> seats = level.getEntitiesOfClass(SeatEntity.class, new AxisAlignedBB(getBlockPos()));
         if(!seats.isEmpty())
         {
             SeatEntity seat = seats.get(0);

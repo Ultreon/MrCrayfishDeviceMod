@@ -3,9 +3,9 @@ package com.ultreon.devices.init;
 import com.ultreon.devices.Devices;
 import com.ultreon.devices.Reference;
 import dev.architectury.registry.registries.Registrar;
-import dev.architectury.registry.registries.RegistrySupplier;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.fml.RegistryObject;
+import net.minecraft.util.Registry;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 
 /**
@@ -14,8 +14,8 @@ import net.minecraft.sounds.SoundEvent;
 public class DeviceSounds {
     private static final Registrar<SoundEvent> REGISTER = Devices.REGISTRIES.get().get(Registry.SOUND_EVENT_REGISTRY);
 
-    public static final RegistrySupplier<SoundEvent> PRINTER_PRINTING = REGISTER.register(Devices.id("printer_printing"), () -> new SoundEvent(new ResourceLocation(Reference.MOD_ID, "printer_printing")));
-    public static final RegistrySupplier<SoundEvent> PRINTER_LOADING_PAPER = REGISTER.register(Devices.id("printer_loading_paper"), () -> new SoundEvent(new ResourceLocation(Reference.MOD_ID, "printer_loading_paper")));
+    public static final RegistryObject<SoundEvent> PRINTER_PRINTING = REGISTER.register(Devices.id("printer_printing"), () -> new SoundEvent(new ResourceLocation(Reference.MOD_ID, "printer_printing")));
+    public static final RegistryObject<SoundEvent> PRINTER_LOADING_PAPER = REGISTER.register(Devices.id("printer_loading_paper"), () -> new SoundEvent(new ResourceLocation(Reference.MOD_ID, "printer_loading_paper")));
 
 //    static {
 //        PRINTER_PRINTING = registerSound("devices:printing_ink");

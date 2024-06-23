@@ -1,7 +1,7 @@
 package com.ultreon.devices.api.app;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.ultreon.devices.Devices;
 import com.ultreon.devices.api.io.File;
 import com.ultreon.devices.core.Laptop;
@@ -12,8 +12,8 @@ import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.util.DataHandler;
 import com.ultreon.devices.util.GLHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundNBT;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -109,7 +109,7 @@ public abstract class Application extends Wrappable implements DataHandler {
      * your application window.
      */
     @Override
-    public abstract void init(@Nullable CompoundTag intent);
+    public abstract void init(@Nullable CompoundNBT intent);
 
     @Override
     public void onTick() {
@@ -132,7 +132,7 @@ public abstract class Application extends Wrappable implements DataHandler {
      * @param partialTicks the render partial ticks.
      */
     @Override
-    public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
+    public void render(MatrixStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
 //        GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
         GLHelper.pushScissor(x, y, width, height);
@@ -149,7 +149,7 @@ public abstract class Application extends Wrappable implements DataHandler {
 
         currentLayout.renderOverlay(pose, laptop, mc, mouseX, mouseY, active);
 
-        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+        RenderSystem.blendColor(1f, 1f, 1f, 1f);
 
         // TODO Port this to 1.18.2 if possible
 //        Lighting.turnOff();
@@ -274,12 +274,12 @@ public abstract class Application extends Wrappable implements DataHandler {
     /**
      * Called when you first load up your application. Allows you to read any
      * stored data you have saved. Only called if you have saved data. This
-     * method is called after {{@link Wrappable#init(CompoundTag)} so you can update any
+     * method is called after {{@link Wrappable#init(CompoundNBT)} so you can update any
      * Components with this data.
      *
      * @param tag the tag compound where you saved data is
      */
-    public abstract void load(CompoundTag tag);
+    public abstract void load(CompoundNBT tag);
 
     /**
      * Allows you to save data from your application. This is only called if
@@ -288,7 +288,7 @@ public abstract class Application extends Wrappable implements DataHandler {
      *
      * @param tag the tag compound to save your data to
      */
-    public abstract void save(CompoundTag tag);
+    public abstract void save(CompoundNBT tag);
 
     /**
      * Sets the defaults layout width. It should be noted that the width must be

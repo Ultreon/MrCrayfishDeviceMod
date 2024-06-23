@@ -1,7 +1,7 @@
 package com.ultreon.devices.api.app.component;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.listener.ClickListener;
 import com.ultreon.devices.api.task.Task;
@@ -9,9 +9,9 @@ import com.ultreon.devices.api.utils.RenderUtil;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.client.gui.IngameGui;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.item.ItemStack;
 
 import java.awt.*;
 
@@ -38,24 +38,24 @@ public class Inventory extends Component {
     }
 
     @Override
-    public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(MatrixStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         if (this.visible) {
-            RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-            RenderSystem.setShaderTexture(0, CHEST_GUI_TEXTURE);
+            RenderSystem.blendColor(1f, 1f, 1f, 1f);
+            mc.textureManager.bind(CHEST_GUI_TEXTURE);
             RenderUtil.drawRectWithTexture(pose, xPosition, yPosition, 7, 139, 162, 54, 162, 54);
 
             assert mc.player != null;
-            net.minecraft.world.entity.player.Inventory inventory = mc.player.getInventory();
+            net.minecraft.entity.player.Inventory inventory = mc.player.getInventory();
             for (int i = 9; i < inventory.getContainerSize() - 4; i++) {
                 int offsetX = (i % 9) * 18;
                 int offsetY = (i / 9) * 18 - 18;
 
                 if (selected == i) {
-                    Gui.fill(pose, xPosition + offsetX, yPosition + offsetY, xPosition + offsetX + 18, yPosition + offsetY + 18, selectedColor);
+                    IngameGui.fill(pose, xPosition + offsetX, yPosition + offsetY, xPosition + offsetX + 18, yPosition + offsetY + 18, selectedColor);
                 }
 
                 if (GuiHelper.isMouseInside(mouseX, mouseY, xPosition + offsetX, yPosition + offsetY, xPosition + offsetX + 17, yPosition + offsetY + 17)) {
-                    Gui.fill(pose, xPosition + offsetX, yPosition + offsetY, xPosition + offsetX + 18, yPosition + offsetY + 18, hoverColor);
+                    IngameGui.fill(pose, xPosition + offsetX, yPosition + offsetY, xPosition + offsetX + 18, yPosition + offsetY + 18, hoverColor);
                 }
 
                 ItemStack stack = inventory.getItem(i);
@@ -67,7 +67,7 @@ public class Inventory extends Component {
     }
 
     @Override
-    public void renderOverlay(PoseStack pose, Laptop laptop, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
+    public void renderOverlay(MatrixStack pose, Laptop laptop, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
         if (this.visible) {
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 9; j++) {

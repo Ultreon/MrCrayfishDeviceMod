@@ -1,13 +1,13 @@
 package com.ultreon.devices.core.laptop.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.ultreon.devices.Reference;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.IngameGui;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.text.Component;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -20,15 +20,15 @@ public class ClientLaptopScreen extends Screen {
 
 
     public ClientLaptopScreen(ClientLaptop laptop) {
-        super(new TranslatableComponent(laptop.toString()));
+        super(new TranslationTextComponent(laptop.toString()));
         this.laptop = laptop;
     }
 
-    public void renderBezels(final @NotNull PoseStack pose, final int mouseX, final int mouseY, float partialTicks) {
+    public void renderBezels(final @NotNull MatrixStack pose, final int mouseX, final int mouseY, float partialTicks) {
         this.renderBackground(pose);
 
-        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-        RenderSystem.setShaderTexture(0, LAPTOP_GUI);
+        RenderSystem.blendColor(1f, 1f, 1f, 1f);
+        mc.textureManager.bind(LAPTOP_GUI);
 
         //*************************//
         //     Physical Screen     //
@@ -43,24 +43,24 @@ public class ClientLaptopScreen extends Screen {
         blit(pose, posX, posY + ClientLaptop.DEVICE_HEIGHT - BORDER, 0, 11, BORDER, BORDER); // BOTTOM-LEFT
 
         // Edges
-        Gui.blit(pose, posX + BORDER, posY, ClientLaptop.SCREEN_WIDTH, BORDER, 10, 0, 1, BORDER, 256, 256); // TOP
-        Gui.blit(pose, posX + ClientLaptop.DEVICE_WIDTH - BORDER, posY + BORDER, BORDER, ClientLaptop.SCREEN_HEIGHT, 11, 10, BORDER, 1, 256, 256); // RIGHT
-        Gui.blit(pose, posX + BORDER, posY + ClientLaptop.DEVICE_HEIGHT - BORDER, ClientLaptop.SCREEN_WIDTH, BORDER, 10, 11, 1, BORDER, 256, 256); // BOTTOM
-        Gui.blit(pose, posX, posY + BORDER, BORDER, ClientLaptop.SCREEN_HEIGHT, 0, 11, BORDER, 1, 256, 256); // LEFT
+        IngameGui.blit(pose, posX + BORDER, posY, ClientLaptop.SCREEN_WIDTH, BORDER, 10, 0, 1, BORDER, 256, 256); // TOP
+        IngameGui.blit(pose, posX + ClientLaptop.DEVICE_WIDTH - BORDER, posY + BORDER, BORDER, ClientLaptop.SCREEN_HEIGHT, 11, 10, BORDER, 1, 256, 256); // RIGHT
+        IngameGui.blit(pose, posX + BORDER, posY + ClientLaptop.DEVICE_HEIGHT - BORDER, ClientLaptop.SCREEN_WIDTH, BORDER, 10, 11, 1, BORDER, 256, 256); // BOTTOM
+        IngameGui.blit(pose, posX, posY + BORDER, BORDER, ClientLaptop.SCREEN_HEIGHT, 0, 11, BORDER, 1, 256, 256); // LEFT
 
         // Center
-        Gui.blit(pose, posX + BORDER, posY + BORDER, ClientLaptop.SCREEN_WIDTH, ClientLaptop.SCREEN_HEIGHT, 10, 10, 1, 1, 256, 256);
+        IngameGui.blit(pose, posX + BORDER, posY + BORDER, ClientLaptop.SCREEN_WIDTH, ClientLaptop.SCREEN_HEIGHT, 10, 10, 1, 1, 256, 256);
 
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
+    public void render(MatrixStack matrices, int mouseX, int mouseY, float partialTick) {
         int posX = (width - ClientLaptop.DEVICE_WIDTH) / 2 + BORDER;
         int posY = (height - ClientLaptop.DEVICE_HEIGHT) / 2 + BORDER;
-        super.render(poseStack, mouseX, mouseY, partialTick);
-        renderBezels(poseStack, mouseX, mouseY, partialTick);
-        poseStack.translate(posX, posY, 0);
-        laptop.render(poseStack, mouseX-posX, mouseY-posY, partialTick);
+        super.render(matrices, mouseX, mouseY, partialTick);
+        renderBezels(matrices, mouseX, mouseY, partialTick);
+        matrices.translate(posX, posY, 0);
+        laptop.render(matrices, mouseX-posX, mouseY-posY, partialTick);
     }
 
     @Override

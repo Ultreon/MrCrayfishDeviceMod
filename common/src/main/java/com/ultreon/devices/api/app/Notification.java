@@ -4,8 +4,8 @@ import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.core.client.ClientNotification;
 import com.ultreon.devices.network.PacketHandler;
 import com.ultreon.devices.network.task.NotificationPacket;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -53,15 +53,15 @@ public class Notification {
      *
      * @return the notification tag
      */
-    public CompoundTag toTag() {
-        CompoundTag tag = new CompoundTag();
+    public CompoundNBT toTag() {
+        CompoundNBT tag = new CompoundNBT();
         tag.putString("title", title);
 
         if (!StringUtils.isEmpty(subTitle)) {
             tag.putString("subTitle", subTitle);
         }
 
-        CompoundTag tagIcon = new CompoundTag();
+        CompoundNBT tagIcon = new CompoundNBT();
         tagIcon.putInt("ordinal", icon.getOrdinal());
         tagIcon.putString("className", icon.getClass().getName());
 
@@ -75,7 +75,7 @@ public class Notification {
      *
      * @param player the target player
      */
-    public void pushTo(ServerPlayer player) {
+    public void pushTo(ServerPlayerEntity player) {
         PacketHandler.sendToClient(new NotificationPacket(this), player);
     }
 }

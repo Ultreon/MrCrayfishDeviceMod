@@ -1,13 +1,13 @@
 package com.ultreon.devices.programs.gitweb.component.container;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.ultreon.devices.core.Laptop;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.RecipeType;
+import net.minecraft.block.Blocks;
 
 /**
  * @author MrCrayfish
@@ -43,10 +43,10 @@ public class FurnaceBox extends ContainerBox {
     }
 
     @Override
-    protected void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    protected void render(MatrixStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         super.render(pose, laptop, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
 
-        RenderSystem.setShaderTexture(0, CONTAINER_BOXES_TEXTURE);
+        mc.textureManager.bind(CONTAINER_BOXES_TEXTURE);
 
         int burnProgress = this.getBurnLeftScaled(13);
         this.blit(pose, x + 26, y + 52 - burnProgress, 128, 238 - burnProgress, 14, burnProgress + 1);

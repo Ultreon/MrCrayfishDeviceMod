@@ -2,7 +2,7 @@ package com.ultreon.devices.core;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.ultreon.devices.Devices;
 import com.ultreon.devices.Reference;
 import com.ultreon.devices.api.ApplicationManager;
@@ -28,21 +28,21 @@ import dev.architectury.injectables.annotations.PlatformOnly;
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.ints.IntArraySet;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.IngameGui;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.client.audio.SimpleSound;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.StringNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.util.text.Component;
+import net.minecraft.util.text.ITextProperties;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvents;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -65,7 +65,7 @@ public class Laptop extends Screen implements System {
     public static final ResourceLocation ICON_TEXTURES = new ResourceLocation(Reference.MOD_ID, "textures/atlas/app_icons.png");
     public static final int ICON_SIZE = 14;
     private static final ResourceLocation LAPTOP_FONT = Devices.res("laptop");
-    private static Font font;
+    private static FontRenderer font;
     private static final ResourceLocation LAPTOP_GUI = new ResourceLocation(Reference.MOD_ID, "textures/gui/laptop.png");
     private static final List<Application> APPLICATIONS = new ArrayList<>();
     private static boolean worldLess;
@@ -94,8 +94,8 @@ public class Laptop extends Screen implements System {
     private final Settings settings;
     private final TaskBar bar;
     final ArrayList<Window<?>> windows;
-    private final CompoundTag appData;
-    private final CompoundTag systemData;
+    private final CompoundNBT appData;
+    private final CompoundNBT systemData;
     protected List<AppInfo> installedApps = new ArrayList<>();
     private Layout context = null;
     private Wallpaper currentWallpaper;
@@ -106,7 +106,7 @@ public class Laptop extends Screen implements System {
     private final Layout wallpaperLayout;
     private BSOD bsod;
 
-    public static Font getFont() {
+    public static FontRenderer getFont() {
         if (font == null) {
             font = Minecraft.getInstance().font;
         }
@@ -128,7 +128,7 @@ public class Laptop extends Screen implements System {
      * @param laptop the block entity of the laptop in-game, if the laptop is not in-game, the level passed to it should be null.
      */
     public Laptop(LaptopBlockEntity laptop, boolean worldLess) {
-        super(new TextComponent("Laptop"));
+        super(new StringTextComponent("Laptop"));
 
         instance = this;
 
@@ -240,7 +240,7 @@ public class Laptop extends Screen implements System {
         bar.init(posX + BORDER, posY + DEVICE_HEIGHT - 28);
 
         installedApps.clear();
-        ListTag list = systemData.getList("InstalledApps", Tag.TAG_STRING);
+        ListNBT list = systemData.getList("InstalledApps", Constants.NBT.TAG_STRING);
         for (int i = 0; i < list.size(); i++) {
             AppInfo info = ApplicationManager.getApplication(list.getString(i));
             if (info != null) {
@@ -278,8 +278,8 @@ public class Laptop extends Screen implements System {
         systemData.put("CurrentWallpaper", currentWallpaper.serialize());
         systemData.put("Settings", settings.toTag());
 
-        ListTag tagListApps = new ListTag();
-        installedApps.forEach(info -> tagListApps.add(StringTag.valueOf(info.getFormattedId())));
+        ListNBT tagListApps = new ListNBT();
+        installedApps.forEach(info -> tagListApps.add(StringNBT.valueOf(info.getFormattedId())));
         systemData.put("InstalledApps", tagListApps);
 
         TaskManager.sendTask(new TaskUpdateSystemData(pos, systemData));
@@ -329,13 +329,13 @@ public class Laptop extends Screen implements System {
     }
 
     @Override
-    public void render(final @NotNull PoseStack pose, final int mouseX, final int mouseY, float partialTicks) {
+    public void render(final @NotNull MatrixStack pose, final int mouseX, final int mouseY, float partialTicks) {
         if (bsod != null) {
             renderBsod(pose, mouseX, mouseY, partialTicks);
             return;
         }
 
-        PoseStack.Pose last = pose.last();
+        MatrixStack.Entry last = pose.last();
 
         try {
             renderLaptop(pose, mouseX, mouseY, partialTicks);
@@ -354,11 +354,11 @@ public class Laptop extends Screen implements System {
         }
     }
 
-    public void renderBsod(final @NotNull PoseStack pose, final int mouseX, final int mouseY, float partialTicks) {
+    public void renderBsod(final @NotNull MatrixStack pose, final int mouseX, final int mouseY, float partialTicks) {
         renderBezels(pose, mouseX, mouseY, partialTicks);
         int posX = (width - DEVICE_WIDTH) / 2;
         int posY = (height - DEVICE_HEIGHT) / 2;
-        Gui.fill(pose, posX+10, posY+10, posX + DEVICE_WIDTH-10, posY + DEVICE_HEIGHT-10, new Color(0, 0, 255).getRGB());
+        IngameGui.fill(pose, posX+10, posY+10, posX + DEVICE_WIDTH-10, posY + DEVICE_HEIGHT-10, new Color(0, 0, 255).getRGB());
         var bo = new ByteArrayOutputStream();
 
         double scale = Minecraft.getInstance().getWindow().getGuiScale();
@@ -374,32 +374,32 @@ public class Laptop extends Screen implements System {
         pose.popPose();
     }
 
-    public static void drawLines(PoseStack poseStack, Font font, String text, int x, int y, int width, int color) {
+    public static void drawLines(MatrixStack matrices, FontRenderer font, String text, int x, int y, int width, int color) {
         var lines = new ArrayList<String>();
-        font.getSplitter().splitLines(FormattedText.of(text.replaceAll("\r\n", "\n").replaceAll("\r", "\n")), width, Style.EMPTY).forEach(b -> lines.add(b.getString()));
+        font.getSplitter().splitLines(ITextProperties.of(text.replaceAll("\r\n", "\n").replaceAll("\r", "\n")), width, Style.EMPTY).forEach(b -> lines.add(b.getString()));
         var totalTextHeight = font.lineHeight*lines.size();
         var textScale = (DEVICE_HEIGHT-20-(getFont().lineHeight*2))/(float)totalTextHeight;
         textScale = (float) (1f / Minecraft.getInstance().getWindow().getGuiScale());
         textScale = Math.max(0.5f, textScale);
-        poseStack.pushPose();
-        poseStack.scale(textScale, textScale, 1);
-        poseStack.translate(x / textScale, (y+3)/textScale, 0);
+        matrices.pushPose();
+        matrices.scale(textScale, textScale, 1);
+        matrices.translate(x / textScale, (y+3)/textScale, 0);
         //poseStack.translate();
         var lineNr = 0;
         for (String s : lines) {
-            font.draw(poseStack, s.replaceAll("\t", "    "), (float)0, (float)0+(lineNr*font.lineHeight), color);
+            font.draw(matrices, s.replaceAll("\t", "    "), (float)0, (float)0+(lineNr*font.lineHeight), color);
             lineNr++;
         }
-        poseStack.popPose();
+        matrices.popPose();
     }
 
-    public void renderBezels(final @NotNull PoseStack pose, final int mouseX, final int mouseY, float partialTicks) {
+    public void renderBezels(final @NotNull MatrixStack pose, final int mouseX, final int mouseY, float partialTicks) {
         tasks.clear();
 
         this.renderBackground(pose);
 
-        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-        RenderSystem.setShaderTexture(0, LAPTOP_GUI);
+        RenderSystem.blendColor(1f, 1f, 1f, 1f);
+        mc.textureManager.bind(LAPTOP_GUI);
 
         //*************************//
         //     Physical Screen     //
@@ -414,13 +414,13 @@ public class Laptop extends Screen implements System {
         blit(pose, posX, posY + DEVICE_HEIGHT - BORDER, 0, 11, BORDER, BORDER); // BOTTOM-LEFT
 
         // Edges
-        Gui.blit(pose, posX + BORDER, posY, SCREEN_WIDTH, BORDER, 10, 0, 1, BORDER, 256, 256); // TOP
-        Gui.blit(pose, posX + DEVICE_WIDTH - BORDER, posY + BORDER, BORDER, SCREEN_HEIGHT, 11, 10, BORDER, 1, 256, 256); // RIGHT
-        Gui.blit(pose, posX + BORDER, posY + DEVICE_HEIGHT - BORDER, SCREEN_WIDTH, BORDER, 10, 11, 1, BORDER, 256, 256); // BOTTOM
-        Gui.blit(pose, posX, posY + BORDER, BORDER, SCREEN_HEIGHT, 0, 11, BORDER, 1, 256, 256); // LEFT
+        IngameGui.blit(pose, posX + BORDER, posY, SCREEN_WIDTH, BORDER, 10, 0, 1, BORDER, 256, 256); // TOP
+        IngameGui.blit(pose, posX + DEVICE_WIDTH - BORDER, posY + BORDER, BORDER, SCREEN_HEIGHT, 11, 10, BORDER, 1, 256, 256); // RIGHT
+        IngameGui.blit(pose, posX + BORDER, posY + DEVICE_HEIGHT - BORDER, SCREEN_WIDTH, BORDER, 10, 11, 1, BORDER, 256, 256); // BOTTOM
+        IngameGui.blit(pose, posX, posY + BORDER, BORDER, SCREEN_HEIGHT, 0, 11, BORDER, 1, 256, 256); // LEFT
 
         // Center
-        Gui.blit(pose, posX + BORDER, posY + BORDER, SCREEN_WIDTH, SCREEN_HEIGHT, 10, 10, 1, 1, 256, 256);
+        IngameGui.blit(pose, posX + BORDER, posY + BORDER, SCREEN_WIDTH, SCREEN_HEIGHT, 10, 10, 1, 1, 256, 256);
 
     }
 
@@ -432,7 +432,7 @@ public class Laptop extends Screen implements System {
      * @param mouseY       the current mouse Y position.
      * @param partialTicks the rendering partial ticks that forge give use (which is useless here).
      */
-    public void renderLaptop(final @NotNull PoseStack pose, final int mouseX, final int mouseY, float partialTicks) {
+    public void renderLaptop(final @NotNull MatrixStack pose, final int mouseX, final int mouseY, float partialTicks) {
         int posX = (width - DEVICE_WIDTH) / 2;
         int posY = (height - DEVICE_HEIGHT) / 2;
         // Fixes the strange partialTicks that Forge decided to give us
@@ -476,7 +476,7 @@ public class Laptop extends Screen implements System {
             for (int i = windows.size() - 1; i >= 0; i--) {
                 var window = windows.get(i);
                 if (window != null) {
-                    PoseStack.Pose last = pose.last();
+                    MatrixStack.Entry last = pose.last();
                     try {
                         if (i == 0) {
                             window.render(pose, this, minecraft, posX + BORDER, posY + BORDER, mouseX, mouseY, !insideContext, partialTicks);
@@ -491,7 +491,7 @@ public class Laptop extends Screen implements System {
                         e.printStackTrace();
                         Dialog.Message message = new Dialog.Message("An error has occurred.\nSend logs to devs.");
                         message.setTitle("Error");
-                        CompoundTag intent = new CompoundTag();
+                        CompoundNBT intent = new CompoundNBT();
                         if (window.content instanceof Application app) {
                             AppInfo info = app.getInfo();
                             if (info != null) {
@@ -608,7 +608,7 @@ public class Laptop extends Screen implements System {
                     Dialog.Message message = new Dialog.Message("An error has occurred.\nSend logs to devs.");
                     message.setTitle("Error");
                     if (windows.size() == 0 || windows.get(0) == null) {
-                        CompoundTag intent = new CompoundTag();
+                        CompoundNBT intent = new CompoundNBT();
                         AppInfo info = window.content.getInfo();
                         if (info != null) {
                             intent.putString("name", info.getName());
@@ -783,7 +783,7 @@ public class Laptop extends Screen implements System {
     }
 
     @Override
-    public void renderComponentTooltip(@NotNull PoseStack pose, @NotNull List<Component> tooltips, int x, int y) {
+    public void renderComponentTooltip(@NotNull MatrixStack pose, @NotNull List<Component> tooltips, int x, int y) {
         super.renderComponentTooltip(pose, tooltips, x, y);
     }
 
@@ -804,18 +804,18 @@ public class Laptop extends Screen implements System {
 
     @Override
     public Application openApplication(AppInfo info) {
-        return openApplication(info, (CompoundTag) null);
+        return openApplication(info, (CompoundNBT) null);
     }
 
     @Override
-    public Application openApplication(AppInfo info, CompoundTag intentTag) {
+    public Application openApplication(AppInfo info, CompoundNBT intentTag) {
         Optional<Application> optional = APPLICATIONS.stream().filter(app -> app.getInfo() == info).findFirst();
         Application[] a = new Application[]{null};
         optional.ifPresent(application -> a[0] = openApplication(application, intentTag));
         return a[0];
     }
 
-    private Application openApplication(Application app, CompoundTag intent) {
+    private Application openApplication(Application app, CompoundNBT intent) {
         if (!(app instanceof DiagnosticsApp)) {
             if (isApplicationNotInstalled(app.getInfo()))
                 return null;
@@ -850,7 +850,7 @@ public class Laptop extends Screen implements System {
 
             addWindow(window);
 
-            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1f));
+            Minecraft.getInstance().getSoundManager().play(SimpleSound.forUI(SoundEvents.UI_BUTTON_CLICK, 1f));
         } catch (Exception e) {
             e.printStackTrace();
             AppInfo info = ApplicationManager.getApplication("devices:diagnostics");
@@ -904,7 +904,7 @@ public class Laptop extends Screen implements System {
             if (window != null) {
                 if (window.content.getInfo().equals(app.getInfo())) {
                     if (app.isDirty()) {
-                        CompoundTag container = new CompoundTag();
+                        CompoundNBT container = new CompoundNBT();
                         app.save(container);
                         app.clean();
                         appData.put(app.getInfo().getFormattedId(), container);
@@ -1139,7 +1139,7 @@ public class Laptop extends Screen implements System {
             return location;
         }
 
-        private Wallpaper(CompoundTag tag) {
+        private Wallpaper(CompoundNBT tag) {
             var a = tag.getString("url");
             var b = tag.getInt("location");
             if (tag.contains("url", 8)) {
@@ -1165,7 +1165,7 @@ public class Laptop extends Screen implements System {
         }
 
         public Tag serialize() {
-            var a = new CompoundTag();
+            var a = new CompoundNBT();
             if (isBuiltIn()) {
                 a.putInt("location", location);
             } else {

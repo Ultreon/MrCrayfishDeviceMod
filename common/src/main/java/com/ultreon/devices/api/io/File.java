@@ -5,7 +5,7 @@ import com.ultreon.devices.api.task.Callback;
 import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.core.io.action.FileAction;
 import com.ultreon.devices.programs.system.component.FileBrowser;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.CompoundNBT;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
@@ -26,7 +26,7 @@ public class File {
     protected Folder parent;
     protected String name;
     protected String openingApp;
-    protected CompoundTag data;
+    protected CompoundNBT data;
     protected boolean protect = false;
     protected boolean valid = false;
 
@@ -41,7 +41,7 @@ public class File {
      * @param app  the application that is opening the file
      * @param data the data of the file
      */
-    public File(String name, Application app, CompoundTag data) {
+    public File(String name, Application app, CompoundNBT data) {
         this(name, app.getInfo().getFormattedId(), data, false);
     }
 
@@ -54,11 +54,11 @@ public class File {
      * @param openingAppId the application identifier of the application that is opening the file
      * @param data         the data of the file
      */
-    public File(String name, String openingAppId, CompoundTag data) {
+    public File(String name, String openingAppId, CompoundNBT data) {
         this(name, openingAppId, data, false);
     }
 
-    private File(String name, String openingAppId, CompoundTag data, boolean protect) {
+    private File(String name, String openingAppId, CompoundNBT data, boolean protect) {
         this.name = name;
         this.openingApp = openingAppId;
         this.data = data;
@@ -180,7 +180,7 @@ public class File {
      *
      * @param data the data for the file
      */
-    public void setData(CompoundTag data) {
+    public void setData(CompoundNBT data) {
         setData(data, null);
     }
 
@@ -192,7 +192,7 @@ public class File {
      * @param data     the data for the file
      * @param callback the callback to be fired when the data is set
      */
-    public void setData(CompoundTag data, @Nullable Callback<FileSystem.Response> callback) {
+    public void setData(CompoundNBT data, @Nullable Callback<FileSystem.Response> callback) {
         if (!valid)
             throw new IllegalStateException("File must be added to the system before you can rename it");
 
@@ -222,12 +222,12 @@ public class File {
 
     /**
      * Gets the data of this file. The data you receive is a copied version. If you want to update
-     * it, use {@link #setData(CompoundTag, Callback)} to do so.
+     * it, use {@link #setData(CompoundNBT, Callback)} to do so.
      *
      * @return the file's data
      */
     @Nullable
-    public CompoundTag getData() {
+    public CompoundNBT getData() {
         return data.copy();
     }
 
@@ -440,8 +440,8 @@ public class File {
      *
      * @return the file tag
      */
-    public CompoundTag toTag() {
-        CompoundTag tag = new CompoundTag();
+    public CompoundNBT toTag() {
+        CompoundNBT tag = new CompoundNBT();
         tag.putString("openingApp", openingApp);
         tag.put("data", data);
         return tag;
@@ -454,7 +454,7 @@ public class File {
      * @param tag  the tag compound from {@link #toTag()}
      * @return a file instance
      */
-    public static File fromTag(String name, CompoundTag tag) {
+    public static File fromTag(String name, CompoundNBT tag) {
         return new File(name, tag.getString("openingApp"), tag.getCompound("data"));
     }
 

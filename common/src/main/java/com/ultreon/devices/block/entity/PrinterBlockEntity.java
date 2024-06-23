@@ -4,17 +4,17 @@ import com.ultreon.devices.DeviceConfig;
 import com.ultreon.devices.api.print.IPrint;
 import com.ultreon.devices.init.DeviceBlockEntities;
 import com.ultreon.devices.init.DeviceSounds;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.sounds.SoundCategory;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.block.BlockState;
+import net.minecraft.util.math.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayDeque;
@@ -35,8 +35,8 @@ public class PrinterBlockEntity extends NetworkDeviceBlockEntity.Colored {
     private int remainingPrintTime;
     private int paperCount = 0;
 
-    public PrinterBlockEntity(BlockPos pWorldPosition, BlockState pBlockState) {
-        super(DeviceBlockEntities.PRINTER.get(), pWorldPosition, pBlockState);
+    public PrinterBlockEntity() {
+        super(DeviceBlockEntities.PRINTER.get());
     }
 
     @Override
@@ -48,7 +48,7 @@ public class PrinterBlockEntity extends NetworkDeviceBlockEntity.Colored {
                     pipeline.putInt("remainingPrintTime", remainingPrintTime);
                     sync();
                     if (remainingPrintTime != 0 && state == PRINTING) {
-                        level.playSound(null, worldPosition, DeviceSounds.PRINTER_PRINTING.get(), SoundSource.BLOCKS, 0.5f, 1f);
+                        level.playSound(null, worldPosition, DeviceSounds.PRINTER_PRINTING.get(), SoundCategory.BLOCKS, 0.5f, 1f);
                     }
                 }
                 remainingPrintTime--;
@@ -79,26 +79,26 @@ public class PrinterBlockEntity extends NetworkDeviceBlockEntity.Colored {
     }
 
     @Override
-    public void load(@NotNull CompoundTag compound) {
-        super.load(compound);
-        if (compound.contains("currentPrint", Tag.TAG_COMPOUND)) {
+    public void load(BlockState state, @NotNull CompoundNBT compound) {
+        super.load(state, compound);
+        if (compound.contains("currentPrint", Constants.NBT.TAG_COMPOUND)) {
             currentPrint = IPrint.load(compound.getCompound("currentPrint"));
         }
-        if (compound.contains("totalPrintTime", Tag.TAG_INT)) {
+        if (compound.contains("totalPrintTime", Constants.NBT.TAG_INT)) {
             totalPrintTime = compound.getInt("totalPrintTime");
         }
-        if (compound.contains("remainingPrintTime", Tag.TAG_INT)) {
+        if (compound.contains("remainingPrintTime", Constants.NBT.TAG_INT)) {
             remainingPrintTime = compound.getInt("remainingPrintTime");
         }
-        if (compound.contains("state", Tag.TAG_INT)) {
+        if (compound.contains("state", Constants.NBT.TAG_INT)) {
             state = State.values()[compound.getInt("state")];
         }
-        if (compound.contains("paperCount", Tag.TAG_INT)) {
+        if (compound.contains("paperCount", Constants.NBT.TAG_INT)) {
             paperCount = compound.getInt("paperCount");
         }
-        if (compound.contains("queue", Tag.TAG_LIST)) {
+        if (compound.contains("queue", Constants.NBT.TAG_LIST)) {
             printQueue.clear();
-            ListTag queue = compound.getList("queue", Tag.TAG_COMPOUND);
+            ListNBT queue = compound.getList("queue", Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < queue.size(); i++) {
                 IPrint print = IPrint.load(queue.getCompound(i));
                 printQueue.offer(print);
@@ -107,8 +107,8 @@ public class PrinterBlockEntity extends NetworkDeviceBlockEntity.Colored {
     }
 
     @Override
-    public void saveAdditional(@NotNull CompoundTag tag) {
-        super.saveAdditional(tag);
+    public void save(BlockState state, @NotNull CompoundNBT tag) {
+        super.save(tag);
         tag.putInt("totalPrintTime", totalPrintTime);
         tag.putInt("remainingPrintTime", remainingPrintTime);
         tag.putInt("state", state.ordinal());
@@ -117,15 +117,15 @@ public class PrinterBlockEntity extends NetworkDeviceBlockEntity.Colored {
             tag.put("currentPrint", IPrint.save(currentPrint));
         }
         if (!printQueue.isEmpty()) {
-            ListTag queue = new ListTag();
+            ListNBT queue = new ListNBT();
             printQueue.forEach(print -> queue.add(IPrint.save(print)));
             tag.put("queue", queue);
         }
     }
 
     @Override
-    public CompoundTag saveSyncTag() {
-        CompoundTag tag = super.saveSyncTag();
+    public CompoundNBT saveSyncTag() {
+        CompoundNBT tag = super.saveSyncTag();
         tag.putInt("paperCount", paperCount);
         return tag;
     }
@@ -157,7 +157,7 @@ public class PrinterBlockEntity extends NetworkDeviceBlockEntity.Colored {
 
     private void print(IPrint print) {
         assert level != null;
-        level.playSound(null, worldPosition, DeviceSounds.PRINTER_LOADING_PAPER.get(), SoundSource.BLOCKS, 0.5f, 1f);
+        level.playSound(null, worldPosition, DeviceSounds.PRINTER_LOADING_PAPER.get(), SoundCategory.BLOCKS, 0.5f, 1f);
 
         setState(LOADING_PAPER);
         currentPrint = print;
@@ -197,7 +197,7 @@ public class PrinterBlockEntity extends NetworkDeviceBlockEntity.Colored {
             pipeline.putInt("paperCount", paperCount);
             sync();
             assert level != null;
-            level.playSound(null, worldPosition, SoundEvents.ITEM_FRAME_BREAK, SoundSource.BLOCKS, 1f, 1f);
+            level.playSound(null, worldPosition, SoundEvents.ITEM_FRAME_BREAK, SoundCategory.BLOCKS, 1f, 1f);
             return true;
         }
         return false;

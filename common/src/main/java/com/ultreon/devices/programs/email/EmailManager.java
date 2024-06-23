@@ -6,13 +6,13 @@ import com.ultreon.devices.api.WorldSavedData;
 import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Notification;
 import com.ultreon.devices.programs.email.object.Email;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.*;
 
@@ -25,7 +25,7 @@ public class EmailManager implements WorldSavedData {
     public static final EmailManager INSTANCE = new EmailManager();
     private final HashBiMap<UUID, String> uuidToName = HashBiMap.create();
     private final Map<String, List<Email>> nameToInbox = new HashMap<>();
-    @Environment(EnvType.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     private List<Email> inbox;
 
     public boolean addEmailToInbox(Email email, String to) {
@@ -37,7 +37,7 @@ public class EmailManager implements WorldSavedData {
         return false;
     }
 
-    @Environment(EnvType.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public List<Email> getInbox() {
         if (inbox == null) {
             inbox = new ArrayList<>();
@@ -45,14 +45,14 @@ public class EmailManager implements WorldSavedData {
         return inbox;
     }
 
-    public List<Email> getEmailsForAccount(Player player) {
+    public List<Email> getEmailsForAccount(PlayerEntity player) {
         if (uuidToName.containsKey(player.getUUID())) {
             return nameToInbox.get(uuidToName.get(player.getUUID()));
         }
         return new ArrayList<Email>();
     }
 
-    public boolean addAccount(Player player, String name) {
+    public boolean addAccount(PlayerEntity player, String name) {
         if (!uuidToName.containsKey(player.getUUID())) {
             if (!uuidToName.containsValue(name)) {
                 uuidToName.put(player.getUUID(), name);
@@ -67,22 +67,22 @@ public class EmailManager implements WorldSavedData {
         return uuidToName.containsKey(uuid);
     }
 
-    public String getName(Player player) {
+    public String getName(PlayerEntity player) {
         return uuidToName.get(player.getUUID());
     }
 
-    public void load(CompoundTag nbt) {
+    public void load(CompoundNBT nbt) {
         nameToInbox.clear();
 
-        ListTag inboxes = (ListTag) nbt.get("Inboxes");
+        ListNBT inboxes = (ListNBT) nbt.get("Inboxes");
         for (int i = 0; i < inboxes.size(); i++) {
-            CompoundTag inbox = inboxes.getCompound(i);
+            CompoundNBT inbox = inboxes.getCompound(i);
             String name = inbox.getString("Name");
 
             List<Email> emails = new ArrayList<Email>();
-            ListTag emailTagList = (ListTag) inbox.get("Emails");
+            ListNBT emailTagList = (ListNBT) inbox.get("Emails");
             for (int j = 0; j < emailTagList.size(); j++) {
-                CompoundTag emailTag = emailTagList.getCompound(j);
+                CompoundNBT emailTag = emailTagList.getCompound(j);
                 Email email = Email.readFromNBT(emailTag);
                 emails.add(email);
             }
@@ -91,25 +91,25 @@ public class EmailManager implements WorldSavedData {
 
         uuidToName.clear();
 
-        ListTag accounts = (ListTag) nbt.get("Accounts");
+        ListNBT accounts = (ListNBT) nbt.get("Accounts");
         for (int i = 0; i < accounts.size(); i++) {
-            CompoundTag account = accounts.getCompound(i);
+            CompoundNBT account = accounts.getCompound(i);
             UUID uuid = UUID.fromString(account.getString("UUID"));
             String name = account.getString("Name");
             uuidToName.put(uuid, name);
         }
     }
 
-    public void save(CompoundTag nbt) {
-        ListTag inboxes = new ListTag();
+    public void save(CompoundNBT nbt) {
+        ListNBT inboxes = new ListNBT();
         for (String key : nameToInbox.keySet()) {
-            CompoundTag inbox = new CompoundTag();
+            CompoundNBT inbox = new CompoundNBT();
             inbox.putString("Name", key);
 
-            ListTag emailTagList = new ListTag();
+            ListNBT emailTagList = new ListNBT();
             List<Email> emails = nameToInbox.get(key);
             for (Email email : emails) {
-                CompoundTag emailTag = new CompoundTag();
+                CompoundNBT emailTag = new CompoundNBT();
                 email.save(emailTag);
                 emailTagList.add(emailTag);
             }
@@ -118,9 +118,9 @@ public class EmailManager implements WorldSavedData {
         }
         nbt.put("Inboxes", inboxes);
 
-        ListTag accounts = new ListTag();
+        ListNBT accounts = new ListNBT();
         for (UUID key : uuidToName.keySet()) {
-            CompoundTag account = new CompoundTag();
+            CompoundNBT account = new CompoundNBT();
             account.putString("UUID", key.toString());
             account.putString("Name", Objects.requireNonNull(uuidToName.get(key)));
             accounts.add(account);
@@ -138,7 +138,7 @@ public class EmailManager implements WorldSavedData {
         MinecraftServer server = Devices.getServer();
         UUID id = uuidToName.inverse().get(name);
         if (id != null) {
-            ServerPlayer player = server.getPlayerList().getPlayer(id);
+            ServerPlayerEntity player = server.getPlayerList().getPlayer(id);
             if (player != null) {
                 Notification notification = new Notification(Icons.MAIL, "New Email!", "from " + email.getAuthor());
                 notification.pushTo(player);

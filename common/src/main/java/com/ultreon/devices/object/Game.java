@@ -2,14 +2,14 @@ package com.ultreon.devices.object;
 
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.exception.WorldLessException;
 import com.ultreon.devices.object.tiles.Tile;
 import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -19,7 +19,7 @@ public class Game extends Component {
     public static final ResourceLocation ICONS = new ResourceLocation("devices:textures/gui/mine_racer.png");
 
     private static final Map<Integer, Tile> registeredTiles = new HashMap<Integer, Tile>();
-    private final Player player;
+    private final PlayerEntity player;
     public int mapWidth;
     public int mapHeight;
     private Tile[][] tiles;
@@ -40,7 +40,7 @@ public class Game extends Component {
         if (mapWidth % Tile.WIDTH != 0 || mapHeight % Tile.HEIGHT != 0)
             throw new Exception("Width and height need to be a multiple of " + Tile.WIDTH);
 
-        this.player = new Player(this);
+        this.player = new PlayerEntity(this);
         this.mapWidth = mapWidth / Tile.WIDTH;
         this.mapHeight = mapHeight / Tile.HEIGHT;
         this.tiles = new Tile[4][this.mapWidth * this.mapHeight];
@@ -115,7 +115,7 @@ public class Game extends Component {
     }
 
     @Override
-    public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(MatrixStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         //long start = System.currentTimeMillis();
 
         if (editorMode) {
@@ -123,8 +123,8 @@ public class Game extends Component {
         }
 
         pose.pushPose();
-        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-        RenderSystem.setShaderTexture(0, ICONS);
+        RenderSystem.blendColor(1f, 1f, 1f, 1f);
+        mc.textureManager.bind(ICONS);
 
         if (renderBackground) {
             for (int i = 0; i < tiles[0].length; i++) {
@@ -162,7 +162,7 @@ public class Game extends Component {
             player.render(pose, xPosition, yPosition, partialTicks);
         }
 
-        RenderSystem.setShaderTexture(0, ICONS);
+        mc.textureManager.bind(ICONS);
         if (renderMidgroundHigh) {
             for (int i = 0; i < tiles[2].length; i++) {
                 Tile tile = tiles[2][i];

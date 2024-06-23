@@ -8,11 +8,11 @@ import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.core.io.drive.AbstractDrive;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.World;
+import net.minecraft.tileentity.TileEntity;
 
 /**
  * @author MrCrayfish
@@ -32,13 +32,13 @@ public class TaskGetMainDrive extends Task {
     }
 
     @Override
-    public void prepareRequest(CompoundTag tag) {
+    public void prepareRequest(CompoundNBT tag) {
         tag.putLong("pos", pos.asLong());
     }
 
     @Override
-    public void processRequest(CompoundTag tag, Level level, Player player) {
-        BlockEntity tileEntity = level.getBlockEntity(BlockPos.of(tag.getLong("pos")));
+    public void processRequest(CompoundNBT tag, World level, PlayerEntity player) {
+        TileEntity tileEntity = level.getBlockEntity(BlockPos.of(tag.getLong("pos")));
         if (tileEntity instanceof LaptopBlockEntity laptop) {
             FileSystem fileSystem = laptop.getFileSystem();
             mainDrive = fileSystem.getMainDrive();
@@ -47,9 +47,9 @@ public class TaskGetMainDrive extends Task {
     }
 
     @Override
-    public void prepareResponse(CompoundTag tag) {
+    public void prepareResponse(CompoundNBT tag) {
         if (this.isSucessful()) {
-            CompoundTag mainDriveTag = new CompoundTag();
+            CompoundNBT mainDriveTag = new CompoundNBT();
             mainDriveTag.putString("name", mainDrive.getName());
             mainDriveTag.putString("uuid", mainDrive.getUuid().toString());
             mainDriveTag.putString("type", mainDrive.getType().toString());
@@ -59,10 +59,10 @@ public class TaskGetMainDrive extends Task {
     }
 
     @Override
-    public void processResponse(CompoundTag tag) {
+    public void processResponse(CompoundNBT tag) {
         if (this.isSucessful()) {
             if (Minecraft.getInstance().screen instanceof Laptop) {
-                CompoundTag structureTag = tag.getCompound("structure");
+                CompoundNBT structureTag = tag.getCompound("structure");
                 Drive drive = new Drive(tag.getCompound("main_drive"));
                 drive.syncRoot(Folder.fromTag(FileSystem.LAPTOP_DRIVE_NAME, structureTag));
                 drive.getRoot().validate();

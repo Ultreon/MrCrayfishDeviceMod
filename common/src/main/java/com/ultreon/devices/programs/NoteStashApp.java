@@ -7,8 +7,8 @@ import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.component.*;
 import com.ultreon.devices.api.io.File;
 import com.ultreon.devices.core.io.FileSystem;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -20,8 +20,8 @@ import java.util.function.Predicate;
 public class NoteStashApp extends Application {
     @SuppressWarnings("ConstantConditions")
     private static final Predicate<File> PREDICATE_FILE_NOTE = file -> !file.isFolder()
-            && file.getData().contains("title", Tag.TAG_STRING)
-            && file.getData().contains("content", Tag.TAG_STRING);
+            && file.getData().contains("title", Constants.NBT.TAG_STRING)
+            && file.getData().contains("content", Constants.NBT.TAG_STRING);
     private static final Marker MARKER = MarkerFactory.getMarker("Note Stash App");
 
     /* Main */
@@ -49,7 +49,7 @@ public class NoteStashApp extends Application {
     }
 
     @Override
-    public void init(@Nullable CompoundTag intent) {
+    public void init(@Nullable CompoundNBT intent) {
         /* Main */
 
         layoutMain = new Layout(180, 80);
@@ -136,7 +136,7 @@ public class NoteStashApp extends Application {
         btnSave = new Button(124, 5, "Save");
         btnSave.setSize(50, 20);
         btnSave.setClickListener((mouseX, mouseY, mouseButton) -> {
-            CompoundTag data = new CompoundTag();
+            CompoundNBT data = new CompoundNBT();
             data.putString("title", title.getText());
             data.putString("content", textArea.getText());
 
@@ -181,11 +181,11 @@ public class NoteStashApp extends Application {
     }
 
     @Override
-    public void load(CompoundTag tagCompound) {
+    public void load(CompoundNBT tagCompound) {
     }
 
     @Override
-    public void save(CompoundTag tagCompound) {
+    public void save(CompoundNBT tagCompound) {
     }
 
     @Override
@@ -198,7 +198,7 @@ public class NoteStashApp extends Application {
     public boolean handleFile(File file) {
         if (!PREDICATE_FILE_NOTE.test(file)) return false;
 
-        CompoundTag data = file.getData();
+        CompoundNBT data = file.getData();
         assert data != null;
         noteTitle.setText(data.getString("title"));
         noteContent.setText(data.getString("content"));

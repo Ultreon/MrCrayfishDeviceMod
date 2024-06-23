@@ -1,7 +1,7 @@
 package com.ultreon.devices.programs.snake.layout;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Layout;
@@ -9,7 +9,7 @@ import com.ultreon.devices.api.app.component.Button;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.programs.snake.SnakeApp;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.IngameGui;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -26,14 +26,14 @@ public class SnakeLayout extends Layout {
         }));
 
         this.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
-            Gui.fill(pose, x,y,x+width,x+height, new Color(0x0, 0x0, 0x0).getRGB());
+            IngameGui.fill(pose, x,y,x+width,x+height, new Color(0x0, 0x0, 0x0).getRGB());
         });
         this.addComponent(button);
         this.addComponent(new Grid(0, 0));
     }
 
     @Override
-    public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(MatrixStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         super.render(pose, laptop, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
     }
 
@@ -99,7 +99,7 @@ public class SnakeLayout extends Layout {
         }
 
         @Override
-        protected void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+        protected void render(MatrixStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
             super.render(pose, laptop, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
             var black = new Color(0, 0, 0, 0.5f);
             var intBlack = black.getRGB();
@@ -120,40 +120,40 @@ public class SnakeLayout extends Layout {
                 //Pos2d pos = snakePos.get(i);
                 renderConnectedSnakePart(pose, x, y, white, i);
             }
-            Gui.fill(pose, x+applePos.x*10, y+applePos.y*10, x+applePos.x*10+10, y+applePos.y*10+10, red);
+            IngameGui.fill(pose, x+applePos.x*10, y+applePos.y*10, x+applePos.x*10+10, y+applePos.y*10+10, red);
         }
 
-        private void renderConnectedSnakePart(PoseStack pose, int x, int y, int color, int index) {
+        private void renderConnectedSnakePart(MatrixStack pose, int x, int y, int color, int index) {
             var pos = snakePos.get(index);
-            Gui.fill(pose, x+pos.x*10+1, y+pos.y*10+1, x+pos.x*10+10-1, y+pos.y*10+10-1, color);
+            IngameGui.fill(pose, x+pos.x*10+1, y+pos.y*10+1, x+pos.x*10+10-1, y+pos.y*10+10-1, color);
 
             // Right Checks
             if (snakePos.get(index+1) != null && snakePos.get(index).right().samePos(snakePos.get(index+1))) {
-                Gui.fill(pose, x+pos.x*10+10-1, y+pos.y*10+1, x+pos.x*10+10, y+pos.y*10+10-1, color);
+                IngameGui.fill(pose, x+pos.x*10+10-1, y+pos.y*10+1, x+pos.x*10+10, y+pos.y*10+10-1, color);
             }
             if (snakePos.get(index-1) != null && snakePos.get(index).right().samePos(snakePos.get(index-1))) {
-                Gui.fill(pose, x+pos.x*10+10-1, y+pos.y*10+1, x+pos.x*10+10, y+pos.y*10+10-1, color);
+                IngameGui.fill(pose, x+pos.x*10+10-1, y+pos.y*10+1, x+pos.x*10+10, y+pos.y*10+10-1, color);
             }
             // Left Checks
             if (snakePos.get(index+1) != null && snakePos.get(index).left().samePos(snakePos.get(index+1))) {
-                Gui.fill(pose, x+pos.x*10, y+pos.y*10+1, x+pos.x*10+1, y+pos.y*10+10-1, color);
+                IngameGui.fill(pose, x+pos.x*10, y+pos.y*10+1, x+pos.x*10+1, y+pos.y*10+10-1, color);
             }
             if (snakePos.get(index-1) != null && snakePos.get(index).left().samePos(snakePos.get(index-1))) {
-                Gui.fill(pose, x+pos.x*10, y+pos.y*10+1, x+pos.x*10+1, y+pos.y*10+10-1, color);
+                IngameGui.fill(pose, x+pos.x*10, y+pos.y*10+1, x+pos.x*10+1, y+pos.y*10+10-1, color);
             }
             // Down Checks
             if (snakePos.get(index+1) != null && snakePos.get(index).down().samePos(snakePos.get(index+1))) {
-                Gui.fill(pose, x+pos.x*10+1, y+pos.y*10+10-1, x+pos.x*10+10-1, y+pos.y*10+10, color);
+                IngameGui.fill(pose, x+pos.x*10+1, y+pos.y*10+10-1, x+pos.x*10+10-1, y+pos.y*10+10, color);
             }
             if (snakePos.get(index-1) != null && snakePos.get(index).down().samePos(snakePos.get(index-1))) {
-                Gui.fill(pose, x+pos.x*10+1, y+pos.y*10+10-1, x+pos.x*10+10-1, y+pos.y*10+10, color);
+                IngameGui.fill(pose, x+pos.x*10+1, y+pos.y*10+10-1, x+pos.x*10+10-1, y+pos.y*10+10, color);
             }
             // Up Checks
             if (snakePos.get(index+1) != null && snakePos.get(index).up().samePos(snakePos.get(index+1))) {
-                Gui.fill(pose, x+pos.x*10+1, y+pos.y*10, x+pos.x*10+10-1, y+pos.y*10+1, color);
+                IngameGui.fill(pose, x+pos.x*10+1, y+pos.y*10, x+pos.x*10+10-1, y+pos.y*10+1, color);
             }
             if (snakePos.get(index-1) != null && snakePos.get(index).up().samePos(snakePos.get(index-1))) {
-                Gui.fill(pose, x+pos.x*10+1, y+pos.y*10, x+pos.x*10+10-1, y+pos.y*10+1, color);
+                IngameGui.fill(pose, x+pos.x*10+1, y+pos.y*10, x+pos.x*10+10-1, y+pos.y*10+1, color);
             }
             //Gui.fill(pose, x+pos.x*10, y+pos.y*10, x+pos.x*10+10, y+pos.y*10+10, color);
         }
@@ -161,10 +161,10 @@ public class SnakeLayout extends Layout {
         public void handleKeyPressed(int keyCode, int scanCode, int modifiers) {
             super.handleKeyPressed(keyCode, scanCode, modifiers);
             switch (keyCode) {
-                case InputConstants.KEY_W -> up();
-                case InputConstants.KEY_S -> down();
-                case InputConstants.KEY_A -> left();
-                case InputConstants.KEY_D -> right();
+                case GLFW.GLFW_KEY_W -> up();
+                case GLFW.GLFW_KEY_S -> down();
+                case GLFW.GLFW_KEY_A -> left();
+                case GLFW.GLFW_KEY_D -> right();
             }
         }
 

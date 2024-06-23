@@ -1,15 +1,15 @@
 package com.ultreon.devices.core;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.ultreon.devices.api.app.Application;
 import com.ultreon.devices.api.app.Dialog;
 import com.ultreon.devices.gui.GuiButtonClose;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.gui.IngameGui;
+import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
 import java.awt.*;
@@ -47,7 +47,7 @@ public class Window<T extends Wrappable> {
         }
     }
 
-    void init(int x, int y, @Nullable CompoundTag intent) {
+    void init(int x, int y, @Nullable CompoundNBT intent) {
         try {
             btnClose = new GuiButtonClose(x + offsetX + width - 12, y + offsetY + 1);
             content.init(intent);
@@ -74,7 +74,7 @@ public class Window<T extends Wrappable> {
         content.onTick();
     }
 
-    public void render(PoseStack pose, Laptop gui, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
+    public void render(MatrixStack pose, Laptop gui, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
         if (content.isPendingLayoutUpdate()) {
             this.setWidth(content.getWidth());
             this.setHeight(content.getHeight());
@@ -86,9 +86,9 @@ public class Window<T extends Wrappable> {
 
         pose.pushPose();
 
-        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+        RenderSystem.blendColor(1f, 1f, 1f, 1f);
         RenderSystem.enableBlend();
-        RenderSystem.setShaderTexture(0, WINDOW_GUI);
+        mc.textureManager.bind(WINDOW_GUI);
 
         /* Corners */
         gui.blit(pose, x + offsetX, y + offsetY, 0, 0, 1, 13);
@@ -97,13 +97,13 @@ public class Window<T extends Wrappable> {
         gui.blit(pose, x + offsetX, y + offsetY + height - 1, 0, 14, 1, 1);
 
         /* Edges */
-        GuiComponent.blit(pose, x + offsetX + 1, y + offsetY, width - 14, 13, 1, 0, 1, 13, 256, 256);
-        GuiComponent.blit(pose, x + offsetX + width - 1, y + offsetY + 13, 1, height - 14, 14, 13, 1, 1, 256, 256);
-        GuiComponent.blit(pose, x + offsetX + 1, y + offsetY + height - 1, width - 2, 1, 1, 14, 13, 1, 256, 256);
-        GuiComponent.blit(pose, x + offsetX, y + offsetY + 13, 1, height - 14, 0, 13, 1, 1, 256, 256);
+        AbstractGui.blit(pose, x + offsetX + 1, y + offsetY, width - 14, 13, 1, 0, 1, 13, 256, 256);
+        AbstractGui.blit(pose, x + offsetX + width - 1, y + offsetY + 13, 1, height - 14, 14, 13, 1, 1, 256, 256);
+        AbstractGui.blit(pose, x + offsetX + 1, y + offsetY + height - 1, width - 2, 1, 1, 14, 13, 1, 256, 256);
+        AbstractGui.blit(pose, x + offsetX, y + offsetY + 13, 1, height - 14, 0, 13, 1, 1, 256, 256);
 
         /* Center */
-        GuiComponent.blit(pose, x + offsetX + 1, y + offsetY + 13, width - 2, height - 14, 1, 13, 13, 1, 256, 256);
+        AbstractGui.blit(pose, x + offsetX + 1, y + offsetY + 13, width - 2, height - 14, 1, 13, 13, 1, 256, 256);
 
         String windowTitle = content.getWindowTitle();
         if (mc.font.width(windowTitle) > width - 2 - 13 - 3) { // window width, border, close button, padding, padding
@@ -118,10 +118,10 @@ public class Window<T extends Wrappable> {
         /* Render content */
         content.render(pose, gui, mc, x + offsetX + 1, y + offsetY + 13, mouseX, mouseY, active && dialogWindow == null, partialTicks);
 
-        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+        RenderSystem.blendColor(1f, 1f, 1f, 1f);
 
         if (dialogWindow != null) {
-            Gui.fill(pose, x + offsetX, y + offsetY, x + offsetX + width, y + offsetY + height, Color_WINDOW_DARK);
+            IngameGui.fill(pose, x + offsetX, y + offsetY, x + offsetX + width, y + offsetY + height, Color_WINDOW_DARK);
             dialogWindow.render(pose, gui, mc, x, y, mouseX, mouseY, active, partialTicks);
         }
         pose.popPose();

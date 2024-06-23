@@ -8,11 +8,11 @@ import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.core.io.action.FileAction;
 import com.ultreon.devices.core.io.task.TaskGetFiles;
 import com.ultreon.devices.programs.system.component.FileBrowser;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.NonNullList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.INBT;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -48,14 +48,14 @@ public class Folder extends File {
      * @param folderTag the tag compound from {@link #toTag()}
      * @return a folder instance
      */
-    public static Folder fromTag(String name, CompoundTag folderTag) {
+    public static Folder fromTag(String name, CompoundNBT folderTag) {
         Folder folder = new Folder(name);
 
-        if (folderTag.contains("protected", Tag.TAG_BYTE)) folder.protect = folderTag.getBoolean("protected");
+        if (folderTag.contains("protected", Constants.NBT.TAG_BYTE)) folder.protect = folderTag.getBoolean("protected");
 
-        CompoundTag fileList = folderTag.getCompound("files");
+        CompoundNBT fileList = folderTag.getCompound("files");
         for (String fileName : fileList.getAllKeys()) {
-            CompoundTag fileTag = fileList.getCompound(fileName);
+            CompoundNBT fileTag = fileList.getCompound(fileName);
             if (fileTag.contains("files")) {
                 File file = Folder.fromTag(fileName, fileTag);
                 file.parent = folder;
@@ -409,7 +409,7 @@ public class Folder extends File {
      * @param data the data to set
      */
     @Override
-    public void setData(@Nonnull CompoundTag data) {
+    public void setData(@Nonnull CompoundNBT data) {
 
     }
 
@@ -421,7 +421,7 @@ public class Folder extends File {
      * @param callback the response callback
      */
     @Override
-    public void setData(@Nonnull CompoundTag data, Callback<FileSystem.Response> callback) {
+    public void setData(@Nonnull CompoundNBT data, Callback<FileSystem.Response> callback) {
         if (callback != null) {
             callback.execute(FileSystem.createResponse(FileSystem.Status.FAILED, "Can not set data of a folder"), false);
         }
@@ -438,10 +438,10 @@ public class Folder extends File {
      *
      * @param list the tag list to read from
      */
-    public void syncFiles(ListTag list) {
+    public void syncFiles(ListNBT list) {
         files.removeIf(f -> !f.isFolder());
         for (int i = 0; i < list.size(); i++) {
-            CompoundTag fileTag = list.getCompound(i);
+            CompoundNBT fileTag = list.getCompound(i);
             File file = File.fromTag(fileTag.getString("file_name"), fileTag.getCompound("data"));
             file.drive = drive;
             file.valid = true;
@@ -465,8 +465,8 @@ public class Folder extends File {
 
             Task task = new TaskGetFiles(this, pos);
             task.setCallback((tag, success) -> {
-                if (success && Objects.requireNonNull(tag).contains("files", Tag.TAG_LIST)) {
-                    ListTag files = tag.getList("files", Tag.TAG_COMPOUND);
+                if (success && Objects.requireNonNull(tag).contains("files", Constants.NBT.TAG_LIST)) {
+                    ListNBT files = tag.getList("files", Constants.NBT.TAG_COMPOUND);
                     syncFiles(files);
                     if (callback != null) {
                         callback.execute(this, true);
@@ -517,10 +517,10 @@ public class Folder extends File {
      * @return the folder tag
      */
     @Override
-    public CompoundTag toTag() {
-        CompoundTag folderTag = new CompoundTag();
+    public CompoundNBT toTag() {
+        CompoundNBT folderTag = new CompoundNBT();
 
-        CompoundTag fileList = new CompoundTag();
+        CompoundNBT fileList = new CompoundNBT();
         files.forEach(file -> fileList.put(file.getName(), file.toTag()));
         folderTag.put("files", fileList);
 

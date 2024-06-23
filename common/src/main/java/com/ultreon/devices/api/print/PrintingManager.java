@@ -3,9 +3,9 @@ package com.ultreon.devices.api.print;
 import com.google.common.collect.HashBiMap;
 import com.ultreon.devices.Devices;
 import dev.architectury.injectables.annotations.PlatformOnly;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
@@ -17,7 +17,7 @@ import java.util.Map;
 public class PrintingManager {
     private static final HashBiMap<String, Class<? extends IPrint>> registeredPrints = HashBiMap.create();
 
-    @Environment(EnvType.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     private static Map<String, IPrint.Renderer> registeredRenders;
     @PlatformOnly("fabric")
     public static Map<String, IPrint.Renderer> getRegisteredRenders() {
@@ -61,13 +61,13 @@ public class PrintingManager {
         return null;
     }
 
-    @Environment(EnvType.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public static IPrint.Renderer getRenderer(IPrint print) {
         String id = getPrintIdentifier(print);
         return registeredRenders.get(id);
     }
 
-    @Environment(EnvType.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public static IPrint.Renderer getRenderer(String identifier) {
         return registeredRenders.get(identifier);
     }

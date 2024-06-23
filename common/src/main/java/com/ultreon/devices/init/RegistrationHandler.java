@@ -1,7 +1,7 @@
 package com.ultreon.devices.init;
 
-import dev.architectury.utils.EnvExecutor;
-import net.fabricmc.api.EnvType;
+import net.minecraftforge.api.distmarker.DistExecutor;
+import net.minecraftforge.api.distmarker.Dist;
 
 /**
  * @author MrCrayfish
@@ -13,6 +13,6 @@ public class RegistrationHandler {
         DeviceBlocks.register();
         DeviceItems.register();
         DeviceSounds.register();
-        EnvExecutor.runInEnv(EnvType.CLIENT, () -> DeviceEntityRenderers::register);
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> DeviceEntityRenderers::register);
     }
 }

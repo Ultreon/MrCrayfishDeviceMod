@@ -3,9 +3,9 @@ package com.ultreon.devices.programs.email.task;
 import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.programs.email.EmailManager;
 import com.ultreon.devices.programs.email.object.Email;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.World;
 
 public class TaskSendEmail extends Task {
     private Email email;
@@ -22,13 +22,13 @@ public class TaskSendEmail extends Task {
     }
 
     @Override
-    public void prepareRequest(CompoundTag nbt) {
+    public void prepareRequest(CompoundNBT nbt) {
         this.email.save(nbt);
         nbt.putString("to", this.to);
     }
 
     @Override
-    public void processRequest(CompoundTag nbt, Level level, Player player) {
+    public void processRequest(CompoundNBT nbt, World level, PlayerEntity player) {
         String name = EmailManager.INSTANCE.getName(player);
         if (name != null) {
             Email email = Email.readFromNBT(nbt);
@@ -40,11 +40,11 @@ public class TaskSendEmail extends Task {
     }
 
     @Override
-    public void prepareResponse(CompoundTag nbt) {
+    public void prepareResponse(CompoundNBT nbt) {
     }
 
     @Override
-    public void processResponse(CompoundTag nbt) {
+    public void processResponse(CompoundNBT nbt) {
     }
 
 }

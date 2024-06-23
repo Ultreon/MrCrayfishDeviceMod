@@ -1,7 +1,7 @@
 package com.ultreon.devices.programs.system.component;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.ultreon.devices.api.ApplicationManager;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Dialog;
@@ -27,15 +27,15 @@ import com.ultreon.devices.core.io.task.TaskGetStructure;
 import com.ultreon.devices.core.io.task.TaskSetupFileBrowser;
 import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.programs.system.SystemApp;
-import net.minecraft.ChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.gui.IngameGui;
+import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
 import java.lang.System;
@@ -60,12 +60,12 @@ public class FileBrowser extends Component {
 
     private static final ListItemRenderer<File> ITEM_RENDERER = new ListItemRenderer<>(18) {
         @Override
-        public void render(PoseStack pose, File file, GuiComponent gui, Minecraft mc, int x, int y, int width, int height, boolean selected) {
+        public void render(MatrixStack pose, File file, AbstractGui gui, Minecraft mc, int x, int y, int width, int height, boolean selected) {
             Color bgColor = new Color(Laptop.getSystem().getSettings().getColorScheme().getBackgroundColor());
-            Gui.fill(pose, x, y, x + width, y + height, selected ? bgColor.brighter().brighter().getRGB() : bgColor.brighter().getRGB());
+            IngameGui.fill(pose, x, y, x + width, y + height, selected ? bgColor.brighter().brighter().getRGB() : bgColor.brighter().getRGB());
 
-            RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-            RenderSystem.setShaderTexture(0, ASSETS);
+            RenderSystem.blendColor(1f, 1f, 1f, 1f);
+            mc.textureManager.bind(ASSETS);
             if (file.isFolder()) {
                 RenderUtil.drawRectWithTexture(pose, x + 3, y + 2, 0, 0, 14, 14, 14, 14);
             } else {
@@ -118,7 +118,7 @@ public class FileBrowser extends Component {
     /**
      * The default constructor for a component. For your component to
      * be laid out correctly, make sure you use the x and y parameters
-     * from {@link Wrappable#init(CompoundTag)} and pass them into the
+     * from {@link Wrappable#init(CompoundNBT)} and pass them into the
      * x and y arguments of this constructor.
      * <p>
      * Laying out the components is a simple relative positioning. So for left (x position),
@@ -139,8 +139,8 @@ public class FileBrowser extends Component {
         layoutMain = new Layout(mode.getWidth(), mode.getHeight());
         layoutMain.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
             Color color = new Color(Laptop.getSystem().getSettings().getColorScheme().getHeaderColor());
-            Gui.fill(pose, x, y, x + width, y + 20, color.getRGB());
-            Gui.fill(pose, x, y + 20, x + width, y + 21, color.darker().getRGB());
+            IngameGui.fill(pose, x, y, x + width, y + 20, color.getRGB());
+            IngameGui.fill(pose, x, y + 20, x + width, y + 21, color.darker().getRGB());
         });
 
         btnPreviousFolder = new Button(5, 2, Icons.ARROW_LEFT);
@@ -260,7 +260,7 @@ public class FileBrowser extends Component {
                                         createErrorDialog(targetApp.getInfo().getName() + " was unable to open the file.");
                                     }
                                 } else {
-                                    createErrorDialog("This file could not be open because the application '" + ChatFormatting.YELLOW + targetApp.getInfo().getName() + ChatFormatting.RESET + "' is not installed.");
+                                    createErrorDialog("This file could not be open because the application '" + TextFormatting.YELLOW + targetApp.getInfo().getName() + TextFormatting.RESET + "' is not installed.");
                                 }
                             } else {
                                 createErrorDialog("The application designed for this file does not exist.");
@@ -281,11 +281,11 @@ public class FileBrowser extends Component {
         comboBoxDrive.setChangeListener((oldValue, newValue) -> openDrive(newValue));
         comboBoxDrive.setListItemRenderer(new ListItemRenderer<>(12) {
             @Override
-            public void render(PoseStack pose, Drive drive, GuiComponent gui, Minecraft mc, int x, int y, int width, int height, boolean selected) {
+            public void render(MatrixStack pose, Drive drive, AbstractGui gui, Minecraft mc, int x, int y, int width, int height, boolean selected) {
                 Color bgColor = new Color(getColorScheme().getBackgroundColor());
                 fill(pose, x, y, x + width, y + height, selected ? bgColor.brighter().brighter().getRGB() : bgColor.brighter().getRGB());
-                RenderSystem.setShaderTexture(0, ASSETS);
-                RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+                mc.textureManager.bind(ASSETS);
+                RenderSystem.blendColor(1f, 1f, 1f, 1f);
                 RenderUtil.drawRectWithTexture(pose, x + 2, y + 2, drive.getType().ordinal() * 8, 30, 8, 8, 8, 8);
 
                 String text = drive.getName();
@@ -302,7 +302,7 @@ public class FileBrowser extends Component {
         layout.addComponent(layoutMain);
 
         layoutLoading = new Layout(mode.getOffset(), 25, fileList.getWidth(), fileList.getHeight());
-        layoutLoading.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> Gui.fill(pose, x, y, x + width, y + height, Window.Color_WINDOW_DARK));
+        layoutLoading.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> IngameGui.fill(pose, x, y, x + width, y + height, Window.Color_WINDOW_DARK));
         layoutLoading.setVisible(false);
 
         spinnerLoading = new Spinner((layoutLoading.width - 12) / 2, (layoutLoading.height - 12) / 2);
@@ -320,7 +320,7 @@ public class FileBrowser extends Component {
                 if (success) {
                     if (Laptop.getMainDrive() == null) {
                         assert tag != null;
-                        CompoundTag structureTag = tag.getCompound("structure");
+                        CompoundNBT structureTag = tag.getCompound("structure");
                         Drive drive = new Drive(tag.getCompound("main_drive"));
                         drive.syncRoot(Folder.fromTag(FileSystem.LAPTOP_DRIVE_NAME, structureTag));
                         drive.getRoot().validate();
@@ -328,11 +328,11 @@ public class FileBrowser extends Component {
                     }
 
                     assert tag != null;
-                    ListTag driveList = tag.getList("available_drives", Tag.TAG_COMPOUND);
+                    ListNBT driveList = tag.getList("available_drives", Constants.NBT.TAG_COMPOUND);
                     Drive[] drives = new Drive[driveList.size() + 1];
                     drives[0] = currentDrive = Laptop.getMainDrive();
                     for (int i = 0; i < driveList.size(); i++) {
-                        CompoundTag driveTag = driveList.getCompound(i);
+                        CompoundNBT driveTag = driveList.getCompound(i);
                         drives[i + 1] = new Drive(driveTag);
                     }
                     comboBoxDrive.setItems(drives);
@@ -424,8 +424,8 @@ public class FileBrowser extends Component {
             task.setCallback((tag, success) -> {
                 if (success) {
                     assert tag != null;
-                    if (tag.contains("files", Tag.TAG_LIST)) {
-                        ListTag files = tag.getList("files", Tag.TAG_COMPOUND);
+                    if (tag.contains("files", Constants.NBT.TAG_LIST)) {
+                        ListNBT files = tag.getList("files", Constants.NBT.TAG_COMPOUND);
                         folder.syncFiles(files);
                         setCurrentFolder(folder, push);
                     }
@@ -731,7 +731,7 @@ public class FileBrowser extends Component {
 
     private void updatePath() {
         String path = currentFolder.getPath();
-        path = path.replace("/", ChatFormatting.GOLD + "/" + ChatFormatting.RESET);
+        path = path.replace("/", TextFormatting.GOLD + "/" + TextFormatting.RESET);
         int width = Minecraft.getInstance().font.width(path);
         if (width > 144) {
             path = "..." + Minecraft.getInstance().font.plainSubstrByWidth(path, 144, true);

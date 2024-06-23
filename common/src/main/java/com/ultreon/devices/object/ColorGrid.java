@@ -1,6 +1,6 @@
 package com.ultreon.devices.object;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.component.Slider;
 import com.ultreon.devices.core.Laptop;
@@ -31,7 +31,7 @@ public class ColorGrid extends Component {
     }
 
     @Override
-    public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(MatrixStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         int endX = xPosition + width + 2;
         int endY = yPosition + (colors.length / 5) * 10 + 2;
         fill(pose, xPosition, yPosition, endX, endY, Color.DARK_GRAY.getRGB());

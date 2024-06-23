@@ -2,22 +2,22 @@ package com.ultreon.devices.block.entity;
 
 import com.ultreon.devices.core.network.Router;
 import com.ultreon.devices.init.DeviceBlockEntities;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.block.BlockState;
 
 @SuppressWarnings("unused")
 public class RouterBlockEntity extends DeviceBlockEntity.Colored {
     private Router router;
 
-    @Environment(EnvType.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     private int debugTimer;
 
-    public RouterBlockEntity(BlockPos pWorldPosition, BlockState pBlockState) {
-        super(DeviceBlockEntities.ROUTER.get(), pWorldPosition, pBlockState);
+    public RouterBlockEntity() {
+        super(DeviceBlockEntities.ROUTER.get());
     }
 
     public Router getRouter() {
@@ -37,12 +37,12 @@ public class RouterBlockEntity extends DeviceBlockEntity.Colored {
         }
     }
 
-    @Environment(EnvType.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public boolean isDebug() {
         return debugTimer > 0;
     }
 
-    @Environment(EnvType.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void setDebug(boolean debug) {
         if (debug) {
             debugTimer = 1200;
@@ -56,9 +56,9 @@ public class RouterBlockEntity extends DeviceBlockEntity.Colored {
     }
 
     @Override
-    public void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
-        if (tag.contains("router", Tag.TAG_COMPOUND)) {
+    public void save(CompoundNBT tag) {
+        super.save(tag);
+        if (tag.contains("router", Constants.NBT.TAG_COMPOUND)) {
             router = Router.fromTag(worldPosition, tag.getCompound("router"));
         }
     }

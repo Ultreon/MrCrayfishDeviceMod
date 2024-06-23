@@ -4,13 +4,13 @@ import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.block.entity.NetworkDeviceBlockEntity;
 import com.ultreon.devices.core.network.NetworkDevice;
 import com.ultreon.devices.core.network.Router;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.World;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.chunk.Chunk;
 
 import java.util.Collection;
 
@@ -39,7 +39,7 @@ public class TaskGetDevices extends Task {
     }
 
     @Override
-    public void prepareRequest(CompoundTag tag) {
+    public void prepareRequest(CompoundNBT tag) {
         tag.putLong("devicePos", devicePos.asLong());
         if (targetDeviceClass != null) {
             tag.putString("targetClass", targetDeviceClass.getName());
@@ -48,7 +48,7 @@ public class TaskGetDevices extends Task {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void processRequest(CompoundTag tag, Level level, Player player) {
+    public void processRequest(CompoundNBT tag, World level, PlayerEntity player) {
         BlockPos devicePos = BlockPos.of(tag.getLong("devicePos"));
         Class<? extends NetworkDeviceBlockEntity> targetDeviceClass = null;
         try {
@@ -60,7 +60,7 @@ public class TaskGetDevices extends Task {
             e.printStackTrace();
         }
 
-        BlockEntity tileEntity = level.getChunkAt(devicePos).getBlockEntity(devicePos, LevelChunk.EntityCreationType.IMMEDIATE);
+        TileEntity tileEntity = level.getChunkAt(devicePos).getBlockEntity(devicePos, Chunk.CreateEntityType.IMMEDIATE);
         if (tileEntity instanceof NetworkDeviceBlockEntity tileEntityNetworkDevice) {
             if (tileEntityNetworkDevice.isConnected()) {
                 Router router = tileEntityNetworkDevice.getRouter();
@@ -77,16 +77,16 @@ public class TaskGetDevices extends Task {
     }
 
     @Override
-    public void prepareResponse(CompoundTag tag) {
+    public void prepareResponse(CompoundNBT tag) {
         if (this.isSucessful()) {
-            ListTag deviceList = new ListTag();
+            ListNBT deviceList = new ListNBT();
             foundDevices.forEach(device -> deviceList.add(device.toTag(true)));
             tag.put("network_devices", deviceList);
         }
     }
 
     @Override
-    public void processResponse(CompoundTag tag) {
+    public void processResponse(CompoundNBT tag) {
 
     }
 }

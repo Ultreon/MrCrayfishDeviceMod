@@ -1,6 +1,6 @@
 package com.ultreon.devices.api.app.component;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Layout;
@@ -9,8 +9,8 @@ import com.ultreon.devices.api.app.renderer.ListItemRenderer;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.core.NonNullList;
+import net.minecraft.client.gui.IngameGui;
+import net.minecraft.util.NonNullList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -88,7 +88,7 @@ public class ItemList<E> extends Component implements Iterable<E> {
         layoutLoading.setVisible(loading);
         layoutLoading.addComponent(new Spinner((layoutLoading.width - 12) / 2, (layoutLoading.height - 12) / 2));
         layoutLoading.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) ->
-                Gui.fill(pose, x, y, x + width, y + height, LOADING_BACKGROUND));
+                IngameGui.fill(pose, x, y, x + width, y + height, LOADING_BACKGROUND));
         layout.addComponent(layoutLoading);
 
         updateButtons();
@@ -98,7 +98,7 @@ public class ItemList<E> extends Component implements Iterable<E> {
     }
 
     @Override
-    public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(MatrixStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         if (this.visible) {
             int height = 13;
             if (renderer != null) {
@@ -111,7 +111,7 @@ public class ItemList<E> extends Component implements Iterable<E> {
             Color borderColor = bgColor.darker().darker();
 
             /* Fill */
-            Gui.fill(pose, xPosition + 1, yPosition + 1, xPosition + width - 1, yPosition + (size * height) + size, bgColor.getRGB());
+            IngameGui.fill(pose, xPosition + 1, yPosition + 1, xPosition + width - 1, yPosition + (size * height) + size, bgColor.getRGB());
 
             /* Box */
             drawHorizontalLine(pose, xPosition, xPosition + width - 1, yPosition, borderColor.getRGB());

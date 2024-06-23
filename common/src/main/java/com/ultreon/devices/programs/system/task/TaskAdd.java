@@ -3,9 +3,9 @@ package com.ultreon.devices.programs.system.task;
 import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.api.utils.BankUtil;
 import com.ultreon.devices.programs.system.object.Account;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.World;
 
 public class TaskAdd extends Task {
     private int amount;
@@ -20,12 +20,12 @@ public class TaskAdd extends Task {
     }
 
     @Override
-    public void prepareRequest(CompoundTag tag) {
+    public void prepareRequest(CompoundNBT tag) {
         tag.putInt("amount", this.amount);
     }
 
     @Override
-    public void processRequest(CompoundTag tag, Level level, Player player) {
+    public void processRequest(CompoundNBT tag, World level, PlayerEntity player) {
         int amount = tag.getInt("amount");
         Account sender = BankUtil.INSTANCE.getAccount(player);
         sender.add(amount);
@@ -33,11 +33,11 @@ public class TaskAdd extends Task {
     }
 
     @Override
-    public void prepareResponse(CompoundTag tag) {
+    public void prepareResponse(CompoundNBT tag) {
         tag.putInt("balance", this.amount);
     }
 
     @Override
-    public void processResponse(CompoundTag tag) {
+    public void processResponse(CompoundNBT tag) {
     }
 }

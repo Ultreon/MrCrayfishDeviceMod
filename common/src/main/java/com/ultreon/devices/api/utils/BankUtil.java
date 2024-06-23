@@ -8,9 +8,9 @@ import com.ultreon.devices.programs.system.task.TaskAdd;
 import com.ultreon.devices.programs.system.task.TaskGetBalance;
 import com.ultreon.devices.programs.system.task.TaskPay;
 import com.ultreon.devices.programs.system.task.TaskRemove;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +42,7 @@ public class BankUtil implements WorldSavedData {
      *
      * @param callback he callback object to processing the response
      */
-    public static void getBalance(Callback<CompoundTag> callback) {
+    public static void getBalance(Callback<CompoundNBT> callback) {
         TaskManager.sendTask(new TaskGetBalance().setCallback(callback));
     }
 
@@ -55,7 +55,7 @@ public class BankUtil implements WorldSavedData {
      * @param amount   the amount to pay
      * @param callback the callback object to processing the response
      */
-    public static void pay(String uuid, int amount, Callback<CompoundTag> callback) {
+    public static void pay(String uuid, int amount, Callback<CompoundNBT> callback) {
         TaskManager.sendTask(new TaskPay().setCallback(callback));
     }
 
@@ -66,7 +66,7 @@ public class BankUtil implements WorldSavedData {
      *
      * @param callback he callback object to processing the response
      */
-    public static void add(int amount, Callback<CompoundTag> callback) {
+    public static void add(int amount, Callback<CompoundNBT> callback) {
         TaskManager.sendTask(new TaskAdd(amount).setCallback(callback));
     }
 
@@ -77,13 +77,13 @@ public class BankUtil implements WorldSavedData {
      *
      * @param callback he callback object to processing the response
      */
-    public static void remove(int amount, Callback<CompoundTag> callback) {
+    public static void remove(int amount, Callback<CompoundNBT> callback) {
         TaskManager.sendTask(new TaskRemove(amount).setCallback(callback));
     }
 
     //TODO: Make private. Only the bank application should have access to these.
 
-    public Account getAccount(Player player) {
+    public Account getAccount(PlayerEntity player) {
         if (!uuidToAccount.containsKey(player.getUUID())) {
             uuidToAccount.put(player.getUUID(), new Account(0));
         }
@@ -94,10 +94,10 @@ public class BankUtil implements WorldSavedData {
         return uuidToAccount.get(uuid);
     }
 
-    public void save(CompoundTag tag) {
-        ListTag accountList = new ListTag();
+    public void save(CompoundNBT tag) {
+        ListNBT accountList = new ListNBT();
         for (UUID uuid : uuidToAccount.keySet()) {
-            CompoundTag accountTag = new CompoundTag();
+            CompoundNBT accountTag = new CompoundNBT();
             Account account = uuidToAccount.get(uuid);
             accountTag.putString("uuid", uuid.toString());
             accountTag.putInt("balance", account.getBalance());
@@ -106,10 +106,10 @@ public class BankUtil implements WorldSavedData {
         tag.put("accounts", accountList);
     }
 
-    public void load(CompoundTag tag) {
-        ListTag accountList = (ListTag) tag.get("accounts");
+    public void load(CompoundNBT tag) {
+        ListNBT accountList = (ListNBT) tag.get("accounts");
         for (int i = 0; i < accountList.size(); i++) {
-            CompoundTag accountTag = accountList.getCompound(i);
+            CompoundNBT accountTag = accountList.getCompound(i);
             UUID uuid = UUID.fromString(accountTag.getString("uuid"));
             Account account = new Account(accountTag.getInt("balance"));
             uuidToAccount.put(uuid, account);

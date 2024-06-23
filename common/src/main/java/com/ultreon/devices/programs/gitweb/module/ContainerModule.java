@@ -7,9 +7,9 @@ import com.ultreon.devices.api.app.component.Text;
 import com.ultreon.devices.programs.gitweb.component.GitWebFrame;
 import com.ultreon.devices.programs.gitweb.component.container.ContainerBox;
 import com.ultreon.devices.programs.gitweb.component.container.CraftingBox;
-import net.minecraft.ChatFormatting;
-import net.minecraft.nbt.TagParser;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.nbt.INBTParser;
+import net.minecraft.item.ItemStack;
 
 import java.util.Map;
 
@@ -47,7 +47,7 @@ public abstract class ContainerModule extends Module {
         if (data.containsKey("title") || data.containsKey("desc")) {
             if (data.containsKey("title")) {
                 String s = GitWebFrame.parseFormatting(data.get("title"));
-                Label label = new Label(ChatFormatting.BOLD + s, 5, 5);
+                Label label = new Label(TextFormatting.BOLD + s, 5, 5);
                 layout.addComponent(label);
             }
             if (data.containsKey("desc")) {

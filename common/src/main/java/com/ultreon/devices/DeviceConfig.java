@@ -2,8 +2,8 @@ package com.ultreon.devices;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.architectury.platform.Platform;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class DeviceConfig {
@@ -54,20 +54,20 @@ public class DeviceConfig {
                 .define(CATEGORY_PIXEL_PAINTER + ".renderPrintedIn3d", false);
 
         DEBUG_BUTTON = builder.comment("Display a button to access a worldless laptop")
-                .define(CATEGORY_DEBUG + ".debugButton", Platform.isDevelopmentEnvironment());
+                .define(CATEGORY_DEBUG + ".debugButton", Platform.isDevelopmentOnlyIn());
 
         CONFIG = builder.build();
     }
 
     // TODO *** Add read/write of synchronization tags of the config file if needed ***
 
-    public static void readSyncTag(CompoundTag tag) {
-        if (tag.contains("pingRate", Tag.TAG_INT)) PING_RATE.set(tag.getInt("pingRate"));
-        if (tag.contains("signalRange", Tag.TAG_INT)) SIGNAL_RANGE.set(tag.getInt("signalRange"));
+    public static void readSyncTag(CompoundNBT tag) {
+        if (tag.contains("pingRate", Constants.NBT.TAG_INT)) PING_RATE.set(tag.getInt("pingRate"));
+        if (tag.contains("signalRange", Constants.NBT.TAG_INT)) SIGNAL_RANGE.set(tag.getInt("signalRange"));
     }
 
-    public static CompoundTag writeSyncTag() {
-        CompoundTag tag = new CompoundTag();
+    public static CompoundNBT writeSyncTag() {
+        CompoundNBT tag = new CompoundNBT();
         tag.putInt("pingRate", PING_RATE.get());
         tag.putInt("signalRange", SIGNAL_RANGE.get());
         return tag;

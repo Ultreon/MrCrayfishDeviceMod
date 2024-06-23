@@ -2,11 +2,11 @@ package com.ultreon.devices.core.network;
 
 import com.ultreon.devices.DeviceConfig;
 import com.ultreon.devices.block.entity.NetworkDeviceBlockEntity;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.world.World;
+import net.minecraft.tileentity.TileEntity;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -26,7 +26,7 @@ public class Router {
         this.pos = pos;
     }
 
-    public void tick(Level level) {
+    public void tick(World level) {
         if (++timer >= DeviceConfig.BEACON_INTERVAL.get()) {
             sendBeacon(level);
             timer = 0;
@@ -67,7 +67,7 @@ public class Router {
     }
 
     @Nullable
-    public NetworkDeviceBlockEntity getDevice(Level level, UUID id) {
+    public NetworkDeviceBlockEntity getDevice(World level, UUID id) {
         return NETWORK_DEVICES.containsKey(id) ? NETWORK_DEVICES.get(id).getDevice(level) : null;
     }
 
@@ -75,17 +75,17 @@ public class Router {
         return NETWORK_DEVICES.values();
     }
 
-    public Collection<NetworkDevice> getConnectedDevices(Level level) {
+    public Collection<NetworkDevice> getConnectedDevices(World level) {
         sendBeacon(level);
         return NETWORK_DEVICES.values().stream().filter(device -> device.getPos() != null).toList();
     }
 
-    public Collection<NetworkDevice> getConnectedDevices(final Level level, Class<? extends NetworkDeviceBlockEntity> type) {
+    public Collection<NetworkDevice> getConnectedDevices(final World level, Class<? extends NetworkDeviceBlockEntity> type) {
         final Predicate<NetworkDevice> DEVICE_TYPE = networkDevice -> {
             if (networkDevice.getPos() == null)
                 return false;
 
-            BlockEntity blockEntity = level.getBlockEntity(networkDevice.getPos());
+            TileEntity blockEntity = level.getBlockEntity(networkDevice.getPos());
             if (blockEntity instanceof NetworkDeviceBlockEntity device) {
                 return type.isAssignableFrom(device.getClass());
             }
@@ -94,7 +94,7 @@ public class Router {
         return getConnectedDevices(level).stream().filter(DEVICE_TYPE).toList();
     }
 
-    private void sendBeacon(Level level) {
+    private void sendBeacon(World level) {
         if (level.isClientSide)
             return;
 
@@ -104,7 +104,7 @@ public class Router {
             for (int y = -range; y <= range; y++) {
                 for (int z = -range; z <= range; z++) {
                     BlockPos currentPos = new BlockPos(pos.getX() + x, pos.getY() + y, pos.getZ() + z);
-                    BlockEntity blockEntity = level.getBlockEntity(currentPos);
+                    TileEntity blockEntity = level.getBlockEntity(currentPos);
                     if (blockEntity instanceof NetworkDeviceBlockEntity device) {
                         if (!NETWORK_DEVICES.containsKey(device.getId()))
                             continue;
@@ -132,11 +132,11 @@ public class Router {
         this.pos = pos;
     }
 
-    public CompoundTag toTag(boolean includePos) {
-        CompoundTag tag = new CompoundTag();
+    public CompoundNBT toTag(boolean includePos) {
+        CompoundNBT tag = new CompoundNBT();
         tag.putUUID("id", getId());
 
-        ListTag deviceList = new ListTag();
+        ListNBT deviceList = new ListNBT();
         NETWORK_DEVICES.forEach((id, device) -> {
             deviceList.add(device.toTag(includePos));
         });
@@ -145,11 +145,11 @@ public class Router {
         return tag;
     }
 
-    public static Router fromTag(BlockPos pos, CompoundTag tag) {
+    public static Router fromTag(BlockPos pos, CompoundNBT tag) {
         Router router = new Router(pos);
         router.routerId = tag.getUUID("id");
 
-        ListTag deviceList = tag.getList("network_devices", 10);
+        ListNBT deviceList = tag.getList("network_devices", 10);
         for (int i = 0; i < deviceList.size(); i++) {
             NetworkDevice device = NetworkDevice.fromTag(deviceList.getCompound(i));
             router.NETWORK_DEVICES.put(device.getId(), device);

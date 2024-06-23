@@ -1,7 +1,7 @@
 package com.ultreon.devices.object.tiles;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.ultreon.devices.api.utils.RenderUtil;
 import com.ultreon.devices.object.Game;
 
@@ -13,19 +13,19 @@ public class TileGrass extends Tile
 	}
 
 	@Override
-	public void render(PoseStack pose, Game game, int x, int y, Game.Layer layer)
+	public void render(MatrixStack pose, Game game, int x, int y, Game.Layer layer)
 	{
 		super.render(pose, game, x, y, layer);
 		if(!game.isFullTile(layer, x, y + 1))
 		{
-			RenderSystem.setShaderColor(0.6f, 0.6f, 0.6f, 1f);
+			RenderSystem.blendColor(0.6f, 0.6f, 0.6f, 1f);
 			RenderUtil.drawRectWithTexture(pose, game.xPosition + x * WIDTH, game.yPosition + y * HEIGHT + 6, dirt.x * 16, dirt.y * 16, WIDTH, HEIGHT, 16, 16);
-			RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+			RenderSystem.blendColor(1f, 1f, 1f, 1f);
 		}
 	}
 
 	@Override
-	public void renderForeground(PoseStack pose, Game game, int x, int y, Game.Layer layer)
+	public void renderForeground(MatrixStack pose, Game game, int x, int y, Game.Layer layer)
 	{
 		super.renderForeground(pose, game, x, y, layer);
 

@@ -2,23 +2,23 @@ package com.ultreon.devices.object;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.math.Quaternion;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.matrix.Tessellator;
+import net.minecraft.util.math.vector.Quaternion;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.object.tiles.Tile;
 import com.ultreon.devices.util.KeyboardHelper;
 import com.ultreon.devices.util.Vec2d;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.BoatRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.entity.vehicle.Boat;
 
 import java.util.Objects;
 
-public class Player {
+public class PlayerEntity {
     private static final ResourceLocation boatTextures = new ResourceLocation("textures/entity/boat/oak.png");
     boolean canMove = false;
     private final Game game;
@@ -36,7 +36,7 @@ public class Player {
         return new EntityRendererProvider.Context(Minecraft.getInstance().getEntityRenderDispatcher(), Minecraft.getInstance().getItemRenderer(), Minecraft.getInstance().getResourceManager(), Minecraft.getInstance().getEntityModels(), Minecraft.getInstance().font);
     }
 
-    public Player(Game game) {
+    public PlayerEntity(Game game) {
         this.game = game;
         this.direction = new Vec2d(0, 0);
         this.velocity = new Vec2d(0, 0);
@@ -56,7 +56,7 @@ public class Player {
         posXPrev = posX;
         posYPrev = posY;
 
-        if (KeyboardHelper.isKeyDown(InputConstants.KEY_UP)) {
+        if (KeyboardHelper.isKeyDown(GLFW.GLFW_KEY_UP)) {
             speed += 0.5;
             if (speed >= 3) {
                 speed = 3;
@@ -67,10 +67,10 @@ public class Player {
         } else {
             speed /= 1.1;
         }
-        if (KeyboardHelper.isKeyDown(InputConstants.KEY_LEFT)) {
+        if (KeyboardHelper.isKeyDown(GLFW.GLFW_KEY_LEFT)) {
             rotation -= 8;
         }
-        if (KeyboardHelper.isKeyDown(InputConstants.KEY_RIGHT)) {
+        if (KeyboardHelper.isKeyDown(GLFW.GLFW_KEY_RIGHT)) {
             rotation += 8;
         }
 
@@ -110,7 +110,7 @@ public class Player {
         return (int) (posY / Tile.HEIGHT);
     }
 
-    public void render(PoseStack pose, int x, int y, float partialTicks) {
+    public void render(MatrixStack pose, int x, int y, float partialTicks) {
         float scale = 0.5f;
         double px = x + posXPrev + (posX - posXPrev) * partialTicks;
         double py = y + posYPrev + (posY - posYPrev) * partialTicks;
@@ -124,8 +124,8 @@ public class Player {
         pose.translate(0f, -3d, 0f);
         pose.mulPose(new Quaternion(-90, 1f, 0f, 0f));
         pose.mulPose(new Quaternion(rot, 0f, 1f, 0f));
-        RenderSystem.setShaderTexture(0, boatTextures);
-        Minecraft.getInstance().getEntityRenderDispatcher().render(this.boat, 0, 0, 0, 0f, partialTicks, pose, MultiBufferSource.immediate(Tesselator.getInstance().getBuilder()), 1);
+        mc.textureManager.bind(boatTextures);
+        Minecraft.getInstance().getEntityRenderDispatcher().render(this.boat, 0, 0, 0, 0f, partialTicks, pose, IRenderTypeBuffer.immediate(Tessellator.getInstance().getBuilder()), 1);
         boatModel.render(boat, 0f, 0f, pose, Minecraft.getInstance().renderBuffers().bufferSource(), 1);
         pose.popPose();
 
@@ -144,7 +144,7 @@ public class Player {
         pose.popPose();
     }
 
-//    public static class ModelDummyPlayer extends PlayerModel<net.minecraft.world.entity.player.Player> {
+//    public static class ModelDummyPlayer extends PlayerModel<net.minecraft.entity.player.Player> {
 //        public ModelPart bipedLeftArmwear;
 //        public ModelPart bipedRightArmwear;
 //        public ModelPart bipedLeftLegwear;

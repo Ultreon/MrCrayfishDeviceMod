@@ -2,9 +2,9 @@ package com.ultreon.devices.programs.email.task;
 
 import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.programs.email.EmailManager;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.World;
 
 public class TaskCheckEmailAccount extends Task {
     private boolean hasAccount = false;
@@ -15,12 +15,12 @@ public class TaskCheckEmailAccount extends Task {
     }
 
     @Override
-    public void prepareRequest(CompoundTag tag) {
+    public void prepareRequest(CompoundNBT tag) {
 
     }
 
     @Override
-    public void processRequest(CompoundTag tag, Level level, Player player) {
+    public void processRequest(CompoundNBT tag, World level, PlayerEntity player) {
         this.hasAccount = EmailManager.INSTANCE.hasAccount(player.getUUID());
         if (this.hasAccount) {
             this.name = EmailManager.INSTANCE.getName(player);
@@ -29,12 +29,12 @@ public class TaskCheckEmailAccount extends Task {
     }
 
     @Override
-    public void prepareResponse(CompoundTag tag) {
+    public void prepareResponse(CompoundNBT tag) {
         if (this.isSucessful()) tag.putString("Name", this.name);
     }
 
     @Override
-    public void processResponse(CompoundTag tag) {
+    public void processResponse(CompoundNBT tag) {
 
     }
 

@@ -2,7 +2,7 @@ package com.ultreon.devices.core.io;
 
 import com.ultreon.devices.api.app.Application;
 import com.ultreon.devices.api.io.MimeType;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.CompoundNBT;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
@@ -10,7 +10,7 @@ import java.util.Comparator;
 /**
  * @author MrCrayfish
  */
-public sealed class ServerFile permits ServerFolder {
+public class ServerFile permits ServerFolder {
     public static final Comparator<ServerFile> SORT_BY_NAME = (f1, f2) -> {
         if (f1.isFolder() && !f2.isFolder()) return -1;
         if (!f1.isFolder() && f2.isFolder()) return 1;
@@ -21,7 +21,7 @@ public sealed class ServerFile permits ServerFolder {
     protected ServerFolder parent;
     protected String name;
     protected String openingApp;
-    protected CompoundTag data;
+    protected CompoundNBT data;
     protected boolean protect = false;
     protected long lastModified;
     protected long lastAccessed;
@@ -31,23 +31,23 @@ public sealed class ServerFile permits ServerFolder {
 
     }
 
-    public ServerFile(String name, Application app, CompoundTag data) {
+    public ServerFile(String name, Application app, CompoundNBT data) {
         this(name, app.getInfo().getFormattedId(), data, false);
     }
 
-    public ServerFile(String name, String openingAppId, CompoundTag data) {
+    public ServerFile(String name, String openingAppId, CompoundNBT data) {
         this(name, openingAppId, data, false);
     }
 
-    public ServerFile(String name, String openingAppId, MimeType mimeType, CompoundTag data) {
+    public ServerFile(String name, String openingAppId, MimeType mimeType, CompoundNBT data) {
         this(name, openingAppId, data, mimeType, false);
     }
 
-    private ServerFile(String name, String openingAppId, CompoundTag data,  boolean protect) {
+    private ServerFile(String name, String openingAppId, CompoundNBT data,  boolean protect) {
         this(name, openingAppId, data, MimeType.APPLICATION_OCTET_STREAM, protect);
     }
 
-    private ServerFile(String name, String openingAppId, CompoundTag data, MimeType mimeType, boolean protect) {
+    private ServerFile(String name, String openingAppId, CompoundNBT data, MimeType mimeType, boolean protect) {
         this.name = name;
         this.openingApp = openingAppId;
         this.data = data;
@@ -58,7 +58,7 @@ public sealed class ServerFile permits ServerFolder {
         this.lastAccessed = this.creationTime;
     }
 
-    private ServerFile(String name, boolean protect, CompoundTag tag) {
+    private ServerFile(String name, boolean protect, CompoundNBT tag) {
         this.openingApp = tag.getString("openingApp");
         this.name = name;
         this.data = tag.getCompound("data");
@@ -90,7 +90,7 @@ public sealed class ServerFile permits ServerFolder {
         return openingApp;
     }
 
-    public FileSystem.Response setData(CompoundTag data) {
+    public FileSystem.Response setData(CompoundNBT data) {
         if (this.protect)
             return FileSystem.createResponse(FileSystem.Status.FILE_IS_PROTECTED, "Cannot set data on a protected file");
 
@@ -103,8 +103,8 @@ public sealed class ServerFile permits ServerFolder {
     }
 
     @Nullable
-    public CompoundTag getData() {
-        CompoundTag data1 = data.copy(); // make a copy to prevent modifying the original data
+    public CompoundNBT getData() {
+        CompoundNBT data1 = data.copy(); // make a copy to prevent modifying the original data
         lastAccessed = System.currentTimeMillis();
         return data1;
     }
@@ -148,8 +148,8 @@ public sealed class ServerFile permits ServerFolder {
         return FileSystem.createResponse(FileSystem.Status.FILE_INVALID, "Invalid file");
     }
 
-    public CompoundTag toTag() {
-        CompoundTag tag = new CompoundTag();
+    public CompoundNBT toTag() {
+        CompoundNBT tag = new CompoundNBT();
         tag.putString("openingApp", openingApp);
         tag.putLong("lastModified", lastModified);
         tag.putLong("lastAccessed", lastAccessed);
@@ -158,7 +158,7 @@ public sealed class ServerFile permits ServerFolder {
         return tag;
     }
 
-    public static ServerFile fromTag(String name, CompoundTag tag) {
+    public static ServerFile fromTag(String name, CompoundNBT tag) {
         return new ServerFile(name, false, tag);
     }
 

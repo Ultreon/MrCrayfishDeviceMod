@@ -1,18 +1,18 @@
 package com.ultreon.devices.block.entity;
 
 import com.ultreon.devices.DeviceConfig;
-import com.ultreon.devices.core.network.Connection;
+import com.ultreon.devices.core.network.NetworkManager;
 import com.ultreon.devices.core.network.Router;
 import com.ultreon.devices.util.Colorable;
 import com.ultreon.devices.util.Tickable;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.util.text.Component;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.item.DyeColor;
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.block.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,10 +21,10 @@ import java.util.Objects;
 @SuppressWarnings("unused")
 public abstract class NetworkDeviceBlockEntity extends DeviceBlockEntity implements Tickable {
     private int counter;
-    private Connection connection;
+    private NetworkManager connection;
 
-    public NetworkDeviceBlockEntity(BlockEntityType<?> pType, BlockPos pWorldPosition, BlockState pBlockState) {
-        super(pType, pWorldPosition, pBlockState);
+    public NetworkDeviceBlockEntity(TileEntityType<?> pType) {
+        super(pType);
     }
 
     public void tick() {
@@ -53,12 +53,12 @@ public abstract class NetworkDeviceBlockEntity extends DeviceBlockEntity impleme
             connection = null;
             return;
         }
-        connection = new Connection(router);
+        connection = new NetworkManager(router);
         counter = 0;
         this.setChanged();
     }
 
-    public Connection getConnection() {
+    public NetworkManager getConnection() {
         return connection;
     }
 
@@ -96,50 +96,50 @@ public abstract class NetworkDeviceBlockEntity extends DeviceBlockEntity impleme
 
     @Nullable
     @Override
-    public Component getDisplayName() {
-        return new TextComponent(getCustomName());
+    public TextComponent getDisplayName() {
+        return new StringTextComponent(getCustomName());
     }
 
     @Override
-    public void saveAdditional(@NotNull CompoundTag tag) {
-        super.saveAdditional(tag);
+    public void save(BlockState state, @NotNull CompoundNBT tag) {
+        super.save(tag);
         if (connection != null) {
             tag.put("connection", connection.toTag());
         }
     }
 
     @Override
-    public void load(@NotNull CompoundTag tag) {
-        super.load(tag);
-        if (tag.contains("connection", Tag.TAG_COMPOUND)) {
-            connection = Connection.fromTag(tag.getCompound("connection"));
+    public void load(BlockState state, @NotNull CompoundNBT tag) {
+        super.load(state, tag);
+        if (tag.contains("connection", Constants.NBT.TAG_COMPOUND)) {
+            connection = NetworkManager.fromTag(tag.getCompound("connection"));
         }
     }
 
     public static abstract class Colored extends NetworkDeviceBlockEntity implements Colorable {
         private DyeColor color = DyeColor.RED;
 
-        public Colored(BlockEntityType<?> pType, BlockPos pWorldPosition, BlockState pBlockState) {
-            super(pType, pWorldPosition, pBlockState);
+        public Colored(TileEntityType<?> pType) {
+            super(pType);
         }
 
         @Override
-        public void load(@NotNull CompoundTag tag) {
-            super.load(tag);
-            if (tag.contains("color", Tag.TAG_STRING)) {
+        public void load(BlockState state, @NotNull CompoundNBT tag) {
+            super.load(state, tag);
+            if (tag.contains("color", Constants.NBT.TAG_STRING)) {
                 color = DyeColor.byId(tag.getByte("color"));
             }
         }
 
         @Override
-        public void saveAdditional(@NotNull CompoundTag tag) {
-            super.saveAdditional(tag);
+        public void save(BlockState state, @NotNull CompoundNBT tag) {
+            super.save(tag);
             tag.putByte("color", (byte) color.getId());
         }
 
         @Override
-        public CompoundTag saveSyncTag() {
-            CompoundTag tag = super.saveSyncTag();
+        public CompoundNBT saveSyncTag() {
+            CompoundNBT tag = super.saveSyncTag();
             tag.putByte("color", (byte) color.getId());
             return tag;
         }

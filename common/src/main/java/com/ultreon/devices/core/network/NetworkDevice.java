@@ -2,11 +2,11 @@ package com.ultreon.devices.core.network;
 
 import com.ultreon.devices.block.entity.NetworkDeviceBlockEntity;
 import com.ultreon.devices.core.Device;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.world.World;
+import net.minecraft.tileentity.TileEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,12 +25,12 @@ public class NetworkDevice extends Device {
         super(id, name);
     }
 
-    public boolean isConnected(Level level) {
+    public boolean isConnected(World level) {
         if (pos == null) {
             return false;
         }
 
-        BlockEntity blockEntity = level.getBlockEntity(pos);
+        TileEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof NetworkDeviceBlockEntity device) {
             Router router = device.getRouter();
             return router != null && router.getId().equals(this.getId());
@@ -40,11 +40,11 @@ public class NetworkDevice extends Device {
 
     @Nullable
     @Override
-    public NetworkDeviceBlockEntity getDevice(@NotNull Level level) {
+    public NetworkDeviceBlockEntity getDevice(@NotNull World level) {
         if (pos == null)
             return null;
 
-        BlockEntity blockEntity = level.getBlockEntity(pos);
+        TileEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof NetworkDeviceBlockEntity device) {
             return device;
         }
@@ -52,20 +52,20 @@ public class NetworkDevice extends Device {
     }
 
     @Override
-    public CompoundTag toTag(boolean includePos) {
-        CompoundTag tag = super.toTag(includePos);
+    public CompoundNBT toTag(boolean includePos) {
+        CompoundNBT tag = super.toTag(includePos);
         if (includePos && pos != null) {
             tag.putLong("pos", pos.asLong());
         }
         return tag;
     }
 
-    public static NetworkDevice fromTag(CompoundTag tag) {
+    public static NetworkDevice fromTag(CompoundNBT tag) {
         NetworkDevice device = new NetworkDevice();
         device.id = UUID.fromString(tag.getString("id"));
         device.name = tag.getString("name");
 
-        if (tag.contains("pos", Tag.TAG_LONG)) {
+        if (tag.contains("pos", Constants.NBT.TAG_LONG)) {
             device.pos = BlockPos.of(tag.getLong("pos"));
         }
         return device;

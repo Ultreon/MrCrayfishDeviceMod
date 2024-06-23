@@ -3,10 +3,10 @@ package com.ultreon.devices.core.io.drive;
 import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.core.io.ServerFolder;
 import com.ultreon.devices.core.io.action.FileAction;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.World;
+import net.minecraft.tileentity.TileEntity;
 
 import javax.annotation.Nullable;
 
@@ -24,8 +24,8 @@ public final class NetworkDrive extends AbstractDrive {
 
     @Nullable
     @Override
-    public ServerFolder getRoot(Level level) {
-        BlockEntity tileEntity = level.getBlockEntity(pos);
+    public ServerFolder getRoot(World level) {
+        TileEntity tileEntity = level.getBlockEntity(pos);
         if (tileEntity instanceof Interface impl) {
             AbstractDrive drive = impl.getDrive();
             if (drive != null) {
@@ -36,8 +36,8 @@ public final class NetworkDrive extends AbstractDrive {
     }
 
     @Override
-    public FileSystem.Response handleFileAction(FileSystem fileSystem, FileAction action, Level level) {
-        BlockEntity tileEntity = level.getBlockEntity(pos);
+    public FileSystem.Response handleFileAction(FileSystem fileSystem, FileAction action, World level) {
+        TileEntity tileEntity = level.getBlockEntity(pos);
         if (tileEntity instanceof Interface impl) {
             AbstractDrive drive = impl.getDrive();
             if (drive.handleFileAction(fileSystem, action, level).getStatus() == FileSystem.Status.SUCCESSFUL) {
@@ -60,7 +60,7 @@ public final class NetworkDrive extends AbstractDrive {
     }
 
     @Override
-    public CompoundTag toTag() {
+    public CompoundNBT toTag() {
         return null;
     }
 

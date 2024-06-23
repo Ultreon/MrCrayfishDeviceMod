@@ -1,7 +1,7 @@
 package com.ultreon.devices.programs.gitweb.module;
 
-import com.mojang.blaze3d.platform.Lighting;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.renderer.RenderHelper;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.datafixers.util.Pair;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Layout;
@@ -11,18 +11,18 @@ import com.ultreon.devices.programs.gitweb.component.container.ContainerBox;
 import com.ultreon.devices.programs.gitweb.component.container.LoomBox;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.blockentity.BannerRenderer;
+import net.minecraft.client.model.geom.ModelRenderer;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.tileentity.BannerRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.util.Mth;
-import net.minecraft.world.item.BannerItem;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BannerBlockEntity;
-import net.minecraft.world.level.block.entity.BannerPattern;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.item.BannerItem;
+import net.minecraft.item.DyeColor;
+import net.minecraft.item.ItemStack;
+import net.minecraft.block.Blocks;
+import net.minecraft.tileentity.BannerBlockEntity;
+import net.minecraft.tileentity.BannerPattern;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +58,7 @@ public class BannerIIModule extends Module {
     public static class LoomBox extends Component {
         public static final int HEIGHT = 84;
         private final ItemStack banner;
-        private final ModelPart flag;
+        private final ModelRenderer flag;
         private final List<Pair<BannerPattern, DyeColor>> resultBannerPatterns;
 
         public LoomBox(ItemStack banner, boolean waving) {
@@ -73,13 +73,13 @@ public class BannerIIModule extends Module {
         }
 
         @Override
-        protected void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+        protected void render(MatrixStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
             super.render(pose, laptop, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
             int i = x;//this.leftPos;
             int j = y;//this.topPos;
             if (banner.isEmpty())return;
-            Lighting.setupForFlatItems();
-            MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
+            RenderHelper.setupForFlatItems();
+            IRenderTypeBuffer.BufferSource bufferSource = mc.renderBuffers().bufferSource();
             pose.pushPose();
             //pose.translate((double)(i + 139), (double)(j + 52), 0.0D);
             pose.translate(i+139,j+90,0.0D);
@@ -93,7 +93,7 @@ public class BannerIIModule extends Module {
             float h = ((float)Math.floorMod(l, 100L) + partialTicks) / 100.0f;
 
             this.flag.yRot = (float) Math.toRadians(30);
-            this.flag.xRot = (-0.0125f + 0.01f * Mth.cos((float)Math.PI * 2 * h)) * (float)Math.PI;
+            this.flag.xRot = (-0.0125f + 0.01f * MathHelper.cos((float)Math.PI * 2 * h)) * (float)Math.PI;
            // this.flag.xRot = 0.0F;
             this.flag.y = -32.0F;
             BannerRenderer.renderPatterns(pose, bufferSource, 15728880, OverlayTexture.NO_OVERLAY, this.flag, ModelBakery.BANNER_BASE, true, this.resultBannerPatterns);

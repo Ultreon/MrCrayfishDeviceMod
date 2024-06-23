@@ -3,9 +3,9 @@ package com.ultreon.devices.programs.email.task;
 import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.programs.email.EmailManager;
 import com.ultreon.devices.programs.email.object.Email;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.World;
 
 import java.util.List;
 
@@ -22,12 +22,12 @@ public class TaskViewEmail extends Task {
     }
 
     @Override
-    public void prepareRequest(CompoundTag nbt) {
+    public void prepareRequest(CompoundNBT nbt) {
         nbt.putInt("Index", this.index);
     }
 
     @Override
-    public void processRequest(CompoundTag nbt, Level world, Player player) {
+    public void processRequest(CompoundNBT nbt, World world, PlayerEntity player) {
         List<Email> emails = EmailManager.INSTANCE.getEmailsForAccount(player);
         if (emails != null) {
             int index = nbt.getInt("Index");
@@ -38,11 +38,11 @@ public class TaskViewEmail extends Task {
     }
 
     @Override
-    public void prepareResponse(CompoundTag nbt) {
+    public void prepareResponse(CompoundNBT nbt) {
     }
 
     @Override
-    public void processResponse(CompoundTag nbt) {
+    public void processResponse(CompoundNBT nbt) {
     }
 
 }

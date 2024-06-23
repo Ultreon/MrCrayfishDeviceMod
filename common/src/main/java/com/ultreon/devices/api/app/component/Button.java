@@ -1,22 +1,22 @@
 package com.ultreon.devices.api.app.component;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.IIcon;
 import com.ultreon.devices.api.app.listener.ClickListener;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.util.GuiHelper;
 import com.ultreon.devices.util.StringUtils;
-import net.minecraft.ChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.minecraft.client.sounds.SoundManager;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.client.audio.SimpleSound;
+import net.minecraft.client.audio.SoundHandler;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvents;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -199,7 +199,7 @@ public class Button extends Component {
     public static int getTextWidth(String text) {
         boolean flag = Minecraft.getInstance().options.forceUnicodeFont;
         Minecraft.getInstance().options.forceUnicodeFont = false;
-        Font fontRenderer = Minecraft.getInstance().font;
+        FontRenderer fontRenderer = Minecraft.getInstance().font;
         int width = fontRenderer.width(text);
         Minecraft.getInstance().options.forceUnicodeFont = flag;
         return width;
@@ -211,14 +211,14 @@ public class Button extends Component {
     }
 
     @Override
-    public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(MatrixStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         if (this.visible) {
-            RenderSystem.setShaderTexture(0, Component.COMPONENTS_GUI);
-            RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+            mc.textureManager.bind(Component.COMPONENTS_GUI);
+            RenderSystem.blendColor(1f, 1f, 1f, 1f);
             Color bgColor = new Color(getColorScheme().getBackgroundColor()).brighter().brighter();
             float[] hsb = Color.RGBtoHSB(bgColor.getRed(), bgColor.getGreen(), bgColor.getBlue(), null);
             bgColor = new Color(Color.HSBtoRGB(hsb[0], hsb[1], 1f));
-            RenderSystem.setShaderColor(bgColor.getRed() / 255f, bgColor.getGreen() / 255f, bgColor.getBlue() / 255f, 1f);
+            RenderSystem.blendColor(bgColor.getRed() / 255f, bgColor.getGreen() / 255f, bgColor.getBlue() / 255f, 1f);
             this.hovered = GuiHelper.isMouseWithin(mouseX, mouseY, x, y, width, height) && windowActive;
             int i = this.getHoverState(this.hovered);
             RenderSystem.enableBlend();
@@ -226,22 +226,22 @@ public class Button extends Component {
             RenderSystem.blendFunc(770, 771);
 
             /* Corners */
-            GuiComponent.blit(pose, x, y, 2, 2, 96 + i * 5, 12, 2, 2, 256, 256);
-            GuiComponent.blit(pose, x + width - 2, y, 2, 2, 99 + i * 5, 12, 2, 2, 256, 256);
-            GuiComponent.blit(pose, x + width - 2, y + height - 2, 2, 2, 99 + i * 5, 15, 2, 2, 256, 256);
-            GuiComponent.blit(pose, x, y + height - 2, 2, 2, 96 + i * 5, 15, 2, 2, 256, 256);
+            AbstractGui.blit(pose, x, y, 2, 2, 96 + i * 5, 12, 2, 2, 256, 256);
+            AbstractGui.blit(pose, x + width - 2, y, 2, 2, 99 + i * 5, 12, 2, 2, 256, 256);
+            AbstractGui.blit(pose, x + width - 2, y + height - 2, 2, 2, 99 + i * 5, 15, 2, 2, 256, 256);
+            AbstractGui.blit(pose, x, y + height - 2, 2, 2, 96 + i * 5, 15, 2, 2, 256, 256);
 
             /* Middles */
-            GuiComponent.blit(pose, x + 2, y, width - 4, 2, 98 + i * 5, 12, 1, 2, 256, 256);
-            GuiComponent.blit(pose, x + width - 2, y + 2, 2, height - 4, 99 + i * 5, 14, 2, 1, 256, 256);
-            GuiComponent.blit(pose, x + 2, y + height - 2, width - 4, 2, 98 + i * 5, 15, 1, 2, 256, 256);
-            GuiComponent.blit(pose, x, y + 2, 2, height - 4, 96 + i * 5, 14, 2, 1, 256, 256);
+            AbstractGui.blit(pose, x + 2, y, width - 4, 2, 98 + i * 5, 12, 1, 2, 256, 256);
+            AbstractGui.blit(pose, x + width - 2, y + 2, 2, height - 4, 99 + i * 5, 14, 2, 1, 256, 256);
+            AbstractGui.blit(pose, x + 2, y + height - 2, width - 4, 2, 98 + i * 5, 15, 1, 2, 256, 256);
+            AbstractGui.blit(pose, x, y + 2, 2, height - 4, 96 + i * 5, 14, 2, 1, 256, 256);
 
             /* Center */
-            GuiComponent.blit(pose, x + 2, y + 2, width - 4, height - 4, 98 + i * 5, 14, 1, 1, 256, 256);
+            AbstractGui.blit(pose, x + 2, y + 2, width - 4, height - 4, 98 + i * 5, 14, 1, 1, 256, 256);
 
-            RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-            RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+            RenderSystem.blendColor(1f, 1f, 1f, 1f);
+            RenderSystem.blendColor(1f, 1f, 1f, 1f);
 
             int contentWidth = (iconResource != null ? iconWidth : 0) + getTextWidth(text);
             if (iconResource != null && !StringUtils.isNotNullOrEmpty(text)) contentWidth += 3;
@@ -249,8 +249,8 @@ public class Button extends Component {
 
             if (iconResource != null) {
                 int iconY = (height - iconHeight) / 2;
-                RenderSystem.setShaderTexture(0, iconResource);
-                GuiComponent.blit(pose, x + contentX, y + iconY, iconWidth, iconHeight, iconU, iconV, iconVWidth, iconUHeight, iconSourceWidth, iconSourceHeight);
+                mc.textureManager.bind(iconResource);
+                AbstractGui.blit(pose, x + contentX, y + iconY, iconWidth, iconHeight, iconU, iconV, iconVWidth, iconUHeight, iconSourceWidth, iconSourceHeight);
             }
 
             if (!StringUtils.isNullOrEmpty(text)) {
@@ -263,9 +263,9 @@ public class Button extends Component {
     }
 
     @Override
-    public void renderOverlay(PoseStack pose, Laptop laptop, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
+    public void renderOverlay(MatrixStack pose, Laptop laptop, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
         if (this.hovered && this.toolTip != null && toolTipTick >= TOOLTIP_DELAY) {
-            laptop.renderComponentTooltip(pose, Arrays.asList(new TextComponent(this.toolTipTitle).withStyle(ChatFormatting.GOLD), new TextComponent(this.toolTip)), mouseX, mouseY);
+            laptop.renderComponentTooltip(pose, Arrays.asList(new StringTextComponent(this.toolTipTitle).withStyle(TextFormatting.GOLD), new StringTextComponent(this.toolTip)), mouseX, mouseY);
         }
     }
 
@@ -304,8 +304,8 @@ public class Button extends Component {
         return i;
     }
 
-    protected void playClickSound(SoundManager manager) {
-        manager.play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1f));
+    protected void playClickSound(SoundHandler manager) {
+        manager.play(SimpleSound.forUI(SoundEvents.UI_BUTTON_CLICK, 1f));
     }
 
     protected boolean isInside(int mouseX, int mouseY) {

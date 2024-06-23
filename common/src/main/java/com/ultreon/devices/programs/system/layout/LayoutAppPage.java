@@ -1,7 +1,7 @@
 package com.ultreon.devices.programs.system.layout;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.ScrollableLayout;
@@ -17,12 +17,12 @@ import com.ultreon.devices.programs.system.object.AppEntry;
 import com.ultreon.devices.programs.system.object.LocalEntry;
 import com.ultreon.devices.programs.system.object.RemoteEntry;
 import com.ultreon.devices.util.GuiHelper;
-import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.gui.IngameGui;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
 
@@ -57,9 +57,9 @@ public class LayoutAppPage extends Layout {
         this.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) ->
         {
             Color color = new Color(Laptop.getSystem().getSettings().getColorScheme().getBackgroundColor());
-            Gui.fill(pose, x, y + 40, x + width, y + 41, color.brighter().getRGB());
-            Gui.fill(pose, x, y + 41, x + width, y + 60, color.getRGB());
-            Gui.fill(pose, x, y + 60, x + width, y + 61, color.darker().getRGB());
+            IngameGui.fill(pose, x, y + 40, x + width, y + 41, color.brighter().getRGB());
+            IngameGui.fill(pose, x, y + 41, x + width, y + 60, color.getRGB());
+            IngameGui.fill(pose, x, y + 60, x + width, y + 61, color.darker().getRGB());
         });
 
         ResourceLocation resource = new ResourceLocation(entry.id());
@@ -165,12 +165,12 @@ public class LayoutAppPage extends Layout {
     }
 
     @Override
-    public void renderOverlay(PoseStack pose, Laptop laptop, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
+    public void renderOverlay(MatrixStack pose, Laptop laptop, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
         super.renderOverlay(pose, laptop, mc, mouseX, mouseY, windowActive);
         if (store.certifiedApps.contains(entry)) {
             int width = Laptop.getFont().width(entry.name()) * 2;
             if (GuiHelper.isMouseWithin(mouseX, mouseY, xPosition + 38 + width + 3, yPosition + 29, 20, 20)) {
-                laptop.renderComponentTooltip(pose, Lists.newArrayList(new TextComponent("Certified App").withStyle(ChatFormatting.GREEN)), mouseX, mouseY);
+                laptop.renderComponentTooltip(pose, Lists.newArrayList(new StringTextComponent("Certified App").withStyle(TextFormatting.GREEN)), mouseX, mouseY);
             }
         }
     }

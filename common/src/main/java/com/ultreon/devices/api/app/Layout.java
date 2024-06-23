@@ -1,14 +1,14 @@
 package com.ultreon.devices.api.app;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.ultreon.devices.api.app.listener.InitListener;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.core.Wrappable;
 import com.ultreon.devices.util.GLHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.nbt.CompoundNBT;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * in your application to switch interfaces during runtime.
  * <p>
  * Use {@link Application#setCurrentLayout(Layout)}
- * inside of {@link Wrappable#init(CompoundTag)}
+ * inside of {@link Wrappable#init(CompoundNBT)}
  * to set the current layout for your application.
  * <p>
  * Check out the example applications to get a better understand of
@@ -164,7 +164,7 @@ public class Layout extends com.ultreon.devices.api.app.Component {
      * @param y      the starting y rendering position (top most)
      */
     @Override
-    public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(MatrixStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         if (!this.visible)
             return;
 
@@ -172,7 +172,7 @@ public class Layout extends com.ultreon.devices.api.app.Component {
             background.render(pose, laptop, mc, x, y, width, height, mouseX, mouseY, windowActive);
         }
 
-        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+        RenderSystem.blendColor(1f, 1f, 1f, 1f);
         for (var c : new ArrayList<>(components)) {
             RenderSystem.disableDepthTest();
             GLHelper.pushScissor(x, y, width, height);
@@ -182,7 +182,7 @@ public class Layout extends com.ultreon.devices.api.app.Component {
     }
 
     @Override
-    public void renderOverlay(PoseStack pose, Laptop laptop, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
+    public void renderOverlay(MatrixStack pose, Laptop laptop, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
         if (!visible)
             return;
 
@@ -371,7 +371,7 @@ public class Layout extends com.ultreon.devices.api.app.Component {
          * @param width  the width of the layout
          * @param height the height of the layout
          */
-        void render(PoseStack pose, GuiComponent gui, Minecraft mc, int x, int y, int width, int height, int mouseX, int mouseY, boolean windowActive);
+        void render(MatrixStack pose, AbstractGui gui, Minecraft mc, int x, int y, int width, int height, int mouseX, int mouseY, boolean windowActive);
     }
 
     public static class Context extends Layout {
@@ -382,7 +382,7 @@ public class Layout extends com.ultreon.devices.api.app.Component {
         }
 
         @Override
-        public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+        public void render(MatrixStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
             super.render(pose, laptop, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
             if (borderVisible) {
                 drawHorizontalLine(pose, x, x + width - 1, y, Color.DARK_GRAY.getRGB());

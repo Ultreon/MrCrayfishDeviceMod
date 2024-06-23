@@ -1,8 +1,8 @@
 package com.ultreon.devices.object;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.matrix.Tessellator;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Layout;
@@ -79,10 +79,10 @@ public class TileGrid extends Component
 	}
 
 	@Override
-	public void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks)
+	public void render(MatrixStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks)
 	{
 		try {
-			Tesselator.getInstance().getBuilder().end();
+			Tessellator.getInstance().getBuilder().end();
 		} catch (IllegalStateException e) {
 			// ignore it
 		}
@@ -90,7 +90,7 @@ public class TileGrid extends Component
 		fill(pose, xPosition + 1, yPosition + 16, xPosition + 92, yPosition + 99, Color.GRAY.getRGB());
 		
 
-		RenderSystem.setShaderTexture(0, Game.ICONS);
+		mc.textureManager.bind(Game.ICONS);
 		for(int i = 0; i < tabTiles.size(); i++)
 		{
 			Tile tile = tabTiles.get(i);
@@ -101,7 +101,7 @@ public class TileGrid extends Component
 			else
 				fill(pose, tileX - 1, tileY - 1, tileX + 13, tileY + 13, Color.LIGHT_GRAY.getRGB());
 			pose.pushPose();
-			RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
+			RenderSystem.blendColor(1F, 1F, 1F, 1F);
 			RenderUtil.drawRectWithTexture(pose, tileX, tileY, tile.x * 16, tile.y * 16, 12, 12, 16, 16);
 			pose.popPose();
 		}

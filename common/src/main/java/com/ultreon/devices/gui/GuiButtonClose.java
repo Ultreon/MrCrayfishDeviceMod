@@ -1,27 +1,27 @@
 package com.ultreon.devices.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.ultreon.devices.core.Window;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.util.text.StringTextComponent;
 import org.jetbrains.annotations.NotNull;
 
 public class GuiButtonClose extends Button {
     public GuiButtonClose(int x, int y) {
-        super(x, y, 11, 11, new TextComponent(""), (button) -> {
+        super(x, y, 11, 11, new StringTextComponent(""), (button) -> {
 
         });
     }
 
     @Override
-    public void renderButton(@NotNull PoseStack pose, int mouseX, int mouseY, float partialTicks) {
+    public void renderButton(@NotNull MatrixStack pose, int mouseX, int mouseY, float partialTicks) {
         if (this.visible) {
-            Font font = Minecraft.getInstance().font;
-            RenderSystem.setShaderTexture(0, Window.WINDOW_GUI);
-            RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+            FontRenderer font = Minecraft.getInstance().font;
+            mc.textureManager.bind(Window.WINDOW_GUI);
+            RenderSystem.blendColor(1f, 1f, 1f, 1f);
             this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 
             RenderSystem.enableBlend();

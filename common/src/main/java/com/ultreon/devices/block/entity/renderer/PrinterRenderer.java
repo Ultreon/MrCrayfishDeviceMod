@@ -1,11 +1,11 @@
 package com.ultreon.devices.block.entity.renderer;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
+import com.mojang.blaze3d.matrix.BufferBuilder;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.matrix.VertexConsumer;
+import net.minecraft.util.math.vector.Quaternion;
+import net.minecraft.util.math.vector.Vector3f;
 import com.ultreon.devices.Devices;
 import com.ultreon.devices.Reference;
 import com.ultreon.devices.block.PrinterBlock;
@@ -13,20 +13,19 @@ import com.ultreon.devices.block.entity.PrinterBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.ModelRenderer;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.blockentity.SignRenderer;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
+import net.minecraft.client.renderer.tileentity.SignRenderer;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -36,9 +35,9 @@ import java.util.Objects;
  * @author MrCrayfish
  */
 public record PrinterRenderer(
-        BlockEntityRendererProvider.Context context) implements BlockEntityRenderer<PrinterBlockEntity> {
+        TileEntityRendererProvider.Context context) extends TileEntityRenderer<PrinterBlockEntity> {
     @Override
-    public void render(PrinterBlockEntity blockEntity, float partialTick, @NotNull PoseStack pose, @NotNull MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    public void render(PrinterBlockEntity blockEntity, float partialTick, @NotNull MatrixStack pose, @NotNull IRenderTypeBuffer bufferSource, int packedLight, int packedOverlay) {
  //       PaperModel paperModel = new PaperModel(Minecraft.getInstance().getEntityModels().bakeLayer(PaperModel.LAYER_LOCATION));
 //
 //       // Tesselator tesselator = Tesselator.getInstance();
@@ -158,12 +157,12 @@ public record PrinterRenderer(
     public static class PaperModel extends Model {
         public static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/model/paper.png");
         public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(Devices.id("paper_model"), "main");
-        private final ModelPart root;
+        private final ModelRenderer root;
 //        private final ModelPart main;
 
 //            private final ModelRenderer box = new ModelRenderer(this, 0, 0).addBox(0, 0, 0, 22, 30, 1);
 
-        public PaperModel(ModelPart pRoot) {
+        public PaperModel(ModelRenderer pRoot) {
             super(RenderType::entitySolid);
             this.root = pRoot;
 //            this.main = pRoot.getChild("main");
@@ -177,13 +176,13 @@ public record PrinterRenderer(
         }
 
         @Override
-        public void renderToBuffer(@NotNull PoseStack pPoseStack, @NotNull VertexConsumer pBuffer, int pPackedLight, int pPackedOverlay, float pRed, float pGreen, float pBlue, float pAlpha) {
-            this.render(pPoseStack, pBuffer, pPackedLight, pPackedOverlay, pRed, pGreen, pBlue, pAlpha);
+        public void renderToBuffer(@NotNull MatrixStack pMatrixStack, @NotNull VertexConsumer pBuffer, int pPackedLight, int pPackedOverlay, float pRed, float pGreen, float pBlue, float pAlpha) {
+            this.render(pMatrixStack, pBuffer, pPackedLight, pPackedOverlay, pRed, pGreen, pBlue, pAlpha);
         }
 
-        private void render(PoseStack pPoseStack, VertexConsumer pBuffer, int pPackedLight, int pPackedOverlay, float pRed, float pGreen, float pBlue, float pAlpha) {
-            RenderSystem.setShaderTexture(0, TEXTURE);
-            this.root.render(pPoseStack, pBuffer, pPackedLight, pPackedOverlay, pRed, pGreen, pBlue, pAlpha);
+        private void render(MatrixStack pMatrixStack, VertexConsumer pBuffer, int pPackedLight, int pPackedOverlay, float pRed, float pGreen, float pBlue, float pAlpha) {
+            mc.textureManager.bind(TEXTURE);
+            this.root.render(pMatrixStack, pBuffer, pPackedLight, pPackedOverlay, pRed, pGreen, pBlue, pAlpha);
         }
 
 //        public ModelPart getMain() {

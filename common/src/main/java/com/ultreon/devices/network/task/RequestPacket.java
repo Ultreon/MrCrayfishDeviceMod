@@ -4,10 +4,10 @@ import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.api.task.TaskManager;
 import com.ultreon.devices.network.Packet;
 import com.ultreon.devices.network.PacketHandler;
-import dev.architectury.networking.NetworkManager;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.entity.player.ServerPlayerEntity;
 
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -15,9 +15,9 @@ import java.util.function.Supplier;
 public class RequestPacket extends Packet<RequestPacket> {
     private final int id;
     private final Task request;
-    private CompoundTag tag;
+    private CompoundNBT tag;
 
-    public RequestPacket(FriendlyByteBuf buf) {
+    public RequestPacket(PacketBuffer buf) {
         this.id = buf.readInt();
         String name = buf.readUtf();
         this.request = TaskManager.getTask(name);
@@ -31,19 +31,19 @@ public class RequestPacket extends Packet<RequestPacket> {
     }
 
     @Override
-    public void toBytes(FriendlyByteBuf buf) {
+    public void toBytes(PacketBuffer buf) {
         buf.writeInt(this.id);
         buf.writeUtf(this.request.getName());
-        CompoundTag tag = new CompoundTag();
+        CompoundNBT tag = new CompoundNBT();
         this.request.prepareRequest(tag);
         buf.writeNbt(tag);
     }
 
     @Override
-    public boolean onMessage(Supplier<NetworkManager.PacketContext> ctx) {
+    public boolean onMessage(Supplier<NetworkEvent.Context> ctx) {
         //System.out.println("RECEIVED from " + ctx.get().getPlayer().getUUID());
-        request.processRequest(tag, Objects.requireNonNull(ctx.get().getPlayer()).level, ctx.get().getPlayer());
-        if (ctx.get().getPlayer() instanceof ServerPlayer player)
+        request.processRequest(tag, Objects.requireNonNull(ctx.get().getSender()).level, ctx.get().getSender());
+        if (ctx.get().getSender() instanceof ServerPlayerEntity player)
         PacketHandler.sendToClient(new ResponsePacket(id, request), player);
         return true;
     }

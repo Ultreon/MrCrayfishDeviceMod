@@ -3,15 +3,15 @@ package com.ultreon.devices.block.entity;
 import com.ultreon.devices.block.DeviceBlock;
 import com.ultreon.devices.util.Colorable;
 import com.ultreon.devices.util.Tickable;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.util.text.Component;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.item.DyeColor;
+import net.minecraft.block.Block;
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.block.BlockState;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,8 +22,8 @@ public abstract class DeviceBlockEntity extends SyncBlockEntity implements Ticka
     private UUID deviceId;
     private String name;
 
-    public DeviceBlockEntity(BlockEntityType<?> pType, BlockPos pWorldPosition, BlockState pBlockState) {
-        super(pType, pWorldPosition, pBlockState);
+    public DeviceBlockEntity(TileEntityType<?> pType) {
+        super(pType);
     }
 
     @NotNull
@@ -48,13 +48,13 @@ public abstract class DeviceBlockEntity extends SyncBlockEntity implements Ticka
         return name != null && StringUtils.isEmpty(name);
     }
 
-    public Component getDisplayName() {
-        return new TextComponent(getCustomName());
+    public TextComponent getDisplayName() {
+        return new StringTextComponent(getCustomName());
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag) {
-        super.saveAdditional(tag);
+    protected void save(BlockState state, @NotNull CompoundNBT tag) {
+        super.save(tag);
 
         tag.putString("deviceId", getId().toString());
         if (hasCustomName()) {
@@ -65,23 +65,23 @@ public abstract class DeviceBlockEntity extends SyncBlockEntity implements Ticka
     }
 
     @Override
-    public void load(@NotNull CompoundTag tag) {
-        super.load(tag);
+    public void load(BlockState state, @NotNull CompoundNBT tag) {
+        super.load(state, tag);
 
-        if (tag.contains("deviceId", Tag.TAG_STRING)) {
+        if (tag.contains("deviceId", Constants.NBT.TAG_STRING)) {
             deviceId = UUID.fromString(tag.getString("deviceId"));
         }
-        if (tag.contains("name", Tag.TAG_STRING)) {
+        if (tag.contains("name", Constants.NBT.TAG_STRING)) {
             name = tag.getString("name");
         }
-        if (tag.contains("color", Tag.TAG_BYTE)) {
+        if (tag.contains("color", Constants.NBT.TAG_BYTE)) {
             color = DyeColor.byId(tag.getByte("color"));
         }
     }
 
     @Override
-    public CompoundTag saveSyncTag() {
-        CompoundTag tag = new CompoundTag();
+    public CompoundNBT saveSyncTag() {
+        CompoundNBT tag = new CompoundNBT();
         if (hasCustomName()) {
             tag.putString("name", name);
         }
@@ -106,27 +106,27 @@ public abstract class DeviceBlockEntity extends SyncBlockEntity implements Ticka
     public static abstract class Colored extends DeviceBlockEntity implements Colorable {
         private DyeColor color = DyeColor.RED;
 
-        public Colored(BlockEntityType<?> pType, BlockPos pWorldPosition, BlockState pBlockState) {
-            super(pType, pWorldPosition, pBlockState);
+        public Colored(TileEntityType<?> pType) {
+            super(pType);
         }
 
         @Override
-        public void load(@NotNull CompoundTag tag) {
-            super.load(tag);
-            if (tag.contains("color", Tag.TAG_BYTE)) {
+        public void load(BlockState state, @NotNull CompoundNBT tag) {
+            super.load(state, tag);
+            if (tag.contains("color", Constants.NBT.TAG_BYTE)) {
                 color = DyeColor.byId(tag.getByte("color"));
             }
         }
 
         @Override
-        protected void saveAdditional(@NotNull CompoundTag tag) {
-            super.saveAdditional(tag);
+        protected void save(BlockState state, @NotNull CompoundNBT tag) {
+            super.save(tag);
             tag.putByte("color", (byte) color.getId());
         }
 
         @Override
-        public CompoundTag saveSyncTag() {
-            CompoundTag tag = super.saveSyncTag();
+        public CompoundNBT saveSyncTag() {
+            CompoundNBT tag = super.saveSyncTag();
             tag.putByte("color", (byte) color.getId());
             return tag;
         }

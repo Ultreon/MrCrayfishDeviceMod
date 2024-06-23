@@ -1,7 +1,7 @@
 package com.ultreon.devices.programs.gitweb.component.container;
 
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.item.ItemStack;
+import net.minecraft.block.Blocks;
 
 /**
  * @author MrCrayfish

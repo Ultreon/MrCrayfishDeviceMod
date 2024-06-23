@@ -1,7 +1,7 @@
 package com.ultreon.devices.programs.system.object;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 
 import java.awt.*;
 
@@ -21,27 +21,27 @@ public class ColorScheme {
         resetDefault();
     }
 
-    public static ColorScheme fromTag(CompoundTag tag) {
+    public static ColorScheme fromTag(CompoundNBT tag) {
         ColorScheme scheme = new ColorScheme();
-        if (tag.contains("textColor", Tag.TAG_INT)) {
+        if (tag.contains("textColor", Constants.NBT.TAG_INT)) {
             scheme.textColor = tag.getInt("textColor");
         }
-        if (tag.contains("textSecondaryColor", Tag.TAG_INT)) {
+        if (tag.contains("textSecondaryColor", Constants.NBT.TAG_INT)) {
             scheme.textSecondaryColor = tag.getInt("textSecondaryColor");
         }
-        if (tag.contains("headerColor", Tag.TAG_INT)) {
+        if (tag.contains("headerColor", Constants.NBT.TAG_INT)) {
             scheme.headerColor = tag.getInt("headerColor");
         }
-        if (tag.contains("backgroundColor", Tag.TAG_INT)) {
+        if (tag.contains("backgroundColor", Constants.NBT.TAG_INT)) {
             scheme.backgroundColor = tag.getInt("backgroundColor");
         }
-        if (tag.contains("backgroundSecondaryColor", Tag.TAG_INT)) {
+        if (tag.contains("backgroundSecondaryColor", Constants.NBT.TAG_INT)) {
             scheme.backgroundSecondaryColor = tag.getInt("backgroundSecondaryColor");
         }
-        if (tag.contains("itemBackgroundColor", Tag.TAG_INT)) {
+        if (tag.contains("itemBackgroundColor", Constants.NBT.TAG_INT)) {
             scheme.itemBackgroundColor = tag.getInt("itemBackgroundColor");
         }
-        if (tag.contains("itemHighlightColor", Tag.TAG_INT)) {
+        if (tag.contains("itemHighlightColor", Constants.NBT.TAG_INT)) {
             scheme.itemHighlightColor = tag.getInt("itemHighlightColor");
         }
         return scheme;
@@ -114,8 +114,8 @@ public class ColorScheme {
         itemHighlightColor = Color.decode("0x8B74C9").getRGB();
     }
 
-    public CompoundTag toTag() {
-        CompoundTag tag = new CompoundTag();
+    public CompoundNBT toTag() {
+        CompoundNBT tag = new CompoundNBT();
         tag.putInt("textColor", textColor);
         tag.putInt("textSecondaryColor", textSecondaryColor);
         tag.putInt("headerColor", headerColor);

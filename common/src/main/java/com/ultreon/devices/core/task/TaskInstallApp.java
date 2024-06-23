@@ -3,15 +3,15 @@ package com.ultreon.devices.core.task;
 import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.block.entity.LaptopBlockEntity;
 import com.ultreon.devices.object.AppInfo;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.StringNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.World;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.chunk.Chunk;
 
 /**
  * @author MrCrayfish
@@ -33,7 +33,7 @@ public class TaskInstallApp extends Task {
     }
 
     @Override
-    public void prepareRequest(CompoundTag tag) {
+    public void prepareRequest(CompoundNBT tag) {
         tag.putString("appId", appId);
         tag.putLong("pos", laptopPos.asLong());
         tag.putBoolean("install", install);
@@ -41,16 +41,16 @@ public class TaskInstallApp extends Task {
     }
 
     @Override
-    public void processRequest(CompoundTag tag, Level level, Player player) {
+    public void processRequest(CompoundNBT tag, World level, PlayerEntity player) {
         System.out.println("Proc message " + tag.getString("appId") + ", " +  BlockPos.of(tag.getLong("pos")) + ", " + tag.getBoolean("install"));
         String appId = tag.getString("appId");
         System.out.println(level.getBlockState(BlockPos.of(tag.getLong("pos"))).getBlock().toString());
-        BlockEntity tileEntity = level.getChunkAt(BlockPos.of(tag.getLong("pos"))).getBlockEntity(BlockPos.of(tag.getLong("pos")), LevelChunk.EntityCreationType.IMMEDIATE);
+        TileEntity tileEntity = level.getChunkAt(BlockPos.of(tag.getLong("pos"))).getBlockEntity(BlockPos.of(tag.getLong("pos")), Chunk.CreateEntityType.IMMEDIATE);
         System.out.println(tileEntity);
         if (tileEntity instanceof LaptopBlockEntity laptop) {
             System.out.println("laptop is made out of laptop");
-            CompoundTag systemData = laptop.getSystemData();
-            ListTag list = systemData.getList("InstalledApps", Tag.TAG_STRING);
+            CompoundNBT systemData = laptop.getSystemData();
+            ListNBT list = systemData.getList("InstalledApps", Constants.NBT.TAG_STRING);
 
             if (tag.getBoolean("install")) {
                 for (int i = 0; i < list.size(); i++) {
@@ -59,7 +59,7 @@ public class TaskInstallApp extends Task {
                         return;
                     }
                 }
-                list.add(StringTag.valueOf(appId));
+                list.add(StringNBT.valueOf(appId));
                 this.setSuccessful();
             } else {
                 list.removeIf(appTag -> {
@@ -78,12 +78,12 @@ public class TaskInstallApp extends Task {
 
 
     @Override
-    public void prepareResponse(CompoundTag tag) {
+    public void prepareResponse(CompoundNBT tag) {
 
     }
 
     @Override
-    public void processResponse(CompoundTag tag) {
+    public void processResponse(CompoundNBT tag) {
 
     }
 }

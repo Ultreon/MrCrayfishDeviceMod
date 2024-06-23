@@ -4,25 +4,25 @@ import com.ultreon.devices.ModDeviceTypes;
 import com.ultreon.devices.block.entity.RouterBlockEntity;
 import com.ultreon.devices.network.PacketHandler;
 import com.ultreon.devices.network.task.SyncBlockPacket;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.DyeColor;
+import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.world.IBlockReader;
+import net.minecraft.world.World;
+import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.block.BlockState;
+import net.minecraft.state.StateContainer;
+import net.minecraft.state.BooleanProperty;
+import net.minecraft.block.material.Material;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -64,7 +64,7 @@ public class RouterBlock extends DeviceBlock.Colored {
     }
 
     @Override
-    public @NotNull VoxelShape getShape(@NotNull BlockState pState, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos, @NotNull CollisionContext pContext) {
+    public @NotNull VoxelShape getShape(@NotNull BlockState pState, @NotNull IBlockReader pLevel, @NotNull BlockPos pPos, @NotNull ISelectionContext pContext) {
         return switch (pState.getValue(FACING)) {
             case NORTH -> pState.getValue(VERTICAL) ? BODY_VERTICAL_BOUNDING_BOX[0] : BODY_BOUNDING_BOX[0];
             case EAST -> pState.getValue(VERTICAL) ? BODY_VERTICAL_BOUNDING_BOX[1] : BODY_BOUNDING_BOX[1];
@@ -75,22 +75,22 @@ public class RouterBlock extends DeviceBlock.Colored {
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    public ActionResultType use(BlockState state, World level, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
         if (level.isClientSide && player.isCreative()) {
-            BlockEntity blockEntity = level.getBlockEntity(pos);
+            TileEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof RouterBlockEntity router) {
                 router.setDebug(true);
                 if (router.isDebug()) {
                     PacketHandler.INSTANCE.sendToServer(new SyncBlockPacket(pos));
                 }
             }
-            return InteractionResult.SUCCESS;
+            return ActionResultType.SUCCESS;
         }
-        return InteractionResult.PASS;
+        return ActionResultType.PASS;
     }
 
     @Override
-    public @org.jetbrains.annotations.Nullable BlockState getStateForPlacement(@NotNull BlockPlaceContext pContext) {
+    public @org.jetbrains.annotations.Nullable BlockState getStateForPlacement(@NotNull BlockItemUseContext pContext) {
         BlockState state = super.getStateForPlacement(pContext);
         return state != null ? state.setValue(FACING, pContext.getHorizontalDirection().getOpposite()).setValue(VERTICAL, pContext.getClickLocation().y - pContext.getClickLocation().y > 0.5) : null;
     }
@@ -109,12 +109,12 @@ public class RouterBlock extends DeviceBlock.Colored {
     @NotNull
     @Override
     @Contract("_, _ -> new")
-    public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
-        return new RouterBlockEntity(pos, state);
+    public TileEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
+        return new RouterBlockEntity();
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> pBuilder) {
+    protected void createBlockStateDefinition(StateContainer.@NotNull Builder<Block, BlockState> pBuilder) {
         super.createBlockStateDefinition(pBuilder);
         pBuilder.add(VERTICAL);
     }

@@ -2,13 +2,13 @@ package com.ultreon.devices.block.entity;
 
 import com.ultreon.devices.api.print.IPrint;
 import com.ultreon.devices.init.DeviceBlockEntities;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.sounds.SoundCategory;
+import net.minecraft.block.BlockState;
 
 import javax.annotation.Nullable;
 
@@ -19,8 +19,8 @@ public class PaperBlockEntity extends SyncBlockEntity {
     private IPrint print;
     private byte rotation;
 
-    public PaperBlockEntity(BlockPos pWorldPosition, BlockState pBlockState) {
-        super(DeviceBlockEntities.PAPER.get(), pWorldPosition, pBlockState);
+    public PaperBlockEntity() {
+        super(DeviceBlockEntities.PAPER.get());
     }
 
     public void nextRotation() {
@@ -43,19 +43,19 @@ public class PaperBlockEntity extends SyncBlockEntity {
     }
 
     @Override
-    public void load(CompoundTag compound) {
-        super.load(compound);
-        if (compound.contains("print", Tag.TAG_COMPOUND)) {
+    public void load(BlockState state, CompoundNBT compound) {
+        super.load(state, compound);
+        if (compound.contains("print", Constants.NBT.TAG_COMPOUND)) {
             print = IPrint.load(compound.getCompound("print"));
         }
-        if (compound.contains("rotation", Tag.TAG_BYTE)) {
+        if (compound.contains("rotation", Constants.NBT.TAG_BYTE)) {
             rotation = compound.getByte("rotation");
         }
     }
 
     @Override
-    public void saveAdditional(CompoundTag compound) {
-        super.saveAdditional(compound);
+    public void save(CompoundNBT compound) {
+        super.save(compound);
         if (print != null) {
             compound.put("print", IPrint.save(print));
         }
@@ -63,8 +63,8 @@ public class PaperBlockEntity extends SyncBlockEntity {
     }
 
     @Override
-    public CompoundTag saveSyncTag() {
-        CompoundTag tag = new CompoundTag();
+    public CompoundNBT saveSyncTag() {
+        CompoundNBT tag = new CompoundNBT();
         if (print != null) {
             tag.put("print", IPrint.save(print));
         }
@@ -73,6 +73,6 @@ public class PaperBlockEntity extends SyncBlockEntity {
     }
 
     private void playSound(SoundEvent sound) {
-        level.playSound(null, worldPosition, sound, SoundSource.BLOCKS, 1f, 1f);
+        level.playSound(null, worldPosition, sound, SoundCategory.BLOCKS, 1f, 1f);
     }
 }

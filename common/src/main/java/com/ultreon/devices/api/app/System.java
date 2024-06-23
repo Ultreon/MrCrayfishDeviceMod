@@ -4,7 +4,7 @@ import com.ultreon.devices.api.io.File;
 import com.ultreon.devices.core.Settings;
 import com.ultreon.devices.object.AppInfo;
 import it.unimi.dsi.fastutil.Pair;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.CompoundNBT;
 
 import java.util.Collection;
 
@@ -49,7 +49,7 @@ public interface System {
      * @param info      the app info instance of the application to be opened
      * @param intentTag the tag to pass data to the initialization of an application
      */
-    Application openApplication(AppInfo info, CompoundTag intentTag);
+    Application openApplication(AppInfo info, CompoundNBT intentTag);
 
     /**
      * Opens the specified application with a file

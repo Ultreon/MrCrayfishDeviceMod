@@ -1,10 +1,10 @@
 package com.ultreon.devices.init;
 
 import com.ultreon.devices.Devices;
-import net.minecraft.core.Registry;
+import net.minecraft.util.Registry;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.item.Item;
+import net.minecraft.block.Block;
 
 /**
  * @author Qboi

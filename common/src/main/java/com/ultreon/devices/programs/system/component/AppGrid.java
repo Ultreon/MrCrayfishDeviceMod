@@ -1,6 +1,6 @@
 package com.ultreon.devices.programs.system.component;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.ultreon.devices.api.ApplicationManager;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Icons;
@@ -16,8 +16,8 @@ import com.ultreon.devices.programs.system.object.LocalEntry;
 import com.ultreon.devices.programs.system.object.RemoteEntry;
 import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.gui.IngameGui;
+import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -64,14 +64,14 @@ public class AppGrid extends Component {
     }
 
     @Override
-    protected void render(PoseStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    protected void render(MatrixStack pose, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         int size = Math.min(entries.size(), verticalItems * horizontalItems);
         for (int i = 0; i < size; i++) {
             int itemX = x + (i % horizontalItems) * (itemWidth + padding) + padding;
             int itemY = y + (i / horizontalItems) * (itemHeight + padding) + padding;
             if (GuiHelper.isMouseWithin(mouseX, mouseY, itemX, itemY, itemWidth, itemHeight)) {
-                Gui.fill(pose, itemX, itemY, itemX + itemWidth, itemY + itemHeight, Color.GRAY.getRGB());
-                Gui.fill(pose, itemX + 1, itemY + 1, itemX + itemWidth - 1, itemY + itemHeight - 1, Laptop.getSystem().getSettings().getColorScheme().getItemBackgroundColor());
+                IngameGui.fill(pose, itemX, itemY, itemX + itemWidth, itemY + itemHeight, Color.GRAY.getRGB());
+                IngameGui.fill(pose, itemX + 1, itemY + 1, itemX + itemWidth - 1, itemY + itemHeight - 1, Laptop.getSystem().getSettings().getColorScheme().getItemBackgroundColor());
             }
         }
     }

@@ -1,9 +1,9 @@
 package com.ultreon.devices.api.task;
 
 import com.ultreon.devices.core.task.TaskInstallApp;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.World;
 
 /**
  * <p>A Task is simple implementation that allows you to make calls to the
@@ -11,8 +11,8 @@ import net.minecraft.world.level.Level;
  * client-server like applications, e.g. Emails, Instant Messaging, etc</p>
  *
  * <p>Any global variables that are initialized in this class, wont be on the server side.
- * To initialize them, first store the data in the NBT tag provided in {@link #prepareRequest(CompoundTag)},
- * then once your Task gets to the server, use {@link #processRequest(CompoundTag, Level, Player)} to
+ * To initialize them, first store the data in the NBT tag provided in {@link #prepareRequest(CompoundNBT)},
+ * then once your Task gets to the server, use {@link #processRequest(CompoundNBT, World, Player)} to
  * get the data from the NBT tag parameter. Initialize the variables as normal.
  *
  * <p>Please check out the example applications to get a better understanding
@@ -22,7 +22,7 @@ import net.minecraft.world.level.Level;
  */
 public abstract class Task {
     private final String name;
-    private Callback<CompoundTag> callback = null;
+    private Callback<CompoundNBT> callback = null;
     private boolean success = false;
 
     public Task(String name) {
@@ -36,7 +36,7 @@ public abstract class Task {
      * @param callback the callback instance for response processing
      * @return this Task instance
      */
-    public final Task setCallback(Callback<CompoundTag> callback) {
+    public final Task setCallback(Callback<CompoundNBT> callback) {
         this.callback = callback;
         return this;
     }
@@ -46,7 +46,7 @@ public abstract class Task {
      *
      * @param tag the response data
      */
-    public final void callback(CompoundTag tag) {
+    public final void callback(CompoundNBT tag) {
         if (callback != null) {
             callback.execute(tag, success);
         }
@@ -55,7 +55,7 @@ public abstract class Task {
     /**
      * Sets that this Task was successful. Should be called
      * if your Task produced the correct results, preferably in
-     * {@link #processRequest(CompoundTag, Level, Player)}
+     * {@link #processRequest(CompoundNBT, World, Player)}
      */
     public final void setSuccessful() {
         if (this instanceof TaskInstallApp) System.out.println("Setting successful...");
@@ -94,16 +94,16 @@ public abstract class Task {
      *
      * @param tag The NBT to be sent to the server
      */
-    public abstract void prepareRequest(CompoundTag tag);
+    public abstract void prepareRequest(CompoundNBT tag);
 
     /**
      * Called when the request arrives to the server. Here you can perform actions
-     * with your request. Data attached to the NBT from {@link Task#prepareRequest(CompoundTag tag)}
+     * with your request. Data attached to the NBT from {@link Task#prepareRequest(CompoundNBT tag)}
      * can be accessed from the NBT tag parameter.
      *
      * @param tag The NBT Tag received from the client
      */
-    public abstract void processRequest(CompoundTag tag, Level level, Player player);
+    public abstract void processRequest(CompoundNBT tag, World level, PlayerEntity player);
 
     /**
      * Called before the response is sent back to the client.
@@ -111,7 +111,7 @@ public abstract class Task {
      *
      * @param tag The NBT to be sent back to the client
      */
-    public abstract void prepareResponse(CompoundTag tag);
+    public abstract void prepareResponse(CompoundNBT tag);
 
     /**
      * Called when the response arrives to the client. Here you can update data
@@ -120,5 +120,5 @@ public abstract class Task {
      *
      * @param tag The NBT Tag received from the server
      */
-    public abstract void processResponse(CompoundTag tag);
+    public abstract void processResponse(CompoundNBT tag);
 }

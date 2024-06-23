@@ -1,8 +1,8 @@
 package com.ultreon.devices.core.io.drive;
 
 import com.ultreon.devices.core.io.ServerFolder;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
@@ -12,7 +12,7 @@ import java.util.function.Predicate;
  * @author MrCrayfish
  */
 public final class ExternalDrive extends AbstractDrive {
-    private static final Predicate<CompoundTag> PREDICATE_DRIVE_TAG = tag -> tag.contains("name", Tag.TAG_STRING) && tag.contains("uuid", Tag.TAG_STRING) && tag.contains("root", Tag.TAG_COMPOUND);
+    private static final Predicate<CompoundNBT> PREDICATE_DRIVE_TAG = tag -> tag.contains("name", Constants.NBT.TAG_STRING) && tag.contains("uuid", Constants.NBT.TAG_STRING) && tag.contains("root", Constants.NBT.TAG_COMPOUND);
 
     private ExternalDrive() {
     }
@@ -22,26 +22,26 @@ public final class ExternalDrive extends AbstractDrive {
     }
 
     @Nullable
-    public static AbstractDrive fromTag(CompoundTag driveTag) {
+    public static AbstractDrive fromTag(CompoundNBT driveTag) {
         if (!PREDICATE_DRIVE_TAG.test(driveTag)) return null;
 
         AbstractDrive drive = new ExternalDrive();
         drive.name = driveTag.getString("name");
         drive.uuid = UUID.fromString(driveTag.getString("uuid"));
 
-        CompoundTag folderTag = driveTag.getCompound("root");
+        CompoundNBT folderTag = driveTag.getCompound("root");
         drive.root = ServerFolder.fromTag(folderTag.getString("file_name"), folderTag.getCompound("data"));
 
         return drive;
     }
 
     @Override
-    public CompoundTag toTag() {
-        CompoundTag driveTag = new CompoundTag();
+    public CompoundNBT toTag() {
+        CompoundNBT driveTag = new CompoundNBT();
         driveTag.putString("name", name);
         driveTag.putString("uuid", uuid.toString());
 
-        CompoundTag folderTag = new CompoundTag();
+        CompoundNBT folderTag = new CompoundNBT();
         folderTag.putString("file_name", root.getName());
         folderTag.put("data", root.toTag());
         driveTag.put("root", folderTag);

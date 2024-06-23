@@ -4,9 +4,9 @@ import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.core.io.ServerFile;
 import com.ultreon.devices.core.io.ServerFolder;
 import com.ultreon.devices.core.io.action.FileAction;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.world.level.Level;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
@@ -55,18 +55,18 @@ public abstract class AbstractDrive {
         return uuid;
     }
 
-    public ServerFolder getRoot(Level level) {
+    public ServerFolder getRoot(World level) {
         return root;
     }
 
-    public FileSystem.Response handleFileAction(FileSystem fileSystem, FileAction action, Level level) {
-        CompoundTag actionData = action.getData();
+    public FileSystem.Response handleFileAction(FileSystem fileSystem, FileAction action, World level) {
+        CompoundNBT actionData = action.getData();
         ServerFolder folder = getFolder(actionData.getString("directory"));
         if (folder != null) {
-            CompoundTag data = actionData.getCompound("data");
+            CompoundNBT data = actionData.getCompound("data");
             switch (action.getType()) {
                 case NEW:
-                    if (data.contains("files", Tag.TAG_COMPOUND)) {
+                    if (data.contains("files", Constants.NBT.TAG_COMPOUND)) {
                         return folder.add(ServerFolder.fromTag(actionData.getString("file_name"), data), actionData.getBoolean("override"));
                     }
                     return folder.add(ServerFile.fromTag(actionData.getString("file_name"), data), data.getBoolean("override"));
@@ -118,7 +118,7 @@ public abstract class AbstractDrive {
         return FileSystem.createResponse(FileSystem.Status.DRIVE_UNAVAILABLE, "Invalid directory");
     }
 
-    public abstract CompoundTag toTag();
+    public abstract CompoundNBT toTag();
 
     public abstract Type getType();
 

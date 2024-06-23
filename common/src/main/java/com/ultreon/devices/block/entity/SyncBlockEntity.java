@@ -3,26 +3,26 @@ package com.ultreon.devices.block.entity;
 import com.ultreon.devices.annotations.PlatformOverride;
 import com.ultreon.devices.util.BlockEntityUtil;
 import dev.architectury.injectables.annotations.PlatformOnly;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.Connection;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.NetworkManager;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.world.item.DebugStickItem;
-import net.minecraft.world.level.block.DoorBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.network.protocol.game.SUpdateTileEntityPacket;
+import net.minecraft.item.DebugStickItem;
+import net.minecraft.block.DoorBlock;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.block.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public abstract class SyncBlockEntity extends BlockEntity {
-    protected CompoundTag pipeline = new CompoundTag();
+public abstract class SyncBlockEntity extends TileEntity {
+    protected CompoundNBT pipeline = new CompoundNBT();
 
-    public SyncBlockEntity(BlockEntityType<?> pType, BlockPos pWorldPosition, BlockState pBlockState) {
-        super(pType, pWorldPosition, pBlockState);
+    public SyncBlockEntity(TileEntityType<?> pType) {
+        super(pType);
     }
 
     public void sync() {
@@ -36,34 +36,33 @@ public abstract class SyncBlockEntity extends BlockEntity {
         this.level.sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), 3);
     }
 
-    @PlatformOnly("forge")
     @PlatformOverride("forge")
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
         this.load(Objects.requireNonNull(pkt.getTag(), "The data packet for the block entity contained no data"));
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
+    public CompoundNBT getUpdateTag() {
         if (!pipeline.isEmpty()) {
-            CompoundTag updateTag = pipeline;
-            saveAdditional(updateTag);
-            pipeline = new CompoundTag();
+            CompoundNBT updateTag = pipeline;
+            save(updateTag);
+            pipeline = new CompoundNBT();
             return updateTag;
         }
-        CompoundTag updateTag = saveSyncTag();
-        super.saveAdditional(updateTag);
+        CompoundNBT updateTag = saveSyncTag();
+        super.save(updateTag);
         return updateTag;
     }
 
-    public abstract CompoundTag saveSyncTag();
+    public abstract CompoundNBT saveSyncTag();
 
     @Nullable
     @Override
     public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this, BlockEntity::getUpdateTag);
+        return SUpdateTileEntityPacket.create(this, TileEntity::getUpdateTag);
     }
 
-    public CompoundTag getPipeline() {
+    public CompoundNBT getPipeline() {
         return pipeline;
     }
 }

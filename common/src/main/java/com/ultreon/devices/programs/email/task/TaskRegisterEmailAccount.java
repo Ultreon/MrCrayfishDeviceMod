@@ -2,9 +2,9 @@ package com.ultreon.devices.programs.email.task;
 
 import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.programs.email.EmailManager;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.World;
 
 public class TaskRegisterEmailAccount extends Task {
     private String name;
@@ -19,23 +19,23 @@ public class TaskRegisterEmailAccount extends Task {
     }
 
     @Override
-    public void prepareRequest(CompoundTag nbt) {
+    public void prepareRequest(CompoundNBT nbt) {
         nbt.putString("AccountName", this.name);
     }
 
     @Override
-    public void processRequest(CompoundTag nbt, Level level, Player player) {
+    public void processRequest(CompoundNBT nbt, World level, PlayerEntity player) {
         if (EmailManager.INSTANCE.addAccount(player, nbt.getString("AccountName"))) {
             this.setSuccessful();
         }
     }
 
     @Override
-    public void prepareResponse(CompoundTag nbt) {
+    public void prepareResponse(CompoundNBT nbt) {
     }
 
     @Override
-    public void processResponse(CompoundTag nbt) {
+    public void processResponse(CompoundNBT nbt) {
     }
 
 }

@@ -2,8 +2,8 @@ package com.ultreon.devices.core.laptop.server;
 
 import com.ultreon.devices.core.laptop.common.S2CUpdatePacket;
 import com.ultreon.devices.network.PacketHandler;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -11,7 +11,7 @@ import java.util.UUID;
 public class ServerLaptop {
     public static HashMap<UUID, ServerLaptop> laptops = new HashMap<>();
     private final UUID uuid = new UUID(430985038594038L, 493058808830598L);
-    public void sendPacket(Player player, String type, CompoundTag nbt) {
+    public void sendPacket(PlayerEntity player, String type, CompoundNBT nbt) {
         PacketHandler.sendToClient(new S2CUpdatePacket(this.uuid, type, nbt), player);
     }
 
@@ -19,7 +19,7 @@ public class ServerLaptop {
         return uuid;
     }
 
-    public void handlePacket(Player player, String type, CompoundTag data) {
+    public void handlePacket(PlayerEntity player, String type, CompoundNBT data) {
         System.out.printf("Handling %s, %s%n", type, data);
         if (type.equals("mouseMoved")) {
             var x = data.getDouble("x");

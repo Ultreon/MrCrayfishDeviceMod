@@ -1,8 +1,8 @@
 package com.ultreon.devices.programs.email.object;
 
 import com.ultreon.devices.api.io.File;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 
 import javax.annotation.Nullable;
 
@@ -28,10 +28,10 @@ public class Email {
         this.author = author;
     }
 
-    public static Email readFromNBT(CompoundTag nbt) {
+    public static Email readFromNBT(CompoundNBT nbt) {
         File attachment = null;
-        if (nbt.contains("attachment", Tag.TAG_COMPOUND)) {
-            CompoundTag fileTag = nbt.getCompound("attachment");
+        if (nbt.contains("attachment", Constants.NBT.TAG_COMPOUND)) {
+            CompoundNBT fileTag = nbt.getCompound("attachment");
             attachment = File.fromTag(fileTag.getString("file_name"), fileTag.getCompound("data"));
         }
         Email email = new Email(nbt.getString("subject"), nbt.getString("author"), nbt.getString("message"), attachment);
@@ -67,14 +67,14 @@ public class Email {
         this.read = read;
     }
 
-    public void save(CompoundTag nbt) {
+    public void save(CompoundNBT nbt) {
         nbt.putString("subject", this.subject);
         if (author != null) nbt.putString("author", this.author);
         nbt.putString("message", this.message);
         nbt.putBoolean("read", this.read);
 
         if (attachment != null) {
-            CompoundTag fileTag = new CompoundTag();
+            CompoundNBT fileTag = new CompoundNBT();
             fileTag.putString("file_name", attachment.getName());
             fileTag.put("data", attachment.toTag());
             nbt.put("attachment", fileTag);

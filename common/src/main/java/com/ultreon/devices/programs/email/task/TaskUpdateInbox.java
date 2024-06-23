@@ -3,10 +3,10 @@ package com.ultreon.devices.programs.email.task;
 import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.programs.email.EmailManager;
 import com.ultreon.devices.programs.email.object.Email;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.World;
 
 import java.util.List;
 
@@ -18,20 +18,20 @@ public class TaskUpdateInbox extends Task {
     }
 
     @Override
-    public void prepareRequest(CompoundTag nbt) {
+    public void prepareRequest(CompoundNBT nbt) {
     }
 
     @Override
-    public void processRequest(CompoundTag nbt, Level world, Player player) {
+    public void processRequest(CompoundNBT nbt, World world, PlayerEntity player) {
         this.emails = EmailManager.INSTANCE.getEmailsForAccount(player);
     }
 
     @Override
-    public void prepareResponse(CompoundTag nbt) {
-        ListTag tagList = new ListTag();
+    public void prepareResponse(CompoundNBT nbt) {
+        ListNBT tagList = new ListNBT();
         if (emails != null) {
             for (Email email : emails) {
-                CompoundTag emailTag = new CompoundTag();
+                CompoundNBT emailTag = new CompoundNBT();
                 email.save(emailTag);
                 tagList.add(emailTag);
             }
@@ -40,11 +40,11 @@ public class TaskUpdateInbox extends Task {
     }
 
     @Override
-    public void processResponse(CompoundTag nbt) {
+    public void processResponse(CompoundNBT nbt) {
         EmailManager.INSTANCE.getInbox().clear();
-        ListTag emails = (ListTag) nbt.get("emails");
+        ListNBT emails = (ListNBT) nbt.get("emails");
         for (int i = 0; i < emails.size(); i++) {
-            CompoundTag emailTag = emails.getCompound(i);
+            CompoundNBT emailTag = emails.getCompound(i);
             Email email = Email.readFromNBT(emailTag);
             EmailManager.INSTANCE.getInbox().add(email);
         }

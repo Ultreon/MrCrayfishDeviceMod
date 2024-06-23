@@ -4,13 +4,13 @@ import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.block.entity.LaptopBlockEntity;
 import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.core.io.drive.AbstractDrive;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.World;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.chunk.Chunk;
 
 import java.util.Map;
 import java.util.UUID;
@@ -36,14 +36,14 @@ public class TaskSetupFileBrowser extends Task {
     }
 
     @Override
-    public void prepareRequest(CompoundTag tag) {
+    public void prepareRequest(CompoundNBT tag) {
         tag.putLong("pos", pos.asLong());
         tag.putBoolean("include_main", includeMain);
     }
 
     @Override
-    public void processRequest(CompoundTag tag, Level level, Player player) {
-        BlockEntity tileEntity = level.getChunkAt(BlockPos.of(tag.getLong("pos"))).getBlockEntity(BlockPos.of(tag.getLong("pos")), LevelChunk.EntityCreationType.IMMEDIATE);
+    public void processRequest(CompoundNBT tag, World level, PlayerEntity player) {
+        TileEntity tileEntity = level.getChunkAt(BlockPos.of(tag.getLong("pos"))).getBlockEntity(BlockPos.of(tag.getLong("pos")), Chunk.CreateEntityType.IMMEDIATE);
         if (tileEntity instanceof LaptopBlockEntity laptop) {
             FileSystem fileSystem = laptop.getFileSystem();
             if (tag.getBoolean("include_main")) {
@@ -55,10 +55,10 @@ public class TaskSetupFileBrowser extends Task {
     }
 
     @Override
-    public void prepareResponse(CompoundTag tag) {
+    public void prepareResponse(CompoundNBT tag) {
         if (this.isSucessful()) {
             if (mainDrive != null) {
-                CompoundTag mainDriveTag = new CompoundTag();
+                CompoundNBT mainDriveTag = new CompoundNBT();
                 mainDriveTag.putString("name", mainDrive.getName());
                 mainDriveTag.putString("uuid", mainDrive.getUuid().toString());
                 mainDriveTag.putString("type", mainDrive.getType().toString());
@@ -66,9 +66,9 @@ public class TaskSetupFileBrowser extends Task {
                 tag.put("structure", mainDrive.getDriveStructure().toTag());
             }
 
-            ListTag driveList = new ListTag();
+            ListNBT driveList = new ListNBT();
             availableDrives.forEach((k, v) -> {
-                CompoundTag driveTag = new CompoundTag();
+                CompoundNBT driveTag = new CompoundNBT();
                 driveTag.putString("name", v.getName());
                 driveTag.putString("uuid", v.getUuid().toString());
                 driveTag.putString("type", v.getType().toString());
@@ -79,7 +79,7 @@ public class TaskSetupFileBrowser extends Task {
     }
 
     @Override
-    public void processResponse(CompoundTag tag) {
+    public void processResponse(CompoundNBT tag) {
 
     }
 }

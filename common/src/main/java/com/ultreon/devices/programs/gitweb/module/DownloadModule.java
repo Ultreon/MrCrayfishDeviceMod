@@ -12,9 +12,9 @@ import com.ultreon.devices.api.utils.RenderUtil;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.programs.gitweb.component.GitWebFrame;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.TagParser;
+import net.minecraft.client.gui.IngameGui;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBTParser;
 
 import java.awt.*;
 import java.util.Map;
@@ -47,11 +47,11 @@ public class DownloadModule extends Module {
             int subWidth = section * 4;
             int posX = x + section;
             int posY = y + 5;
-            Gui.fill(pose, posX, posY, posX + subWidth, posY + height - 5, Color.BLACK.getRGB());
-            Gui.fill(pose, posX + 1, posY + 1, posX + subWidth - 1, posY + height - 5 - 1, Color.DARK_GRAY.getRGB());
+            IngameGui.fill(pose, posX, posY, posX + subWidth, posY + height - 5, Color.BLACK.getRGB());
+            IngameGui.fill(pose, posX + 1, posY + 1, posX + subWidth - 1, posY + height - 5 - 1, Color.DARK_GRAY.getRGB());
 
-            RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-            RenderSystem.setShaderTexture(0, Laptop.ICON_TEXTURES);
+            RenderSystem.blendColor(1f, 1f, 1f, 1f);
+            mc.textureManager.bind(Laptop.ICON_TEXTURES);
 //            int iconU = 0, iconV = 0;
 //            if (info != null) {
 //                iconU = info.getIconU();
@@ -75,7 +75,7 @@ public class DownloadModule extends Module {
         button.setSize(70, height - 15);
         button.setClickListener((mouseX, mouseY, mouseButton) -> {
             try {
-                CompoundTag tag = TagParser.parseTag(data.get("file-data"));
+                CompoundNBT tag = TagParser.parseTag(data.get("file-data"));
                 File file = new File(data.getOrDefault("file-name", ""), data.get("file-app"), tag);
                 Dialog dialog = new Dialog.SaveFile(frame.getApp(), file);
                 frame.getApp().openDialog(dialog);

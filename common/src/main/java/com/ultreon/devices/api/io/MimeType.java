@@ -1,6 +1,6 @@
 package com.ultreon.devices.api.io;
 
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.CompoundNBT;
 
 public record MimeType(String type, String subType) {
     public static final MimeType TEXT_PLAIN = new MimeType("text", "plain");
@@ -10,12 +10,12 @@ public record MimeType(String type, String subType) {
     public static final MimeType TEXT_NOTE_STASH = new MimeType("text", "note-stash");
     public static final MimeType IMAGE_MC_IMG = new MimeType("image", "mc-img");
 
-    public static MimeType of(CompoundTag mimeType) {
+    public static MimeType of(CompoundNBT mimeType) {
         return new MimeType(mimeType.getString("type"), mimeType.getString("subType"));
     }
 
-    public CompoundTag toNbt() {
-        CompoundTag mimeType = new CompoundTag();
+    public CompoundNBT toNbt() {
+        CompoundNBT mimeType = new CompoundNBT();
         mimeType.putString("type", type);
         mimeType.putString("subType", subType);
         return mimeType;

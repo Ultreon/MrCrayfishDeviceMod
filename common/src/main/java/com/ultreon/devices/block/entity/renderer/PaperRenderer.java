@@ -1,9 +1,9 @@
 package com.ultreon.devices.block.entity.renderer;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Quaternion;
+import com.mojang.blaze3d.matrix.*;
+import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.math.vector.Quaternion;
 import com.ultreon.devices.DeviceConfig;
 import com.ultreon.devices.Devices;
 import com.ultreon.devices.api.print.IPrint;
@@ -12,17 +12,16 @@ import com.ultreon.devices.block.PaperBlock;
 import com.ultreon.devices.block.entity.PaperBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.MapRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.entity.ItemFrameRenderer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.util.Direction;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.block.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -32,10 +31,10 @@ import java.util.Objects;
  * @author MrCrayfish
  */
 public record PaperRenderer(
-        BlockEntityRendererProvider.Context context) implements BlockEntityRenderer<PaperBlockEntity> {
+        TileEntityRendererProvider.Context context) extends TileEntityRenderer<PaperBlockEntity> {
 
     @SuppressWarnings("SameParameterValue")
-    private static void drawCuboid(double x, double y, double z, double width, double height, double depth, MultiBufferSource bufferSource) {
+    private static void drawCuboid(double x, double y, double z, double width, double height, double depth, IRenderTypeBuffer bufferSource) {
         x /= 16;
         y /= 16;
         z /= 16;
@@ -55,7 +54,7 @@ public record PaperRenderer(
 //        GlStateManager.enableLighting();
     }
 
-    private static void drawQuad(double xFrom, double yFrom, double zFrom, double xTo, double yTo, double zTo, Direction direction, MultiBufferSource bufferSource) {
+    private static void drawQuad(double xFrom, double yFrom, double zFrom, double xTo, double yTo, double zTo, Direction direction, IRenderTypeBuffer bufferSource) {
         double textureWidth = Math.abs(xTo - xFrom);
         double textureHeight = Math.abs(yTo - yFrom);
         double textureDepth = Math.abs(zTo - zFrom);
@@ -64,7 +63,7 @@ public record PaperRenderer(
     }
 
     private static long AA = 0;
-    private static void drawPixels(PoseStack poseStack, int[] pixels, int resolution, boolean cut, int packedLight, MultiBufferSource bufferSource) {
+    private static void drawPixels(MatrixStack matrices, int[] pixels, int resolution, boolean cut, int packedLight, IRenderTypeBuffer bufferSource) {
         double scale = 16 / (double) resolution;
         var d = new DynamicTexture(resolution, resolution, true);
         for (int i = 0; i < resolution; i++) {
@@ -79,7 +78,7 @@ public record PaperRenderer(
             }
         }
         ResourceLocation resourcelocation = Minecraft.getInstance().getTextureManager().register("map/" + AA, d);
-        Matrix4f matrix4f = poseStack.last().pose();
+        Matrix4f matrix4f = matrices.last().pose();
         var vertexconsumer = bufferSource.getBuffer(RenderType.text(resourcelocation));
         vertexconsumer.vertex(matrix4f, 0.0f, 128.0f, -0.01f).color(255, 255, 255, 255).uv(0.0f, 1.0f).uv2(packedLight).endVertex();
         vertexconsumer.vertex(matrix4f, 128.0f, 128.0f, -0.01f).color(255, 255, 255, 255).uv(1.0f, 1.0f).uv2(packedLight).endVertex();
@@ -89,7 +88,7 @@ public record PaperRenderer(
     }
 
     @Override
-    public void render(PaperBlockEntity blockEntity, float partialTick, @NotNull PoseStack pose, @NotNull MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    public void render(PaperBlockEntity blockEntity, float partialTick, @NotNull MatrixStack pose, @NotNull IRenderTypeBuffer bufferSource, int packedLight, int packedOverlay) {
         BlockState state = Objects.requireNonNull(blockEntity.getLevel()).getBlockState(blockEntity.getBlockPos());
         if (blockEntity.getBlockState().getBlock() != state.getBlock()) {
             Devices.LOGGER.error("Paper block mismatch: {} != {}", blockEntity.getBlockState().getBlock(), state.getBlock());
@@ -106,9 +105,9 @@ public record PaperRenderer(
 
             IPrint print = blockEntity.getPrint();
             if (print != null) {
-                CompoundTag data = print.toTag();
-                if (data.contains("pixels", Tag.TAG_INT_ARRAY) && data.contains("resolution", Tag.TAG_INT)) {
-                    RenderSystem.setShaderTexture(0, PrinterRenderer.PaperModel.TEXTURE);
+                CompoundNBT data = print.toTag();
+                if (data.contains("pixels", Constants.NBT.TAG_INT_ARRAY) && data.contains("resolution", Constants.NBT.TAG_INT)) {
+                    mc.textureManager.bind(PrinterRenderer.PaperModel.TEXTURE);
                     if (DeviceConfig.RENDER_PRINTED_3D.get() && !data.getBoolean("cut")) {
                        // drawCuboid(0, 0, 0, 16, 16, 1, bufferSource);
                     }
@@ -125,7 +124,7 @@ public record PaperRenderer(
                     pose.pushPose();
                     {
                         if (DeviceConfig.RENDER_PRINTED_3D.get() && data.getBoolean("cut")) {
-                            CompoundTag tag = print.toTag();
+                            CompoundNBT tag = print.toTag();
                             drawPixels(pose, tag.getIntArray("pixels"), tag.getInt("resolution"), tag.getBoolean("cut"), packedLight, bufferSource);
                         }
                     }

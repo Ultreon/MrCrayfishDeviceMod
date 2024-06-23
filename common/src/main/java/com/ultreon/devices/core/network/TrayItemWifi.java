@@ -1,6 +1,6 @@
 package com.ultreon.devices.core.network;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.ultreon.devices.DeviceConfig;
 import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Layout;
@@ -17,11 +17,11 @@ import com.ultreon.devices.core.network.task.TaskConnect;
 import com.ultreon.devices.core.network.task.TaskPing;
 import com.ultreon.devices.object.TrayItem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.client.gui.IngameGui;
+import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraft.tileentity.TileEntity;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -39,14 +39,14 @@ public class TrayItemWifi extends TrayItem {
 
     private static Layout createWifiMenu(TrayItem item) {
         Layout layout = new Layout.Context(100, 100);
-        layout.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> Gui.fill(pose, x, y, x + width, y + height, new Color(0.65f, 0.65f, 0.65f, 0.9f).getRGB()));
+        layout.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> IngameGui.fill(pose, x, y, x + width, y + height, new Color(0.65f, 0.65f, 0.65f, 0.9f).getRGB()));
 
         ItemList<Device> itemListRouters = new ItemList<>(5, 5, 90, 4);
         itemListRouters.setItems(getRouters());
         itemListRouters.setListItemRenderer(new ListItemRenderer<>(16) {
             @Override
-            public void render(PoseStack pose, Device device, GuiComponent gui, Minecraft mc, int x, int y, int width, int height, boolean selected) {
-                Gui.fill(pose, x, y, x + width, y + height, selected ? Color.DARK_GRAY.getRGB() : Color.GRAY.getRGB());
+            public void render(MatrixStack pose, Device device, AbstractGui gui, Minecraft mc, int x, int y, int width, int height, boolean selected) {
+                IngameGui.fill(pose, x, y, x + width, y + height, selected ? Color.DARK_GRAY.getRGB() : Color.GRAY.getRGB());
                 RenderUtil.drawStringClipped(pose, device.getName(), x + 16, y + 4, 70, Color.WHITE.getRGB(), false);
 
                 if (device.getPos() == null) return;
@@ -97,7 +97,7 @@ public class TrayItemWifi extends TrayItem {
     private static List<Device> getRouters() {
         List<Device> routers = new ArrayList<>();
 
-        Level level = Minecraft.getInstance().level;
+        World level = Minecraft.getInstance().level;
         if (Laptop.isWorldLess()) {
             return new ArrayList<>();
         }
@@ -111,7 +111,7 @@ public class TrayItemWifi extends TrayItem {
                     assert laptopPos != null;
                     BlockPos pos = new BlockPos(laptopPos.getX() + x, laptopPos.getY() + y, laptopPos.getZ() + z);
                     assert level != null;
-                    BlockEntity tileEntity = level.getBlockEntity(pos);
+                    TileEntity tileEntity = level.getBlockEntity(pos);
                     if (tileEntity instanceof RouterBlockEntity) {
                         routers.add(new Device((DeviceBlockEntity) tileEntity));
                     }

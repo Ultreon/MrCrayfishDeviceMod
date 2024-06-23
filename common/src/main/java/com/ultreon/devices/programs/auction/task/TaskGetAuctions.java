@@ -3,10 +3,10 @@ package com.ultreon.devices.programs.auction.task;
 import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.programs.auction.AuctionManager;
 import com.ultreon.devices.programs.auction.object.AuctionItem;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.World;
 
 import java.util.List;
 import java.util.UUID;
@@ -24,26 +24,26 @@ public class TaskGetAuctions extends Task {
     }
 
     @Override
-    public void prepareRequest(CompoundTag nbt) {
+    public void prepareRequest(CompoundNBT nbt) {
         if (seller != null) {
             nbt.putString("seller", seller.toString());
         }
     }
 
     @Override
-    public void processRequest(CompoundTag nbt, Level world, Player player) {
+    public void processRequest(CompoundNBT nbt, World world, PlayerEntity player) {
         if (nbt.contains("seller")) {
             seller = UUID.fromString(nbt.getString("seller"));
         }
     }
 
     @Override
-    public void prepareResponse(CompoundTag nbt) {
+    public void prepareResponse(CompoundNBT nbt) {
         if (seller != null) {
             List<AuctionItem> items = AuctionManager.INSTANCE.getItemsForSeller(seller);
-            ListTag tagList = new ListTag();
+            ListNBT tagList = new ListNBT();
             items.forEach(i -> {
-                CompoundTag itemTag = new CompoundTag();
+                CompoundNBT itemTag = new CompoundNBT();
                 i.writeToNBT(itemTag);
                 tagList.add(itemTag);
             });
@@ -55,7 +55,7 @@ public class TaskGetAuctions extends Task {
     }
 
     @Override
-    public void processResponse(CompoundTag nbt) {
+    public void processResponse(CompoundNBT nbt) {
         AuctionManager.INSTANCE.readFromNBT(nbt);
     }
 }

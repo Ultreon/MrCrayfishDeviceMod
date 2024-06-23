@@ -22,11 +22,11 @@ import com.ultreon.devices.programs.system.layout.LayoutAppPage;
 import com.ultreon.devices.programs.system.layout.LayoutSearchApps;
 import com.ultreon.devices.programs.system.object.AppEntry;
 import com.ultreon.devices.programs.system.object.RemoteEntry;
-import net.minecraft.ChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.gui.IngameGui;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
 import java.awt.*;
@@ -45,7 +45,7 @@ public class AppStore extends SystemApp {
     private AppInfo queuedApp;
 
     @Override
-    public void init(@Nullable CompoundTag intent) {
+    public void init(@Nullable CompoundNBT intent) {
         layoutMain = new Layout(LAYOUT_WIDTH, LAYOUT_HEIGHT);
 
         ScrollableLayout homePageLayout = new ScrollableLayout(0, 0, LAYOUT_WIDTH, 368, LAYOUT_HEIGHT);
@@ -53,14 +53,14 @@ public class AppStore extends SystemApp {
         homePageLayout.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
             Color color = new Color(Laptop.getSystem().getSettings().getColorScheme().getBackgroundColor());
             int offset = 60;
-            Gui.fill(pose, x, y + offset, x + LAYOUT_WIDTH, y + offset + 1, color.brighter().getRGB());
-            Gui.fill(pose, x, y + offset + 1, x + LAYOUT_WIDTH, y + offset + 19, color.getRGB());
-            Gui.fill(pose, x, y + offset + 19, x + LAYOUT_WIDTH, y + offset + 20, color.darker().getRGB());
+            IngameGui.fill(pose, x, y + offset, x + LAYOUT_WIDTH, y + offset + 1, color.brighter().getRGB());
+            IngameGui.fill(pose, x, y + offset + 1, x + LAYOUT_WIDTH, y + offset + 19, color.getRGB());
+            IngameGui.fill(pose, x, y + offset + 19, x + LAYOUT_WIDTH, y + offset + 20, color.darker().getRGB());
 
             offset = 172;
-            Gui.fill(pose, x, y + offset, x + LAYOUT_WIDTH, y + offset + 1, color.brighter().getRGB());
-            Gui.fill(pose, x, y + offset + 1, x + LAYOUT_WIDTH, y + offset + 19, color.getRGB());
-            Gui.fill(pose, x, y + offset + 19, x + LAYOUT_WIDTH, y + offset + 20, color.darker().getRGB());
+            IngameGui.fill(pose, x, y + offset, x + LAYOUT_WIDTH, y + offset + 1, color.brighter().getRGB());
+            IngameGui.fill(pose, x, y + offset + 1, x + LAYOUT_WIDTH, y + offset + 19, color.getRGB());
+            IngameGui.fill(pose, x, y + offset + 19, x + LAYOUT_WIDTH, y + offset + 20, color.darker().getRGB());
         });
 
         com.ultreon.devices.api.app.component.Image imageBanner = new com.ultreon.devices.api.app.component.Image(0, 0, LAYOUT_WIDTH, 60);
@@ -88,10 +88,10 @@ public class AppStore extends SystemApp {
         labelBanner.setScale(2);
         homePageLayout.addComponent(labelBanner);
 
-        Label labelCertified = new Label(ChatFormatting.WHITE + ChatFormatting.BOLD.toString() + "Certified Apps", 10, 66);
+        Label labelCertified = new Label(TextFormatting.WHITE + TextFormatting.BOLD.toString() + "Certified Apps", 10, 66);
         homePageLayout.addComponent(labelCertified);
 
-        Label labelCertifiedDesc = new Label(ChatFormatting.GRAY + "Verified by Ultreon Team", LAYOUT_WIDTH - 10, 66);
+        Label labelCertifiedDesc = new Label(TextFormatting.GRAY + "Verified by Ultreon Team", LAYOUT_WIDTH - 10, 66);
         labelCertifiedDesc.setAlignment(Component.ALIGN_RIGHT);
         labelCertifiedDesc.setScale(1d);
         labelCertifiedDesc.setShadow(false);
@@ -116,10 +116,10 @@ public class AppStore extends SystemApp {
             }
         });
 
-        Label labelOther = new Label(ChatFormatting.WHITE + ChatFormatting.BOLD.toString() + "Other Apps", 10, 178);
+        Label labelOther = new Label(TextFormatting.WHITE + TextFormatting.BOLD.toString() + "Other Apps", 10, 178);
         homePageLayout.addComponent(labelOther);
 
-        Label labelOtherDesc = new Label(ChatFormatting.GRAY + "Community Created", LAYOUT_WIDTH - 10, 178);
+        Label labelOtherDesc = new Label(TextFormatting.GRAY + "Community Created", LAYOUT_WIDTH - 10, 178);
         labelOtherDesc.setAlignment(Component.ALIGN_RIGHT);
         labelOtherDesc.setScale(1d);
         labelOtherDesc.setShadow(false);
@@ -151,12 +151,12 @@ public class AppStore extends SystemApp {
     }
 
     @Override
-    public void load(CompoundTag tag) {
+    public void load(CompoundNBT tag) {
 
     }
 
     @Override
-    public void save(CompoundTag tag) {
+    public void save(CompoundNBT tag) {
 
     }
 

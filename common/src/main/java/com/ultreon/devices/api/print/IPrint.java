@@ -1,12 +1,12 @@
 package com.ultreon.devices.api.print;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.ultreon.devices.init.DeviceBlocks;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nullable;
 
@@ -16,15 +16,15 @@ import javax.annotation.Nullable;
  * @author MrCrayfish
  */
 public interface IPrint {
-    static CompoundTag save(IPrint print) {
-        CompoundTag tag = new CompoundTag();
+    static CompoundNBT save(IPrint print) {
+        CompoundNBT tag = new CompoundNBT();
         tag.putString("type", PrintingManager.getPrintIdentifier(print));
         tag.put("data", print.toTag());
         return tag;
     }
 
     @Nullable
-    static IPrint load(CompoundTag tag) {
+    static IPrint load(CompoundNBT tag) {
         IPrint print = PrintingManager.getPrint(tag.getString("type"));
         if (print != null) {
             print.fromTag(tag.getCompound("data"));
@@ -34,17 +34,17 @@ public interface IPrint {
     }
 
     static ItemStack generateItem(IPrint print) {
-        CompoundTag blockEntityTag = new CompoundTag();
+        CompoundNBT blockEntityTag = new CompoundNBT();
         blockEntityTag.put("print", save(print));
 
-        CompoundTag itemTag = new CompoundTag();
+        CompoundNBT itemTag = new CompoundNBT();
         itemTag.put("BlockEntityTag", blockEntityTag);
 
         ItemStack stack = new ItemStack(DeviceBlocks.PAPER.get());
         stack.setTag(itemTag);
 
         if (print.getName() != null && !print.getName().isEmpty()) {
-            stack.setHoverName(new TextComponent(print.getName()));
+            stack.setHoverName(new StringTextComponent(print.getName()));
         }
         return stack;
     }
@@ -70,14 +70,14 @@ public interface IPrint {
      *
      * @return nbt form of print
      */
-    CompoundTag toTag();
+    CompoundNBT toTag();
 
-    void fromTag(CompoundTag tag);
+    void fromTag(CompoundNBT tag);
 
-    @Environment(EnvType.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     Class<? extends Renderer> getRenderer();
 
     interface Renderer {
-        boolean render(PoseStack pose, CompoundTag data);
+        boolean render(MatrixStack pose, CompoundNBT data);
     }
 }

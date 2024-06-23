@@ -1,9 +1,9 @@
 package com.ultreon.devices.core.io;
 
 import com.ultreon.devices.core.io.FileSystem.Status;
-import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.util.NonNullList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -27,7 +27,7 @@ public final class ServerFolder extends ServerFile {
         this.protect = protect;
     }
 
-    private ServerFolder(String name, boolean protect, CompoundTag tag) {
+    private ServerFolder(String name, boolean protect, CompoundNBT tag) {
         this.name = name;
         this.protect = protect;
         this.creationTime = tag.getLong("creationTime");
@@ -35,14 +35,14 @@ public final class ServerFolder extends ServerFile {
         this.lastAccessed = tag.getLong("lastAccessed");
     }
 
-    public static ServerFolder fromTag(String name, CompoundTag folderTag) {
+    public static ServerFolder fromTag(String name, CompoundNBT folderTag) {
         ServerFolder folder = new ServerFolder(name, false, folderTag);
 
-        if (folderTag.contains("protected", Tag.TAG_BYTE)) folder.protect = folderTag.getBoolean("protected");
+        if (folderTag.contains("protected", Constants.NBT.TAG_BYTE)) folder.protect = folderTag.getBoolean("protected");
 
-        CompoundTag fileList = folderTag.getCompound("files");
+        CompoundNBT fileList = folderTag.getCompound("files");
         for (String fileName : fileList.getAllKeys()) {
-            CompoundTag fileTag = fileList.getCompound(fileName);
+            CompoundNBT fileTag = fileList.getCompound(fileName);
             if (fileTag.contains("files")) {
                 folder.add(ServerFolder.fromTag(fileName, fileTag), false);
             } else {
@@ -145,10 +145,10 @@ public final class ServerFolder extends ServerFile {
     }
 
     @Override
-    public CompoundTag toTag() {
-        CompoundTag folderTag = new CompoundTag();
+    public CompoundNBT toTag() {
+        CompoundNBT folderTag = new CompoundNBT();
 
-        CompoundTag fileList = new CompoundTag();
+        CompoundNBT fileList = new CompoundNBT();
         files.forEach(file -> fileList.put(file.getName(), file.toTag()));
         folderTag.put("files", fileList);
 
@@ -162,7 +162,7 @@ public final class ServerFolder extends ServerFile {
     }
 
     @Override
-    public FileSystem.Response setData(@Nonnull CompoundTag data) {
+    public FileSystem.Response setData(@Nonnull CompoundNBT data) {
         return FileSystem.createResponse(Status.FILE_INVALID_DATA, "Data can not be set to a folder");
     }
 

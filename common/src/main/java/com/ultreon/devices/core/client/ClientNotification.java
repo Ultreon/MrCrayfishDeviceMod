@@ -1,17 +1,17 @@
 package com.ultreon.devices.core.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.ultreon.devices.api.app.IIcon;
 import com.ultreon.devices.api.utils.RenderUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.components.toasts.Toast;
-import net.minecraft.client.gui.components.toasts.ToastComponent;
-import net.minecraft.client.resources.language.I18n;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.widget.toasts.Toast;
+import net.minecraft.client.gui.widget.toasts.ToastComponent;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -29,11 +29,11 @@ public class ClientNotification implements Toast {
 
     @NotNull
     @Override
-    public Visibility render(@NotNull PoseStack pose, ToastComponent toastComponent, long timeSinceLastVisible) {
-        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-        RenderSystem.setShaderTexture(0, TEXTURE_TOASTS);
+    public Visibility render(@NotNull MatrixStack pose, ToastComponent toastComponent, long timeSinceLastVisible) {
+        RenderSystem.blendColor(1f, 1f, 1f, 1f);
+        mc.textureManager.bind(TEXTURE_TOASTS);
         toastComponent.blit(pose, 0, 0, 0, 0, 160, 32);
-        Font font = toastComponent.getMinecraft().font;
+        FontRenderer font = toastComponent.getMinecraft().font;
 
         if (subTitle == null) {
             font.drawShadow(pose, font.plainSubstrByWidth(I18n.get(title), 118), 38, 12, -1);
@@ -42,13 +42,13 @@ public class ClientNotification implements Toast {
             font.draw(pose, font.plainSubstrByWidth(I18n.get(subTitle), 118), 38, 18, -1);
         }
 
-        RenderSystem.setShaderTexture(0, icon.getIconAsset());
+        mc.textureManager.bind(icon.getIconAsset());
         RenderUtil.drawRectWithTexture(pose, 6, 6, icon.getGridWidth(), icon.getGridHeight(), icon.getU(), icon.getV(), icon.getSourceWidth(), icon.getSourceHeight(), icon.getIconSize(), icon.getIconSize());
 
         return timeSinceLastVisible >= 5000L ? Visibility.HIDE : Visibility.SHOW;
     }
 
-    public static ClientNotification loadFromTag(CompoundTag tag) {
+    public static ClientNotification loadFromTag(CompoundNBT tag) {
         ClientNotification notification = new ClientNotification();
 
         int ordinal = tag.getCompound("icon").getInt("ordinal");
@@ -61,7 +61,7 @@ public class ClientNotification implements Toast {
         }
 
         notification.title = tag.getString("title");
-        if (tag.contains("subTitle", Tag.TAG_STRING)) {
+        if (tag.contains("subTitle", Constants.NBT.TAG_STRING)) {
             notification.subTitle = tag.getString("subTitle");
         }
 

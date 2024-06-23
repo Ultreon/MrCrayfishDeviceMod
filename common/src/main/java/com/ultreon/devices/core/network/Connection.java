@@ -1,24 +1,24 @@
 package com.ultreon.devices.core.network;
 
 import com.ultreon.devices.block.entity.RouterBlockEntity;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.World;
+import net.minecraft.tileentity.TileEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public class Connection {
+public class NetworkManager {
     private UUID routerId;
     private BlockPos routerPos;
 
-    private Connection() {
+    private NetworkManager() {
 
     }
 
-    public Connection(Router router) {
+    public NetworkManager(Router router) {
         this.routerId = router.getId();
         this.routerPos = router.getPos();
     }
@@ -37,11 +37,11 @@ public class Connection {
     }
 
     @Nullable
-    public Router getRouter(@NotNull Level level) {
+    public Router getRouter(@NotNull World level) {
         if (routerPos == null)
             return null;
 
-        BlockEntity blockEntity = level.getBlockEntity(routerPos);
+        TileEntity blockEntity = level.getBlockEntity(routerPos);
         if (blockEntity instanceof RouterBlockEntity router) {
             if (router.getRouter().getId().equals(routerId)) {
                 return router.getRouter();
@@ -54,14 +54,14 @@ public class Connection {
         return routerPos != null;
     }
 
-    public CompoundTag toTag() {
-        CompoundTag tag = new CompoundTag();
+    public CompoundNBT toTag() {
+        CompoundNBT tag = new CompoundNBT();
         tag.putString("id", routerId.toString());
         return tag;
     }
 
-    public static Connection fromTag(CompoundTag tag) {
-        Connection connection = new Connection();
+    public static NetworkManager fromTag(CompoundNBT tag) {
+        NetworkManager connection = new NetworkManager();
         connection.routerId = UUID.fromString(tag.getString("id"));
         return connection;
     }

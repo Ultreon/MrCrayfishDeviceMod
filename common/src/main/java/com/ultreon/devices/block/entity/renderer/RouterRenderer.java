@@ -1,21 +1,20 @@
 package com.ultreon.devices.block.entity.renderer;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
+import com.mojang.blaze3d.matrix.*;
+import net.minecraft.util.math.vector.Quaternion;
+import net.minecraft.util.math.vector.Vector3f;
 import com.ultreon.devices.block.PrinterBlock;
 import com.ultreon.devices.block.RouterBlock;
 import com.ultreon.devices.block.entity.RouterBlockEntity;
 import com.ultreon.devices.core.network.NetworkDevice;
 import com.ultreon.devices.core.network.Router;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.block.BlockState;
+import net.minecraft.util.math.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -25,10 +24,10 @@ import java.util.Objects;
  * @author MrCrayfish
  */
 public record RouterRenderer(
-        BlockEntityRendererProvider.Context context) implements BlockEntityRenderer<RouterBlockEntity> {
+        TileEntityRendererProvider.Context context) extends TileEntityRenderer<RouterBlockEntity> {
 
     @Override
-    public void render(RouterBlockEntity blockEntity, float partialTick, @NotNull PoseStack pose, @NotNull MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    public void render(RouterBlockEntity blockEntity, float partialTick, @NotNull MatrixStack pose, @NotNull IRenderTypeBuffer bufferSource, int packedLight, int packedOverlay) {
         BlockState state = Objects.requireNonNull(blockEntity.getLevel()).getBlockState(blockEntity.getBlockPos());
         if (state.getBlock() != blockEntity.getBlock()) return;
 
@@ -49,23 +48,23 @@ public record RouterRenderer(
                 final double startLineY = linePositions.y;
                 final double startLineZ = linePositions.z;
 
-                Tesselator tesselator = Tesselator.getInstance();
+                Tessellator tesselator = Tessellator.getInstance();
                 BufferBuilder buffer = tesselator.getBuilder();
 
                 final Collection<NetworkDevice> DEVICES = router.getConnectedDevices(Minecraft.getInstance().level);
                 DEVICES.forEach(networkDevice -> {
                     BlockPos devicePos = networkDevice.getPos();
 
-                    Objects.requireNonNull(devicePos, "Connection device has no position, weird.");
+                    Objects.requireNonNull(devicePos, "NetworkManager device has no position, weird.");
 
                     RenderSystem.lineWidth(14F);
-                    buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+                    buffer.begin(GL20.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
                     buffer.vertex(startLineX, startLineY, startLineZ).color(0f, 0f, 0f, 0.5f).endVertex();
                     buffer.vertex((devicePos.getX() - routerPos.getX()) + 0.5f, (devicePos.getY() - routerPos.getY()), (devicePos.getZ() - routerPos.getZ()) + 0.5f).color(1f, 1f, 1f, 0.35f).endVertex();
                     tesselator.end();
 
                     RenderSystem.lineWidth(4F);
-                    buffer.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR);
+                    buffer.begin(GL20.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
                     buffer.vertex(startLineX, startLineY, startLineZ).color(0f, 0f, 0f, 0.5f).endVertex();
                     buffer.vertex((devicePos.getX() - routerPos.getX()) + 0.5f, (devicePos.getY() - routerPos.getY()), (devicePos.getZ() - routerPos.getZ()) + 0.5f).color(0f, 1f, 0f, 0.5f).endVertex();
                     tesselator.end();

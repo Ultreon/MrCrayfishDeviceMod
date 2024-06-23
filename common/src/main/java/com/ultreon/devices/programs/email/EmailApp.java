@@ -1,7 +1,7 @@
 package com.ultreon.devices.programs.email;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.ultreon.devices.Resources;
 import com.ultreon.devices.api.ApplicationManager;
 import com.ultreon.devices.api.app.Component;
@@ -22,14 +22,14 @@ import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.programs.email.object.Contact;
 import com.ultreon.devices.programs.email.object.Email;
 import com.ultreon.devices.programs.email.task.*;
-import net.minecraft.ChatFormatting;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.gui.IngameGui;
+import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.text.ITextProperties;
+import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
 import java.awt.*;
@@ -124,7 +124,7 @@ public class EmailApp extends Application {
     private List<Contact> contacts; // TODO unused
 
     @Override
-    public void init(@Nullable CompoundTag intent) {
+    public void init(@Nullable CompoundNBT intent) {
         /* Loading Layout */
         layoutInit = new Layout(40, 40);
 
@@ -167,7 +167,7 @@ public class EmailApp extends Application {
         image.setAlpha(0.85f);
         layoutRegisterAccount.addComponent(image);
 
-        labelEmail = new Label(ChatFormatting.BOLD + "Choose your email", layoutRegisterAccount.width / 2, 30);
+        labelEmail = new Label(TextFormatting.BOLD + "Choose your email", layoutRegisterAccount.width / 2, 30);
         labelEmail.setAlignment(Component.ALIGN_CENTER);
         layoutRegisterAccount.addComponent(labelEmail);
 
@@ -211,40 +211,40 @@ public class EmailApp extends Application {
             TaskManager.sendTask(taskUpdateInbox);
         });
         layoutInbox.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
-            RenderSystem.setShaderTexture(0, ENDER_MAIL_BACKGROUND);
+            mc.textureManager.bind(ENDER_MAIL_BACKGROUND);
             RenderUtil.drawRectWithTexture(pose, x, y, 0, 0, width, height, 640, 360, 640, 360);
 
             Color temp = new Color(Laptop.getSystem().getSettings().getColorScheme().getBackgroundColor());
             Color color = new Color(temp.getRed(), temp.getGreen(), temp.getBlue(), 150);
-            Gui.fill(pose, x, y, x + 125, y + height, color.getRGB());
-            Gui.fill(pose, x + 125, y, x + 126, y + height, color.darker().getRGB());
+            IngameGui.fill(pose, x, y, x + 125, y + height, color.getRGB());
+            IngameGui.fill(pose, x + 125, y, x + 126, y + height, color.darker().getRGB());
 
             Email e = listEmails.getSelectedItem();
             if (e != null) {
-                Gui.fill(pose, x + 130, y + 5, x + width - 5, y + 34, color.getRGB());
-                Gui.fill(pose, x + 130, y + 34, x + width - 5, y + 35, color.darker().getRGB());
-                Gui.fill(pose, x + 130, y + 35, x + width - 5, y + height - 5, new Color(1f, 1f, 1f, 0.25f).getRGB());
+                IngameGui.fill(pose, x + 130, y + 5, x + width - 5, y + 34, color.getRGB());
+                IngameGui.fill(pose, x + 130, y + 34, x + width - 5, y + 35, color.darker().getRGB());
+                IngameGui.fill(pose, x + 130, y + 35, x + width - 5, y + height - 5, new Color(1f, 1f, 1f, 0.25f).getRGB());
                 RenderUtil.drawStringClipped(pose, e.getSubject(), x + 135, y + 10, 120, Color.WHITE.getRGB(), true);
                 RenderUtil.drawStringClipped(pose, e.getAuthor() + "@endermail.official", x + 135, y + 22, 120, Color.LIGHT_GRAY.getRGB(), false);
-                Laptop.getFont().drawWordWrap(FormattedText.of(e.getMessage()), x + 135, y + 40, 115, Color.WHITE.getRGB());
+                Laptop.getFont().drawWordWrap(ITextProperties.of(e.getMessage()), x + 135, y + 40, 115, Color.WHITE.getRGB());
             }
         });
 
         listEmails = new ItemList<>(5, 25, 116, 4);
         listEmails.setListItemRenderer(new ListItemRenderer<>(28) {
             @Override
-            public void render(PoseStack pose, Email e, GuiComponent gui, Minecraft mc, int x, int y, int width, int height, boolean selected) {
-                Gui.fill(pose, x, y, x + width, y + height, selected ? Color.DARK_GRAY.getRGB() : Color.GRAY.getRGB());
+            public void render(MatrixStack pose, Email e, AbstractGui gui, Minecraft mc, int x, int y, int width, int height, boolean selected) {
+                IngameGui.fill(pose, x, y, x + width, y + height, selected ? Color.DARK_GRAY.getRGB() : Color.GRAY.getRGB());
 
                 if (!e.isRead()) {
-                    RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+                    RenderSystem.blendColor(1f, 1f, 1f, 1f);
                     RenderUtil.drawApplicationIcon(pose, info, x + width - 16, y + 2);
                 }
 
                 if (e.getAttachment() != null) {
-                    RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+                    RenderSystem.blendColor(1f, 1f, 1f, 1f);
                     int posX = x + (!e.isRead() ? -12 : 0) + width;
-                    RenderSystem.setShaderTexture(0, ENDER_MAIL_ICONS);
+                    mc.textureManager.bind(ENDER_MAIL_ICONS);
                     RenderUtil.drawRectWithTexture(pose, posX, y + 16, 20, 10, 7, 10, 13, 20);
                 }
                 RenderUtil.drawStringClipped(pose, e.getSubject(), x + 5, y + 5, width - 20, Color.WHITE.getRGB(), false);
@@ -423,13 +423,13 @@ public class EmailApp extends Application {
 
         layoutViewEmail = new Layout(240, 156);
         layoutViewEmail.setBackground((pose, gui, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
-            Gui.fill(pose, x, y + 22, x + layoutViewEmail.width, y + 50, Color.GRAY.getRGB());
-            Gui.fill(pose, x, y + 22, x + layoutViewEmail.width, y + 23, Color.DARK_GRAY.getRGB());
-            Gui.fill(pose, x, y + 49, x + layoutViewEmail.width, y + 50, Color.DARK_GRAY.getRGB());
-            Gui.fill(pose, x, y + 50, x + layoutViewEmail.width, y + 156, COLOR_EMAIL_CONTENT_BACKGROUND.getRGB());
+            IngameGui.fill(pose, x, y + 22, x + layoutViewEmail.width, y + 50, Color.GRAY.getRGB());
+            IngameGui.fill(pose, x, y + 22, x + layoutViewEmail.width, y + 23, Color.DARK_GRAY.getRGB());
+            IngameGui.fill(pose, x, y + 49, x + layoutViewEmail.width, y + 50, Color.DARK_GRAY.getRGB());
+            IngameGui.fill(pose, x, y + 50, x + layoutViewEmail.width, y + 156, COLOR_EMAIL_CONTENT_BACKGROUND.getRGB());
 
             if (attachedFile != null) {
-                RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+                RenderSystem.blendColor(1f, 1f, 1f, 1f);
                 AppInfo info = ApplicationManager.getApplication(Objects.requireNonNull(attachedFile.getOpeningApp(), "Attached file has no opening app"));
                 RenderUtil.drawApplicationIcon(pose, info, x + 204, y + 4);
             }
@@ -506,25 +506,25 @@ public class EmailApp extends Application {
     }
 
     @Override
-    public void load(CompoundTag tagCompound) {
+    public void load(CompoundNBT tagCompound) {
 
     }
 
     @Override
-    public void save(CompoundTag tagCompound) {
+    public void save(CompoundNBT tagCompound) {
         // Save emails
-        ListTag emailsTag = new ListTag();
+        ListNBT emailsTag = new ListNBT();
         for (Email email : listEmails) {
-            CompoundTag emailTag = new CompoundTag();
+            CompoundNBT emailTag = new CompoundNBT();
             email.save(emailTag);
             emailsTag.add(emailTag);
         }
         tagCompound.put("emails", emailsTag);
 
         // Save contacts
-        ListTag contactsTag = new ListTag();
+        ListNBT contactsTag = new ListNBT();
         for (Contact contact : listContacts) {
-            CompoundTag contactTag = new CompoundTag();
+            CompoundNBT contactTag = new CompoundNBT();
             contact.save(contactTag);
             contactsTag.add(contactTag);
         }
