@@ -6,7 +6,6 @@ import dev.ultreon.devices.api.app.Dialog;
 import dev.ultreon.devices.core.Wrappable;
 import dev.ultreon.devices.gui.GuiButtonClose;
 import dev.ultreon.devices.api.app.Application;
-import dev.ultreon.devices.util.FrameBuffer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -31,14 +30,13 @@ public class Window<T extends Wrappable> {
     protected boolean removed;
     private Font font = Minecraft.getInstance().font;
     UUID windowId;
-    private FrameBuffer frameBuffer;
 
     public Window(T wrappable, MineOS mineOS) {
         this.content = wrappable;
         this.mineOS = mineOS;
         wrappable.setWindow(this);
         this.windowId = mineOS.generateWindowId();
-        frameBuffer = new FrameBuffer(new ResourceLocation("devices:generated/win_" + this.windowId.toString().replace("-", "_")), 1, 1);
+//        frameBuffer = new FrameBuffer(new ResourceLocation("devices:generated/win_" + this.windowId.toString().replace("-", "_")), 1, 1);
     }
 
     void setWidth(int width) {
@@ -250,7 +248,6 @@ public class Window<T extends Wrappable> {
     public void handleClose() {
         this.content.onClose();
         this.mineOS.windowById.remove(this.windowId);
-        this.frameBuffer.dispose();
     }
 
     private void updateComponents(int x, int y) {
@@ -303,7 +300,4 @@ public class Window<T extends Wrappable> {
         return content;
     }
 
-    public FrameBuffer getFrameBuffer() {
-        return frameBuffer;
-    }
 }
