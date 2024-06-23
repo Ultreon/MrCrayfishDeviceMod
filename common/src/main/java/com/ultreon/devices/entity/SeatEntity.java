@@ -4,9 +4,9 @@ import com.ultreon.devices.init.DeviceEntities;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.network.protocol.game.SSpawnObjectPacket;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityDimensions;
+import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.Pose;
 import net.minecraft.entity.decoration.ArmorStand;
@@ -29,7 +29,7 @@ public class SeatEntity extends Entity
     }
 
     @Override
-    protected float getEyeHeight(Pose pose, EntityDimensions dimensions) {
+    protected float getEyeHeight(Pose pose, EntitySize dimensions) {
         return 0;
     }
 
@@ -79,7 +79,7 @@ public class SeatEntity extends Entity
 
     @Override
     public Packet<?> getAddEntityPacket() {
-        return new ClientboundAddEntityPacket(this);
+        return new SSpawnObjectPacket(this);
     }
 
 //    @Override

@@ -1,10 +1,10 @@
 package com.ultreon.devices.util;
 
-import dev.architectury.platform.Platform;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 
 public class ArchUtils {
     @Deprecated
     public static boolean isProduction() {
-        return Platform.isDevelopmentOnlyIn();
+        return FMLEnvironment.production;
     }
 }

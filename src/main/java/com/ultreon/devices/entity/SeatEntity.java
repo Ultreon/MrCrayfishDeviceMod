@@ -2,12 +2,12 @@ package com.ultreon.devices.entity;
 
 import com.ultreon.devices.init.DeviceEntities;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityDimensions;
+import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.Pose;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.network.IPacket;
+import net.minecraft.network.play.server.SSpawnObjectPacket;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -27,7 +27,7 @@ public class SeatEntity extends Entity
     }
 
     @Override
-    protected float getEyeHeight(Pose pose, EntityDimensions dimensions) {
+    protected float getEyeHeight(Pose pose, EntitySize dimensions) {
         return 0;
     }
 
@@ -61,7 +61,7 @@ public class SeatEntity extends Entity
     @Override
     public void tick()
     {
-        if(!this.level.isClientSide && (!this.hasExactlyOnePlayerPassenger() || this.level.isEmptyBlock(this.getOnPos())))
+        if(!this.level.isClientSide && (!this.hasOnePlayerPassenger() || this.level.isEmptyBlock(this.getOnPos())))
         {
             this.kill();
         }
@@ -77,8 +77,8 @@ public class SeatEntity extends Entity
     }
 
     @Override
-    public @NotNull Packet<?> getAddEntityPacket() {
-        return new ClientboundAddEntityPacket(this);
+    public @NotNull IPacket<?> getAddEntityPacket() {
+        return new SSpawnObjectPacket(this);
     }
 
 //    @Override
