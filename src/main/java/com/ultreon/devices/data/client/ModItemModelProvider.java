@@ -9,7 +9,7 @@ import com.ultreon.devices.init.DeviceItems;
 import com.ultreon.devices.item.FlashDriveItem;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.world.level.ItemLike;
+import net.minecraft.util.IItemProvider;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -64,7 +64,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         }
     }
 
-    private void builder(ItemLike item, ModelFile parent) {
+    private void builder(IItemProvider item, ModelFile parent) {
         String name = Objects.requireNonNull(item.asItem().getRegistryName()).getPath();
         builder(item, parent, "item/" + name);
     }
@@ -74,7 +74,7 @@ public class ModItemModelProvider extends ItemModelProvider {
 //        return getBuilder(item, parent, "item/" + name);
 //    }
 
-    private void builder(ItemLike item, ModelFile parent, String texture) {
+    private void builder(IItemProvider item, ModelFile parent, String texture) {
         try {
             getBuilder(Objects.requireNonNull(item.asItem().getRegistryName()).getPath())
                     .parent(parent)

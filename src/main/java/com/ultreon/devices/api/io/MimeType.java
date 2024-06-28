@@ -42,7 +42,7 @@ public final class MimeType {
     public boolean equals(Object obj) {
         if (obj == this) return true;
         if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (MimeType) obj;
+        MimeType that = (MimeType) obj;
         return Objects.equals(this.type, that.type) &&
                 Objects.equals(this.subType, that.subType);
     }

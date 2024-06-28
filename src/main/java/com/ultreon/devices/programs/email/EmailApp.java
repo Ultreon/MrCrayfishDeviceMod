@@ -231,7 +231,7 @@ public class EmailApp extends Application {
         });
 
         listEmails = new ItemList<>(5, 25, 116, 4);
-        listEmails.setListItemRenderer(new ListItemRenderer<>(28) {
+        listEmails.setListItemRenderer(new ListItemRenderer<Email>(28) {
             @Override
             public void render(MatrixStack pose, Email e, AbstractGui gui, Minecraft mc, int x, int y, int width, int height, boolean selected) {
                 IngameGui.fill(pose, x, y, x + width, y + height, selected ? Color.DARK_GRAY.getRGB() : Color.GRAY.getRGB());

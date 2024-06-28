@@ -10,15 +10,20 @@ import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.util.GLHelper;
 import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IngameGui;
+import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 public class TextArea extends Component {
@@ -228,14 +233,16 @@ public class TextArea extends Component {
     protected void handleMouseRelease(int mouseX, int mouseY, int mouseButton) {
         if (scrollBar != null) {
             switch (scrollBar) {
-                case HORIZONTAL:
+                case HORIZONTAL: {
                     float scrollPercentage = (float) maxLineWidth / (float) (width - padding * 2);
                     horizontalScroll = MathHelper.clamp(horizontalScroll + (int) (horizontalOffset * scrollPercentage), 0, maxLineWidth - (width - padding * 2));
                     break;
-                case VERTICAL:
+                }
+                case VERTICAL: {
                     float scrollPercentage = MathHelper.clamp((verticalScroll + verticalOffset) / (float) (lines.size() - visibleLines), 0f, 1f);
                     verticalScroll = (int) ((lines.size() - visibleLines) * (scrollPercentage));
                     break;
+                }
             }
             horizontalOffset = 0;
             verticalOffset = 0;
@@ -277,7 +284,7 @@ public class TextArea extends Component {
                     performBackspace();
                     break;
                 // TODO: Make delete actually work
-                case GLFW.GLFW_KEY_RETURN:
+                case GLFW.GLFW_KEY_ENTER:
                     performReturn();
                     break;
                 case GLFW.GLFW_KEY_TAB:
@@ -649,16 +656,16 @@ public class TextArea extends Component {
                     continue;
                 }
 
-                List<String> split = font.plainSubstrByWidth(lines.get(i), width - padding * 2).lines().toList();
+                List<String> split = Arrays.stream(font.plainSubstrByWidth(lines.get(i), width - padding * 2).split("(\r\n[\n\r])")).collect(Collectors.toList());
                 for (int j = 0; j < split.size() - 1; j++) {
                     updatedLines.add(split.get(j));
                 }
-                if (split.size() > 0) {
+                if (!split.isEmpty()) {
                     updatedLines.add(split.get(split.size() - 1) + "\n");
                 }
             }
 
-            List<String> split = font.plainSubstrByWidth(lines.get(lines.size() - 1), width - padding * 2).lines().toList();
+            List<String> split = Arrays.asList(font.plainSubstrByWidth(lines.get(lines.size() - 1), width - padding * 2).split("(\r\n[\n\r])"));
             for (int i = 0; i < split.size() - 1; i++) {
                 updatedLines.add(split.get(i));
             }
@@ -666,7 +673,7 @@ public class TextArea extends Component {
                 updatedLines.add(split.get(split.size() - 1));
             }
 
-            List<String> activeLine = font.plainSubstrByWidth(lines.get(cursorY), width - padding * 2).lines().toList();
+            List<String> activeLine = Arrays.asList(font.plainSubstrByWidth(lines.get(cursorY), width - padding * 2).split("(\r\n[\n\r])"));
             int totalLength = 0;
             for (String line : activeLine) {
                 if (totalLength + line.length() < cursorX) {

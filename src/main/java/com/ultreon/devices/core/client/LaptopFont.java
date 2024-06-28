@@ -11,7 +11,7 @@ public class LaptopFont extends FontRenderer {
     private boolean debug = false;
 
     public LaptopFont(Minecraft mc) {
-        super(res -> new LaptopFont(mc.getTextureManager(), Devices.res("laptop")));
+        super(res -> new LaptopFontSet(mc.getTextureManager(), Devices.res("laptop")));
     }
 
     // Todo: Port to 1.18.2 where possible.

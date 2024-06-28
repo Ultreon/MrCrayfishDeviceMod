@@ -28,10 +28,10 @@ public abstract class Application extends Wrappable implements DataHandler {
     @SuppressWarnings("FieldMayBeFinal")
     protected AppInfo info = null;
     public void setInfo(AppInfo info) {
-        if (StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass().equals(Devices.class)) {
+//        if (StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass().equals(Devices.class)) {
             this.info = info;
-            return;
-        }
+//            return;
+//        }
         throw new IllegalStateException();
     }
     private final Layout defaultLayout = new Layout();

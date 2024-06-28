@@ -1,7 +1,6 @@
 package com.ultreon.devices.programs.snake.layout;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.InputConstants;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Layout;
@@ -10,6 +9,7 @@ import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.programs.snake.SnakeApp;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IngameGui;
+import org.lwjgl.glfw.GLFW;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ public class SnakeLayout extends Layout {
     }
 
     public static class Grid extends Component {
-        private ArrayList<Pos2d> snakePos = new ArrayList<>() {
+        private ArrayList<Pos2d> snakePos = new ArrayList<Pos2d>() {
             @Override
             public Pos2d get(int index) {
                 try {
@@ -201,8 +201,8 @@ public class SnakeLayout extends Layout {
             super.handleTick();
             if (tick > speed) {
                 tick = 0;
-                Pos2d newPos = null;
-                Pos2d newLastPos = null;
+                Pos2d newPos;
+                Pos2d newLastPos;
                 Pos2d first = snakePos.get(snakePos.size() - 1);
                 newPos = first.dir(direction2d);
                 for (Pos2d pos : snakePos) {

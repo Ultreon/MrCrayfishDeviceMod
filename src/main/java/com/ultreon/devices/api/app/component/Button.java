@@ -8,6 +8,8 @@ import com.ultreon.devices.api.app.listener.ClickListener;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.util.GuiHelper;
 import com.ultreon.devices.util.StringUtils;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
@@ -82,7 +84,7 @@ public class Button extends Component {
      * Alternate button constructor
      *
      * @param left how many pixels from the left
-     *             I	 * @param top how many pixels from the top
+     *             I	* @param top how many pixels from the top
      * @param icon icon to be displayed in the button
      */
     public Button(int left, int top, IIcon icon) {

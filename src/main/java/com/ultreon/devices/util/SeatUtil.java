@@ -17,7 +17,7 @@ public class SeatUtil
         if(!seats.isEmpty())
         {
             SeatEntity seat = seats.get(0);
-            if(seat.getFirstPassenger() == null)
+            if(seat.getControllingPassenger() == null)
             {
                 playerIn.startRiding(seat);
             }

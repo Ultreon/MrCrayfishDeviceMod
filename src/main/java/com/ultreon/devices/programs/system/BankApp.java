@@ -1,6 +1,5 @@
 package com.ultreon.devices.programs.system;
 
-import com.mojang.blaze3d.matrix.Tessellator;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.ultreon.devices.api.app.Application;
 import com.ultreon.devices.api.app.Dialog;
@@ -16,17 +15,19 @@ import com.ultreon.devices.api.utils.RenderUtil;
 import com.ultreon.devices.programs.system.task.TaskDeposit;
 import com.ultreon.devices.programs.system.task.TaskWithdraw;
 import com.ultreon.devices.util.InventoryUtil;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.entity.merchant.villager.VillagerData;
+import net.minecraft.entity.merchant.villager.VillagerProfession;
+import net.minecraft.entity.villager.VillagerType;
+import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IngameGui;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.VillagerRenderer;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.merchant.villager.VillagerEntity;
-import net.minecraft.entity.npc.VillagerData;
-import net.minecraft.entity.npc.VillagerProfession;
-import net.minecraft.entity.npc.VillagerType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
@@ -103,8 +104,8 @@ public class BankApp extends Application {//The bank is not a system application
                 float scaleY = (mouseY - y - 20) / (float) height;
 //                RenderSystem.setShaderTexture(villagerTextures);
 
-                IRenderTypeBuffer.BufferSource buffer = IRenderTypeBuffer.immediate(Tessellator.getInstance().getBuilder());
-                VillagerRenderer renderer = new VillagerRenderer(new EntityRendererProvider.Context(Minecraft.getInstance().getEntityRenderDispatcher(), Minecraft.getInstance().getItemRenderer(), Minecraft.getInstance().getResourceManager(), Minecraft.getInstance().getEntityModels(), Minecraft.getInstance().font));
+                IRenderTypeBuffer.Impl buffer = IRenderTypeBuffer.immediate(Tessellator.getInstance().getBuilder());
+                VillagerRenderer renderer = new VillagerRenderer(Minecraft.getInstance().getEntityRenderDispatcher(), (IReloadableResourceManager) Minecraft.getInstance().getResourceManager());
                 VillagerEntity villager = EntityType.VILLAGER.create(Minecraft.getInstance().level);
                 assert villager != null;
                 villager.setVillagerData(new VillagerData(VillagerType.PLAINS, VillagerProfession.NITWIT, 1));
@@ -126,7 +127,9 @@ public class BankApp extends Application {//The bank is not a system application
         layoutStart.addComponent(labelTeller);
 
         assert Minecraft.getInstance().level == null || Minecraft.getInstance().player != null;
-        textWelcome = new Text(TextFormatting.BLACK + "Hello " + Minecraft.getInstance().player.getGameProfile().getName() + ", welcome to The Emerald Bank! How can I help you?", 62, 25, 125);
+        if (Minecraft.getInstance().player != null) {
+            textWelcome = new Text(TextFormatting.BLACK + "Hello " + Minecraft.getInstance().player.getGameProfile().getName() + ", welcome to The Emerald Bank! How can I help you?", 62, 25, 125);
+        }
         layoutStart.addComponent(textWelcome);
 
         btnDepositWithdraw = new Button(54, 74, "View Account");

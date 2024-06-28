@@ -1,9 +1,6 @@
 package com.ultreon.devices;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.ultreon.devices.api.ApplicationManager;
 import com.ultreon.devices.api.app.Application;
 import com.ultreon.devices.api.print.IPrint;
@@ -11,6 +8,7 @@ import com.ultreon.devices.api.print.PrintingManager;
 import com.ultreon.devices.api.task.TaskManager;
 import com.ultreon.devices.api.utils.OnlineRequest;
 import com.ultreon.devices.block.PrinterBlock;
+import com.ultreon.devices.client.DevicesClient;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.core.client.ClientNotification;
 import com.ultreon.devices.core.client.debug.ClientAppDebug;
@@ -40,16 +38,28 @@ import com.ultreon.devices.programs.snake.SnakeApp;
 import com.ultreon.devices.programs.system.*;
 import com.ultreon.devices.programs.system.task.*;
 import com.ultreon.devices.util.SiteRegistration;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -424,36 +434,35 @@ public class Devices {
 //    }
 
     private static void setupClientEvents() {
-        ClientPlayerEvent.CLIENT_PLAYER_QUIT.register((player -> {
-            LOGGER.debug("Client disconnected from server");
-
-            allowedApps = null;
-            DeviceConfig.restore();
-        }));
+        DevicesClient.init();
     }
 
     private static void setupEvents() {
-        LifecycleEvent.SERVER_STARTING.register((instance -> server = instance));
-        LifecycleEvent.SERVER_STOPPED.register(instance -> server = null);
-        InteractionEvent.RIGHT_CLICK_BLOCK.register(((player, hand, pos, face) -> {
-            World level = player.getLevel();
-            if (!player.getItemInHand(hand).isEmpty() && player.getItemInHand(hand).getItem() == Items.PAPER) {
+        FMLJavaModLoadingContext.get().getModEventBus().addListener((FMLServerStartingEvent evt) -> server = evt.getServer());
+        FMLJavaModLoadingContext.get().getModEventBus().addListener((FMLServerStoppedEvent evt) -> server = null);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener((PlayerInteractEvent.RightClickBlock evt) -> {
+            World level = evt.getWorld();
+            PlayerEntity player = evt.getPlayer();
+            BlockPos pos = evt.getPos();
+            Hand hand = evt.getHand();
+            if (!player.getItemInHand(evt.getHand()).isEmpty() && player.getItemInHand(hand).getItem() == Items.PAPER) {
                 if (level.getBlockState(pos).getBlock() instanceof PrinterBlock) {
-                    return EventResult.interruptTrue();
-                    //event.setUseBlock(Event.Result.ALLOW); //todo
+                    evt.setUseBlock(Event.Result.ALLOW);
+                    return;
                 }
             }
-            return EventResult.pass();
-        }));
+        });
 
-        PlayerEvent.PLAYER_JOIN.register((player -> {
-            LOGGER.info("Player logged in: " + player.getName());
+        MinecraftForge.EVENT_BUS.addListener((PlayerEvent.PlayerLoggedInEvent evt) -> {
+            if (!(evt.getPlayer() instanceof ServerPlayerEntity)) return;
+
+            LOGGER.info("Player logged in: " + evt.getPlayer().getName());
 
             if (allowedApps != null) {
-                PacketHandler.sendToClient(new SyncApplicationPacket(allowedApps), player);
+                PacketHandler.sendToClient(new SyncApplicationPacket(allowedApps), evt.getPlayer());
             }
-            PacketHandler.sendToClient(new SyncConfigPacket(), player);
-        }));
+            PacketHandler.sendToClient(new SyncConfigPacket(), evt.getPlayer());
+        });
     }
 
     private static void setupSiteRegistrations() {
@@ -466,7 +475,7 @@ public class Devices {
         OnlineRequest.getInstance().make(url, (success, response) -> {
             if (success) {
                 //Minecraft.getInstance().doRunTask(() -> {
-                JsonArray array = JsonParser.parseString(response).getAsJsonArray();
+                JsonArray array = new Gson().fromJson(response, JsonArray.class);
                 for (JsonElement jsonElement : array) {
                     JsonObject elem = jsonElement.getAsJsonObject();
                     String registrant = elem.get("registrant") != null ? elem.get("registrant").getAsString() : null;
@@ -488,17 +497,17 @@ public class Devices {
                     switch (type) {
                         case REGISTRATION:
                             @SuppressWarnings("all") //no
-                            var dev = elem.get("dev") != null ? elem.get("dev").getAsBoolean() : false;
+                            boolean dev = elem.get("dev") != null ? elem.get("dev").getAsBoolean() : false;
                             String site = elem.get("site").getAsString();
                             if (dev && !IS_DEV_PREVIEW) {
                                 continue;
                             }
                             for (JsonElement registration : elem.get("registrations").getAsJsonArray()) {
-                                var a = registration.getAsJsonObject().keySet();
+                                Set<Map.Entry<String, JsonElement>> a = registration.getAsJsonObject().entrySet();
                                 JsonObject d = registration.getAsJsonObject();
-                                for (String string : a) {
-                                    String registrationType = d.get(string).getAsString();
-                                    SITE_REGISTRATIONS.add(new SiteRegistration(registrant, string, registrationType, site));
+                                for (Map.Entry<String, JsonElement> string : a) {
+                                    String registrationType = d.get(string.getKey()).getAsString();
+                                    SITE_REGISTRATIONS.add(new SiteRegistration(registrant, string.getKey(), registrationType, site));
                                 }
                             }
                             break;
@@ -526,12 +535,18 @@ public class Devices {
         return new ResourceLocation(MOD_ID, id);
     }
 
+    public static void logOut() {
+        LOGGER.debug("Client disconnected from server");
+
+        allowedApps = null;
+        DeviceConfig.restore();
+    }
+
     private enum Type {
         SITE_REGISTER, REGISTRATION
     }
 
     private static class ProtectedArrayList<T> extends ArrayList<T> {
-        private final StackWalker stackWalker = StackWalker.getInstance(EnumSet.of(StackWalker.Option.RETAIN_CLASS_REFERENCE));
         private boolean frozen = false;
 
         private void freeze() {
@@ -545,72 +560,48 @@ public class Devices {
         @Override
         public boolean add(T t) {
             freezeCheck();
-            if (stackWalker.getCallerClass() != Devices.class) {
-                throw new IllegalCallerException("Should be called from Devices Mod main class.");
-            }
             return super.add(t);
         }
 
         @Override
         public boolean addAll(Collection<? extends T> c) {
             freezeCheck();
-            if (stackWalker.getCallerClass() != Devices.class) {
-                throw new IllegalCallerException("Should be called from Devices Mod main class.");
-            }
             return super.addAll(c);
         }
 
         @Override
         public void add(int index, T element) {
             freezeCheck();
-            if (stackWalker.getCallerClass() != Devices.class) {
-                throw new IllegalCallerException("Should be called from Devices Mod main class.");
-            }
             super.add(index, element);
         }
 
         @Override
         protected void removeRange(int fromIndex, int toIndex) {
             freezeCheck();
-            if (stackWalker.getCallerClass() != Devices.class) {
-                throw new IllegalCallerException("Should be called from Devices Mod main class.");
-            }
             super.removeRange(fromIndex, toIndex);
         }
 
         @Override
         public boolean remove(Object o) {
             freezeCheck();
-            if (stackWalker.getCallerClass() != Devices.class) {
-                throw new IllegalCallerException("Should be called from Devices Mod main class.");
-            }
             return super.remove(o);
         }
 
         @Override
         public boolean removeAll(Collection<?> c) {
             freezeCheck();
-            if (stackWalker.getCallerClass() != Devices.class) {
-                throw new IllegalCallerException("Should be called from Devices Mod main class.");
-            }
             return super.removeAll(c);
         }
 
         @Override
         public boolean removeIf(Predicate<? super T> filter) {
             freezeCheck();
-            if (stackWalker.getCallerClass() != Devices.class) {
-                throw new IllegalCallerException("Should be called from Devices Mod main class.");
-            }
             return super.removeIf(filter);
         }
 
         @Override
         public T remove(int index) {
             freezeCheck();
-            if (stackWalker.getCallerClass() != Devices.class) {
-                throw new IllegalCallerException("Should be called from Devices Mod main class.");
-            }
             return super.remove(index);
         }
     }

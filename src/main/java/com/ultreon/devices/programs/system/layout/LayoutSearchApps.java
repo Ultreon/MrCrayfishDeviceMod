@@ -46,7 +46,7 @@ public class LayoutSearchApps extends StandardLayout {
         ItemList<AppInfo> itemListResults = new ItemList<>(5, 48, AppStore.LAYOUT_WIDTH - 10, 5, true);
         itemListResults.setItems(ApplicationManager.getAvailableApplications());
         itemListResults.sortBy(Comparator.comparing(AppInfo::getName));
-        itemListResults.setListItemRenderer(new ListItemRenderer<>(18) {
+        itemListResults.setListItemRenderer(new ListItemRenderer<AppInfo>(18) {
             @Override
             public void render(MatrixStack pose, AppInfo info, AbstractGui gui, Minecraft mc, int x, int y, int width, int height, boolean selected) {
                 IngameGui.fill(pose, x, y, x + width, y + height, selected ? ITEM_SELECTED.getRGB() : ITEM_BACKGROUND.getRGB());

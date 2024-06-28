@@ -6,9 +6,9 @@ import com.ultreon.devices.init.DeviceBlocks;
 import com.ultreon.devices.init.DeviceItems;
 import com.ultreon.devices.item.FlashDriveItem;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.data.recipes.RecipeProvider;
-import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.data.IFinishedRecipe;
+import net.minecraft.data.RecipeProvider;
+import net.minecraft.data.ShapedRecipeBuilder;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.DyeItem;
 import net.minecraft.item.Items;
@@ -28,7 +28,7 @@ public class ModRecipesProvider extends RecipeProvider {
     }
 
     @Override
-    protected void buildCraftingRecipes(@NotNull Consumer<FinishedRecipe> consumer) {
+    protected void buildShapelessRecipes(@NotNull Consumer<IFinishedRecipe> consumer) {
         //***********************//
         //      Flash Drives     //
         //***********************//

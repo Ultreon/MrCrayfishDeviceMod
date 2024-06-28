@@ -28,6 +28,7 @@ import net.minecraft.client.gui.IngameGui;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -781,7 +782,7 @@ public abstract class Dialog extends Wrappable {
             layoutMain.addComponent(buttonRefresh);
 
             itemListPrinters = new ItemList<>(5, 18, 140, 5);
-            itemListPrinters.setListItemRenderer(new ListItemRenderer<>(16) {
+            itemListPrinters.setListItemRenderer(new ListItemRenderer<NetworkDevice>(16) {
                 @Override
                 public void render(MatrixStack pose, NetworkDevice networkDevice, AbstractGui gui, Minecraft mc, int x, int y, int width, int height, boolean selected) {
                     ColorScheme colorScheme = Laptop.getSystem().getSettings().getColorScheme();
@@ -802,11 +803,11 @@ public abstract class Dialog extends Wrappable {
 
                 BlockPos pos1 = o1.getPos();
                 assert pos1 != null;
-                double distance1 = laptopPos.distToCenterSqr(pos1.getX() + 0.5, pos1.getY() + 0.5, pos1.getZ() + 0.5);
+                double distance1 = laptopPos.distSqr(pos1.getX() + 0.5, pos1.getY() + 0.5, pos1.getZ() + 0.5, false);
 
                 BlockPos pos2 = o2.getPos();
                 assert pos2 != null;
-                double distance2 = laptopPos.distToCenterSqr(pos2.getX() + 0.5, pos2.getY() + 0.5, pos2.getZ() + 0.5);
+                double distance2 = laptopPos.distSqr(pos2.getX() + 0.5, pos2.getY() + 0.5, pos2.getZ() + 0.5, false);
 
                 return Double.compare(distance1, distance2);
             });

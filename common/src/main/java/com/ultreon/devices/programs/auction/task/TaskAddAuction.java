@@ -43,8 +43,8 @@ public class TaskAddAuction extends Task {
         int price = nbt.getInt("price");
         int duration = nbt.getInt("duration");
 
-        if (slot >= 0 && price >= 0 && slot < player.getInventory().getContainerSize()) {
-            ItemStack real = player.getInventory().getItem(slot);
+        if (slot >= 0 && price >= 0 && slot < player.inventory.getContainerSize()) {
+            ItemStack real = player.inventory.getItem(slot);
             if (!real.isEmpty()) {
                 ItemStack stack = real.copy();
                 stack.setCount(amount);

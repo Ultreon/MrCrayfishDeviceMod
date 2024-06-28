@@ -8,7 +8,7 @@ import net.minecraft.item.ItemStack;
 public class InventoryUtil {
     public static int getItemAmount(PlayerEntity player, Item item) {
         int amount = 0;
-        Inventory inventory = player.getInventory();
+        Inventory inventory = player.inventory;
         for (int i = 0; i < inventory.getContainerSize(); i++) {
             ItemStack stack = inventory.getItem(i);
             if (!stack.isEmpty() && stack.getItem() == item) {
@@ -20,7 +20,7 @@ public class InventoryUtil {
 
     public static boolean hasItemAndAmount(PlayerEntity player, Item item, int amount) {
         int count = 0;
-        for (ItemStack stack : player.getInventory().items) {
+        for (ItemStack stack : player.inventory.items) {
             if (stack != null && stack.getItem() == item) {
                 count += stack.getCount();
             }
@@ -30,15 +30,15 @@ public class InventoryUtil {
 
     public static boolean removeItemWithAmount(PlayerEntity player, Item item, int amount) {
         if (hasItemAndAmount(player, item, amount)) {
-            for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
-                ItemStack stack = player.getInventory().getItem(i);
+            for (int i = 0; i < player.inventory.getContainerSize(); i++) {
+                ItemStack stack = player.inventory.getItem(i);
                 if (!stack.isEmpty() && stack.getItem() == item) {
                     if (amount - stack.getCount() < 0) {
                         stack.shrink(amount);
                         return true;
                     } else {
                         amount -= stack.getCount();
-                        player.getInventory().items.set(i, ItemStack.EMPTY);
+                        player.inventory.items.set(i, ItemStack.EMPTY);
                         if (amount == 0) return true;
                     }
                 }

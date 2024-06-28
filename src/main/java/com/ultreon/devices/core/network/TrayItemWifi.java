@@ -43,7 +43,7 @@ public class TrayItemWifi extends TrayItem {
 
         ItemList<Device> itemListRouters = new ItemList<>(5, 5, 90, 4);
         itemListRouters.setItems(getRouters());
-        itemListRouters.setListItemRenderer(new ListItemRenderer<>(16) {
+        itemListRouters.setListItemRenderer(new ListItemRenderer<Device>(16) {
             @Override
             public void render(MatrixStack pose, Device device, AbstractGui gui, Minecraft mc, int x, int y, int width, int height, boolean selected) {
                 IngameGui.fill(pose, x, y, x + width, y + height, selected ? Color.DARK_GRAY.getRGB() : Color.GRAY.getRGB());
@@ -53,7 +53,7 @@ public class TrayItemWifi extends TrayItem {
 
                 BlockPos laptopPos = Laptop.getPos();
                 assert laptopPos != null;
-                double distance = Math.sqrt(device.getPos().distToCenterSqr(laptopPos.getX() + 0.5, laptopPos.getY() + 0.5, laptopPos.getZ() + 0.5));
+                double distance = Math.sqrt(device.getPos().distSqr(laptopPos.getX() + 0.5, laptopPos.getY() + 0.5, laptopPos.getZ() + 0.5, false));
                 if (distance > 20) {
                     Icons.WIFI_LOW.draw(pose, mc, x + 3, y + 3);
                 } else if (distance > 10) {
@@ -67,9 +67,9 @@ public class TrayItemWifi extends TrayItem {
             BlockPos laptopPos = Laptop.getPos();
             assert o1.getPos() != null;
             assert laptopPos != null;
-            double distance1 = Math.sqrt(o1.getPos().distToCenterSqr(laptopPos.getX() + 0.5, laptopPos.getY() + 0.5, laptopPos.getZ() + 0.5));
+            double distance1 = Math.sqrt(o1.getPos().distSqr(laptopPos.getX() + 0.5, laptopPos.getY() + 0.5, laptopPos.getZ() + 0.5, false));
             assert o2.getPos() != null;
-            double distance2 = Math.sqrt(o2.getPos().distToCenterSqr(laptopPos.getX() + 0.5, laptopPos.getY() + 0.5, laptopPos.getZ() + 0.5));
+            double distance2 = Math.sqrt(o2.getPos().distSqr(laptopPos.getX() + 0.5, laptopPos.getY() + 0.5, laptopPos.getZ() + 0.5, false));
             return Double.compare(distance1, distance2);
         });
         layout.addComponent(itemListRouters);

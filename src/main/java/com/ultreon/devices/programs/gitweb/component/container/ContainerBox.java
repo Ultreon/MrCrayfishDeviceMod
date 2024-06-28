@@ -8,6 +8,7 @@ import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
@@ -79,7 +80,7 @@ public abstract class ContainerBox extends Component {
         public void renderOverlay(MatrixStack pose, Laptop laptop, int x, int y, int mouseX, int mouseY) {
             if (GuiHelper.isMouseWithin(mouseX, mouseY, x + slotX, y + slotY, 16, 16)) {
                 if (!stack.isEmpty()) {
-                    laptop.renderTooltip(pose, laptop.getTooltipFromItem(stack), Optional.empty(), mouseX, mouseY/*, stack*/);
+                    laptop.renderComponentTooltip(pose, laptop.getTooltipFromItem(stack), mouseX, mouseY/*, stack*/);
                 }
             }
 

@@ -80,7 +80,7 @@ public final class SiteRegistration {
     public boolean equals(Object obj) {
         if (obj == this) return true;
         if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (SiteRegistration) obj;
+        SiteRegistration that = (SiteRegistration) obj;
         return Objects.equals(this.registrant, that.registrant) &&
                 Objects.equals(this.string, that.string) &&
                 Objects.equals(this.type, that.type) &&

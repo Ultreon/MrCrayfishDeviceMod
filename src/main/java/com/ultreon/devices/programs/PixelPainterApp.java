@@ -28,6 +28,7 @@ import net.minecraft.client.gui.IngameGui;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Quaternion;
+import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nullable;
 import java.awt.*;
@@ -94,7 +95,7 @@ public class PixelPainterApp extends Application {
         layoutMainMenu.setIcon(Icons.HOME);
 
         ItemList<Picture> pictureList = new ItemList<>(5, 43, 80, 4);
-        pictureList.setListItemRenderer(new ListItemRenderer<>(18) {
+        pictureList.setListItemRenderer(new ListItemRenderer<Picture>(18) {
             @Override
             public void render(MatrixStack pose, Picture picture, AbstractGui gui, Minecraft mc, int x, int y, int width, int height, boolean selected) {
                 RenderUtil.drawStringClipped(pose, "Henlo", x, y, 100, AUTHOR_TEXT.getRGB(), true);
@@ -183,7 +184,7 @@ public class PixelPainterApp extends Application {
         });
 
         listPictures = new ItemList<>(5, 5, 80, 5);
-        listPictures.setListItemRenderer(new ListItemRenderer<>(20) {
+        listPictures.setListItemRenderer(new ListItemRenderer<Picture>(20) {
             @Override
             public void render(MatrixStack pose, Picture picture, AbstractGui gui, Minecraft mc, int x, int y, int width, int height, boolean selected) {
                 IngameGui.fill(pose, x, y, x + width, y + height, selected ? ITEM_SELECTED.getRGB() : ITEM_BACKGROUND.getRGB());
@@ -503,7 +504,7 @@ public class PixelPainterApp extends Application {
 
                 // This is for the paper background
                 if (!cut) {
-                    mc.textureManager.bind(TEXTURE);
+                    Minecraft.getInstance().textureManager.bind(TEXTURE);
                     RenderUtil.drawRectWithTexture(pose, -1, 0, 0, 0, 1, 1, resolution, resolution, resolution, resolution);
                 }
 
@@ -519,7 +520,7 @@ public class PixelPainterApp extends Application {
                 int textureId = TextureUtil.generateTextureId();
                 TextureUtil.prepareImage(textureId, resolution, resolution);
 
-                mc.textureManager.bind(textureId);
+                RenderSystem.activeTexture(textureId);
                 RenderUtil.drawRectWithTexture(pose, -1, 0, 0, 0, 1, 1, resolution, resolution, resolution, resolution);
                 RenderSystem.deleteTexture(textureId);
 

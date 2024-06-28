@@ -35,6 +35,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.util.Constants;
 
 import java.awt.*;
 import java.lang.System;
@@ -57,7 +58,7 @@ public class FileBrowser extends Component {
     private static final Color ITEM_SELECTED = Color.decode("0x757575");
     private static final Color PROTECTED_FILE = new Color(155, 237, 242);
 
-    private static final ListItemRenderer<File> ITEM_RENDERER = new ListItemRenderer<>(18) {
+    private static final ListItemRenderer<File> ITEM_RENDERER = new ListItemRenderer<File>(18) {
         @Override
         public void render(MatrixStack pose, File file, AbstractGui gui, Minecraft mc, int x, int y, int width, int height, boolean selected) {
             Color bgColor = new Color(Laptop.getSystem().getSettings().getColorScheme().getBackgroundColor());
@@ -255,7 +256,7 @@ public class FileBrowser extends Component {
                             Application targetApp = laptop.getApplication(file.getOpeningApp());
                             if (targetApp != null) {
                                 if (laptop.isApplicationInstalled(targetApp.getInfo())) {
-                                    if (!laptop.openApplication(targetApp.getInfo(), file).right()) {
+                                    if (!laptop.openApplication(targetApp.getInfo(), file).getSecond()) {
                                         laptop.sendApplicationToFront(systemApp.getInfo());
                                         createErrorDialog(targetApp.getInfo().getName() + " was unable to open the file.");
                                     }
@@ -279,7 +280,7 @@ public class FileBrowser extends Component {
 
         comboBoxDrive = new ComboBox.List<>(26, 3, 44, 100, new Drive[]{});
         comboBoxDrive.setChangeListener((oldValue, newValue) -> openDrive(newValue));
-        comboBoxDrive.setListItemRenderer(new ListItemRenderer<>(12) {
+        comboBoxDrive.setListItemRenderer(new ListItemRenderer<Drive>(12) {
             @Override
             public void render(MatrixStack pose, Drive drive, AbstractGui gui, Minecraft mc, int x, int y, int width, int height, boolean selected) {
                 Color bgColor = new Color(getColorScheme().getBackgroundColor());

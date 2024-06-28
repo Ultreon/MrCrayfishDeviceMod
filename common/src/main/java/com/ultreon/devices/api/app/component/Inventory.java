@@ -45,7 +45,7 @@ public class Inventory extends Component {
             RenderUtil.drawRectWithTexture(pose, xPosition, yPosition, 7, 139, 162, 54, 162, 54);
 
             assert mc.player != null;
-            net.minecraft.entity.player.Inventory inventory = mc.player.getInventory();
+            net.minecraft.entity.player.Inventory inventory = mc.player.inventory;
             for (int i = 9; i < inventory.getContainerSize() - 4; i++) {
                 int offsetX = (i % 9) * 18;
                 int offsetY = (i / 9) * 18 - 18;
@@ -74,7 +74,7 @@ public class Inventory extends Component {
                     int x = xPosition + (j * 18) - 1;
                     int y = yPosition + (i * 18) - 1;
                     if (GuiHelper.isMouseInside(mouseX, mouseY, x, y, x + 18, y + 18)) {
-                        ItemStack stack = mc.player.getInventory().getItem((i * 9) + j + 9);
+                        ItemStack stack = mc.player.inventory.getItem((i * 9) + j + 9);
                         if (!stack.isEmpty()) {
                             laptop.renderTooltip(pose, stack.getDisplayName(), mouseX, mouseY);
                         }

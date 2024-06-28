@@ -20,7 +20,7 @@ public class GuiButtonClose extends Button {
     public void renderButton(@NotNull MatrixStack pose, int mouseX, int mouseY, float partialTicks) {
         if (this.visible) {
             FontRenderer font = Minecraft.getInstance().font;
-            mc.textureManager.bind(Window.WINDOW_GUI);
+            Minecraft.getInstance().textureManager.bind(Window.WINDOW_GUI);
             RenderSystem.blendColor(1f, 1f, 1f, 1f);
             this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 

@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class Router {
     private final Map<UUID, NetworkDevice> NETWORK_DEVICES = new HashMap<>();
@@ -77,7 +78,7 @@ public class Router {
 
     public Collection<NetworkDevice> getConnectedDevices(World level) {
         sendBeacon(level);
-        return NETWORK_DEVICES.values().stream().filter(device -> device.getPos() != null).toList();
+        return NETWORK_DEVICES.values().stream().filter(device -> device.getPos() != null).collect(Collectors.toList());
     }
 
     public Collection<NetworkDevice> getConnectedDevices(final World level, Class<? extends NetworkDeviceBlockEntity> type) {
@@ -92,7 +93,7 @@ public class Router {
             }
             return false;
         };
-        return getConnectedDevices(level).stream().filter(DEVICE_TYPE).toList();
+        return getConnectedDevices(level).stream().filter(DEVICE_TYPE).collect(Collectors.toList());
     }
 
     private void sendBeacon(World level) {

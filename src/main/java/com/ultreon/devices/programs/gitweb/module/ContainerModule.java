@@ -7,6 +7,7 @@ import com.ultreon.devices.api.app.component.Text;
 import com.ultreon.devices.programs.gitweb.component.GitWebFrame;
 import com.ultreon.devices.programs.gitweb.component.container.ContainerBox;
 import com.ultreon.devices.programs.gitweb.component.container.CraftingBox;
+import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.item.ItemStack;
 
@@ -71,7 +72,7 @@ public abstract class ContainerModule extends Module {
     protected static ItemStack getItem(Map<String, String> data, String key) {
         if (data.containsKey(key)) {
             try {
-                return ItemStack.of(TagParser.parseTag(data.get(key)));
+                return ItemStack.of(JsonToNBT.parseTag(data.get(key)));
             } catch (CommandSyntaxException e) {
                 return ItemStack.EMPTY;
             }

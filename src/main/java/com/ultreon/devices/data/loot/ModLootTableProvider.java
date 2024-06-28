@@ -2,14 +2,11 @@ package com.ultreon.devices.data.loot;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
+import com.sun.org.apache.xerces.internal.impl.dv.ValidationContext;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.loot.LootTableProvider;
+import net.minecraft.data.LootTableProvider;
+import net.minecraft.loot.*;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.storage.loot.LootTable;
-import net.minecraft.world.storage.loot.LootTables;
-import net.minecraft.world.storage.loot.ValidationContext;
-import net.minecraft.world.storage.loot.parameters.LootContextParamSet;
-import net.minecraft.world.storage.loot.parameters.LootContextParamSets;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -29,16 +26,15 @@ public class ModLootTableProvider extends LootTableProvider {
         return "Devices Mod - Loot Tables";
     }
 
-    @NotNull
     @Override
-    protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootContextParamSet>> getTables() {
+    protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootParameterSet>> getTables() {
         return ImmutableList.of(
-                Pair.of(ModBlockLootTables::new, LootContextParamSets.BLOCK)
+                Pair.of(ModBlockLootTables::new, LootParameterSets.BLOCK)
         );
     }
 
     @Override
-    protected void validate(Map<ResourceLocation, LootTable> map, ValidationContext ctx) {
-        map.forEach((id, table) -> LootTables.validate(ctx, id, table));
+    protected void validate(Map<ResourceLocation, LootTable> map, ValidationTracker ctx) {
+        map.forEach((id, table) -> LootTableManager.validate(ctx, id, table));
     }
 }

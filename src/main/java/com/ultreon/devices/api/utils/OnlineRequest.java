@@ -99,7 +99,7 @@ public class OnlineRequest {
         public boolean equals(Object obj) {
             if (obj == this) return true;
             if (obj == null || obj.getClass() != this.getClass()) return false;
-            var that = (RequestWrapper) obj;
+            RequestWrapper that = (RequestWrapper) obj;
             return Objects.equals(this.url, that.url) &&
                     Objects.equals(this.handler, that.handler);
         }

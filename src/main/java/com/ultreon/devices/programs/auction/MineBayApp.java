@@ -143,7 +143,7 @@ public class MineBayApp extends Application {
         layoutMain.addComponent(labelItems);
 
         items = new ItemList<>(100, 40, 180, 4);
-        items.setListItemRenderer(new ListItemRenderer<>(20) {
+        items.setListItemRenderer(new ListItemRenderer<AuctionItem>(20) {
             @Override
             public void render(MatrixStack pose, AuctionItem e, AbstractGui gui, Minecraft mc, int x, int y, int width, int height, boolean selected) {
                 if (selected) {
@@ -212,7 +212,7 @@ public class MineBayApp extends Application {
         {
             if (inventory.getSelectedSlotIndex() != -1) {
                 assert Minecraft.getInstance().player != null;
-                ItemStack stack = Minecraft.getInstance().player.getInventory().getItem(inventory.getSelectedSlotIndex());
+                ItemStack stack = Minecraft.getInstance().player.inventory.getItem(inventory.getSelectedSlotIndex());
                 if (!stack.isEmpty()) {
                     buttonAddNext.setEnabled(true);
                     selectorAmount.setMax(stack.getCount());
@@ -261,7 +261,7 @@ public class MineBayApp extends Application {
 
             if (inventory.getSelectedSlotIndex() != -1) {
                 assert mc.player != null;
-                ItemStack stack = mc.player.getInventory().getItem(inventory.getSelectedSlotIndex());
+                ItemStack stack = mc.player.inventory.getItem(inventory.getSelectedSlotIndex());
                 if (!stack.isEmpty()) {
                     pose.pushPose();
                     {

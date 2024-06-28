@@ -14,6 +14,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 /**
  * The Layout class is the main implementation for displaying
@@ -186,7 +187,7 @@ public class Layout extends Component {
         if (!visible)
             return;
 
-        for (var c : components.stream().toList()) {
+        for (Component c : components.stream().collect(Collectors.toList())) {
             c.renderOverlay(pose, laptop, mc, mouseX, mouseY, windowActive);
         }
     }

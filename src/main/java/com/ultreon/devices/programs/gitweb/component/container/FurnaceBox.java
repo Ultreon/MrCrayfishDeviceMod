@@ -2,11 +2,12 @@ package com.ultreon.devices.programs.gitweb.component.container;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.ultreon.devices.core.Laptop;
-import dev.architectury.injectables.annotations.ExpectPlatform;
+import net.minecraft.block.AbstractFurnaceBlock;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.RecipeType;
+import net.minecraft.item.crafting.IRecipeType;
+import net.minecraftforge.common.ForgeHooks;
 
 /**
  * @author MrCrayfish
@@ -23,12 +24,11 @@ public class FurnaceBox extends ContainerBox {
         slots.add(new Slot(26, 8, input));
         slots.add(new Slot(26, 44, fuel));
         slots.add(new Slot(85, 26, result));
-        this.fuelTime = getBurnTime(fuel, RecipeType.SMELTING);
+        this.fuelTime = getBurnTime(fuel, IRecipeType.SMELTING);
     }
 
-    @ExpectPlatform
-    private static int getBurnTime(ItemStack stack, RecipeType<?> type) {
-        throw new AssertionError();
+    private static int getBurnTime(ItemStack stack, IRecipeType<?> type) {
+        return ForgeHooks.getBurnTime(stack, type);
     }
 
     @Override

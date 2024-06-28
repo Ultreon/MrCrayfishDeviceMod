@@ -191,7 +191,7 @@ public class AppInfo {
             throw new RuntimeException("Missing app info json for '" + APP_ID + "'");
 
         Reader reader = new InputStreamReader(stream);
-        JsonElement obj = JsonParser.parseReader(reader);
+        JsonElement obj = new Gson().fromJson(reader, JsonElement.class);
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(AppInfo.class, new Deserializer(this));
         Gson gson = builder.create();

@@ -355,7 +355,7 @@ public class SettingsApp extends SystemApp {
     public ComboBox.Custom<Integer> createColorPicker(int left, int top) {
         ComboBox.Custom<Integer> colorPicker = new ComboBox.Custom<>(left, top, 50, 100, 100);
         colorPicker.setValue(Color.RED.getRGB());
-        colorPicker.setItemRenderer(new ItemRenderer<>() {
+        colorPicker.setItemRenderer(new ItemRenderer<Integer>() {
             @Override
             public void render(MatrixStack pose, Integer integer, AbstractGui gui, Minecraft mc, int x, int y, int width, int height) {
                 if (integer != null) {

@@ -61,7 +61,7 @@ public class LaptopBlockEntity extends NetworkDeviceBlockEntity.Colored {
     }
 
     @Override
-    public void load(@NotNull @NotNull BlockState state, @NotNull CompoundNBT compound) {
+    public void load(@NotNull BlockState state, @NotNull CompoundNBT compound) {
         super.load(state, compound);
         if (compound.contains("open")) {
             this.open = compound.getBoolean("open");

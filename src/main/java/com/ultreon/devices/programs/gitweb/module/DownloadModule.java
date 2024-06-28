@@ -14,6 +14,7 @@ import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.programs.gitweb.component.GitWebFrame;
 import net.minecraft.client.gui.IngameGui;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.JsonToNBT;
 
 import java.awt.*;
 import java.util.Map;
@@ -74,7 +75,7 @@ public class DownloadModule extends Module {
         button.setSize(70, height - 15);
         button.setClickListener((mouseX, mouseY, mouseButton) -> {
             try {
-                CompoundNBT tag = TagParser.parseTag(data.get("file-data"));
+                CompoundNBT tag = JsonToNBT.parseTag(data.get("file-data"));
                 File file = new File(data.getOrDefault("file-name", ""), data.get("file-app"), tag);
                 Dialog dialog = new Dialog.SaveFile(frame.getApp(), file);
                 frame.getApp().openDialog(dialog);

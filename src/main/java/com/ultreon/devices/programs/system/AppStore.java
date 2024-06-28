@@ -104,7 +104,7 @@ public class AppStore extends SystemApp {
             certifiedApps.clear();
             spinner.setVisible(false);
             if (success) {
-                Minecraft.getInstance().doRunTask(() -> {
+                Minecraft.getInstance().tell(() -> {
                     AppGrid grid = new AppGrid(0, 81, 3, 1, this);
                     certifiedApps.addAll(parseJson(response));
                     shuffleAndShrink(certifiedApps, 3).forEach(grid::addEntry);
@@ -166,7 +166,7 @@ public class AppStore extends SystemApp {
 
     public List<RemoteEntry> parseJson(String json) {
         List<RemoteEntry> entries = new ArrayList<>();
-        JsonArray array = JsonParser.parseString(json).getAsJsonArray();
+        JsonArray array = new Gson().fromJson(json, JsonArray.class);
         Gson gson = new Gson();
         array.forEach(element -> entries.add(gson.fromJson(element, new TypeToken<RemoteEntry>() {
         }.getType())));

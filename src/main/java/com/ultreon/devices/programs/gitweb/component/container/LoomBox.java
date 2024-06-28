@@ -5,18 +5,17 @@ import com.mojang.datafixers.util.Pair;
 import com.ultreon.devices.core.Laptop;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.model.geom.ModelRenderer;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.model.ModelBakery;
+import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.tileentity.BannerRenderer;
-import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.renderer.tileentity.BannerTileEntityRenderer;
 import net.minecraft.item.BannerItem;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.BannerBlockEntity;
 import net.minecraft.tileentity.BannerPattern;
+import net.minecraft.tileentity.BannerTileEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,10 +41,10 @@ public class LoomBox extends ContainerBox {
         slots.add(new Slot(94, 58, this.result));
 
         if (!result.isEmpty())
-        this.resultBannerPatterns = BannerBlockEntity.createPatterns(((BannerItem)this.result.getItem()).getColor(), BannerBlockEntity.getItemPatterns(this.result));
+        this.resultBannerPatterns = BannerTileEntity.createPatterns(((BannerItem)this.result.getItem()).getColor(), BannerTileEntity.getItemPatterns(this.result));
         else
         this.resultBannerPatterns = new ArrayList<>();
-        this.flag = Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.BANNER).getChild("flag");
+        this.flag = BannerTileEntityRenderer.makeFlag();
     }
 
     @Override
@@ -55,7 +54,7 @@ public class LoomBox extends ContainerBox {
         int j = y+12;//this.topPos;
         if (result.isEmpty())return;
         RenderHelper.setupForFlatItems();
-        IRenderTypeBuffer.BufferSource bufferSource = mc.renderBuffers().bufferSource();
+        IRenderTypeBuffer.Impl bufferSource = mc.renderBuffers().bufferSource();
         pose.pushPose();
         //pose.translate((double)(i + 139), (double)(j + 52), 0.0D);
         pose.translate(i+90d,j+52d,0.0D);
@@ -65,7 +64,7 @@ public class LoomBox extends ContainerBox {
         pose.scale(0.6666667F, -0.6666667F, -0.6666667F);
         this.flag.xRot = 0.0F;
         this.flag.y = -32.0F;
-        BannerRenderer.renderPatterns(pose, bufferSource, 15728880, OverlayTexture.NO_OVERLAY, this.flag, ModelBakery.BANNER_BASE, true, this.resultBannerPatterns);
+        BannerTileEntityRenderer.renderPatterns(pose, bufferSource, 15728880, OverlayTexture.NO_OVERLAY, this.flag, ModelBakery.BANNER_BASE, true, this.resultBannerPatterns);
         pose.popPose();
         bufferSource.endBatch();
 

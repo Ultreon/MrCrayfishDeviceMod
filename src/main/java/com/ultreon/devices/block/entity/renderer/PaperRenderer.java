@@ -87,7 +87,7 @@ public final class PaperRenderer extends TileEntityRenderer<PaperBlockEntity> {
         }
         ResourceLocation resourcelocation = Minecraft.getInstance().getTextureManager().register("map/" + AA, d);
         Matrix4f matrix4f = matrices.last().pose();
-        var vertexconsumer = bufferSource.getBuffer(RenderType.text(resourcelocation));
+        IVertexBuilder vertexconsumer = bufferSource.getBuffer(RenderType.text(resourcelocation));
         vertexconsumer.vertex(matrix4f, 0.0f, 128.0f, -0.01f).color(255, 255, 255, 255).uv(0.0f, 1.0f).uv2(packedLight).endVertex();
         vertexconsumer.vertex(matrix4f, 128.0f, 128.0f, -0.01f).color(255, 255, 255, 255).uv(1.0f, 1.0f).uv2(packedLight).endVertex();
         vertexconsumer.vertex(matrix4f, 128.0f, 0.0f, -0.01f).color(255, 255, 255, 255).uv(1.0f, 0.0f).uv2(packedLight).endVertex();

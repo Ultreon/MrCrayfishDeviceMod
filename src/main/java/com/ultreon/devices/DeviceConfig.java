@@ -1,9 +1,12 @@
 package com.ultreon.devices;
 
-import dev.architectury.injectables.annotations.ExpectPlatform;
-import dev.architectury.platform.Platform;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 
 public class DeviceConfig {
     private static final String CATEGORY_LAPTOP = "laptopSettings";
@@ -53,7 +56,7 @@ public class DeviceConfig {
                 .define(CATEGORY_PIXEL_PAINTER + ".renderPrintedIn3d", false);
 
         DEBUG_BUTTON = builder.comment("Display a button to access a worldless laptop")
-                .define(CATEGORY_DEBUG + ".debugButton", Platform.isDevelopmentOnlyIn());
+                .define(CATEGORY_DEBUG + ".debugButton", !FMLEnvironment.production);
 
         CONFIG = builder.build();
     }
@@ -76,18 +79,9 @@ public class DeviceConfig {
         // NO-OP
     }
 
-    @ExpectPlatform
-    public static void register(Object context) {
-        throw new AssertionError();
-        //context.registerConfig(ModConfig.Type.CLIENT, CONFIG);
+    public static void register(ModLoadingContext context) {
+        context.registerConfig(ModConfig.Type.CLIENT, CONFIG);
     }
-
-//    @ExpectPlatform
-//    @PlatformOnly("fabric")
-//    public static void register(ModLoadingContext context) {
-//        throw new AssertionError();
-//        //context.registerConfig(ModConfig.Type.CLIENT, CONFIG);
-//    }
 
     public static void restore() {
         // NO-OP
@@ -97,8 +91,8 @@ public class DeviceConfig {
         CONFIG.save();
     }
 
-//    @SubscribeEvent
-//    public static void onConfigChanged(ModConfigEvent.Reloading event) {
-//        // TODO // Implement config reloading if needed.
-//    }
+    @SubscribeEvent
+    public static void onConfigChanged(ModConfig.Reloading event) {
+        // TODO // Implement config reloading if needed.
+    }
 }

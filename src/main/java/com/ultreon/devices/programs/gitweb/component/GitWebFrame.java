@@ -1,6 +1,5 @@
 package com.ultreon.devices.programs.gitweb.component;
 
-import com.jab125.apoint.api.APointRuntime;
 import com.ultreon.devices.api.app.Application;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Layout;
@@ -49,7 +48,7 @@ public class GitWebFrame extends Component {
         MODULES.put("redirect", new RedirectModule());
         MODULES.put("applink", new AppLinkModule());
         MODULES.put("credits", new AppLinkModule());
-        MODULES.put("script", new ScriptModule());
+//        MODULES.put("script", new ScriptModule());
         MODULES.put("bannerII", new BannerIIModule());
     }
 
@@ -66,7 +65,7 @@ public class GitWebFrame extends Component {
 
     private Callback<String> loadingCallback;
     private Callback<String> loadedCallback;
-    public APointRuntime aPointRuntime;
+//    public APointRuntime aPointRuntime;
 
     public GitWebFrame(Application app, int left, int top, int width, int height) {
         super(left, top);
@@ -252,7 +251,7 @@ public class GitWebFrame extends Component {
     }
 
     private void setWebsite(String website) {
-        this.aPointRuntime = null;
+//        this.aPointRuntime = null;
         layout.clear();
 
         Matcher matcher = GitWebFrame.PATTERN_LINK.matcher(website);
@@ -323,7 +322,7 @@ public class GitWebFrame extends Component {
     }
 
     private void generateLayout(String websiteData, boolean dynamic) {
-        Minecraft.getInstance().doRunTask(() ->
+        Minecraft.getInstance().tell(() ->
         {
             List<ModuleEntry> modules = parseData(websiteData);
             if (modules == null) {
@@ -344,7 +343,7 @@ public class GitWebFrame extends Component {
                 offset += height;
             }
 
-            if (modules.size() > 0) {
+            if (!modules.isEmpty()) {
                 ModuleEntry entry = modules.get(modules.size() - 1);
                 Module module = entry.getModule();
                 int height = module.calculateHeight(entry.getData(), width);

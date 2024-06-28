@@ -7,18 +7,17 @@ import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.programs.gitweb.component.GitWebFrame;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.model.geom.ModelRenderer;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.model.ModelBakery;
+import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.tileentity.BannerRenderer;
-import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.renderer.tileentity.BannerTileEntityRenderer;
 import net.minecraft.item.BannerItem;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.BannerBlockEntity;
 import net.minecraft.tileentity.BannerPattern;
+import net.minecraft.tileentity.BannerTileEntity;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.ArrayList;
@@ -61,10 +60,10 @@ public class BannerIIModule extends Module {
         public LoomBox(ItemStack banner, boolean waving) {
             super(0, 0);
             this.banner = banner;
-            this.flag = Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.BANNER).getChild("flag");
+            this.flag = BannerTileEntityRenderer.makeFlag();
 
             if (!banner.isEmpty())
-                this.resultBannerPatterns = BannerBlockEntity.createPatterns(((BannerItem)this.banner.getItem()).getColor(), BannerBlockEntity.getItemPatterns(this.banner));
+                this.resultBannerPatterns = BannerTileEntity.createPatterns(((BannerItem)this.banner.getItem()).getColor(), BannerTileEntity.getItemPatterns(this.banner));
             else
                 this.resultBannerPatterns = new ArrayList<>();
         }
@@ -76,7 +75,7 @@ public class BannerIIModule extends Module {
             int j = y;//this.topPos;
             if (banner.isEmpty())return;
             RenderHelper.setupForFlatItems();
-            IRenderTypeBuffer.BufferSource bufferSource = mc.renderBuffers().bufferSource();
+            IRenderTypeBuffer.Impl bufferSource = mc.renderBuffers().bufferSource();
             pose.pushPose();
             //pose.translate((double)(i + 139), (double)(j + 52), 0.0D);
             pose.translate(i+139,j+90,0.0D);
@@ -93,7 +92,7 @@ public class BannerIIModule extends Module {
             this.flag.xRot = (-0.0125f + 0.01f * MathHelper.cos((float)Math.PI * 2 * h)) * (float)Math.PI;
            // this.flag.xRot = 0.0F;
             this.flag.y = -32.0F;
-            BannerRenderer.renderPatterns(pose, bufferSource, 15728880, OverlayTexture.NO_OVERLAY, this.flag, ModelBakery.BANNER_BASE, true, this.resultBannerPatterns);
+            BannerTileEntityRenderer.renderPatterns(pose, bufferSource, 15728880, OverlayTexture.NO_OVERLAY, this.flag, ModelBakery.BANNER_BASE, true, this.resultBannerPatterns);
             pose.popPose();
             bufferSource.endBatch();
 

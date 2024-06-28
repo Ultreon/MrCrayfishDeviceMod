@@ -1,6 +1,9 @@
 package com.ultreon.devices;
 
-import dev.architectury.injectables.annotations.ExpectPlatform;
+import net.minecraftforge.fml.MavenVersionStringHelper;
+import net.minecraftforge.fml.ModList;
+
+import java.util.NoSuchElementException;
 
 public class Reference {
     public static final String MOD_ID = "devices";
@@ -10,8 +13,7 @@ public class Reference {
         VERSION = getVersion();
     }
 
-    @ExpectPlatform // gets the mod version of "devices"
     public static String getVersion() {
-        throw new AssertionError();
+        return MavenVersionStringHelper.artifactVersionToString(ModList.get().getModContainerById(MOD_ID).orElseThrow(NoSuchElementException::new).getModInfo().getVersion());
     }
 }

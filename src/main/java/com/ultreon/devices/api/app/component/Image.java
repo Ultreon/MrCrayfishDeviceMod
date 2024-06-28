@@ -19,6 +19,7 @@ import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
+import org.apache.commons.compress.utils.IOUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,10 +27,12 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -261,7 +264,7 @@ public class Image extends Component {
 
                 RenderSystem.blendColor(tint.get().r/255f, tint.get().g/255f, tint.get().b/255f, alpha);
                 RenderSystem.enableBlend();
-                mc.textureManager.bind(image.textureId);
+                RenderSystem.activeTexture(image.textureId);
 
                 if (/*hasBorder*/true) {
                     if (drawFull) {
@@ -414,7 +417,7 @@ public class Image extends Component {
         @Override
         @SuppressWarnings("ConstantConditions")
         public CachedImage load(Image image) {
-            @Nullable Texture textureObj = Minecraft.getInstance().getTextureManager().getTexture(resource, null);
+            @Nullable Texture textureObj = Minecraft.getInstance().getTextureManager().getTexture(resource);
             if (textureObj != null) {
                 return new CachedImage(textureObj.getId(), 0, 0, false);
             } else {
@@ -449,7 +452,9 @@ public class Image extends Component {
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     conn.setRequestProperty("User-Agent", "Mozilla/5.0");
                     InputStream connIn = conn.getInputStream();
-                    byte[] bytes = connIn.readAllBytes();
+                    ByteArrayOutputStream output = new ByteArrayOutputStream();
+                    IOUtils.copy(connIn, output);
+                    byte[] bytes = output.toByteArray();
                     connIn.close();
                     conn.disconnect();
 

@@ -1,7 +1,6 @@
 package com.ultreon.devices.object;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.matrix.Tessellator;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Icons;
@@ -14,6 +13,7 @@ import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.object.tiles.Tile;
 import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.Tessellator;
 
 import java.awt.*;
 import java.util.ArrayList;

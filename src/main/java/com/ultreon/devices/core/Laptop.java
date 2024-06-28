@@ -132,7 +132,7 @@ public class Laptop extends Screen implements System {
         this.systemData = laptop.getSystemData();
 
         // Windows
-        this.windows = new ArrayList<>() {
+        this.windows = new ArrayList<Window<?>>() {
             @Override
             public Window<?> get(int index) {
                 try {
@@ -372,8 +372,8 @@ public class Laptop extends Screen implements System {
     public static void drawLines(MatrixStack matrices, FontRenderer font, String text, int x, int y, int width, int color) {
         ArrayList<String> lines = new ArrayList<String>();
         font.getSplitter().splitLines(ITextProperties.of(text.replaceAll("\r\n", "\n").replaceAll("\r", "\n")), width, Style.EMPTY).forEach(b -> lines.add(b.getString()));
-        var totalTextHeight = font.lineHeight*lines.size();
-        var textScale = (DEVICE_HEIGHT-20-(getFont().lineHeight*2))/(float)totalTextHeight;
+        int totalTextHeight = font.lineHeight * lines.size();
+        float textScale = (DEVICE_HEIGHT - 20 - (getFont().lineHeight * 2)) / (float)totalTextHeight;
         textScale = (float) (1f / Minecraft.getInstance().getWindow().getGuiScale());
         textScale = Math.max(0.5f, textScale);
         matrices.pushPose();
