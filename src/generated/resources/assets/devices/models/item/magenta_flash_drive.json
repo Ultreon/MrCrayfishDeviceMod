@@ -1,0 +1,6 @@
+{
+    "parent": "devices:item/flash_drive",
+    "textures": {
+        "1": "minecraft:block/magenta_wool"
+    }
+}

@@ -20,14 +20,14 @@ public class ModItemTagsProvider extends ItemTagsProvider {
 
     @Override
     protected void addTags() {
-        Builder<Item> laptops = this.tag(ModTags.Items.LAPTOPS);
-        Builder<Item> printers = this.tag(ModTags.Items.PRINTERS);
-        Builder<Item> routers = this.tag(ModTags.Items.ROUTERS);
-        Builder<Item> flashDrives = this.tag(ModTags.Items.FLASH_DRIVES);
-
-        DeviceItems.getAllLaptops().forEach(laptops::add);
-        DeviceItems.getAllPrinters().forEach(printers::add);
-        DeviceItems.getAllRouters().forEach(routers::add);
-        DeviceItems.getAllFlashDrives().forEach(flashDrives::add);
+//        Builder<Item> laptops = this.tag(ModTags.Items.LAPTOPS);
+//        Builder<Item> printers = this.tag(ModTags.Items.PRINTERS);
+//        Builder<Item> routers = this.tag(ModTags.Items.ROUTERS);
+//        Builder<Item> flashDrives = this.tag(ModTags.Items.FLASH_DRIVES);
+//
+//        DeviceItems.getAllLaptops().forEach(laptops::add);
+//        DeviceItems.getAllPrinters().forEach(printers::add);
+//        DeviceItems.getAllRouters().forEach(routers::add);
+//        DeviceItems.getAllFlashDrives().forEach(flashDrives::add);
     }
 }

@@ -1,0 +1,6 @@
+{
+    "parent": "devices:item/printer",
+    "textures": {
+        "2": "block/wool_colored_red"
+    }
+}

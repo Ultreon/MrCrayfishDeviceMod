@@ -2,7 +2,7 @@
 # Copyright (c) 2022 - Ultreon Team, GPLv3 License. See the license at https://www.gnu.org/licenses/gpl-3.0-standalone.html
 
 modLoader = "javafml"
-loaderVersion = "[40,)"
+loaderVersion = "[36,)"
 license = "GPL-3.0"
 issueTrackerURL = "https://github.com/Ultreon/devices-mod/issues"
 
@@ -25,20 +25,13 @@ itemIcon = "devices:red_laptop"
 [[dependencies.devices]]
 modId = "forge"
 mandatory = true
-versionRange = "[40.1.60,)"
+versionRange = "[36.2.37,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.devices]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.18.2,1.19)"
-ordering = "NONE"
-side = "BOTH"
-
-[[dependencies.devices]]
-modId = "architectury"
-mandatory = true
-versionRange = "[4.5.76,5.0)"
+versionRange = "[1.16.5,1.17)"
 ordering = "NONE"
 side = "BOTH"

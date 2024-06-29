@@ -259,12 +259,12 @@ public class Image extends Component {
 
             RenderSystem.blendColor(tint.get().r/255f, tint.get().g/255f, tint.get().b/255f, alpha);
 
-            if (image != null && image.textureId != -1) {
+            if (image != null && image.textureId > 0) {
                 image.restore();
 
                 RenderSystem.blendColor(tint.get().r/255f, tint.get().g/255f, tint.get().b/255f, alpha);
                 RenderSystem.enableBlend();
-                RenderSystem.activeTexture(image.textureId);
+                RenderSystem.bindTexture(image.textureId);
 
                 if (/*hasBorder*/true) {
                     if (drawFull) {

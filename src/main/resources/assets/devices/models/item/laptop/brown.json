@@ -1,0 +1,6 @@
+{
+    "parent": "devices:item/laptop",
+    "textures": {
+        "2": "block/wool_colored_brown"
+    }
+}

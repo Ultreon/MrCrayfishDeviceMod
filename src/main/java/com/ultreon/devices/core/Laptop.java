@@ -441,7 +441,6 @@ public class Laptop extends Screen implements System {
         //*******************//
         //RenderSystem.setShaderTexture(0, WALLPAPERS.get(currentWallpaper));
         //RenderUtil.drawRectWithTexture(pose, posX + 10, posY + 10, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 512, 288);
-        Image.CACHE.forEach((s, cachedImage) -> cachedImage.delete());
         this.wallpaperLayout.render(pose, this, this.minecraft, posX+10, posY+10, mouseX, mouseY, true, partialTicks);
 
         //************************************//

@@ -27,9 +27,6 @@ import java.util.regex.Pattern;
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(Reference.MOD_ID)
 public class DevicesForge {
-    private static final Pattern DEV_PREVIEW_PATTERN = Pattern.compile("\\d+\\.\\d+\\.\\d+-dev\\d+");
-    private static final boolean IS_DEV_PREVIEW = DEV_PREVIEW_PATTERN.matcher(Reference.VERSION).matches();
-
     public static final Logger LOGGER = LogManager.getLogger("UltreonDevicesMod");
 
     public static final boolean DEVELOPER_MODE = false;

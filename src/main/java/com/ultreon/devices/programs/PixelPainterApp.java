@@ -520,7 +520,7 @@ public class PixelPainterApp extends Application {
                 int textureId = TextureUtil.generateTextureId();
                 TextureUtil.prepareImage(textureId, resolution, resolution);
 
-                RenderSystem.activeTexture(textureId);
+                RenderSystem.bindTexture(textureId);
                 RenderUtil.drawRectWithTexture(pose, -1, 0, 0, 0, 1, 1, resolution, resolution, resolution, resolution);
                 RenderSystem.deleteTexture(textureId);
 

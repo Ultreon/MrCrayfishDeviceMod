@@ -32,7 +32,7 @@ public abstract class Application extends Wrappable implements DataHandler {
             this.info = info;
 //            return;
 //        }
-        throw new IllegalStateException();
+//        throw new IllegalStateException();
     }
     private final Layout defaultLayout = new Layout();
     private BlockPos laptopPositon;

@@ -5,6 +5,7 @@ import com.ultreon.devices.block.*;
 import net.minecraft.block.Block;
 import net.minecraft.item.DyeColor;
 import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -16,6 +17,7 @@ public class DeviceBlocks {
     private static final DeferredRegister<Block> REGISTER = DeferredRegister.create(ForgeRegistries.BLOCKS, Devices.MOD_ID);
 
     public static void register() {
+        REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
     public static final RegistryObject<LaptopBlock> WHITE_LAPTOP = REGISTER.register("white_laptop", () -> new LaptopBlock(DyeColor.WHITE));

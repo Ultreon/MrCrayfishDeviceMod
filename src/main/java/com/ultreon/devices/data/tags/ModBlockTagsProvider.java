@@ -20,12 +20,12 @@ public class ModBlockTagsProvider extends BlockTagsProvider {
 
     @Override
     protected void addTags() {
-        Builder<Block> laptops = this.tag(ModTags.Blocks.LAPTOPS);
-        Builder<Block> printers = this.tag(ModTags.Blocks.PRINTERS);
-        Builder<Block> routers = this.tag(ModTags.Blocks.ROUTERS);
-
-        DeviceBlocks.getAllLaptops().forEach(laptops::add);
-        DeviceBlocks.getAllPrinters().forEach(printers::add);
-        DeviceBlocks.getAllRouters().forEach(routers::add);
+//        Builder<Block> laptops = this.tag(ModTags.Blocks.LAPTOPS);
+//        Builder<Block> printers = this.tag(ModTags.Blocks.PRINTERS);
+//        Builder<Block> routers = this.tag(ModTags.Blocks.ROUTERS);
+//
+//        DeviceBlocks.getAllLaptops().forEach(laptops::add);
+//        DeviceBlocks.getAllPrinters().forEach(printers::add);
+//        DeviceBlocks.getAllRouters().forEach(routers::add);
     }
 }

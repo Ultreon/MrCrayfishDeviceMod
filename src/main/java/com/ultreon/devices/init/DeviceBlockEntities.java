@@ -5,6 +5,7 @@ import com.ultreon.devices.block.entity.*;
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -19,6 +20,6 @@ public class DeviceBlockEntities {
     public static final RegistryObject<TileEntityType<OfficeChairBlockEntity>> SEAT = REGISTER.register("seat", () -> TileEntityType.Builder.of(OfficeChairBlockEntity::new, DeviceBlocks.getAllOfficeChairs().toArray(new Block[]{})).build(null));
 
     public static void register() {
-   //    Marker
+        REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 }

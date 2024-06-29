@@ -7,6 +7,7 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
@@ -158,7 +159,8 @@ public class DeviceItems {
                 .collect(Collectors.toList());
     }
 
-    public static void register() {
 
+    public static void register() {
+        REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 }

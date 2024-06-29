@@ -1,0 +1,6 @@
+{
+  "parent": "devices:block/laptop_base",
+  "textures": {
+    "2": "minecraft:block/light_blue_wool"
+  }
+}

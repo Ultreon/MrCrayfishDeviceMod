@@ -438,9 +438,9 @@ public class Devices {
     }
 
     private static void setupEvents() {
-        FMLJavaModLoadingContext.get().getModEventBus().addListener((FMLServerStartingEvent evt) -> server = evt.getServer());
-        FMLJavaModLoadingContext.get().getModEventBus().addListener((FMLServerStoppedEvent evt) -> server = null);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener((PlayerInteractEvent.RightClickBlock evt) -> {
+        MinecraftForge.EVENT_BUS.addListener((FMLServerStartingEvent evt) -> server = evt.getServer());
+        MinecraftForge.EVENT_BUS.addListener((FMLServerStoppedEvent evt) -> server = null);
+        MinecraftForge.EVENT_BUS.addListener((PlayerInteractEvent.RightClickBlock evt) -> {
             World level = evt.getWorld();
             PlayerEntity player = evt.getPlayer();
             BlockPos pos = evt.getPos();
