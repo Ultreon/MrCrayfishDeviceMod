@@ -49,7 +49,7 @@ public class EmailManager implements WorldSavedData {
         if (uuidToName.containsKey(player.getUUID())) {
             return nameToInbox.get(uuidToName.get(player.getUUID()));
         }
-        return new ArrayList<Email>();
+        return new ArrayList<>();
     }
 
     public boolean addAccount(Player player, String name) {

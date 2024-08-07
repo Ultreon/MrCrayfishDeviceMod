@@ -12,6 +12,9 @@ architectury {
 loom {
     accessWidenerPath = project(":common").loom.accessWidenerPath
     runs {
+        client {
+            programArgs "--username", "user"
+        }
         data {
             inherit client
             name "Data Generation"

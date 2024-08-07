@@ -21,82 +21,82 @@
         "color": {
             "white": {
                 "textures": {
-                    "2": "block/wool_colored_white"
+                    "2": "block/white_wool"
                 }
             },
             "orange": {
                 "textures": {
-                    "2": "block/wool_colored_orange"
+                    "2": "block/orange_wool"
                 }
             },
             "magenta": {
                 "textures": {
-                    "2": "block/wool_colored_magenta"
+                    "2": "block/magenta_wool"
                 }
             },
             "light_blue": {
                 "textures": {
-                    "2": "block/wool_colored_light_blue"
+                    "2": "block/light_blue_wool"
                 }
             },
             "yellow": {
                 "textures": {
-                    "2": "block/wool_colored_yellow"
+                    "2": "block/yellow_wool"
                 }
             },
             "lime": {
                 "textures": {
-                    "2": "block/wool_colored_lime"
+                    "2": "block/lime_wool"
                 }
             },
             "pink": {
                 "textures": {
-                    "2": "block/wool_colored_pink"
+                    "2": "block/pink_wool"
                 }
             },
             "gray": {
                 "textures": {
-                    "2": "block/wool_colored_gray"
+                    "2": "block/gray_wool"
                 }
             },
             "silver": {
                 "textures": {
-                    "2": "block/wool_colored_silver"
+                    "2": "block/silver_wool"
                 }
             },
             "cyan": {
                 "textures": {
-                    "2": "block/wool_colored_cyan"
+                    "2": "block/cyan_wool"
                 }
             },
             "purple": {
                 "textures": {
-                    "2": "block/wool_colored_purple"
+                    "2": "block/purple_wool"
                 }
             },
             "blue": {
                 "textures": {
-                    "2": "block/wool_colored_blue"
+                    "2": "block/blue_wool"
                 }
             },
             "brown": {
                 "textures": {
-                    "2": "block/wool_colored_brown"
+                    "2": "block/brown_wool"
                 }
             },
             "green": {
                 "textures": {
-                    "2": "block/wool_colored_green"
+                    "2": "block/green_wool"
                 }
             },
             "red": {
                 "textures": {
-                    "2": "block/wool_colored_red"
+                    "2": "block/red_wool"
                 }
             },
             "black": {
                 "textures": {
-                    "2": "block/wool_colored_black"
+                    "2": "block/black_wool"
                 }
             }
         }

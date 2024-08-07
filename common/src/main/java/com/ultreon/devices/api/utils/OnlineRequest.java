@@ -1,5 +1,6 @@
 package com.ultreon.devices.api.utils;
 
+import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.util.StreamUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -61,6 +62,15 @@ public class OnlineRequest {
             case "ultreon.gitlab.io", "cdn.discordapp.com", "jab125.com", "jab125.dev", "raw.githubusercontent.com", "github.com", "i.imgur.com", "avatars1.githubusercontent.com" -> true;
             default -> false;
         };
+    }
+
+    public static boolean isSafeAddress(String url) {
+        try {
+            return isSafe(new URL(url).getHost());
+        } catch (MalformedURLException e) {
+            DebugLog.error(e);
+            return false;
+        }
     }
 
     private void start() {

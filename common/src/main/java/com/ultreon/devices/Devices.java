@@ -21,6 +21,7 @@ import com.ultreon.devices.core.network.task.TaskGetDevices;
 import com.ultreon.devices.core.network.task.TaskPing;
 import com.ultreon.devices.core.print.task.TaskPrint;
 import com.ultreon.devices.core.task.TaskInstallApp;
+import com.ultreon.devices.event.WorldDataHandler;
 import com.ultreon.devices.init.DeviceItems;
 import com.ultreon.devices.network.PacketHandler;
 import com.ultreon.devices.network.task.SyncApplicationPacket;
@@ -88,6 +89,8 @@ public class Devices {
     private static final SiteRegisterStack SITE_REGISTER_STACK = new SiteRegisterStack();
     static List<AppInfo> allowedApps;
     private static List<Vulnerability> vulnerabilities;
+    private static WorldDataHandler dataHandler;
+
     public static List<Vulnerability> getVulnerabilities() {
         return vulnerabilities;
     }
@@ -116,7 +119,7 @@ public class Devices {
         EnvExecutor.runInEnv(Env.CLIENT, () -> Devices::checkForVulnerabilities);
 
         setupEvents();
-
+        dataHandler = new WorldDataHandler();
         EnvExecutor.runInEnv(Env.CLIENT, () -> Devices::setupClientEvents); //todo
         if (!ArchitecturyTarget.getCurrentTarget().equals("forge")) {
             loadComplete();
@@ -217,6 +220,10 @@ public class Devices {
 
     public static void setAllowedApps(List<AppInfo> allowedApps) {
         Devices.allowedApps = allowedApps;
+    }
+
+    public static WorldDataHandler getDataHandler() {
+        return dataHandler;
     }
 
     public interface ApplicationSupplier {

@@ -17,6 +17,7 @@ import com.ultreon.devices.core.io.task.TaskGetFiles;
 import com.ultreon.devices.core.io.task.TaskGetMainDrive;
 import com.ultreon.devices.core.io.task.TaskSendAction;
 import com.ultreon.devices.init.DeviceItems;
+import com.ultreon.devices.item.FlashDriveItem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.nbt.CompoundTag;
@@ -211,30 +212,31 @@ public class FileSystem {
     public Map<UUID, AbstractDrive> getAvailableDrives(@Nullable Level level, boolean includeMain) {
         Map<UUID, AbstractDrive> drives = new LinkedHashMap<>();
 
-        if (includeMain) {
-            drives.put(mainDrive.getUuid(), mainDrive);
-        }
+        if (includeMain && this.mainDrive != null) drives.put(this.mainDrive.getUuid(), this.mainDrive);
 
-        drives.putAll(additionalDrives);
+        drives.putAll(this.additionalDrives);
+
+        if (this.attachedDrive != null) drives.put(this.attachedDrive.getUuid(), this.attachedDrive);
 
         // TODO add network drives
         return drives;
     }
 
     public boolean setAttachedDrive(ItemStack flashDrive) {
-        if (attachedDrive == null) {
-            CompoundTag flashDriveTag = getExternalDriveTag(flashDrive);
-            AbstractDrive drive = ExternalDrive.fromTag(flashDriveTag.getCompound("drive"));
-            if (drive != null) {
-                drive.setName(flashDrive.getDisplayName().getString());
-                attachedDrive = drive;
+        if (flashDrive.getItem() instanceof FlashDriveItem flashDriveItem) {
+            if (attachedDrive == null) {
+                ExternalDrive drive = getExternalDrive(flashDrive);
+                if (drive != null) {
+                    drive.setName(flashDrive.getHoverName().getString());
+                    attachedDrive = drive;
 
-                attachedDriveColor = DyeColor.byId(flashDriveTag.getByte("color"));
+                    attachedDriveColor = flashDriveItem.getColor();
 
-                blockEntity.getPipeline().putByte("external_drive_color", (byte) attachedDriveColor.getId());
-                blockEntity.sync();
+                    blockEntity.getPipeline().putByte("external_drive_color", (byte) attachedDriveColor.getId());
+                    blockEntity.sync();
 
-                return true;
+                    return true;
+                }
             }
         }
 
@@ -253,12 +255,30 @@ public class FileSystem {
     public ItemStack removeAttachedDrive() {
         if (attachedDrive != null) {
             ItemStack stack = new ItemStack(DeviceItems.getFlashDriveByColor(attachedDriveColor), 1);
-            stack.setHoverName(Component.literal(attachedDrive.getName()));
+            if (stack.hasCustomHoverName()) {
+                stack.setHoverName(stack.getHoverName().copy());
+            } else {
+                stack.setHoverName(Component.literal(attachedDrive.getName()));
+            }
             stack.getOrCreateTag().put("drive", attachedDrive.toTag());
             attachedDrive = null;
             return stack;
         }
         return null;
+    }
+
+    public static ExternalDrive getExternalDrive(ItemStack stack) {
+        CompoundTag tag = stack.getTag();
+        if (tag == null) tag = new CompoundTag();
+
+        if (!tag.contains("drive", Tag.TAG_COMPOUND)) {
+            ExternalDrive externalDrive = new ExternalDrive(stack.getDisplayName().getString());
+            tag.put("drive", externalDrive.toTag());
+            stack.setTag(tag);
+            return externalDrive;
+        } else {
+            return ExternalDrive.fromTag(tag.getCompound("drive"));
+        }
     }
 
     private CompoundTag getExternalDriveTag(ItemStack stack) {

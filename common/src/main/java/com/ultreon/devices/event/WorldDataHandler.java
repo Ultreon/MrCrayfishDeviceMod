@@ -1,13 +1,20 @@
 package com.ultreon.devices.event;
 
 import com.ultreon.devices.api.WorldSavedData;
+import com.ultreon.devices.programs.email.EmailManager;
+import com.ultreon.devices.programs.email.object.Email;
+import dev.architectury.event.events.common.LifecycleEvent;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.world.level.storage.LevelResource;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
+
 //TODO
 public class WorldDataHandler {
     private static final LevelResource DEVICES_MOD_DATA = new LevelResource("data/devices-mod");
@@ -52,29 +59,46 @@ public class WorldDataHandler {
 //        saveData(modData, "bank.dat", BankUtil.INSTANCE);
 //    }
 
-    private void loadData(File modData, String fileName, WorldSavedData data) {
-        File dataFile = new File(modData, fileName);
-        if (!dataFile.exists()) {
+    public WorldDataHandler() {
+        LifecycleEvent.SERVER_STARTING.register(server -> {
+            loadData(server.getWorldPath(DEVICES_MOD_DATA), "emails.dat", EmailManager.INSTANCE);
+        });
+
+        LifecycleEvent.SERVER_LEVEL_SAVE.register(level -> {
+            saveData(level.getServer().getWorldPath(DEVICES_MOD_DATA), "emails.dat", EmailManager.INSTANCE);
+        });
+
+        LifecycleEvent.SERVER_STOPPED.register(server -> {
+            EmailManager.INSTANCE.clear();
+        });
+    }
+
+    private void loadData(Path modData, String fileName, WorldSavedData data) {
+        if (Files.notExists(modData)) {
             return;
         }
-        try {
-            CompoundTag nbt = NbtIo.readCompressed(dataFile);
+
+        try(InputStream inputStream = Files.newInputStream(modData.resolve(fileName))) {
+            CompoundTag nbt = NbtIo.readCompressed(inputStream);
             data.load(nbt);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void saveData(File modData, String fileName, WorldSavedData data) {
+    private void saveData(Path modData, String fileName, WorldSavedData data) {
         try {
-            File dataFile = new File(modData, fileName);
-            if (!dataFile.exists()) {
-                Files.createFile(dataFile.toPath());
+            Path resolve = modData.resolve(fileName);
+            if (Files.notExists(modData)) {
+                Files.createDirectories(modData);
+                Files.createFile(resolve);
             }
 
             CompoundTag nbt = new CompoundTag();
             data.save(nbt);
-            NbtIo.writeCompressed(nbt, dataFile);
+            try (OutputStream output = Files.newOutputStream(resolve)) {
+                NbtIo.writeCompressed(nbt, output);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

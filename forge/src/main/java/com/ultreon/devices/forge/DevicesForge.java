@@ -45,7 +45,6 @@ public class DevicesForge {
 
         // Common side stuff
         forgeEventBus.register(this);
-        forgeEventBus.register(new WorldDataHandler());
 
         LOGGER.info("Registering common setup handler, and load complete handler.");
 

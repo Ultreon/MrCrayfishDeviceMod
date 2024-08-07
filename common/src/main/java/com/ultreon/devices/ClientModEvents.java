@@ -9,6 +9,7 @@ import com.ultreon.devices.init.DeviceBlocks;
 import com.ultreon.devices.object.AppInfo;
 import dev.architectury.core.item.ArchitecturyBucketItem;
 import dev.architectury.injectables.annotations.ExpectPlatform;
+import dev.architectury.platform.Platform;
 import dev.architectury.registry.ReloadListenerRegistry;
 import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
 import dev.architectury.registry.client.rendering.RenderTypeRegistry;
@@ -71,7 +72,8 @@ public class ClientModEvents {
         registerRenderLayers();
         registerRenderers();
         registerLayerDefinitions();
-        //generateIconAtlas();
+        if (Platform.isForge())
+            generateIconAtlas();
         ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, new ReloaderListener());
     }
 
@@ -123,33 +125,29 @@ public class ClientModEvents {
             public boolean writeImage(AppInfo info, ResourceLocation location) {
                 //String path = "/assets/" + location.getNamespace() + "/" + location.getPath();
                 try {
-                    System.out.println(location);
                     Resource resource = Minecraft.getInstance().getResourceManager().getResource(location).orElse(null);
+                    assert resource != null;
                     InputStream input = resource.open();
-                    if (input != null) {
-                        BufferedImage icon = ImageIO.read(input);
-                        if (icon.getWidth() != ICON_SIZE || icon.getHeight() != ICON_SIZE) {
-                            Devices.LOGGER.error("Incorrect icon size for " + (info == null ? null : info.getId()) + " (Must be 14 by 14 pixels)");
-                            return false;
-                        }
-                        int iconU = (index % 16) * ICON_SIZE;
-                        int iconV = (index / 16) * ICON_SIZE;
-                        g.drawImage(icon, iconU, iconV, ICON_SIZE, ICON_SIZE, null);
-                        if (info != null) {
-                            AppInfo.Icon.Glyph glyph = switch (mode) {
-                                case 0 -> info.getIcon().getBase();
-                                case 1 -> info.getIcon().getOverlay0();
-                                case 2 -> info.getIcon().getOverlay1();
-                                default -> throw new IllegalStateException("Unexpected value: " + mode);
-                            };
-                            System.out.println("set glyph" + mode + "to " + iconU + ", " + iconV);
-                            glyph.setU(iconU);
-                            glyph.setV(iconV);
-                        }
-                        index++;
-                    } else {
-                        Devices.LOGGER.error("Icon for application '" + (info == null ? null : info.getId()) + "' could not be found at '" + resource.sourcePackId() + "'");
+                    BufferedImage icon = ImageIO.read(input);
+                    if (icon.getWidth() != ICON_SIZE || icon.getHeight() != ICON_SIZE) {
+                        Devices.LOGGER.error("Incorrect icon size for " + (info == null ? null : info.getId()) + " (Must be 14 by 14 pixels)");
+                        return false;
                     }
+                    int iconU = (index % 16) * ICON_SIZE;
+                    int iconV = (index / 16) * ICON_SIZE;
+                    g.drawImage(icon, iconU, iconV, ICON_SIZE, ICON_SIZE, null);
+                    if (info != null) {
+                        AppInfo.Icon.Glyph glyph = switch (mode) {
+                            case 0 -> info.getIcon().getBase();
+                            case 1 -> info.getIcon().getOverlay0();
+                            case 2 -> info.getIcon().getOverlay1();
+                            default -> throw new IllegalStateException("Unexpected value: " + mode);
+                        };
+                        glyph.setU(iconU);
+                        glyph.setV(iconV);
+                    }
+                    index++;
+                    return true;
                 } catch (Exception e) {
                     Devices.LOGGER.error("Unable to load icon for " + (info == null ? null : info.getId()));
                     //e.printStackTrace();
@@ -163,8 +161,6 @@ public class ClientModEvents {
                     ImageIO.write(atlas, "png", Paths.get("it.png").toFile());
                 } catch (Exception e) {
                     throw new RuntimeException(e);
-                } finally {
-                 //   System.exit(-1);
                 }
 
                 ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -175,7 +171,6 @@ public class ClientModEvents {
                     Minecraft.getInstance().submit(() -> {
                         try {
                             Minecraft.getInstance().getTextureManager().register(Laptop.ICON_TEXTURES, new DynamicTexture(NativeImage.read(input)));
-                            System.out.println("registering texture");
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }

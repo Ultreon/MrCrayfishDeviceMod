@@ -1,11 +1,13 @@
 package com.ultreon.devices.core.io.task;
 
+import com.ultreon.devices.Devices;
 import com.ultreon.devices.api.io.Drive;
 import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.block.entity.LaptopBlockEntity;
 import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.core.io.ServerFolder;
 import com.ultreon.devices.core.io.drive.AbstractDrive;
+import com.ultreon.devices.debug.DebugLog;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
@@ -41,16 +43,26 @@ public class TaskGetStructure extends Task {
 
     @Override
     public void processRequest(CompoundTag tag, Level level, Player player) {
-        BlockEntity tileEntity = level.getBlockEntity(BlockPos.of(tag.getLong("pos")));
-        if (tileEntity instanceof LaptopBlockEntity laptop) {
-            FileSystem fileSystem = laptop.getFileSystem();
-            UUID uuid = UUID.fromString(tag.getString("uuid"));
-            AbstractDrive serverDrive = fileSystem.getAvailableDrives(level, true).get(uuid);
-            if (serverDrive != null) {
-                folder = serverDrive.getDriveStructure();
-                this.setSuccessful();
+        BlockPos pos1 = BlockPos.of(tag.getLong("pos"));
+        DebugLog.info("pos == " + pos1.toShortString());
+        DebugLog.info("block->registryName == " + level.getBlockState(pos1).getBlock().arch$registryName());
+        DebugLog.info("level->isClient == " + level.isClientSide());
+
+        Devices.getServer().submit(() -> {
+            BlockEntity tileEntity = level.getBlockEntity(pos1);
+            DebugLog.info("tileEntity == " + tileEntity);
+            if (tileEntity instanceof LaptopBlockEntity laptop) {
+                FileSystem fileSystem = laptop.getFileSystem();
+                UUID uuid = UUID.fromString(tag.getString("uuid"));
+                AbstractDrive serverDrive = fileSystem.getAvailableDrives(level, true).get(uuid);
+                DebugLog.info("uuid = " + uuid);
+                DebugLog.info("serverDrive = " + serverDrive);
+                if (serverDrive != null) {
+                    folder = serverDrive.getDriveStructure();
+                    this.setSuccessful();
+                }
             }
-        }
+        }).join();
     }
 
     @Override

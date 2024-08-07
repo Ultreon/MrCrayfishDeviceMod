@@ -83,36 +83,36 @@ public class LaptopBlock extends DeviceBlock.Colored {
                 }
                 return InteractionResult.SUCCESS;
             } else {
-                if (hit.getDirection() == state.getValue(FACING).getCounterClockWise(Direction.Axis.Y)) {
-                    ItemStack heldItem = player.getItemInHand(hand);
-                    if (!heldItem.isEmpty() && heldItem.getItem() instanceof FlashDriveItem) {
-                        if (!level.isClientSide) {
+                if (hit.getDirection() == state.getValue(FACING).getClockWise(Direction.Axis.Y)) {
+                    if (!level.isClientSide) {
+                        ItemStack heldItem = player.getItemInHand(hand);
+                        if (!heldItem.isEmpty() && heldItem.getItem() instanceof FlashDriveItem) {
                             if (laptop.getFileSystem().setAttachedDrive(heldItem.copy())) {
                                 heldItem.shrink(1);
                                 return InteractionResult.CONSUME;
                             } else {
                                 return InteractionResult.FAIL;
                             }
+                        } else {
+                            ItemStack stack = laptop.getFileSystem().removeAttachedDrive();
+                            if (stack != null) {
+                                BlockPos summonPos = pos.relative(state.getValue(FACING).getClockWise(Direction.Axis.Y));
+                                level.addFreshEntity(new ItemEntity(level, summonPos.getX() + 0.5, summonPos.getY(), summonPos.getZ() + 0.5, stack));
+                                BlockEntityUtil.markBlockForUpdate(level, pos);
+                            }
                         }
-                        return InteractionResult.PASS;
-                    }
-
-                    if (!level.isClientSide) {
-                        ItemStack stack = laptop.getFileSystem().removeAttachedDrive();
-                        if (stack != null) {
-                            BlockPos summonPos = pos.relative(state.getValue(FACING).getCounterClockWise(Direction.Axis.Y));
-                            level.addFreshEntity(new ItemEntity(level, summonPos.getX() + 0.5, summonPos.getY(), summonPos.getZ() + 0.5, stack));
-                            BlockEntityUtil.markBlockForUpdate(level, pos);
-                        }
+                        return InteractionResult.CONSUME;
                     }
                     return InteractionResult.SUCCESS;
                 }
 
-                if (laptop.isOpen() && level.isClientSide) {
-                    EnvExecutor.runInEnv(Env.CLIENT, () -> () -> {
-                        ClientLaptopWrapper.execute(laptop);
-                    });
-                    return InteractionResult.SUCCESS;
+                if (laptop.isOpen()) {
+                    if (level.isClientSide) {
+                        EnvExecutor.runInEnv(Env.CLIENT, () -> () -> {
+                            ClientLaptopWrapper.execute(laptop);
+                        });
+                    }
+                    return InteractionResult.sidedSuccess(level.isClientSide);
                 }
             }
         }

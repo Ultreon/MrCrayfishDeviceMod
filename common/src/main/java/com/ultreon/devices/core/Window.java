@@ -19,6 +19,8 @@ public class Window<T extends Wrappable> {
 
     public static final int Color_WINDOW_DARK = new Color(0f, 0f, 0f, 0.25f).getRGB();
     final Laptop laptop;
+    double dragFromX;
+    double dragFromY;
     protected GuiButtonClose btnClose;
     T content;
     int width, height;
@@ -169,10 +171,7 @@ public class Window<T extends Wrappable> {
         content.handleKeyReleased(keyCode, scanCode, modifiers);
     }
 
-    public void handleWindowMove(int screenStartX, int screenStartY, int mouseDX, int mouseDY) {
-        int newX = offsetX + mouseDX;
-        int newY = offsetY + mouseDY;
-
+    public void handleWindowMove(int screenStartX, int screenStartY, int newX, int newY) {
         if (newX >= 0 && newX <= Laptop.SCREEN_WIDTH - width) {
             this.offsetX = newX;
         } else if (newX < 0) {
@@ -228,9 +227,9 @@ public class Window<T extends Wrappable> {
         content.handleMouseRelease(mouseX, mouseY, mouseButton);
     }
 
-    void handleMouseScroll(int mouseX, int mouseY, boolean direction) {
+    void handleMouseScroll(int mouseX, int mouseY, double delta, boolean direction) {
         if (dialogWindow != null) {
-            dialogWindow.handleMouseScroll(mouseX, mouseY, direction);
+            dialogWindow.handleMouseScroll(mouseX, mouseY, delta, direction);
             return;
         }
         content.handleMouseScroll(mouseX, mouseY, direction);
@@ -250,7 +249,7 @@ public class Window<T extends Wrappable> {
         if (dialogWindow != null) {
             dialogWindow.openDialog(dialog);
         } else {
-            dialogWindow = new Window(dialog, null);
+            dialogWindow = new Window<>(dialog, null);
             dialogWindow.init(0, 0, null);
             dialogWindow.setParent(this);
         }
@@ -278,11 +277,11 @@ public class Window<T extends Wrappable> {
         }
     }
 
-    public Window getParent() {
+    public Window<?> getParent() {
         return parent;
     }
 
-    public void setParent(Window parent) {
+    public void setParent(Window<?> parent) {
         this.parent = parent;
     }
 
