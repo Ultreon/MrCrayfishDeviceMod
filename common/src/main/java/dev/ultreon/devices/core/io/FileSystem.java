@@ -1,14 +1,14 @@
 package dev.ultreon.devices.core.io;
 
 import dev.ultreon.devices.UltreonDevicesMod;
-import dev.ultreon.devices.api.app.Application;
-import dev.ultreon.devices.api.io.Drive;
-import dev.ultreon.devices.api.io.Folder;
-import dev.ultreon.devices.api.task.Callback;
-import dev.ultreon.devices.api.task.Task;
-import dev.ultreon.devices.api.task.TaskManager;
+import dev.ultreon.mineos.api.Application;
+import dev.ultreon.devices.impl.io.Drive;
+import dev.ultreon.devices.impl.io.Folder;
+import dev.ultreon.devices.impl.task.Callback;
+import dev.ultreon.devices.impl.task.Task;
+import dev.ultreon.devices.impl.task.TaskManager;
 import dev.ultreon.devices.block.entity.ComputerBlockEntity;
-import dev.ultreon.devices.mineos.client.MineOS;
+import dev.ultreon.mineos.userspace.MineOS;
 import dev.ultreon.devices.core.io.action.FileAction;
 import dev.ultreon.devices.core.io.drive.AbstractDrive;
 import dev.ultreon.devices.core.io.drive.ExternalDrive;
@@ -62,7 +62,7 @@ public class FileSystem {
 
     @Environment(EnvType.CLIENT)
     public static void sendAction(Drive drive, FileAction action, @Nullable Callback<Response> callback) {
-        if (MineOS.getOpened().getPos() != null) {
+        if (MineOS.get().getPos() != null) {
             DebugLog.log("Sending action " + action + " to " + drive);
             Task task = new TaskSendAction(drive, action);
             task.setCallback((tag, success) -> {
@@ -87,8 +87,8 @@ public class FileSystem {
             }
         }
 
-        if (MineOS.getOpened().getMainDrive() == null) {
-            Task task = new TaskGetMainDrive(MineOS.getOpened().getPos());
+        if (MineOS.get().getMainDrive() == null) {
+            Task task = new TaskGetMainDrive(MineOS.get().getPos());
             task.setCallback((tag, success) -> {
                 if (success) {
                     setupApplicationFolder(app, callback);
@@ -104,8 +104,8 @@ public class FileSystem {
     }
 
     private static void setupApplicationFolder(Application app, Callback<Folder> callback) {
-        assert MineOS.getOpened().getMainDrive() != null;
-        Folder folder = MineOS.getOpened().getMainDrive().getFolder(FileSystem.DIR_APPLICATION_DATA);
+        assert MineOS.get().getMainDrive() != null;
+        Folder folder = MineOS.get().getMainDrive().getFolder(FileSystem.DIR_APPLICATION_DATA);
         if (folder != null) {
             if (folder.hasFolder(app.getInfo().getFormattedId())) {
                 Folder appFolder = folder.getFolder(app.getInfo().getFormattedId());
@@ -113,7 +113,7 @@ public class FileSystem {
                 if (appFolder.isSynced()) {
                     callback.execute(appFolder, true);
                 } else {
-                    Task task = new TaskGetFiles(appFolder, MineOS.getOpened().getPos());
+                    Task task = new TaskGetFiles(appFolder, MineOS.get().getPos());
                     task.setCallback((tag, success) -> {
                         assert tag != null;
                         if (success && tag.contains("files", Tag.TAG_LIST)) {

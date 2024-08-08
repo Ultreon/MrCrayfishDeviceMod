@@ -1,7 +1,7 @@
 package dev.ultreon.devices.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import dev.ultreon.devices.mineos.client.Window;
+import dev.ultreon.mineos.userspace.Window;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;

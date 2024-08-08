@@ -2,9 +2,9 @@ package dev.ultreon.devices.network.task;
 
 import com.google.common.collect.ImmutableList;
 import dev.ultreon.devices.UltreonDevicesMod;
-import dev.ultreon.devices.api.ApplicationManager;
+import dev.ultreon.devices.impl.ApplicationManager;
 import dev.ultreon.devices.network.Packet;
-import dev.ultreon.devices.object.AppInfo;
+import dev.ultreon.mineos.object.AppInfo;
 import dev.architectury.networking.NetworkManager;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;

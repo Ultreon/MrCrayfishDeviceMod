@@ -59,7 +59,7 @@ public abstract class ComputerBlock extends DeviceBlock {
 
                 if (!laptop.isOpen()) return InteractionResult.PASS;
                 if (!level.isClientSide) return InteractionResult.sidedSuccess(false);
-                if (!laptop.isPoweredOn()) laptop.powerOn();
+                if (laptop.isPoweredOff()) laptop.powerOn();
                 EnvExecutor.runInEnv(Env.CLIENT, () -> () -> ClientLaptopWrapper.execute(player, laptop));
                 return InteractionResult.sidedSuccess(true);
             }

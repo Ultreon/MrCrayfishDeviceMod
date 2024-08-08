@@ -1,7 +1,7 @@
 package dev.ultreon.devices.core.io;
 
-import dev.ultreon.devices.api.app.Application;
-import dev.ultreon.devices.api.io.MimeType;
+import dev.ultreon.mineos.api.Application;
+import dev.ultreon.devices.impl.io.MimeType;
 import net.minecraft.nbt.CompoundTag;
 
 import org.jetbrains.annotations.Nullable;

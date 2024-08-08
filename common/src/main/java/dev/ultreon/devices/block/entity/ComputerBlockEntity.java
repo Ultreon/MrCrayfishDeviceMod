@@ -5,24 +5,23 @@ import dev.ultreon.devices.OperatingSystems;
 import dev.ultreon.devices.core.BiosImpl;
 import dev.ultreon.devices.core.BootLoader;
 import dev.ultreon.devices.core.io.FileSystem;
-import dev.ultreon.devices.api.bios.Bios;
+import dev.ultreon.devices.impl.bios.DeviceInfo;
+import dev.ultreon.devices.impl.device.HostDevice;
 import dev.ultreon.devices.util.BlockEntityUtil;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
+import java.nio.ByteBuffer;
 import java.util.List;
 
-public abstract class ComputerBlockEntity extends NetworkDeviceBlockEntity.Colored {
+public abstract class ComputerBlockEntity extends NetworkDeviceBlockEntity.Colored implements HostDevice {
     private final List<BootLoader<?>> bootLoaders = Lists.newArrayList(OperatingSystems.MINE_OS.get());
     private CompoundTag applicationData = new CompoundTag();
     private CompoundTag systemData = new CompoundTag();
@@ -32,6 +31,8 @@ public abstract class ComputerBlockEntity extends NetworkDeviceBlockEntity.Color
     private boolean poweredOn;
     private CompoundTag originalData;
     private BiosImpl bios;
+    private final DeviceInfo deviceInfo = new DeviceInfo();
+    private final ByteBuffer biosData = ByteBuffer.allocate(0x1000);
 
     protected ComputerBlockEntity(BlockEntityType<? extends ComputerBlockEntity> type, BlockPos pWorldPosition, BlockState pBlockState) {
         super(type, pWorldPosition, pBlockState);
@@ -154,6 +155,10 @@ public abstract class ComputerBlockEntity extends NetworkDeviceBlockEntity.Color
         return this.poweredOn;
     }
 
+    public boolean isPoweredOff() {
+        return !this.poweredOn;
+    }
+
     public void powerOn() {
         this.poweredOn = true;
         setChanged();
@@ -168,8 +173,22 @@ public abstract class ComputerBlockEntity extends NetworkDeviceBlockEntity.Color
         }
     }
 
-    private List<BootLoader<?>> getBootLoaders() {
-        return bootLoaders;
+    @Override
+    public void powerOff() {
+        this.poweredOn = false;
+        setChanged();
+        assert level != null;
+        BlockEntityUtil.markBlockForUpdate(level, worldPosition);
+    }
+
+    @Override
+    public DeviceInfo getDevices() {
+        return this.deviceInfo;
+    }
+
+    @Override
+    public ByteBuffer getBiosData() {
+        return this.biosData;
     }
 
     public BiosImpl getBios() {

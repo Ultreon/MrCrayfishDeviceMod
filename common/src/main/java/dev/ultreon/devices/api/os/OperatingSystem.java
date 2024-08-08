@@ -1,13 +1,14 @@
 package dev.ultreon.devices.api.os;
 
+import dev.ultreon.devices.api.bios.efi.VEFI_DeviceID;
 import dev.ultreon.devices.client.Display;
-import dev.ultreon.devices.object.AppInfo;
+import dev.ultreon.devices.api.bios.Bios;
+import dev.ultreon.mineos.object.AppInfo;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.nbt.CompoundTag;
-import dev.ultreon.devices.api.bios.Bios;
 import dev.ultreon.devices.api.bios.InterruptData;
 import net.minecraft.client.gui.GuiGraphics;
-import dev.ultreon.devices.api.app.Application;
+import dev.ultreon.mineos.api.Application;
 
 public interface OperatingSystem {
     void init(GuiGraphics graphics);
@@ -41,4 +42,6 @@ public interface OperatingSystem {
     void connectDisplay(Display display);
 
     void disconnectDisplay();
+
+    VEFI_DeviceID getDeviceId();
 }

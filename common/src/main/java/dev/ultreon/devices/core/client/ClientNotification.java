@@ -2,9 +2,12 @@ package dev.ultreon.devices.core.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.ultreon.devices.UltreonDevicesMod;
-import dev.ultreon.devices.api.app.IIcon;
-import dev.ultreon.devices.api.utils.RenderUtil;
-import dev.ultreon.devices.api.bios.BiosNotification;
+import dev.ultreon.devices.api.bios.efi.VEFI_IconType;
+import dev.ultreon.devices.api.bios.efi.VEFI_Notification;
+import dev.ultreon.devices.impl.app.IIcon;
+import dev.ultreon.mineos.api.Icons;
+import dev.ultreon.devices.impl.utils.RenderUtil;
+import dev.ultreon.devices.impl.bios.BiosNotification;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -35,6 +38,22 @@ public class ClientNotification implements Toast {
         clientNotification.title = notification.title();
         clientNotification.subTitle = notification.subTitle();
 
+        return clientNotification;
+    }
+
+    public static ClientNotification of(VEFI_Notification notification) {
+        ClientNotification clientNotification = new ClientNotification();
+        VEFI_IconType type = notification.type();
+        switch (type) {
+            case VEFI_Info -> clientNotification.icon = Icons.INFO;
+            case VEFI_Warning -> clientNotification.icon = Icons.WARNING;
+            case VEFI_Error -> clientNotification.icon = Icons.ERROR;
+            case VEFI_Success -> clientNotification.icon = Icons.HEART_ON;
+            default -> throw new IllegalStateException("Unexpected value: " + type);
+        }
+
+        clientNotification.title = notification.header();
+        clientNotification.subTitle = notification.message();
         return clientNotification;
     }
 

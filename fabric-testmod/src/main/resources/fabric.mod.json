@@ -4,10 +4,10 @@
   "version": "1.0.0",
   "entrypoints": {
     "client": [
-      "com.jab125.testmod.ClientInit"
+      "dev.jab125.testmod.ClientInit"
     ],
     "devices:application_registration": [
-      "com.jab125.testmod.ClientInit"
+      "dev.jab125.testmod.ClientInit"
     ]
   },
   "custom": {

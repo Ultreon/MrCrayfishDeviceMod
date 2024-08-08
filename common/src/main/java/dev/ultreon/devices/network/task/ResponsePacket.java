@@ -1,7 +1,7 @@
 package dev.ultreon.devices.network.task;
 
-import dev.ultreon.devices.api.task.Task;
-import dev.ultreon.devices.api.task.TaskManager;
+import dev.ultreon.devices.impl.task.Task;
+import dev.ultreon.devices.impl.task.TaskManager;
 import dev.ultreon.devices.network.Packet;
 import dev.architectury.networking.NetworkManager;
 import net.minecraft.nbt.CompoundTag;

@@ -1,9 +1,9 @@
 package dev.ultreon.devices.core.io.task;
 
-import dev.ultreon.devices.api.io.Drive;
-import dev.ultreon.devices.api.task.Task;
+import dev.ultreon.devices.impl.io.Drive;
+import dev.ultreon.devices.impl.task.Task;
 import dev.ultreon.devices.block.entity.ComputerBlockEntity;
-import dev.ultreon.devices.mineos.client.MineOS;
+import dev.ultreon.mineos.userspace.MineOS;
 import dev.ultreon.devices.core.io.FileSystem;
 import dev.ultreon.devices.core.io.action.FileAction;
 import net.minecraft.core.BlockPos;
@@ -31,7 +31,7 @@ public class TaskSendAction extends Task {
         this();
         this.uuid = drive.getUUID().toString();
         this.action = action;
-        this.pos = MineOS.getOpened().getPos();
+        this.pos = MineOS.get().getPos();
     }
 
     @Override

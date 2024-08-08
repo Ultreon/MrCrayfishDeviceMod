@@ -1,6 +1,5 @@
 package dev.ultreon.devices.impl;
 
-import dev.ultreon.devices.api.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LoggerImpl implements Logger {

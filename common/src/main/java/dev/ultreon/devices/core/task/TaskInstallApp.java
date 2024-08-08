@@ -1,10 +1,10 @@
 package dev.ultreon.devices.core.task;
 
 import dev.ultreon.devices.UltreonDevicesMod;
-import dev.ultreon.devices.api.task.Task;
+import dev.ultreon.devices.impl.task.Task;
 import dev.ultreon.devices.block.entity.ComputerBlockEntity;
 import dev.ultreon.devices.debug.DebugLog;
-import dev.ultreon.devices.object.AppInfo;
+import dev.ultreon.mineos.object.AppInfo;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;

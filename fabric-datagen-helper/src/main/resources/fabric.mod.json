@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "entrypoints": {
     "client": [
-      "com.jab125.clientint.ClientInit"
+      "dev.jab125.clientint.ClientInit"
     ]
   },
   "custom": {

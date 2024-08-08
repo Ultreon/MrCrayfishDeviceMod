@@ -1,8 +1,8 @@
 package dev.ultreon.devices.core.io.task;
 
 import dev.ultreon.devices.UltreonDevicesMod;
-import dev.ultreon.devices.api.io.Drive;
-import dev.ultreon.devices.api.task.Task;
+import dev.ultreon.devices.impl.io.Drive;
+import dev.ultreon.devices.impl.task.Task;
 import dev.ultreon.devices.block.entity.ComputerBlockEntity;
 import dev.ultreon.devices.core.io.FileSystem;
 import dev.ultreon.devices.core.io.ServerFolder;

@@ -1,7 +1,7 @@
 package dev.ultreon.devices.core.io.action;
 
-import dev.ultreon.devices.api.io.File;
-import dev.ultreon.devices.api.io.Folder;
+import dev.ultreon.devices.impl.io.File;
+import dev.ultreon.devices.impl.io.Folder;
 import net.minecraft.nbt.CompoundTag;
 
 /**

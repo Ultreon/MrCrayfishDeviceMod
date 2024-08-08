@@ -1,16 +1,15 @@
 package dev.ultreon.devices;
 
-import dev.ultreon.devices.api.ApplicationManager;
-import dev.ultreon.devices.mineos.apps.BoatRacersApp;
-import dev.ultreon.devices.mineos.apps.NoteStashApp;
-import dev.ultreon.devices.mineos.apps.PixelPainterApp;
-import dev.ultreon.devices.mineos.apps.auction.MineBayApp;
-import dev.ultreon.devices.mineos.apps.email.EmailApp;
-import dev.ultreon.devices.mineos.apps.gitweb.GitWebApp;
-import dev.ultreon.devices.mineos.apps.snake.SnakeApp;
-import dev.ultreon.devices.mineos.apps.system.VulnerabilityApp;
-import dev.ultreon.devices.mineos.apps.themes.ThemesApp;
-import dev.ultreon.devices.mineos.apps.system.*;
+import dev.ultreon.devices.impl.ApplicationManager;
+import dev.ultreon.mineos.apps.BoatRacersApp;
+import dev.ultreon.mineos.apps.NoteStashApp;
+import dev.ultreon.mineos.apps.PixelPainterApp;
+import dev.ultreon.mineos.apps.auction.MineBayApp;
+import dev.ultreon.mineos.apps.email.EmailApp;
+import dev.ultreon.mineos.apps.gitweb.GitWebApp;
+import dev.ultreon.mineos.apps.snake.SnakeApp;
+import dev.ultreon.mineos.apps.system.*;
+import dev.ultreon.mineos.apps.themes.ThemesApp;
 import dev.architectury.platform.Platform;
 import net.minecraft.resources.ResourceLocation;
 

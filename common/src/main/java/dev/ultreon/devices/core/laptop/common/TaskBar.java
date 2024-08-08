@@ -3,7 +3,7 @@ package dev.ultreon.devices.core.laptop.common;
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.ultreon.devices.UltreonDevicesMod;
 import dev.ultreon.devices.core.laptop.client.ClientLaptop;
-import dev.ultreon.devices.mineos.apps.system.object.ColorScheme;
+import dev.ultreon.mineos.apps.system.object.ColorScheme;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;

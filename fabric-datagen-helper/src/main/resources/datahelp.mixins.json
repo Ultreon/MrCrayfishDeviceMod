@@ -6,7 +6,7 @@
   "mixins": [
   ],
   "client": [
-    "LanguageManagerAccessor"
+    "dev.jab125.clientint.mixin.LanguageManagerAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

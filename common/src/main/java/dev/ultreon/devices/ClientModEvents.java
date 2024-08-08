@@ -1,17 +1,17 @@
 package dev.ultreon.devices;
 
 import com.mojang.blaze3d.platform.NativeImage;
-import dev.ultreon.devices.api.ApplicationManager;
+import dev.ultreon.devices.impl.ApplicationManager;
 import dev.ultreon.devices.block.entity.renderer.*;
 import dev.ultreon.devices.client.RenderRegistry;
-import dev.ultreon.devices.mineos.client.MineOS;
+import dev.ultreon.mineos.userspace.MineOS;
 import dev.ultreon.devices.debug.DebugFlags;
 import dev.ultreon.devices.debug.DebugUtils;
 import dev.ultreon.devices.debug.DumpType;
 import dev.ultreon.devices.init.DeviceBlockEntities;
 import dev.ultreon.devices.init.DeviceBlocks;
-import dev.ultreon.devices.object.AppInfo;
-import dev.ultreon.devices.mineos.apps.system.object.ColorSchemePresets;
+import dev.ultreon.mineos.object.AppInfo;
+import dev.ultreon.mineos.apps.system.object.ColorSchemePresets;
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.ReloadListenerRegistry;
 import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;

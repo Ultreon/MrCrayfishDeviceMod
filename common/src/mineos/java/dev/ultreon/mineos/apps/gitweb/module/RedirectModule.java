@@ -1,0 +1,39 @@
+package dev.ultreon.mineos.apps.gitweb.module;
+
+import dev.ultreon.devices.impl.app.Layout;
+import dev.ultreon.mineos.apps.gitweb.layout.ModuleLayout;
+import dev.ultreon.mineos.apps.gitweb.component.GitWebFrame;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+public class RedirectModule extends Module {
+    @Override
+    public String[] getRequiredData() {
+        List<String> requiredData = new ArrayList<>();
+        requiredData.add("url");
+        return requiredData.toArray(new String[0]);
+    }
+
+    @Override
+    public String[] getOptionalData() {
+        return new String[0];
+    }
+
+    @Override
+    public int calculateHeight(Map<String, String> data, int width) {
+        return 1; // does not matter
+    }
+
+    @Override
+    public void generate(GitWebFrame frame, Layout layout, int width, Map<String, String> data) {
+        if (data.containsKey("url"))
+            frame.loadWebsite(data.get("url"));
+    }
+
+    @Override
+    public void modify(GitWebFrame frame, ModuleLayout layout, int width, Map<String, String> data) {
+        // NO OP
+    }
+}

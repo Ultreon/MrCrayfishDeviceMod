@@ -1,7 +1,7 @@
 package dev.ultreon.devices.block;
 
 import com.mojang.serialization.MapCodec;
-import dev.ultreon.devices.api.print.IPrint;
+import dev.ultreon.devices.impl.print.IPrint;
 import dev.ultreon.devices.block.entity.PaperBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

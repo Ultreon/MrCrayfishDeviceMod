@@ -1,8 +1,8 @@
 package dev.ultreon.devices.minephone;
 
-import dev.ultreon.devices.api.bios.Bios;
-import dev.ultreon.devices.api.os.OSScreen;
-import dev.ultreon.devices.api.video.CustomResolution;
+import dev.ultreon.devices.impl.bios.Bios;
+import dev.ultreon.devices.impl.os.OSScreen;
+import dev.ultreon.devices.impl.video.CustomResolution;
 import dev.ultreon.devices.block.entity.ComputerBlockEntity;
 import dev.ultreon.devices.client.Display;
 import net.minecraft.client.gui.GuiGraphics;

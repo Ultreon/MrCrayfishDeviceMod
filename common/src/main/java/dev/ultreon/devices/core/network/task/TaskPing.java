@@ -1,6 +1,6 @@
 package dev.ultreon.devices.core.network.task;
 
-import dev.ultreon.devices.api.task.Task;
+import dev.ultreon.devices.impl.task.Task;
 import dev.ultreon.devices.block.entity.NetworkDeviceBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;

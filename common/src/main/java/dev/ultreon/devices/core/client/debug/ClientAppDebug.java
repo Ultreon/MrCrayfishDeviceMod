@@ -3,7 +3,7 @@ package dev.ultreon.devices.core.client.debug;
 import dev.ultreon.devices.DeviceConfig;
 import dev.ultreon.devices.block.entity.LaptopBlockEntity;
 import dev.ultreon.devices.core.WorldLessBiosImpl;
-import dev.ultreon.devices.mineos.client.MineOS;
+import dev.ultreon.mineos.userspace.MineOS;
 import dev.ultreon.devices.core.laptop.client.ClientLaptop;
 import dev.ultreon.devices.core.laptop.client.ClientLaptopScreen;
 import dev.ultreon.devices.core.laptop.server.ServerLaptop;

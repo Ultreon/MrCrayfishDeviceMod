@@ -1,10 +1,12 @@
 package dev.ultreon.devices.core;
 
 import dev.ultreon.devices.UltreonDevicesMod;
-import dev.ultreon.devices.api.io.Drive;
+import dev.ultreon.devices.api.bios.Bios;
+import dev.ultreon.devices.impl.bios.BiosNotification;
+import dev.ultreon.devices.impl.bios.PowerModeInterrupt;
+import dev.ultreon.devices.impl.io.Drive;
 import dev.ultreon.devices.block.entity.ComputerBlockEntity;
 import dev.ultreon.devices.core.client.ClientNotification;
-import dev.ultreon.devices.api.bios.*;
 import dev.ultreon.devices.api.os.OperatingSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;

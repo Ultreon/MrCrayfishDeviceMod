@@ -2,10 +2,10 @@ package dev.ultreon.devices.fabric;
 
 import dev.ultreon.devices.DeviceConfig;
 import dev.ultreon.devices.UltreonDevicesMod;
-import dev.ultreon.devices.mineos.client.MineOS;
-import dev.ultreon.devices.api.app.Application;
-import dev.ultreon.devices.api.print.IPrint;
-import dev.ultreon.devices.api.print.PrintingManager;
+import dev.ultreon.devices.os.mineos.userspace.MineOS;
+import dev.ultreon.devices.impl.app.Application;
+import dev.ultreon.devices.impl.print.IPrint;
+import dev.ultreon.devices.impl.print.PrintingManager;
 import dev.ultreon.devices.init.RegistrationHandler;
 import fuzs.forgeconfigapiport.fabric.api.neoforge.v4.NeoForgeConfigRegistry;
 import net.fabricmc.api.ModInitializer;

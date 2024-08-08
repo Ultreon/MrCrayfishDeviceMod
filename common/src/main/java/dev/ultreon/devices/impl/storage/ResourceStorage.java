@@ -1,8 +1,6 @@
 package dev.ultreon.devices.impl.storage;
 
 import net.minecraft.resources.ResourceLocation;
-import dev.ultreon.devices.api.storage.FileHandle;
-import dev.ultreon.devices.api.storage.DataStorage;
 
 public class ResourceStorage implements DataStorage {
     @Override

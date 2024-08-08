@@ -1,7 +1,7 @@
 package dev.ultreon.devices.util;
 
 import dev.ultreon.devices.UltreonDevicesMod;
-import dev.ultreon.devices.mineos.apps.gitweb.component.GitWebFrame;
+import dev.ultreon.mineos.apps.gitweb.component.GitWebFrame;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 

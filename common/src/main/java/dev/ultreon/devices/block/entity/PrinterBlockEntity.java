@@ -1,7 +1,7 @@
 package dev.ultreon.devices.block.entity;
 
 import dev.ultreon.devices.DeviceConfig;
-import dev.ultreon.devices.api.print.IPrint;
+import dev.ultreon.devices.impl.print.IPrint;
 import dev.ultreon.devices.init.DeviceBlockEntities;
 import dev.ultreon.devices.init.DeviceSounds;
 import net.minecraft.core.BlockPos;

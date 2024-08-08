@@ -1,7 +1,7 @@
 package dev.ultreon.devices.core.print.task;
 
-import dev.ultreon.devices.api.print.IPrint;
-import dev.ultreon.devices.api.task.Task;
+import dev.ultreon.devices.impl.print.IPrint;
+import dev.ultreon.devices.impl.task.Task;
 import dev.ultreon.devices.block.entity.NetworkDeviceBlockEntity;
 import dev.ultreon.devices.block.entity.PrinterBlockEntity;
 import dev.ultreon.devices.core.network.NetworkDevice;

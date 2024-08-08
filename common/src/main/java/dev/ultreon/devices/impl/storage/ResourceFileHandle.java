@@ -1,7 +1,6 @@
 package dev.ultreon.devices.impl.storage;
 
 import net.minecraft.resources.ResourceLocation;
-import dev.ultreon.devices.api.storage.FileHandle;
 import net.minecraft.client.Minecraft;
 
 import java.io.IOException;

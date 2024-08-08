@@ -1,8 +1,8 @@
 package dev.ultreon.devices.core;
 
-import dev.ultreon.devices.api.app.Dialog;
-import dev.ultreon.devices.mineos.client.MineOS;
-import dev.ultreon.devices.mineos.client.Window;
+import dev.ultreon.mineos.api.Dialog;
+import dev.ultreon.mineos.userspace.MineOS;
+import dev.ultreon.mineos.userspace.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;

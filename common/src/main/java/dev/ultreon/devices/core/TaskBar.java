@@ -2,17 +2,17 @@ package dev.ultreon.devices.core;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.ultreon.devices.UltreonDevicesMod;
-import dev.ultreon.devices.api.TrayItemAdder;
-import dev.ultreon.devices.api.event.LaptopEvent;
-import dev.ultreon.devices.api.utils.RenderUtil;
+import dev.ultreon.devices.impl.TrayItemAdder;
+import dev.ultreon.devices.impl.event.LaptopEvent;
+import dev.ultreon.devices.impl.utils.RenderUtil;
 import dev.ultreon.devices.core.network.TrayItemWifi;
-import dev.ultreon.devices.api.util.Vulnerability;
-import dev.ultreon.devices.mineos.client.MineOS;
-import dev.ultreon.devices.object.AppInfo;
-import dev.ultreon.devices.object.TrayItem;
-import dev.ultreon.devices.mineos.apps.system.AppStore;
-import dev.ultreon.devices.mineos.apps.system.FileBrowserApp;
-import dev.ultreon.devices.mineos.apps.system.SettingsApp;
+import dev.ultreon.devices.impl.util.Vulnerability;
+import dev.ultreon.mineos.userspace.MineOS;
+import dev.ultreon.mineos.object.AppInfo;
+import dev.ultreon.mineos.object.TrayItem;
+import dev.ultreon.mineos.apps.system.AppStore;
+import dev.ultreon.mineos.apps.system.FileBrowserApp;
+import dev.ultreon.mineos.apps.system.SettingsApp;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
@@ -98,8 +98,8 @@ public class TaskBar {
 
         int trayItemsWidth = trayItems.size() * 14;
         graphics.blit(APP_BAR_GUI, x, y, 1, 18, 0, 0, 1, 18, 256, 256);
-        graphics.blit(APP_BAR_GUI, x + 1, y, MineOS.getOpened().getScreenWidth() - 36 - trayItemsWidth, 18, 1, 0, 1, 18, 256, 256);
-        graphics.blit(APP_BAR_GUI, x + MineOS.getOpened().getScreenWidth() - 35 - trayItemsWidth, y, 35 + trayItemsWidth, 18, 2, 0, 1, 18, 256, 256);
+        graphics.blit(APP_BAR_GUI, x + 1, y, MineOS.get().getScreenWidth() - 36 - trayItemsWidth, 18, 1, 0, 1, 18, 256, 256);
+        graphics.blit(APP_BAR_GUI, x + MineOS.get().getScreenWidth() - 35 - trayItemsWidth, y, 35 + trayItemsWidth, 18, 2, 0, 1, 18, 256, 256);
 
         RenderSystem.disableBlend();
 
@@ -115,10 +115,10 @@ public class TaskBar {
 
         assert mc.level == null || mc.player != null;
        // assert mc.level != null; //can no longer assume
-        graphics.drawString(mc.font, timeToString(mc.level != null ? mc.level.getDayTime() : 0), x + MineOS.getOpened().getScreenWidth() - 31, y + 5, Color.WHITE.getRGB(), true);
+        graphics.drawString(mc.font, timeToString(mc.level != null ? mc.level.getDayTime() : 0), x + MineOS.get().getScreenWidth() - 31, y + 5, Color.WHITE.getRGB(), true);
 
         /* Settings App */
-        int startX = x + MineOS.getOpened().getScreenWidth() - 48;
+        int startX = x + MineOS.get().getScreenWidth() - 48;
         for (int i = 0; i < trayItems.size(); i++) {
             int posX = startX - (trayItems.size() - 1 - i) * 14;
             if (isMouseInside(mouseX, mouseY, posX, y + 2, posX + 13, y + 15)) {
@@ -151,7 +151,7 @@ public class TaskBar {
             }
         }
 
-        int startX = x + MineOS.getOpened().getScreenWidth() - 48;
+        int startX = x + MineOS.get().getScreenWidth() - 48;
         for (int i = 0; i < trayItems.size(); i++) {
             int posX = startX - (trayItems.size() - 1 - i) * 14;
             if (isMouseInside(mouseX, mouseY, posX, y + 2, posX + 13, y + 15)) {
