@@ -1,0 +1,26 @@
+plugins {
+    id 'java'
+}
+
+group = 'dev.ultreon.mods'
+version = '0.9.0'
+
+base {
+    archivesName = "devices-bios"
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.jetbrains:annotations:24.0.0'
+
+    implementation project(':api')
+}

@@ -1,0 +1,13 @@
+plugins {
+
+}
+
+subprojects {
+    group = 'dev.ultreon.devices.mineos'
+    version = '0.9.0'
+
+    apply plugin: 'java'
+    repositories {
+        mavenCentral()
+    }
+}

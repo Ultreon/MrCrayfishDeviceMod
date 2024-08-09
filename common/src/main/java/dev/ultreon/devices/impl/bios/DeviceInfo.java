@@ -1,6 +1,6 @@
 package dev.ultreon.devices.impl.bios;
 
-import dev.ultreon.devices.api.bios.efi.VEFI_DeviceID;
+import dev.ultreon.vbios.efi.VEFI_DeviceID;
 
 import java.util.ArrayList;
 import java.util.List;

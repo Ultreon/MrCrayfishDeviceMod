@@ -1,14 +1,22 @@
 package dev.ultreon.devices.impl.bios;
 
+import com.mojang.blaze3d.platform.NativeImage;
 import de.waldheinz.fs.BlockDevice;
-import dev.ultreon.devices.api.bios.Bios;
-import dev.ultreon.devices.api.bios.BiosInterruptType;
-import dev.ultreon.devices.api.bios.efi.*;
+import dev.architectury.utils.Env;
+import dev.architectury.utils.EnvExecutor;
+import dev.ultreon.vbios.Bios;
 import dev.ultreon.devices.api.device.HardwareDevice;
 import dev.ultreon.devices.api.device.VEFI_Disk;
 import dev.ultreon.devices.core.client.ClientNotification;
+import dev.ultreon.vbios.efi.*;
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.AbstractTexture;
+import net.minecraft.client.renderer.texture.DynamicTexture;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Map;
@@ -25,6 +33,7 @@ public class VEFI_SystemImpl implements VEFI_System {
     private final VEFI_FileContext[] files = new VEFI_FileContext[128];
     private final BitSet openDisks = new BitSet(32);
     final VEFI_DiskHandle[] disks = new VEFI_DiskHandle[32];
+    private final Int2ObjectMap<AbstractTexture> textures = new Int2ObjectArrayMap<>();
 
     public VEFI_SystemImpl(DeviceInfo deviceInfo, VBios vBios) {
         this.deviceInfo = deviceInfo.createDeviceList();
@@ -338,7 +347,7 @@ public class VEFI_SystemImpl implements VEFI_System {
             try {
                 this.loadPartitions(handle);
             } catch (IOException e) {
-                this.vBios.interrupt(BiosInterruptType.IO_ERROR, new IOErrorInterrupt(this.vBios, this, e));
+                this.vBios.interrupt(new IOErrorInterrupt(this.vBios, this, e));
             }
         } else {
             this.disks[i] = null;
@@ -425,5 +434,29 @@ public class VEFI_SystemImpl implements VEFI_System {
 
         disks[vefiDisk.handle()] = null;
         openDisks.clear(vefiDisk.handle());
+    }
+
+    @Override
+    public void offload(Runnable call) {
+        EnvExecutor.runInEnv(Env.CLIENT, () -> () -> Minecraft.getInstance().submit(call));
+    }
+
+    @Override
+    public int load(InputStream stream) throws IOException {
+        NativeImage image = NativeImage.read(stream);
+        AbstractTexture texture = new DynamicTexture(image);
+
+        this.textures.put(texture.getId(), texture);
+
+        return texture.getId();
+    }
+
+    @Override
+    public void destroy(int textureID) {
+        AbstractTexture texture = this.textures.remove(textureID);
+        if (texture != null) {
+            texture.releaseId();
+            texture.close();
+        }
     }
 }

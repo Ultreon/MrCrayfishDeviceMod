@@ -1,0 +1,31 @@
+plugins {
+    id 'java'
+}
+
+group = 'dev.ultreon.mods'
+version = '0.9.0'
+
+repositories {
+    mavenCentral()
+
+    maven { url "https://gitlab.com/api/v4/groups/9962021/-/packages/maven" }
+    maven { url "https://jitpack.io" }
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+    maven { url "https://oss.sonatype.org/content/repositories/releases" }
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    // Project Reactor
+    implementation 'io.projectreactor:reactor-core:3.6.8'
+
+    // Reactive Streams
+    implementation 'org.reactivestreams:reactive-streams:+'
+    implementation 'org.reactivestreams:reactive-streams-tck:+'
+}
+
+test {
+    useJUnitPlatform()
+}

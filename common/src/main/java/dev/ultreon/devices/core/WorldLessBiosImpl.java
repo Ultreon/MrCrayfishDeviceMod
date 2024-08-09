@@ -1,9 +1,9 @@
 package dev.ultreon.devices.core;
 
-import dev.ultreon.devices.api.bios.Bios;
-import dev.ultreon.devices.api.bios.BiosCallType;
-import dev.ultreon.devices.api.bios.BiosInterruptType;
-import dev.ultreon.devices.api.bios.InterruptHandler;
+import dev.ultreon.vbios.Bios;
+import dev.ultreon.vbios.BiosCallType;
+import dev.ultreon.vbios.BiosInterruptType;
+import dev.ultreon.vbios.InterruptHandler;
 import dev.ultreon.devices.impl.bios.BiosNotification;
 import dev.ultreon.devices.impl.bios.PowerModeInterrupt;
 import dev.ultreon.devices.impl.io.Drive;

@@ -1,14 +1,17 @@
 package dev.ultreon.devices.impl.bios;
 
-import dev.ultreon.devices.api.bios.InterruptData;
+import dev.ultreon.vbios.BiosInterruptType;
+import dev.ultreon.vbios.InterruptData;
 
 import java.lang.reflect.Field;
 
 public abstract class AbstractInterruptData implements InterruptData {
     private final VBios vbios;
+    private final BiosInterruptType interrupt;
 
-    public AbstractInterruptData(VBios vbios) {
+    public AbstractInterruptData(VBios vbios, BiosInterruptType interrupt) {
         this.vbios = vbios;
+        this.interrupt = interrupt;
     }
 
     @Override
@@ -36,5 +39,10 @@ public abstract class AbstractInterruptData implements InterruptData {
         } catch (IllegalAccessException e) {
             vbios.fault(e);
         }
+    }
+
+    @Override
+    public BiosInterruptType interruptType() {
+        return interrupt;
     }
 }

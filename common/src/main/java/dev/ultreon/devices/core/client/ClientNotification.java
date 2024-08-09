@@ -2,8 +2,8 @@ package dev.ultreon.devices.core.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.ultreon.devices.UltreonDevicesMod;
-import dev.ultreon.devices.api.bios.efi.VEFI_IconType;
-import dev.ultreon.devices.api.bios.efi.VEFI_Notification;
+import dev.ultreon.vbios.efi.VEFI_IconType;
+import dev.ultreon.vbios.efi.VEFI_Notification;
 import dev.ultreon.devices.impl.app.IIcon;
 import dev.ultreon.mineos.api.Icons;
 import dev.ultreon.devices.impl.utils.RenderUtil;

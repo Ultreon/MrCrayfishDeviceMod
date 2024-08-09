@@ -114,7 +114,14 @@ gradle-app.setting
 # Cache of project
 .gradletasknamecache
 
-**/build/
+/*/build/
+/build/
+/*/.gradle/
+/.gradle/
+
+/.idea/
+/.vscode/
+/.fleet/
 
 # Common working directory
 run/

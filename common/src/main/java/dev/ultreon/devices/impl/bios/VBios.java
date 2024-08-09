@@ -4,11 +4,12 @@ import com.google.gson.Gson;
 import de.waldheinz.fs.*;
 import de.waldheinz.fs.fat.FatFileSystem;
 import dev.ultreon.devices.api.bios.*;
-import dev.ultreon.devices.api.bios.Bios;
-import dev.ultreon.devices.api.bios.InterruptData;
-import dev.ultreon.devices.api.bios.efi.VEFI_DiskInfo;
-import dev.ultreon.devices.api.bios.efi.VEFI_File;
-import dev.ultreon.devices.api.bios.efi.VEFI_System;
+import dev.ultreon.vbios.*;
+import dev.ultreon.vbios.Bios;
+import dev.ultreon.vbios.InterruptData;
+import dev.ultreon.vbios.efi.VEFI_DiskInfo;
+import dev.ultreon.vbios.efi.VEFI_File;
+import dev.ultreon.vbios.efi.VEFI_System;
 import dev.ultreon.devices.api.device.HardwareDevice;
 import dev.ultreon.devices.api.device.VEFI_Disk;
 import dev.ultreon.devices.impl.device.HostDevice;
@@ -23,10 +24,7 @@ import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.lang.Math.min;
@@ -135,7 +133,7 @@ public class VBios implements Bios {
                 yield null;
             }
             case ENTER_SLEEP -> {
-                this.interrupt(BiosInterruptType.FRAMEBUFFER_INTERRUPT, new AbstractInterruptData(this) {
+                this.interrupt(new AbstractInterruptData(this, BiosInterruptType.FRAMEBUFFER_INTERRUPT) {
                     @SuppressWarnings("unused")
                     public final int type = FrameBuffer.DISABLE;
                 });
@@ -144,7 +142,7 @@ public class VBios implements Bios {
                 yield null;
             }
             case EXIT_SLEEP -> {
-                this.interrupt(BiosInterruptType.FRAMEBUFFER_INTERRUPT, new AbstractInterruptData(this) {
+                this.interrupt(new AbstractInterruptData(this, BiosInterruptType.FRAMEBUFFER_INTERRUPT) {
                     @SuppressWarnings("unused")
                     public final int type = FrameBuffer.ENABLE;
                 });
@@ -223,7 +221,8 @@ public class VBios implements Bios {
         return this.system;
     }
 
-    public void interrupt(BiosInterruptType biosInterruptType, InterruptData data) {
+    public void interrupt(InterruptData data) {
+        BiosInterruptType biosInterruptType = data.interruptType();
         if (biosInterruptType == BiosInterruptType.FAULT) {
             if (faults > 10) {
                 this.reset();
@@ -247,15 +246,24 @@ public class VBios implements Bios {
     }
 
     public void fault(Throwable e) {
+        if (faults > 10) this.reset();
+        if (faults++ > 0) {
+            DoubleFaultInterrupt doubleFaultInterrupt = new DoubleFaultInterrupt(this);
+            doubleFaultInterrupt.errorCode = 1;
+            doubleFaultInterrupt.stackTrace = Arrays.stream(e.getStackTrace()).map(Object::toString).collect(Collectors.joining("\n"));
+            doubleFaultInterrupt.cause = e;
+            this.interrupt(doubleFaultInterrupt);
+            return;
+        }
         FaultInterrupt faultInterrupt = new FaultInterrupt(this);
         faultInterrupt.errorCode = 1;
         faultInterrupt.stackTrace = Arrays.stream(e.getStackTrace()).map(Object::toString).collect(Collectors.joining("\n"));
         faultInterrupt.cause = e;
-        this.interrupt(BiosInterruptType.FAULT, faultInterrupt);
+        this.interrupt(faultInterrupt);
     }
 
     public void requestPowerOff() {
-        this.interrupt(BiosInterruptType.POWER_BUTTON, new AbstractInterruptData(this) {
+        this.interrupt(new AbstractInterruptData(this, BiosInterruptType.POWER_BUTTON) {
             @SuppressWarnings("unused")
             public final int type = PB_POWER_OFF;
         });
@@ -320,7 +328,17 @@ public class VBios implements Bios {
         public @NullPtr Throwable cause;
 
         public FaultInterrupt(VBios vbios) {
-            super(vbios);
+            super(vbios, BiosInterruptType.FAULT);
+        }
+    }
+
+    private static class DoubleFaultInterrupt extends AbstractInterruptData {
+        public int errorCode = 0;
+        public @NullPtr String stackTrace = "";
+        public @NullPtr Throwable cause;
+
+        public DoubleFaultInterrupt(VBios vbios) {
+            super(vbios, BiosInterruptType.DOUBLE_FAULT);
         }
     }
 

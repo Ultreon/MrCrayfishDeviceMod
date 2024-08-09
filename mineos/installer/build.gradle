@@ -1,0 +1,91 @@
+import java.nio.charset.StandardCharsets
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.StandardOpenOption
+
+import static java.nio.charset.StandardCharsets.*
+import static java.nio.file.StandardOpenOption.*
+
+plugins {
+    id 'java'
+}
+
+group = 'dev.ultreon.devices.mineos'
+version = '0.9.0'
+
+base {
+    archivesName = 'mineos-installer'
+}
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    bootloader {
+        canBeConsumed = true
+        canBeResolved = true
+    }
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    bootloader project(":mineos:bootloader")
+
+    compileOnly project(":mineos:kernel:api")
+}
+
+jar {
+    archiveExtension.set("jar")
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+tasks.register("setup") {
+    doLast {
+        copy {
+            from configurations.bootloader.collect { it.isDirectory() ? it : zipTree(it) }
+            into "build/boot-image"
+        }
+
+        copy {
+            from "src/res"
+            into "build/boot-image"
+        }
+
+        copy {
+            from jar.archiveFile
+            into "build/boot-image/usr/bin"
+
+            rename { "installer.jar" }
+        }
+
+        copy {
+            from rootProject.file("LICENSE")
+            into "build/boot-image"
+        }
+
+        Files.writeString(Paths.get("build/boot-image/boot/vefi/boot.json"), """
+            {
+                "bootloader": "/usr/bin/installer.jar",
+            }
+            """.trim().toString(), UTF_8, CREATE, TRUNCATE_EXISTING)
+    }
+}
+
+tasks.register("bootableMedium", Zip) {
+    from "build/boot-image"
+    destinationDirectory = file("build")
+    archiveFileName = "mineos-installer.bin"
+    archiveExtension = "bin"
+
+    zip64 true
+}
+
+test {
+    useJUnitPlatform()
+}

@@ -1,0 +1,29 @@
+plugins {
+    id 'java'
+}
+
+group = 'dev.ultreon.mods'
+version = '0.1.0'
+
+base {
+    archivesName = 'devices-mineos'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+
+    maven { url "https://gitlab.com/api/v4/groups/9962021/-/packages/maven" }
+}
+
+dependencies {
+    implementation project(":api")
+    
+    implementation "org.jetbrains:annotations:24.0.0"
+    implementation "org.apache.commons:commons-compress:1.26.1"
+}

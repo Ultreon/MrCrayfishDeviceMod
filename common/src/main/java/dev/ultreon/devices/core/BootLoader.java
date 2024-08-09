@@ -1,7 +1,7 @@
 package dev.ultreon.devices.core;
 
 import dev.ultreon.devices.UltreonDevicesMod;
-import dev.ultreon.devices.api.bios.Bios;
+import dev.ultreon.vbios.Bios;
 import dev.ultreon.devices.api.os.OperatingSystem;
 import dev.ultreon.devices.block.entity.ComputerBlockEntity;
 import dev.architectury.extensions.injected.InjectedRegistryEntryExtension;

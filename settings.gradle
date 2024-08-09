@@ -14,4 +14,22 @@ include("neoforge")
 include("fabric-datagen-helper")
 include("fabric-testmod")
 include 'api'
+include 'bios'
+include 'mineos'
+include 'mineos:installer'
+findProject(':mineos:installer')?.name = 'installer'
+include 'mineos:kernel'
+findProject(':mineos:kernel')?.name = 'kernel'
+include 'mineos:bootloader'
+findProject(':mineos:bootloader')?.name = 'bootloader'
+include 'mineos:kernel:api'
+findProject(':mineos:kernel:api')?.name = 'api'
+include 'mineos:kernel:impl'
+findProject(':mineos:kernel:impl')?.name = 'impl'
+include 'mineos:desktop'
+findProject(':mineos:desktop')?.name = 'desktop'
+include 'mineos:desktop:logon'
+findProject(':mineos:desktop:logon')?.name = 'logon'
+include 'mineos:desktop:registry-lib'
+findProject(':mineos:desktop:registry-lib')?.name = 'registry-lib'
 

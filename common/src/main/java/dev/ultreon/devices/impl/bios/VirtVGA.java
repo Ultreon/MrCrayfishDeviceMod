@@ -1,6 +1,6 @@
 package dev.ultreon.devices.impl.bios;
 
-import dev.ultreon.devices.api.bios.FrameBufferCall;
+import dev.ultreon.vbios.FrameBufferCall;
 import org.joml.Vector2i;
 
 public class VirtVGA {

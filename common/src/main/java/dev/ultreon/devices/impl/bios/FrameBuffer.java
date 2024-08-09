@@ -1,8 +1,8 @@
 package dev.ultreon.devices.impl.bios;
 
 import dev.ultreon.devices.UltreonDevicesMod;
-import dev.ultreon.devices.api.bios.FrameBufferCall;
-import dev.ultreon.devices.api.bios.FrameBufferInfo;
+import dev.ultreon.vbios.FrameBufferCall;
+import dev.ultreon.vbios.FrameBufferInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.AbstractTexture;

@@ -1,7 +1,7 @@
 package dev.ultreon.devices.impl.bios;
 
 import de.waldheinz.fs.BlockDevice;
-import dev.ultreon.devices.api.bios.efi.VEFI_File;
+import dev.ultreon.vbios.efi.VEFI_File;
 import dev.ultreon.devices.api.device.HardwareDevice;
 
 import java.io.IOException;
