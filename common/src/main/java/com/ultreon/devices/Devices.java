@@ -20,6 +20,7 @@ import com.ultreon.devices.core.network.task.TaskPing;
 import com.ultreon.devices.core.print.task.TaskPrint;
 import com.ultreon.devices.core.task.TaskInstallApp;
 import com.ultreon.devices.debug.DebugLog;
+import com.ultreon.devices.event.WorldDataHandler;
 import com.ultreon.devices.network.PacketHandler;
 import com.ultreon.devices.network.task.SyncApplicationPacket;
 import com.ultreon.devices.network.task.SyncConfigPacket;
@@ -121,7 +122,9 @@ public abstract class Devices {
             preInit();
             serverSetup();
         }
-        //     BlockEntityUtil.sendUpdate(null, null, null);
+//        BlockEntityUtil.sendUpdate(null, null, null);
+
+        WorldDataHandler.init();
 
         // STOPSHIP: 3/11/2022 should be moved to dedicated testmod
         final var property = System.getProperty("ultreon.devices.tests");

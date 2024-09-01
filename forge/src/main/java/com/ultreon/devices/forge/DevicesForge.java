@@ -90,7 +90,6 @@ public final class DevicesForge {
         context.registerConfig(ModConfig.Type.CLIENT, DeviceConfig.CONFIG);
 
         forgeEventBus.register(this);
-        forgeEventBus.register(new WorldDataHandler());
 
         LOGGER.info("Registering common setup handler, and load complete handler.");
         this.modEventBus.addListener(this::fmlCommonSetup);
