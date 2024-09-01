@@ -44,7 +44,7 @@ public class ClientNotification implements Toast {
         }
 
         RenderSystem.setShaderTexture(0, icon.getIconAsset());
-        RenderUtil.drawRectWithTexture(null, graphics, 6, 6, icon.getGridWidth(), icon.getGridHeight(), icon.getU(), icon.getV(), icon.getSourceWidth(), icon.getSourceHeight(), icon.getIconSize(), icon.getIconSize());
+        graphics.blit(icon.getIconAsset(), 6, 6, icon.getGridWidth(), icon.getGridHeight(), icon.getU(), icon.getV(), icon.getIconSize(), icon.getIconSize(), icon.getSourceWidth(), icon.getSourceHeight());
 
         return timeSinceLastVisible >= 5000L ? Visibility.HIDE : Visibility.SHOW;
     }
