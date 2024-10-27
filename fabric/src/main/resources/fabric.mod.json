@@ -52,7 +52,8 @@
   "depends": {
     "fabricloader": ">=${loaderVersion}",
     "minecraft": [">=1.20 <=1.20.1"],
-    "architectury": ">=9.1 <10"
+    "architectury": ">=9.1 <10",
+    "forgeconfigapiport": ">=8.0 <9.0"
   },
   "custom": {
     "modmenu": {
