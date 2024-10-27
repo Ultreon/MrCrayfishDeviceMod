@@ -32,6 +32,7 @@ dependencies {
     forge "net.minecraftforge:forge:$minecraft_version-$forge_version"
     // Remove the next line if you don't want to depend on the API
     modApi "dev.architectury:architectury-forge:$architectury_version"
+    modApi "com.github.Ultreon.ultreonlib:ultreon-lib-forge:$ultreonlib_version"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
