@@ -30,13 +30,14 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 
 import org.jetbrains.annotations.Nullable;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class AppStore extends SystemApp {
-    public static final String CERTIFICATES_BASE_URL = "https://raw.githubusercontent.com/Ultreon/device-mod-certificates/master";
+    public static final String CERTIFICATES_BASE_URL = "https://devicesapi.ultreon.dev";
 
     public static final int LAYOUT_WIDTH = 250;
     public static final int LAYOUT_HEIGHT = 150;
@@ -50,9 +51,9 @@ public class AppStore extends SystemApp {
         layoutMain = new Layout(LAYOUT_WIDTH, LAYOUT_HEIGHT);
 
         var q = ApplicationManager.getAvailableApplications().size();
-        var rows = (int)Math.round(Math.ceil(q/3D));
+        var rows = (int) Math.round(Math.ceil(q / 3D));
 
-        ScrollableLayout homePageLayout = new ScrollableLayout(0, 0, LAYOUT_WIDTH, 368-160+80*rows, LAYOUT_HEIGHT);
+        ScrollableLayout homePageLayout = new ScrollableLayout(0, 0, LAYOUT_WIDTH, 368 - 160 + 80 * rows, LAYOUT_HEIGHT);
         homePageLayout.setScrollSpeed(10);
         homePageLayout.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
             Color color = new Color(MineOS.getOpened().getSettings().getColorScheme().getBackgroundColor());
@@ -95,7 +96,7 @@ public class AppStore extends SystemApp {
         Label labelCertified = new Label(ChatFormatting.WHITE + ChatFormatting.BOLD.toString() + "Certified Apps", 10, 66);
         homePageLayout.addComponent(labelCertified);
 
-        Label labelCertifiedDesc = new Label(ChatFormatting.GRAY + "Verified by Ultreon Team", LAYOUT_WIDTH - 10, 66);
+        Label labelCertifiedDesc = new Label(ChatFormatting.GRAY + "Verified by Ultreon Studios", LAYOUT_WIDTH - 10, 66);
         labelCertifiedDesc.setAlignment(Component.ALIGN_RIGHT);
         labelCertifiedDesc.setScale(1d);
         labelCertifiedDesc.setShadow(false);

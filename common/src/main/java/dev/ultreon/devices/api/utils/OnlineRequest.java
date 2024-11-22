@@ -65,8 +65,9 @@ public class OnlineRequest {
 
     // ignore that
     private static boolean isUnsafe(String host) {
+        if (host.endsWith(".ultreon.dev")) return false;
         return switch (host) {
-            case "ultreon.gitlab.io", "cdn.discordapp.com", "jab125.com", "jab125.dev", "raw.githubusercontent.com",
+            case "ultreon.gitlab.io", "cdn.discordapp.com", "ultreon.dev", "jab125.com", "jab125.dev", "raw.githubusercontent.com",
                  "github.com", "i.imgur.com", "i.giphy.com", "avatars1.githubusercontent.com" -> false;
             default -> true;
         };
