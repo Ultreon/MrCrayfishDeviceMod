@@ -10,9 +10,7 @@ import java.awt.*;
 import java.nio.ByteBuffer;
 import java.util.Stack;
 
-/**
- * @author MrCrayfish
- */
+/// @author MrCrayfish
 public class GLHelper {
     public static Stack<Scissor> scissorStack = new Stack<>();
 
@@ -57,9 +55,7 @@ public class GLHelper {
         return scissorStack.isEmpty();
     }
 
-    /**
-     * Do not call! Used for core only.
-     */
+    /// Do not call! Used for core only.
     public static void clearScissorStack() {
         scissorStack.clear();
     }

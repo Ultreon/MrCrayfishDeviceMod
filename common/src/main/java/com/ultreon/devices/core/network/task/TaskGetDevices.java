@@ -16,9 +16,7 @@ import net.minecraft.world.level.chunk.LevelChunk;
 
 import java.util.Collection;
 
-/**
- * @author MrCrayfish
- */
+/// @author MrCrayfish
 public class TaskGetDevices extends Task {
     private BlockPos devicePos;
     private BlockEntityType<?> targetType;
@@ -41,9 +39,7 @@ public class TaskGetDevices extends Task {
         this.targetType = targetType;
     }
 
-    /**
-     * @deprecated Use {@link #TaskGetDevices(BlockPos, BlockEntityType)} instead.
-     */
+    /// @deprecated Use [#TaskGetDevices(BlockPos,BlockEntityType)] instead.
     @Deprecated(forRemoval = true)
     public TaskGetDevices(BlockPos devicePos, Class<? extends NetworkDeviceBlockEntity> ignoredTargetDeviceClass) {
         this();

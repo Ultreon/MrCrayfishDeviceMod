@@ -30,9 +30,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author MrCrayfish
- */
+/// @author MrCrayfish
 public class TrayItemWifi extends TrayItem {
     private int pingTimer;
     private Strength strength = Strength.NONE;

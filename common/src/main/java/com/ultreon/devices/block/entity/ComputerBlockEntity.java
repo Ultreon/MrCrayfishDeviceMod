@@ -1,11 +1,14 @@
 package com.ultreon.devices.block.entity;
 
+import com.ultreon.devices.api.io.Drive;
 import com.ultreon.devices.block.LaptopBlock;
+import com.ultreon.devices.core.Bios;
 import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.util.BlockEntityUtil;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.Entity;
@@ -16,6 +19,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
+import java.util.UUID;
 
 public abstract class ComputerBlockEntity extends NetworkDeviceBlockEntity.Colored {
     private static final int OPENED_ANGLE = 102;
@@ -68,8 +74,8 @@ public abstract class ComputerBlockEntity extends NetworkDeviceBlockEntity.Color
     }
 
     @Override
-    public void load(@NotNull CompoundTag compound) {
-        super.load(compound);
+    public void loadAdditional(@NotNull CompoundTag compound, HolderLookup.@NotNull Provider registries) {
+        super.loadAdditional(compound, registries);
         if (compound.contains("open")) {
             this.open = compound.getBoolean("open");
             Level level = getLevel();
@@ -95,8 +101,8 @@ public abstract class ComputerBlockEntity extends NetworkDeviceBlockEntity.Color
     }
 
     @Override
-    public void saveAdditional(@NotNull CompoundTag compound) {
-        super.saveAdditional(compound);
+    public void saveAdditional(@NotNull CompoundTag compound, HolderLookup.@NotNull Provider registries) {
+        super.saveAdditional(compound, registries);
         compound.putBoolean("open", open);
 
         if (systemData != null) {
@@ -185,7 +191,7 @@ public abstract class ComputerBlockEntity extends NetworkDeviceBlockEntity.Color
 
     public FileSystem getFileSystem() {
         if (fileSystem == null) {
-            fileSystem = new FileSystem(this, new CompoundTag());
+            fileSystem = new FileSystem(this);
         }
         return fileSystem;
     }
@@ -210,5 +216,13 @@ public abstract class ComputerBlockEntity extends NetworkDeviceBlockEntity.Color
     @Environment(EnvType.CLIENT)
     public DyeColor getExternalDriveColor() {
         return externalDriveColor;
+    }
+
+    public Map<UUID, DriveInfo> getDriveInfo() {
+        return getFileSystem().getDrives();
+    }
+
+    public Bios getBios() {
+        return new BiosImpl(this);
     }
 }

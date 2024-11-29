@@ -11,9 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
-/**
- * @author MrCrayfish
- */
+/// @author MrCrayfish
 public class PrintingManager {
     private static final HashBiMap<String, Class<? extends IPrint>> registeredPrints = HashBiMap.create();
 

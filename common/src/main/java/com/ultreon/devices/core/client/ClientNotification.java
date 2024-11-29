@@ -2,6 +2,7 @@ package com.ultreon.devices.core.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.ultreon.devices.Devices;
 import com.ultreon.devices.api.app.IIcon;
 import com.ultreon.devices.api.utils.RenderUtil;
 import net.minecraft.client.Minecraft;
@@ -15,11 +16,9 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author MrCrayfish
- */
+/// @author MrCrayfish
 public class ClientNotification implements Toast {
-    private static final ResourceLocation TEXTURE_TOASTS = new ResourceLocation("devices:textures/gui/toast.png");
+    private static final ResourceLocation TEXTURE_TOASTS = ResourceLocation.parse("devices:textures/gui/toast.png");
 
     private IIcon icon;
     private String title;
@@ -58,7 +57,7 @@ public class ClientNotification implements Toast {
         try {
             notification.icon = (IIcon) Class.forName(className).getEnumConstants()[ordinal];
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            Devices.LOGGER.error("Failed to load icon for notification", e);
         }
 
         notification.title = tag.getString("title");

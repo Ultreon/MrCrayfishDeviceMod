@@ -6,12 +6,14 @@ import com.ultreon.devices.block.entity.DeviceBlockEntity;
 import com.ultreon.devices.util.BlockEntityUtil;
 import com.ultreon.devices.util.Colorable;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -32,7 +34,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-@SuppressWarnings("deprecation")
 public abstract class DeviceBlock extends HorizontalDirectionalBlock implements EntityBlock, IDeviceType {
     private final ModDeviceTypes deviceType;
 
@@ -40,11 +41,6 @@ public abstract class DeviceBlock extends HorizontalDirectionalBlock implements 
         super(properties.strength(0.5f));
         this.deviceType = deviceType;
     }
-
-//    @Override
-//    public RenderShape getRenderShape(BlockState state) {
-//        return RenderShape.INVISIBLE;
-//    }
 
     @NotNull
     @Override
@@ -65,20 +61,20 @@ public abstract class DeviceBlock extends HorizontalDirectionalBlock implements 
 
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof DeviceBlockEntity deviceBlockEntity) {
-            if (stack.hasCustomHoverName()) {
-                deviceBlockEntity.setCustomName(stack.getHoverName().getString());
+            Component component = stack.get(DataComponents.CUSTOM_NAME);
+            if (component != null) {
+                deviceBlockEntity.setCustomName(component.getString());
             }
         }
     }
 
 
     @Override
-    public void destroy(LevelAccessor level, BlockPos pos, BlockState state) {
+    public void destroy(LevelAccessor level, @NotNull BlockPos pos, @NotNull BlockState state) {
         if (!level.isClientSide()) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof DeviceBlockEntity device) {
                 CompoundTag blockEntityTag = new CompoundTag();
-                blockEntity.saveWithoutMetadata();
                 blockEntityTag.remove("id");
 
                 removeTagsForDrop(blockEntityTag);
@@ -92,10 +88,10 @@ public abstract class DeviceBlock extends HorizontalDirectionalBlock implements 
                 } else {
                     drop = new ItemStack(this);
                 }
-                drop.setTag(tag);
+                drop.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
 
                 if (device.hasCustomName()) {
-                    drop.setHoverName(Component.literal(device.getCustomName()));
+                    drop.set(DataComponents.CUSTOM_NAME, Component.literal(device.getCustomName()));
                 }
 
                 level.addFreshEntity(new ItemEntity((Level) level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, drop));

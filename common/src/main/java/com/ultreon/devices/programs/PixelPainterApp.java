@@ -13,7 +13,6 @@ import com.ultreon.devices.api.app.component.Label;
 import com.ultreon.devices.api.app.component.TextField;
 import com.ultreon.devices.api.app.component.*;
 import com.ultreon.devices.api.app.renderer.ListItemRenderer;
-import com.ultreon.devices.api.io.File;
 import com.ultreon.devices.api.print.IPrint;
 import com.ultreon.devices.api.utils.RenderUtil;
 import com.ultreon.devices.core.Laptop;
@@ -22,23 +21,22 @@ import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.object.Canvas;
 import com.ultreon.devices.object.ColorGrid;
 import com.ultreon.devices.object.Picture;
+import com.ultreon.devices.programs.system.component.FileInfo;
 import com.ultreon.devices.programs.system.layout.StandardLayout;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
 
-import org.jetbrains.annotations.Nullable;
 import java.awt.*;
-import java.lang.System;
 import java.util.Objects;
 
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
 public class PixelPainterApp extends Application {
-    private static final ResourceLocation PIXEL_PAINTER_ICONS = new ResourceLocation("devices:textures/gui/pixel_painter.png");
+    private static final ResourceLocation PIXEL_PAINTER_ICONS = ResourceLocation.parse("devices:textures/gui/pixel_painter.png");
 
     private static final Color ITEM_BACKGROUND = new Color(170, 176, 194);
     private static final Color ITEM_SELECTED = new Color(200, 176, 174);
@@ -89,7 +87,6 @@ public class PixelPainterApp extends Application {
         //super("pixel_painter", "Pixel Painter");
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public void init(@Nullable CompoundTag intent) {
         /* Main Menu */
@@ -171,15 +168,22 @@ public class PixelPainterApp extends Application {
         layoutLoadPicture = new Layout(165, 116);
         layoutLoadPicture.setInitListener(() ->
         {
+            listPictures.setLoading(true);
             listPictures.removeAll();
-            FileSystem.getApplicationFolder(this, (folder, success) ->
-            {
-                if (success) {
-                    assert folder != null;
-                    folder.search(file -> file.isForApplication(this)).forEach(file ->
-                    {
-                        Picture picture = Picture.fromFile(file);
-                        listPictures.addItem(picture);
+            FileSystem.getApplicationFolder(this, (response) -> {
+                if (response.success()) {
+                    FileInfo data = response.data();
+                    data.list((response2) -> {
+                        if (response2.success()) {
+                            for (FileInfo fileInfo : response2.data()) {
+                                if (fileInfo.getName().endsWith(".pic")) {
+                                    Picture picture = new Picture(fileInfo);
+                                    listPictures.addItem(picture);
+                                }
+                            }
+                        } else {
+                            openDialog(new Dialog.Message(response2.message()));
+                        }
                     });
                 }
             });
@@ -222,7 +226,7 @@ public class PixelPainterApp extends Application {
             Dialog.OpenFile dialog = new Dialog.OpenFile(this);
             dialog.setResponseHandler((success, file) ->
             {
-                if (file.isForApplication(this)) {
+                if (file.getName().endsWith(".pic")) {
                     Picture picture = Picture.fromFile(file);
                     canvas.setPicture(picture);
                     setCurrentLayout(layoutDraw);
@@ -245,20 +249,19 @@ public class PixelPainterApp extends Application {
             if (listPictures.getSelectedIndex() != -1) {
                 Picture picture = listPictures.getSelectedItem();
                 assert picture != null;
-                File file = picture.getSource();
+                FileInfo file = picture.getSource();
                 if (file != null) {
-                    file.delete((o, success) ->
-                    {
-                        if (success) {
+                    file.delete((response) -> {
+                        if (response.success()) {
                             listPictures.removeItem(listPictures.getSelectedIndex());
                             btnDeleteSavedPicture.setEnabled(false);
                             btnLoadSavedPicture.setEnabled(false);
                         } else {
-                            //TODO error dialog
+                            openDialog(new Dialog.Message(response.message()));
                         }
                     });
                 } else {
-                    //TODO error dialog
+                    openDialog(new Dialog.Message("The file/folder you are trying to delete does not exist."));
                 }
             }
         });
@@ -334,37 +337,19 @@ public class PixelPainterApp extends Application {
         {
             canvas.picture.pixels = canvas.copyPixels();
 
-            CompoundTag pictureTag = new CompoundTag();
-            canvas.picture.writeToNBT(pictureTag);
-
             if (canvas.isExistingImage()) {
-                File file = canvas.picture.getSource();
+                FileInfo file = canvas.picture.getSource();
                 if (file != null) {
-                    file.setData(pictureTag, (response, success) ->
-                    {
-                        assert response != null;
-                        if (response.getStatus() == FileSystem.Status.SUCCESSFUL) {
-                            canvas.clear();
-                            setCurrentLayout(layoutLoadPicture);
+                    canvas.picture.writeToFile(file, (result) -> {
+                        if (result.success()) {
+                            openDialog(new Dialog.Message("File saved successfully"));
                         } else {
-                            //TODO error dialog
+                            openDialog(new Dialog.Message(result.message()));
                         }
                     });
                 }
             } else {
-                Dialog.SaveFile dialog = new Dialog.SaveFile(PixelPainterApp.this, pictureTag);
-                dialog.setResponseHandler((success, file) ->
-                {
-                    if (success) {
-                        canvas.clear();
-                        setCurrentLayout(layoutLoadPicture);
-                        return true;
-                    } else {
-                        //TODO error dialog
-                    }
-                    return false;
-                });
-                openDialog(dialog);
+                saveFile();
             }
         });
         layoutDraw.addComponent(btnSave);
@@ -398,6 +383,27 @@ public class PixelPainterApp extends Application {
         layoutDraw.addComponent(displayGrid);
 
         setCurrentLayout(layoutMainMenu);
+    }
+
+    private void saveFile() {
+        Dialog.SaveFile dialog = new Dialog.SaveFile(PixelPainterApp.this);
+        dialog.setResponseHandler((success, file) -> {
+            if (success) {
+                canvas.picture.writeToFile(file, (response) -> {
+                    if (response.success()) {
+                        canvas.clear();
+                        setCurrentLayout(layoutLoadPicture);
+                        return;
+                    }
+
+                    openDialog(new Dialog.Message(response.message()));
+                });
+            } else {
+                openDialog(new Dialog.Message("File could not be saved"));
+            }
+            return true;
+        });
+        openDialog(dialog);
     }
 
     @Override
@@ -487,7 +493,7 @@ public class PixelPainterApp extends Application {
     }
 
     public static class PictureRenderer implements IPrint.Renderer {
-        public static final ResourceLocation TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/model/paper.png");
+        public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/model/paper.png");
 
         @SuppressWarnings("resource")
         @Override

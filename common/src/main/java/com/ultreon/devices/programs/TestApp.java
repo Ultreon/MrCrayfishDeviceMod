@@ -8,9 +8,7 @@ import net.minecraft.nbt.CompoundTag;
 
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author MrCrayfish
- */
+/// @author MrCrayfish
 public class TestApp extends Application {
     @Override
     public void init(@Nullable CompoundTag intent) {
@@ -51,7 +49,7 @@ public class TestApp extends Application {
         Button button4 = new Button(105, 5, Icons.PRINTER);
         button4.setClickListener((mouseX, mouseY, mouseButton) -> {
             if (mouseButton == 0) {
-                openDialog(new Dialog.SaveFile(this, new CompoundTag()));
+                openDialog(new Dialog.SaveFile(this));
             }
         });
         super.addComponent(button4);

@@ -15,12 +15,10 @@ public class Spinner extends Component {
 
     protected Color spinnerColor = Color.WHITE;
 
-    /**
-     * Default spinner constructor
-     *
-     * @param left how many pixels from the left
-     * @param top  how many pixels from the top
-     */
+    /// Default spinner constructor
+    ///
+    /// @param left how many pixels from the left
+    /// @param top  how many pixels from the top
     public Spinner(int left, int top) {
         super(left, top);
     }
@@ -37,7 +35,7 @@ public class Spinner extends Component {
     public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         if (this.visible) {
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-            Color bgColor = new Color(getColorScheme().getBackgroundColor()).brighter().brighter();
+            Color bgColor = new Color(getColorScheme().getBackgroundColor(), true).brighter().brighter();
             float[] hsb = Color.RGBtoHSB(bgColor.getRed(), bgColor.getGreen(), bgColor.getBlue(), null);
             bgColor = new Color(Color.HSBtoRGB(hsb[0], hsb[1], 1f));
             RenderSystem.setShaderColor(bgColor.getRed() / 255f, bgColor.getGreen() / 255f, bgColor.getBlue() / 255f, 1f);

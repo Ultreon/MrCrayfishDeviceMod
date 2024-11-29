@@ -14,10 +14,8 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.*;
-import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
@@ -32,20 +30,20 @@ public class FlashDriveItem extends Item implements Colored, SubItems, IDeviceTy
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level level, List<Component> tooltip, @NotNull TooltipFlag isAdvanced) {
+    public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
         TextColor textColor = TextColor.fromRgb(this.color == DyeColor.BLACK ? 0xffffff : this.color.getTextColor());
 
         MutableComponent colorComponent = Component.literal(WordUtils.capitalize(this.color.getName().replace("_", " ")))
                 .withStyle(style -> style.withBold(true).withColor(textColor));
-        tooltip.add(Component.literal("Color: ").withStyle(ChatFormatting.GRAY).append(colorComponent));
+
+        tooltipComponents.add(Component.literal("Color: ").withStyle(ChatFormatting.GRAY).append(colorComponent));
     }
 
     @Override
     public NonNullList<ResourceLocation> getModels() {
         NonNullList<ResourceLocation> modelLocations = NonNullList.create();
         for (DyeColor color : DyeColor.values())
-            modelLocations.add(new ResourceLocation(Reference.MOD_ID, Objects.requireNonNull(RegistrarManager.getId(this, Registries.ITEM)).getPath().substring(5) + "/" + color.getName()));
+            modelLocations.add(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, Objects.requireNonNull(RegistrarManager.getId(this, Registries.ITEM)).getPath().substring(5) + "/" + color.getName()));
         return modelLocations;
     }
 

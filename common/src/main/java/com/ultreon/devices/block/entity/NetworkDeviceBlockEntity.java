@@ -6,6 +6,7 @@ import com.ultreon.devices.core.network.Router;
 import com.ultreon.devices.util.Colorable;
 import com.ultreon.devices.util.Tickable;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -100,16 +101,16 @@ public abstract class NetworkDeviceBlockEntity extends DeviceBlockEntity impleme
     }
 
     @Override
-    public void saveAdditional(@NotNull CompoundTag tag) {
-        super.saveAdditional(tag);
+    public void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
+        super.saveAdditional(tag, registries);
         if (connection != null) {
             tag.put("connection", connection.toTag());
         }
     }
 
     @Override
-    public void load(@NotNull CompoundTag tag) {
-        super.load(tag);
+    public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
+        super.loadAdditional(tag, registries);
         if (tag.contains("connection", Tag.TAG_COMPOUND)) {
             connection = Connection.fromTag(tag.getCompound("connection"));
         }
@@ -123,16 +124,16 @@ public abstract class NetworkDeviceBlockEntity extends DeviceBlockEntity impleme
         }
 
         @Override
-        public void load(@NotNull CompoundTag tag) {
-            super.load(tag);
+        public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
+            super.loadAdditional(tag, registries);
             if (tag.contains("color", Tag.TAG_STRING)) {
                 color = DyeColor.byId(tag.getByte("color"));
             }
         }
 
         @Override
-        public void saveAdditional(@NotNull CompoundTag tag) {
-            super.saveAdditional(tag);
+        public void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
+            super.saveAdditional(tag, registries);
             tag.putByte("color", (byte) color.getId());
         }
 

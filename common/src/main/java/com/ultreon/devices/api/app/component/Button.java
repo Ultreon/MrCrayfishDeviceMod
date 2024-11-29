@@ -22,7 +22,7 @@ import java.util.Arrays;
 
 @SuppressWarnings("unused")
 public class Button extends Component {
-    protected static final ResourceLocation BUTTON_TEXTURES = new ResourceLocation("textures/gui/widgets.png");
+    protected static final ResourceLocation BUTTON_TEXTURES = ResourceLocation.parse("textures/gui/widgets.png");
 
     protected static final int TOOLTIP_DELAY = 20;
 
@@ -50,13 +50,11 @@ public class Button extends Component {
 
     protected ClickListener clickListener = null;
 
-    /**
-     * Alternate button constructor
-     *
-     * @param left how many pixels from the left
-     * @param top  how many pixels from the top
-     * @param text text to be displayed in the button
-     */
+    /// Alternate button constructor
+    ///
+    /// @param left how many pixels from the left
+    /// @param top  how many pixels from the top
+    /// @param text text to be displayed in the button
     public Button(int left, int top, String text) {
         super(left, top);
         this.width = getTextWidth(text) + padding * 2;
@@ -64,13 +62,11 @@ public class Button extends Component {
         this.text = text;
     }
 
-    /**
-     * Alternate button constructor
-     *
-     * @param left how many pixels from the left
-     * @param top  how many pixels from the top
-     * @param text text to be displayed in the button
-     */
+    /// Alternate button constructor
+    ///
+    /// @param left how many pixels from the left
+    /// @param top  how many pixels from the top
+    /// @param text text to be displayed in the button
     public Button(int left, int top, int buttonWidth, int buttonHeight, String text) {
         super(left, top);
         this.explicitSize = true;
@@ -79,13 +75,11 @@ public class Button extends Component {
         this.text = text;
     }
 
-    /**
-     * Alternate button constructor
-     *
-     * @param left how many pixels from the left
-     *             I	 * @param top how many pixels from the top
-     * @param icon icon to be displayed in the button
-     */
+    /// Alternate button constructor
+    ///
+    /// @param left how many pixels from the left
+    ///             I	 * @param top how many pixels from the top
+    /// @param icon icon to be displayed in the button
     public Button(int left, int top, IIcon icon) {
         super(left, top);
         this.padding = 3;
@@ -94,13 +88,11 @@ public class Button extends Component {
         this.setIcon(icon);
     }
 
-    /**
-     * Alternate button constructor
-     *
-     * @param left how many pixels from the left
-     * @param top  how many pixels from the top
-     * @param icon icon to be displayed in the button
-     */
+    /// Alternate button constructor
+    ///
+    /// @param left how many pixels from the left
+    /// @param top  how many pixels from the top
+    /// @param icon icon to be displayed in the button
     public Button(int left, int top, int buttonWidth, int buttonHeight, IIcon icon) {
         super(left, top);
         this.explicitSize = true;
@@ -114,25 +106,21 @@ public class Button extends Component {
         this.iconSourceHeight = iconSourceHeight;
     }
 
-    /**
-     * Alternate button constructor
-     *
-     * @param left how many pixels from the left
-     * @param top  how many pixels from the top
-     * @param icon icon to be displayed in the button
-     */
+    /// Alternate button constructor
+    ///
+    /// @param left how many pixels from the left
+    /// @param top  how many pixels from the top
+    /// @param icon icon to be displayed in the button
     public Button(int left, int top, String text, IIcon icon) {
         this(left, top, text);
         this.setIcon(icon);
     }
 
-    /**
-     * Alternate button constructor
-     *
-     * @param left how many pixels from the left
-     * @param top  how many pixels from the top
-     * @param icon icon to be displayed in the button
-     */
+    /// Alternate button constructor
+    ///
+    /// @param left how many pixels from the left
+    /// @param top  how many pixels from the top
+    /// @param icon icon to be displayed in the button
     public Button(int left, int top, int buttonWidth, int buttonHeight, String text, IIcon icon) {
         super(left, top);
         this.text = text;
@@ -142,24 +130,20 @@ public class Button extends Component {
         this.setIcon(icon);
     }
 
-    /**
-     * Alternate button constructor
-     *
-     * @param left how many pixels from the left
-     * @param top  how many pixels from the top
-     */
+    /// Alternate button constructor
+    ///
+    /// @param left how many pixels from the left
+    /// @param top  how many pixels from the top
     public Button(int left, int top, ResourceLocation iconResource, int iconU, int iconV, int iconWidth, int iconHeight) {
         super(left, top);
         this.padding = 3;
         this.setIcon(iconResource, iconU, iconV, iconWidth, iconHeight);
     }
 
-    /**
-     * Alternate button constructor
-     *
-     * @param left how many pixels from the left
-     * @param top  how many pixels from the top
-     */
+    /// Alternate button constructor
+    ///
+    /// @param left how many pixels from the left
+    /// @param top  how many pixels from the top
     public Button(int left, int top, int buttonWidth, int buttonHeight, ResourceLocation iconResource, int iconU, int iconV, int iconWidth, int iconHeight) {
         super(left, top);
         this.explicitSize = true;
@@ -168,24 +152,20 @@ public class Button extends Component {
         this.setIcon(iconResource, iconU, iconV, iconWidth, iconHeight);
     }
 
-    /**
-     * Alternate button constructor
-     *
-     * @param left how many pixels from the left
-     * @param top  how many pixels from the top
-     */
+    /// Alternate button constructor
+    ///
+    /// @param left how many pixels from the left
+    /// @param top  how many pixels from the top
     public Button(int left, int top, String text, ResourceLocation iconResource, int iconU, int iconV, int iconWidth, int iconHeight) {
         super(left, top);
         this.text = text;
         this.setIcon(iconResource, iconU, iconV, iconWidth, iconHeight);
     }
 
-    /**
-     * Alternate button constructor
-     *
-     * @param left how many pixels from the left
-     * @param top  how many pixels from the top
-     */
+    /// Alternate button constructor
+    ///
+    /// @param left how many pixels from the left
+    /// @param top  how many pixels from the top
     public Button(int left, int top, int buttonWidth, int buttonHeight, String text, ResourceLocation iconResource, int iconU, int iconV, int iconWidth, int iconHeight) {
         super(left, top);
         this.text = text;
@@ -291,12 +271,10 @@ public class Button extends Component {
         }
     }
 
-    /**
-     * Sets the click listener. Use this to handle custom actions
-     * when you press the button.
-     *
-     * @param clickListener the click listener
-     */
+    /// Sets the click listener. Use this to handle custom actions
+    /// when you press the button.
+    ///
+    /// @param clickListener the click listener
     public final void setClickListener(ClickListener clickListener) {
         this.clickListener = clickListener;
     }
@@ -332,20 +310,16 @@ public class Button extends Component {
         updateSize();
     }
 
-    /**
-     * Gets the text currently displayed in the button
-     *
-     * @return the button text
-     */
+    /// Gets the text currently displayed in the button
+    ///
+    /// @return the button text
     public String getText() {
         return text;
     }
 
-    /**
-     * Sets the text to display in the button
-     *
-     * @param text the text
-     */
+    /// Sets the text to display in the button
+    ///
+    /// @param text the text
     public void setText(String text) {
         this.text = text;
         updateSize();
@@ -414,12 +388,10 @@ public class Button extends Component {
         this.height = height;
     }
 
-    /**
-     * Displays a message when hovering the button.
-     *
-     * @param toolTipTitle title of the tool tip
-     * @param toolTip      description of the tool tip
-     */
+    /// Displays a message when hovering the button.
+    ///
+    /// @param toolTipTitle title of the tool tip
+    /// @param toolTip      description of the tool tip
     public void setToolTip(String toolTipTitle, String toolTip) {
         this.toolTipTitle = toolTipTitle;
         this.toolTip = toolTip;

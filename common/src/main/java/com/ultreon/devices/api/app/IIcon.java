@@ -14,18 +14,14 @@ public interface IIcon {
 
     int getGridHeight();
 
-    /**
-     * Width of the source texture in pixels.
-     *
-     * @return The source width.
-     */
+    /// Width of the source texture in pixels.
+    ///
+    /// @return The source width.
     int getSourceWidth();
 
-    /**
-     * Height of the source texture in pixels.
-     *
-     * @return The source height.
-     */
+    /// Height of the source texture in pixels.
+    ///
+    /// @return The source height.
     int getSourceHeight();
 
     int getU();

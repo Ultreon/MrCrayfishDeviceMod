@@ -10,9 +10,7 @@ import net.minecraft.client.gui.Gui;
 import java.awt.*;
 import java.util.Map;
 
-/**
- * @author MrCrayfish
- */
+/// @author MrCrayfish
 public class FooterModule extends Module {
     @Override
     public String[] getRequiredData() {

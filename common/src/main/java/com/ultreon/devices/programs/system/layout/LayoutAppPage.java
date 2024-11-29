@@ -1,7 +1,8 @@
 package com.ultreon.devices.programs.system.layout;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.ultreon.devices.Devices;
+import com.ultreon.devices.api.app.Dialog;
 import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.ScrollableLayout;
@@ -9,6 +10,9 @@ import com.ultreon.devices.api.app.component.Button;
 import com.ultreon.devices.api.app.component.Image;
 import com.ultreon.devices.api.app.component.Label;
 import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.Permission;
+import com.ultreon.devices.core.PermissionRequest;
+import com.ultreon.devices.core.PermissionResult;
 import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.programs.gitweb.component.GitWebFrame;
@@ -21,25 +25,20 @@ import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import java.awt.*;
+import java.nio.file.AccessDeniedException;
 
-/**
- * @author MrCrayfish
- */
+/// @author MrCrayfish
 public class LayoutAppPage extends Layout {
     private final Laptop laptop;
     private final AppEntry entry;
     private final AppStore store;
 
-    private com.ultreon.devices.api.app.component.Image imageBanner;
     private com.ultreon.devices.api.app.Component imageIcon;
-    private Label labelTitle;
-    private Label labelVersion;
 
     private boolean installed;
 
@@ -58,28 +57,31 @@ public class LayoutAppPage extends Layout {
 
         this.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) ->
         {
-            Color color = new Color(Laptop.getSystem().getSettings().getColorScheme().getBackgroundColor());
+            Color color = new Color(Laptop.getSystem().getSettings().getColorScheme().getBackgroundColor(), true);
             graphics.fill(x, y + 40, x + width, y + 41, color.brighter().getRGB());
             graphics.fill(x, y + 41, x + width, y + 60, color.getRGB());
             graphics.fill(x, y + 60, x + width, y + 61, color.darker().getRGB());
         });
 
-        ResourceLocation resource = new ResourceLocation(entry.id());
+        ResourceLocation resource = ResourceLocation.tryParse(entry.id());
+        if (resource == null) {
+            store.getWindow().close();
+            laptop.openDialog(new Dialog.Message("Invalid app id: " + entry.id()));
+            return;
+        }
 
-        imageBanner = new com.ultreon.devices.api.app.component.Image(0, 0, 250, 40);
+        Image imageBanner = new Image(0, 0, 250, 40);
         imageBanner.setDrawFull(true);
         imageBanner.setBorderVisible(true);
         imageBanner.setBorderThickness(0);
         if (entry instanceof LocalEntry) {
-            imageBanner.setImage(new ResourceLocation(resource.getNamespace(), "textures/app/banner/" + resource.getPath() + ".png"));
+            imageBanner.setImage(ResourceLocation.fromNamespaceAndPath(resource.getNamespace(), "textures/app/banner/" + resource.getPath() + ".png"));
         } else if (entry instanceof RemoteEntry) {
             imageBanner.setImage(AppStore.CERTIFICATES_BASE_URL + "/assets/" + resource.getNamespace() + "/" + resource.getPath() + "/banner.png");
         }
         this.addComponent(imageBanner);
 
-        if (entry instanceof LocalEntry) {
-            LocalEntry localEntry = (LocalEntry) entry;
-            AppInfo info = localEntry.info();
+        if (entry instanceof LocalEntry(AppInfo info)) {
             imageIcon = new Image.AppImage(5, 26, 28, 28, info);
           //  imageIcon = new com.ultreon.devices.api.app.component.Image(5, 26, 28, 28, info.getIconU(), info.getIconV(), 14, 14, 224, 224, Laptop.ICON_TEXTURES);
         } else if (entry instanceof RemoteEntry) {
@@ -92,12 +94,12 @@ public class LayoutAppPage extends Layout {
             com.ultreon.devices.api.app.component.Image certifiedIcon = new com.ultreon.devices.api.app.component.Image(38 + width + 3, 29, 20, 20, Icons.VERIFIED);
             this.addComponent(certifiedIcon);
         }
-        labelTitle = new Label(entry.name(), 38, 32);
+        Label labelTitle = new Label(entry.name(), 38, 32);
         labelTitle.setScale(2);
         this.addComponent(labelTitle);
 
         String version = entry instanceof LocalEntry ? "v" + entry.version() + " - " + entry.author() : entry.author();
-        labelVersion = new Label(version, 38, 50);
+        Label labelVersion = new Label(version, 38, 50);
         this.addComponent(labelVersion);
 
         String description = GitWebFrame.parseFormatting(entry.description());
@@ -108,15 +110,20 @@ public class LayoutAppPage extends Layout {
         if (entry instanceof LocalEntry) {
             if (entry.screenshots() != null) {
                 for (String image : entry.screenshots()) {
+                    if (image == null) {
+                        slideShow.addImage(ResourceLocation.fromNamespaceAndPath(Devices.MOD_ID, "invalid.png"));
+                        continue;
+                    }
                     if (image.startsWith("http://") || image.startsWith("https://")) {
                         slideShow.addImage(image);
                     } else {
-                        slideShow.addImage(new ResourceLocation(image));
+                        ResourceLocation resource1 = ResourceLocation.tryParse(image);
+                        if (resource1 == null) slideShow.addImage(ResourceLocation.fromNamespaceAndPath(Devices.MOD_ID, "invalid.png"));
+                        slideShow.addImage(resource1);
                     }
                 }
             }
-        } else if (entry instanceof RemoteEntry) {
-            RemoteEntry remoteEntry = (RemoteEntry) entry;
+        } else if (entry instanceof RemoteEntry remoteEntry) {
             String screenshotUrl = AppStore.CERTIFICATES_BASE_URL + "/assets/" + resource.getNamespace() + "/" + resource.getPath() + "/screenshots/screenshot_%d.png";
             for (int i = 0; i < remoteEntry.screenshots; i++) {
                 slideShow.addImage(String.format(screenshotUrl, i));
@@ -139,13 +146,24 @@ public class LayoutAppPage extends Layout {
                             installed = false;
                         });
                     } else {
-                        laptop.installApplication(info, (o, success) ->
-                        {
-                            DebugLog.log("Installation Succeeded: " + success);
-                            btnInstall.setText("Delete");
-                            btnInstall.setIcon(Icons.CROSS);
-                            installed = true;
-                        });
+                        laptop.requestPermission(new PermissionRequest(
+                                "Software installation", Permission.SOFTWARE_MANAGEMENT, info),
+                                (PermissionResult result) -> {
+                                    if (result.granted()) {
+                                        try {
+                                            laptop.installApplication(info, (o, success) ->
+                                            {
+                                                DebugLog.log("Installation Succeeded: " + success);
+                                                btnInstall.setText("Delete");
+                                                btnInstall.setIcon(Icons.CROSS);
+                                                installed = true;
+                                            });
+                                        } catch (AccessDeniedException e) {
+                                            store.openDialog(new Dialog.Message(e.getMessage()));
+                                        }
+                                    }
+                                }
+                        );
                     }
                 }
             });

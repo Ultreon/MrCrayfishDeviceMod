@@ -1,29 +1,30 @@
 package com.ultreon.devices.api.app;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.app.component.Button;
+import com.ultreon.devices.api.app.component.Image;
 import com.ultreon.devices.api.app.component.ItemList;
+import com.ultreon.devices.api.app.component.Label;
 import com.ultreon.devices.api.app.component.Text;
+import com.ultreon.devices.api.app.component.TextField;
 import com.ultreon.devices.api.app.listener.ClickListener;
 import com.ultreon.devices.api.app.renderer.ListItemRenderer;
-import com.ultreon.devices.api.io.File;
+import com.ultreon.devices.api.io.FSResponse;
 import com.ultreon.devices.api.print.IPrint;
 import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.api.task.TaskManager;
 import com.ultreon.devices.api.utils.RenderUtil;
-import com.ultreon.devices.block.entity.PrinterBlockEntity;
-import com.ultreon.devices.core.Laptop;
-import com.ultreon.devices.core.Wrappable;
+import com.ultreon.devices.core.*;
 import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.core.network.NetworkDevice;
 import com.ultreon.devices.core.network.task.TaskGetDevices;
 import com.ultreon.devices.core.print.task.TaskPrint;
+import com.ultreon.devices.init.DeviceBlockEntities;
 import com.ultreon.devices.programs.system.component.FileBrowser;
+import com.ultreon.devices.programs.system.component.FileInfo;
 import com.ultreon.devices.programs.system.object.ColorScheme;
 import com.ultreon.devices.util.GLHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -31,10 +32,15 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 import java.awt.*;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public abstract class Dialog extends Wrappable {
+    protected final ColorScheme colorScheme = Laptop.getInstance().getSettings().getColorScheme();
     protected final Layout defaultLayout;
     private String title = "Message";
     private int width;
@@ -48,7 +54,7 @@ public abstract class Dialog extends Wrappable {
         this.defaultLayout = new Layout(150, 40);
     }
 
-    protected final void addComponent(com.ultreon.devices.api.app.Component c) {
+    protected final void addComponent(Component c) {
         if (c != null) {
             defaultLayout.addComponent(c);
             c.init(defaultLayout);
@@ -74,19 +80,20 @@ public abstract class Dialog extends Wrappable {
         if (pendingClose && getWindow().getDialogWindow() == null) {
             getWindow().close();
         }
+        if (customLayout == null) return;
         customLayout.handleTick();
     }
 
     @Override
     public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
+        if (customLayout == null)
+            return;
+
         GLHelper.pushScissor(x, y, width, height);
         customLayout.render(graphics, laptop, mc, x, y, mouseX, mouseY, active, partialTicks);
         GLHelper.popScissor();
 
         customLayout.renderOverlay(graphics, laptop, mc, mouseX, mouseY, active);
-
-        // TODO - Port this to 1.18.2
-//        RenderHelper.disableStandardItemLighting();
     }
 
     @Override
@@ -163,26 +170,18 @@ public abstract class Dialog extends Wrappable {
         customLayout.updateComponents(x, y);
     }
 
-    @Override
-    public void onClose() {
-    }
-
     public void close() {
         this.pendingClose = true;
     }
 
-    /**
-     * The response listener interface. Used for handling responses
-     * from components. The generic is the returned value.
-     *
-     * @author MrCrayfish
-     */
+    /// The response listener interface. Used for handling responses
+    /// from components. The generic is the returned value.
+    ///
+    /// @author MrCrayfish
     public interface ResponseHandler<E> {
-        /**
-         * Called when a response is thrown.
-         *
-         * @param success if the executing task was successful
-         */
+        /// Called when a response is thrown.
+        ///
+        /// @param success if the executing task was successful
         boolean onResponse(boolean success, E e);
     }
 
@@ -206,8 +205,6 @@ public abstract class Dialog extends Wrappable {
 
             super.init(intent);
 
-            defaultLayout.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> graphics.fill(x, y, x + width, y + height, Color.LIGHT_GRAY.getRGB()));
-
             Text message = new Text(messageText, 5, 5, getWidth() - 10);
             this.addComponent(message);
 
@@ -224,14 +221,12 @@ public abstract class Dialog extends Wrappable {
         }
     }
 
-    /**
-     * A simple confirmation dialog
-     * <p>
-     * This can be used to prompt as user to confirm whether a
-     * task should run. For instance, the FileBrowser component
-     * uses this dialog to prompt the user if it should override
-     * a file.
-     */
+    /// A simple confirmation dialog
+    ///
+    /// This can be used to prompt a user to confirm whether a task should run.
+    /// For instance, the FileBrowser component
+    /// uses this dialog to prompt the user if it should override
+    /// a file.
     @SuppressWarnings({"FieldCanBeLocal", "unused"})
     public static class Confirmation extends Dialog {
         private static final int DIVIDE_WIDTH = 15;
@@ -243,8 +238,8 @@ public abstract class Dialog extends Wrappable {
         private ClickListener positiveListener;
         private ClickListener negativeListener;
 
-        private com.ultreon.devices.api.app.component.Button buttonPositive;
-        private com.ultreon.devices.api.app.component.Button buttonNegative;
+        private Button buttonPositive;
+        private Button buttonNegative;
 
         public Confirmation() {
         }
@@ -258,17 +253,15 @@ public abstract class Dialog extends Wrappable {
             super.init(intent);
 
             int lines = Minecraft.getInstance().font.wordWrapHeight(messageText, getWidth() - 10);
-            defaultLayout.height += (lines - 1) ;
+            defaultLayout.height += (lines - 1);
 
             super.init(intent);
-
-            defaultLayout.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> graphics.fill(x, y, x + width, y + height, Color.LIGHT_GRAY.getRGB()));
 
             Text message = new Text(messageText, 5, 5, getWidth() - 10);
             this.addComponent(message);
 
             int positiveWidth = Minecraft.getInstance().font.width(positiveText);
-            buttonPositive = new com.ultreon.devices.api.app.component.Button(getWidth() - positiveWidth - DIVIDE_WIDTH, getHeight() - 20, positiveText);
+            buttonPositive = new Button(getWidth() - positiveWidth - DIVIDE_WIDTH, getHeight() - 20, positiveText);
             buttonPositive.setSize(positiveWidth + 10, 16);
             buttonPositive.setClickListener((mouseX, mouseY, mouseButton) -> {
                 if (positiveListener != null) {
@@ -279,7 +272,7 @@ public abstract class Dialog extends Wrappable {
             this.addComponent(buttonPositive);
 
             int negativeWidth = Math.max(20, Minecraft.getInstance().font.width(negativeText));
-            buttonNegative = new com.ultreon.devices.api.app.component.Button(getWidth() - DIVIDE_WIDTH - positiveWidth - DIVIDE_WIDTH - negativeWidth + 1, getHeight() - 20, negativeText);
+            buttonNegative = new Button(getWidth() - DIVIDE_WIDTH - positiveWidth - DIVIDE_WIDTH - negativeWidth + 1, getHeight() - 20, negativeText);
             buttonNegative.setSize(negativeWidth + 10, 16);
             buttonNegative.setClickListener((mouseX, mouseY, mouseButton) -> {
                 if (negativeListener != null) {
@@ -290,22 +283,18 @@ public abstract class Dialog extends Wrappable {
             this.addComponent(buttonNegative);
         }
 
-        /**
-         * Sets the positive button text
-         *
-         * @param positiveText the text to set
-         */
+        /// Sets the positive button text
+        ///
+        /// @param positiveText the text to set
         @SuppressWarnings("ConstantConditions")
         public void setPositiveText(@NotNull String positiveText) {
             if (positiveText == null) throw new IllegalArgumentException("Text can't be null");
             this.positiveText = positiveText;
         }
 
-        /**
-         * Sets the negative button text
-         *
-         * @param negativeText the text to set
-         */
+        /// Sets the negative button text
+        ///
+        /// @param negativeText the text to set
         @SuppressWarnings("ConstantConditions")
         public void setNegativeText(@NotNull String negativeText) {
             if (negativeText == null) {
@@ -327,9 +316,7 @@ public abstract class Dialog extends Wrappable {
         }
     }
 
-    /**
-     * A simple dialog to retrieve text input from the user
-     */
+    /// A simple dialog to retrieve text input from the user
     @SuppressWarnings({"FieldCanBeLocal", "unused"})
     public static class Input extends Dialog {
         private static final int DIVIDE_WIDTH = 15;
@@ -341,9 +328,9 @@ public abstract class Dialog extends Wrappable {
 
         private ResponseHandler<String> responseListener;
 
-        private com.ultreon.devices.api.app.component.TextField textFieldInput;
-        private com.ultreon.devices.api.app.component.Button buttonPositive;
-        private com.ultreon.devices.api.app.component.Button buttonNegative;
+        private TextField textFieldInput;
+        private Button buttonPositive;
+        private Button buttonNegative;
 
         public Input() {
         }
@@ -366,20 +353,18 @@ public abstract class Dialog extends Wrappable {
 
             super.init(intent);
 
-            defaultLayout.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> graphics.fill(x, y, x + width, y + height, Color.LIGHT_GRAY.getRGB()));
-
             if (messageText != null) {
                 Text message = new Text(messageText, 5, 5, getWidth() - 10);
                 this.addComponent(message);
             }
 
-            textFieldInput = new com.ultreon.devices.api.app.component.TextField(5, 5 + offset, getWidth() - 10);
+            textFieldInput = new TextField(5, 5 + offset, getWidth() - 10);
             textFieldInput.setText(inputText);
             textFieldInput.setFocused(true);
             this.addComponent(textFieldInput);
 
             int positiveWidth = Minecraft.getInstance().font.width(positiveText);
-            buttonPositive = new com.ultreon.devices.api.app.component.Button(getWidth() - positiveWidth - DIVIDE_WIDTH, getHeight() - 20, positiveText);
+            buttonPositive = new Button(getWidth() - positiveWidth - DIVIDE_WIDTH, getHeight() - 20, positiveText);
             buttonPositive.setSize(positiveWidth + 10, 16);
             buttonPositive.setClickListener((mouseX, mouseY, mouseButton) -> {
                 if (!textFieldInput.getText().isEmpty()) {
@@ -393,17 +378,15 @@ public abstract class Dialog extends Wrappable {
             this.addComponent(buttonPositive);
 
             int negativeWidth = Minecraft.getInstance().font.width(negativeText);
-            buttonNegative = new com.ultreon.devices.api.app.component.Button(getWidth() - DIVIDE_WIDTH - positiveWidth - DIVIDE_WIDTH - negativeWidth + 1, getHeight() - 20, negativeText);
+            buttonNegative = new Button(getWidth() - DIVIDE_WIDTH - positiveWidth - DIVIDE_WIDTH - negativeWidth + 1, getHeight() - 20, negativeText);
             buttonNegative.setSize(negativeWidth + 10, 16);
             buttonNegative.setClickListener((mouseX, mouseY, mouseButton) -> close());
             this.addComponent(buttonNegative);
         }
 
-        /**
-         * Sets the initial text for the input text field
-         *
-         * @param inputText the text to set
-         */
+        /// Sets the initial text for the input text field
+        ///
+        /// @param inputText the text to set
         @SuppressWarnings("ConstantConditions")
         public void setInputText(@NotNull String inputText) {
             if (inputText == null) {
@@ -412,21 +395,17 @@ public abstract class Dialog extends Wrappable {
             this.inputText = inputText;
         }
 
-        /**
-         * Gets the input text field. This will be null if it has not been
-         *
-         * @return the input text field
-         */
+        /// Gets the input text field. This will be null if it has not been
+        ///
+        /// @return the input text field
         @Nullable
-        public com.ultreon.devices.api.app.component.TextField getTextFieldInput() {
+        public TextField getTextFieldInput() {
             return textFieldInput;
         }
 
-        /**
-         * Sets the positive button text
-         *
-         * @param positiveText the text to set
-         */
+        /// Sets the positive button text
+        ///
+        /// @param positiveText the text to set
         @SuppressWarnings("ConstantConditions")
         public void setPositiveText(@NotNull String positiveText) {
             if (positiveText == null) {
@@ -435,11 +414,9 @@ public abstract class Dialog extends Wrappable {
             this.positiveText = positiveText;
         }
 
-        /**
-         * Sets the negative button text
-         *
-         * @param negativeText the text to set
-         */
+        /// Sets the negative button text
+        ///
+        /// @param negativeText the text to set
         @SuppressWarnings("ConstantConditions")
         public void setNegativeText(@NotNull String negativeText) {
             if (negativeText == null) {
@@ -448,13 +425,11 @@ public abstract class Dialog extends Wrappable {
             this.negativeText = negativeText;
         }
 
-        /**
-         * Sets the response handler. The handler is called when the positive
-         * button is pressed and returns the value in the input text field. Returning
-         * true in the handler indicates that the dialog should close.
-         *
-         * @param responseListener the response handler
-         */
+        /// Sets the response handler.
+        /// The handler is called when the positive button is pressed and returns the value in the input text field.
+        /// Returning true in the handler indicates that the dialog should close.
+        ///
+        /// @param responseListener the response handler
         public void setResponseHandler(ResponseHandler<String> responseListener) {
             this.responseListener = responseListener;
         }
@@ -469,11 +444,11 @@ public abstract class Dialog extends Wrappable {
 
         private Layout main;
         private FileBrowser browser;
-        private com.ultreon.devices.api.app.component.Button buttonPositive;
-        private com.ultreon.devices.api.app.component.Button buttonNegative;
+        private Button buttonPositive;
+        private Button buttonNegative;
 
-        private ResponseHandler<File> responseListener;
-        private Predicate<File> filter;
+        private ResponseHandler<FileInfo> responseListener;
+        private Predicate<FileInfo> filter;
 
         public OpenFile(Application app) {
             this.app = app;
@@ -499,12 +474,12 @@ public abstract class Dialog extends Wrappable {
             main.addComponent(browser);
 
             int positiveWidth = Minecraft.getInstance().font.width(positiveText);
-            buttonPositive = new com.ultreon.devices.api.app.component.Button(172, 106, positiveText);
+            buttonPositive = new Button(172, 106, positiveText);
             buttonPositive.setSize(positiveWidth + 10, 16);
             buttonPositive.setEnabled(false);
             buttonPositive.setClickListener((mouseX, mouseY, mouseButton) -> {
                 if (mouseButton == 0) {
-                    File file = browser.getSelectedFile();
+                    @Nullable FileInfo file = browser.getSelectedFile();
                     if (file != null) {
                         boolean close = true;
                         if (responseListener != null) {
@@ -517,7 +492,7 @@ public abstract class Dialog extends Wrappable {
             main.addComponent(buttonPositive);
 
             int negativeWidth = Minecraft.getInstance().font.width(negativeText);
-            buttonNegative = new com.ultreon.devices.api.app.component.Button(125, 106, negativeText);
+            buttonNegative = new Button(125, 106, negativeText);
             buttonNegative.setSize(negativeWidth + 10, 16);
             buttonNegative.setClickListener((mouseX, mouseY, mouseButton) -> close());
             main.addComponent(buttonNegative);
@@ -525,11 +500,9 @@ public abstract class Dialog extends Wrappable {
             this.setLayout(main);
         }
 
-        /**
-         * Sets the positive button text
-         *
-         * @param positiveText the text to set
-         */
+        /// Sets the positive button text
+        ///
+        /// @param positiveText the text to set
         public void setPositiveText(String positiveText) {
             if (positiveText == null) {
                 throw new IllegalArgumentException("Text can't be null");
@@ -537,11 +510,9 @@ public abstract class Dialog extends Wrappable {
             this.positiveText = positiveText;
         }
 
-        /**
-         * Sets the negative button text
-         *
-         * @param negativeText the text to set
-         */
+        /// Sets the negative button text
+        ///
+        /// @param negativeText the text to set
         public void setNegativeText(String negativeText) {
             if (negativeText == null) {
                 throw new IllegalArgumentException("Text can't be null");
@@ -549,32 +520,26 @@ public abstract class Dialog extends Wrappable {
             this.negativeText = negativeText;
         }
 
-        /**
-         * Sets the response handler. The handler is called when the positive
-         * button is pressed and returns the file that is selected. Returning
-         * true in the handler indicates that the dialog should close.
-         *
-         * @param responseListener the response handler to handle the returned file
-         */
-        public void setResponseHandler(ResponseHandler<File> responseListener) {
+        /// Sets the response handler. The handler is called when the positive
+        /// button is pressed and returns the file that is selected. Returning
+        /// true in the handler indicates that the dialog should close.
+        ///
+        /// @param responseListener the response handler to handle the returned file
+        public void setResponseHandler(ResponseHandler<FileInfo> responseListener) {
             this.responseListener = responseListener;
         }
 
-        /**
-         * Sets the filter for the file list to show only files that match certain conditions.
-         *
-         * @param filter the predicate
-         */
-        public void setFilter(Predicate<File> filter) {
+        /// Sets the filter for the file list to show only files that match certain conditions.
+        ///
+        /// @param filter the predicate
+        public void setFilter(Predicate<FileInfo> filter) {
             this.filter = filter;
         }
 
-        /**
-         * Sets the filter for the file list to show only files that can open with the specified
-         * application.
-         *
-         * @param app the predicate
-         */
+        /// Sets the filter for the file list to show only files that can open with the specified
+        /// application.
+        ///
+        /// @param app the predicate
         public void setFilter(Application app) {
             this.filter = file -> app.getInfo().getFormattedId().equals(file.getOpeningApp());
         }
@@ -583,30 +548,39 @@ public abstract class Dialog extends Wrappable {
     @SuppressWarnings({"FieldCanBeLocal", "unused"})
     public static class SaveFile extends Dialog {
         private final Application app;
-        private final CompoundTag data;
-        public ResponseHandler<File> responseHandler;
+        public ResponseHandler<FileInfo> responseHandler;
         private String name;
         private String positiveText = "Save";
         private String negativeText = "Cancel";
         private Layout main;
         private FileBrowser browser;
-        private com.ultreon.devices.api.app.component.TextField textFieldFileName;
-        private com.ultreon.devices.api.app.component.Button buttonPositive;
-        private com.ultreon.devices.api.app.component.Button buttonNegative;
-        private Predicate<File> filter;
+        private TextField textFieldFileName;
+        private Button buttonPositive;
+        private Button buttonNegative;
+        private Predicate<FileInfo> filter;
 
-        private String path = FileSystem.DIR_HOME;
+        private Path path = FileSystem.DIR_HOME;
 
-        public SaveFile(Application app, CompoundTag data) {
+        @Deprecated
+        public SaveFile(Application app, byte[] data) {
             this.app = app;
-            this.data = data;
             this.setTitle("Save File");
         }
 
-        public SaveFile(Application app, File file) {
+        @Deprecated
+        public SaveFile(Application app, CompoundTag tag) throws IOException {
             this.app = app;
-            this.name = file.getName();
-            this.data = file.toTag();
+            this.setTitle("Save File");
+        }
+
+        public SaveFile(Application app, String file) {
+            this.app = app;
+            this.name = file;
+            this.setTitle("Save File");
+        }
+
+        public SaveFile(Application app) {
+            this.app = app;
             this.setTitle("Save File");
         }
 
@@ -620,7 +594,7 @@ public abstract class Dialog extends Wrappable {
             browser.openFolder(path);
             main.addComponent(browser);
 
-            buttonPositive = new com.ultreon.devices.api.app.component.Button(172, 125, positiveText);
+            buttonPositive = new Button(172, 125, positiveText);
             buttonPositive.setClickListener((mouseX, mouseY, mouseButton) -> {
                 if (mouseButton == 0) {
                     if (!textFieldFileName.getText().isEmpty()) {
@@ -630,33 +604,31 @@ public abstract class Dialog extends Wrappable {
                             return;
                         }
 
-                        File file;
-                        if (name != null) {
-                            file = File.fromTag(textFieldFileName.getText(), data);
-                        } else {
-                            file = new File(textFieldFileName.getText(), app, data.copy());
+                        FileInfo selectedFile = browser.getSelectedFile();
+                        if (selectedFile == null) {
+                            return;
                         }
-
-                        browser.addFile(file, (response, success) -> {
+                        selectedFile.createFile(textFieldFileName.getText(), false, (FSResponse<FileInfo> response) -> {
                             assert response != null;
-                            if (response.getStatus() == FileSystem.Status.FILE_EXISTS) {
+                            if (response.status() == FileSystem.Status.FILE_EXISTS) {
                                 Confirmation dialog = new Confirmation("A file with that name already exists. Are you sure you want to override it?");
                                 dialog.setPositiveText("Override");
-                                dialog.setPositiveListener((mouseX1, mouseY1, mouseButton1) -> browser.addFile(file, true, (response1, success1) -> {
-                                    dialog.close();
-
-                                    //TODO Look into better handling. Get response from parent if should close. Maybe a response interface w/ generic
-                                    if (responseHandler != null) {
-                                        responseHandler.onResponse(success1, file);
+                                dialog.setPositiveListener((mouseX1, mouseY1, mouseButton1) -> selectedFile.createFile(textFieldFileName.getText(), true, (FSResponse<FileInfo> response1) -> {
+                                    assert response1 != null;
+                                    if (response1.success()) {
+                                        if (responseHandler != null) {
+                                            responseHandler.onResponse(true, response1.data());
+                                        }
+                                    } else {
+                                        app.openDialog(new Message(response1.message()));
                                     }
-                                    SaveFile.this.close();
                                 }));
                                 app.openDialog(dialog);
-                            } else {
-                                if (responseHandler != null) {
-                                    responseHandler.onResponse(true, file);
-                                }
-                                close();
+                                return;
+                            }
+
+                            if (responseHandler != null) {
+                                responseHandler.onResponse(true, response.data());
                             }
                         });
                     }
@@ -664,11 +636,11 @@ public abstract class Dialog extends Wrappable {
             });
             main.addComponent(buttonPositive);
 
-            buttonNegative = new com.ultreon.devices.api.app.component.Button(126, 125, negativeText);
+            buttonNegative = new Button(126, 125, negativeText);
             buttonNegative.setClickListener((mouseX, mouseY, mouseButton) -> close());
             main.addComponent(buttonNegative);
 
-            textFieldFileName = new com.ultreon.devices.api.app.component.TextField(26, 105, 180);
+            textFieldFileName = new TextField(26, 105, 180);
             textFieldFileName.setFocused(true);
             if (name != null) textFieldFileName.setText(name);
             main.addComponent(textFieldFileName);
@@ -676,11 +648,9 @@ public abstract class Dialog extends Wrappable {
             this.setLayout(main);
         }
 
-        /**
-         * Sets the positive button text
-         *
-         * @param positiveText the text to set
-         */
+        /// Sets the positive button text
+        ///
+        /// @param positiveText the text to set
         @SuppressWarnings("ConstantConditions")
         public void setPositiveText(@NotNull String positiveText) {
             if (positiveText == null) {
@@ -689,11 +659,9 @@ public abstract class Dialog extends Wrappable {
             this.positiveText = positiveText;
         }
 
-        /**
-         * Sets the negative button text
-         *
-         * @param negativeText the text to set
-         */
+        /// Sets the negative button text
+        ///
+        /// @param negativeText the text to set
         @SuppressWarnings("ConstantConditions")
         public void setNegativeText(@NotNull String negativeText) {
             if (negativeText == null) {
@@ -702,42 +670,34 @@ public abstract class Dialog extends Wrappable {
             this.negativeText = negativeText;
         }
 
-        /**
-         * Sets the response handler. The handler is called when the positive
-         * button is pressed and returns the file that is selected. Returning
-         * true in the handler indicates that the dialog should close.
-         *
-         * @param responseHandler the response handler to handle the returned file
-         */
-        public void setResponseHandler(ResponseHandler<File> responseHandler) {
+        /// Sets the response handler. The handler is called when the positive
+        /// button is pressed and returns the file that is selected. Returning
+        /// true in the handler indicates that the dialog should close.
+        ///
+        /// @param responseHandler the response handler to handle the returned file
+        public void setResponseHandler(ResponseHandler<FileInfo> responseHandler) {
             this.responseHandler = responseHandler;
         }
 
-        /**
-         * Sets the filter for the file list to show only files that match certain conditions.
-         *
-         * @param filter the predicate
-         */
-        public void setFilter(Predicate<File> filter) {
+        /// Sets the filter for the file list to show only files that match certain conditions.
+        ///
+        /// @param filter the predicate
+        public void setFilter(Predicate<FileInfo> filter) {
             this.filter = filter;
         }
 
-        /**
-         * Sets the filter for the file list to show only files that can open with the specified
-         * application.
-         *
-         * @param app the predicate
-         */
+        /// Sets the filter for the file list to show only files that can open with the specified
+        /// application.
+        ///
+        /// @param app the predicate
         public void setFilter(Application app) {
             this.filter = file -> app.getInfo().getFormattedId().equals(file.getOpeningApp());
         }
 
-        /**
-         * Sets the initial folder path to be shown when the dialog is opened
-         *
-         * @param path the initial folder path
-         */
-        public void setFolder(String path) {
+        /// Sets the initial folder path to be shown when the dialog is opened
+        ///
+        /// @param path the initial folder path
+        public void setFolder(Path path) {
             this.path = path;
         }
     }
@@ -747,12 +707,12 @@ public abstract class Dialog extends Wrappable {
         private final IPrint print;
 
         private Layout layoutMain;
-        private com.ultreon.devices.api.app.component.Label labelMessage;
-        private com.ultreon.devices.api.app.component.Button buttonRefresh;
+        private Label labelMessage;
+        private Button buttonRefresh;
         private ItemList<NetworkDevice> itemListPrinters;
-        private com.ultreon.devices.api.app.component.Button buttonPrint;
-        private com.ultreon.devices.api.app.component.Button buttonCancel;
-        private com.ultreon.devices.api.app.component.Button buttonInfo;
+        private Button buttonPrint;
+        private Button buttonCancel;
+        private Button buttonInfo;
 
         public Print(IPrint print) {
             this.print = print;
@@ -765,10 +725,10 @@ public abstract class Dialog extends Wrappable {
 
             layoutMain = new Layout(150, 132);
 
-            labelMessage = new com.ultreon.devices.api.app.component.Label("Select a Printer", 5, 5);
+            labelMessage = new Label("Select a Printer", 5, 5);
             layoutMain.addComponent(labelMessage);
 
-            buttonRefresh = new com.ultreon.devices.api.app.component.Button(131, 2, Icons.RELOAD);
+            buttonRefresh = new Button(131, 2, Icons.RELOAD);
             buttonRefresh.setPadding(2);
             buttonRefresh.setToolTip("Refresh", "Retrieve an updated list of printers");
             buttonRefresh.setClickListener((mouseX, mouseY, mouseButton) -> {
@@ -811,7 +771,7 @@ public abstract class Dialog extends Wrappable {
             });
             layoutMain.addComponent(itemListPrinters);
 
-            buttonPrint = new com.ultreon.devices.api.app.component.Button(98, 108, "Print", Icons.CHECK);
+            buttonPrint = new Button(98, 108, "Print", Icons.CHECK);
             buttonPrint.setPadding(5);
             buttonPrint.setEnabled(false);
             buttonPrint.setClickListener((mouseX, mouseY, mouseButton) -> {
@@ -830,7 +790,7 @@ public abstract class Dialog extends Wrappable {
             });
             layoutMain.addComponent(buttonPrint);
 
-            buttonCancel = new com.ultreon.devices.api.app.component.Button(74, 108, Icons.CROSS);
+            buttonCancel = new Button(74, 108, Icons.CROSS);
             buttonCancel.setPadding(5);
             buttonCancel.setClickListener((mouseX, mouseY, mouseButton) -> {
                 if (mouseButton == 0) {
@@ -839,7 +799,7 @@ public abstract class Dialog extends Wrappable {
             });
             layoutMain.addComponent(buttonCancel);
 
-            buttonInfo = new com.ultreon.devices.api.app.component.Button(5, 108, Icons.HELP);
+            buttonInfo = new Button(5, 108, Icons.HELP);
             buttonInfo.setEnabled(false);
             buttonInfo.setPadding(5);
             buttonInfo.setClickListener((mouseX, mouseY, mouseButton) -> {
@@ -861,7 +821,7 @@ public abstract class Dialog extends Wrappable {
         private void getPrinters(ItemList<NetworkDevice> itemList) {
             itemList.removeAll();
             itemList.setLoading(true);
-            Task task = new TaskGetDevices(Laptop.getPos(), PrinterBlockEntity.class);
+            Task task = new TaskGetDevices(Laptop.getPos(), DeviceBlockEntities.PRINTER.get());
             task.setCallback((tag, success) -> {
                 if (success) {
                     assert tag != null;
@@ -883,11 +843,11 @@ public abstract class Dialog extends Wrappable {
             private final NetworkDevice entry;
 
             private Layout layoutMain;
-            private com.ultreon.devices.api.app.component.Label labelName;
-            private com.ultreon.devices.api.app.component.Image imagePaper;
-            private com.ultreon.devices.api.app.component.Label labelPaper;
-            private com.ultreon.devices.api.app.component.Label labelPosition;
-            private com.ultreon.devices.api.app.component.Button buttonClose;
+            private Label labelName;
+            private Image imagePaper;
+            private Label labelPaper;
+            private Label labelPosition;
+            private Button buttonClose;
 
             private Info(NetworkDevice entry) {
                 this.entry = entry;
@@ -900,17 +860,17 @@ public abstract class Dialog extends Wrappable {
 
                 layoutMain = new Layout(120, 70);
 
-                labelName = new com.ultreon.devices.api.app.component.Label(ChatFormatting.GOLD.toString() + ChatFormatting.BOLD + entry.getName(), 5, 5);
+                labelName = new Label(ChatFormatting.GOLD.toString() + ChatFormatting.BOLD + entry.getName(), 5, 5);
                 layoutMain.addComponent(labelName);
 
-                labelPaper = new com.ultreon.devices.api.app.component.Label(ChatFormatting.DARK_GRAY + "Paper: " + ChatFormatting.RESET + 0, 5, 18); //TODO fix paper count
+                labelPaper = new Label(ChatFormatting.DARK_GRAY + "Paper: " + ChatFormatting.RESET + 0, 5, 18); //TODO fix paper count
                 labelPaper.setAlignment(Component.ALIGN_LEFT);
                 labelPaper.setShadow(false);
                 layoutMain.addComponent(labelPaper);
 
                 assert entry.getPos() != null;
                 String position = ChatFormatting.DARK_GRAY + "X: " + ChatFormatting.RESET + entry.getPos().getX() + " " + ChatFormatting.DARK_GRAY + "Y: " + ChatFormatting.RESET + entry.getPos().getY() + " " + ChatFormatting.DARK_GRAY + "Z: " + ChatFormatting.RESET + entry.getPos().getZ();
-                labelPosition = new com.ultreon.devices.api.app.component.Label(position, 5, 30);
+                labelPosition = new Label(position, 5, 30);
                 labelPosition.setShadow(false);
                 layoutMain.addComponent(labelPosition);
 
@@ -927,4 +887,64 @@ public abstract class Dialog extends Wrappable {
         }
     }
 
+    public static class Permission extends Dialog {
+        private PermissionRequest permissionRequest;
+        private Consumer<PermissionResult> callback;
+        private String reason;
+
+        public Permission(PermissionRequest permissionRequest, Consumer<PermissionResult> callback, String reason) {
+            super();
+
+            this.setTitle("Permission Request");
+            this.setReason(reason);
+            this.setCallback(callback);
+            this.setPermissionRequest(permissionRequest);
+        }
+
+        public void setPermissionRequest(PermissionRequest permissionRequest) {
+            this.permissionRequest = permissionRequest;
+        }
+
+        public void setCallback(Consumer<PermissionResult> callback) {
+            this.callback = callback;
+        }
+
+        public void setReason(String reason) {
+            this.reason = reason;
+        }
+
+        @Override
+        public void init(@Nullable CompoundTag intent) {
+            super.init(intent);
+
+            Layout layoutMain = new Layout(120, 70);
+
+            Label labelName = new Label(ChatFormatting.GOLD.toString() + ChatFormatting.BOLD + permissionRequest.app().getName(), 5, 5);
+            layoutMain.addComponent(labelName);
+
+            Label labelReason = new Label(reason, 5, 18);
+            labelReason.setShadow(false);
+            layoutMain.addComponent(labelReason);
+
+            Button buttonAccept = new Button(5, 49, "Accept");
+            buttonAccept.setClickListener((mouseX, mouseY, mouseButton) -> {
+                if (mouseButton == 0) {
+                    callback.accept(PermissionResult.GRANTED);
+                    close();
+                }
+            });
+            layoutMain.addComponent(buttonAccept);
+
+            Button buttonDeny = new Button(70, 49, "Deny");
+            buttonDeny.setClickListener((mouseX, mouseY, mouseButton) -> {
+                if (mouseButton == 0) {
+                    callback.accept(PermissionResult.DENIED);
+                    close();
+                }
+            });
+            layoutMain.addComponent(buttonDeny);
+
+            setLayout(layoutMain);
+        }
+    }
 }

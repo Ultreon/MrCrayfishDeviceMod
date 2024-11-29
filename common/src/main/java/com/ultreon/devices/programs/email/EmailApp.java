@@ -1,7 +1,6 @@
 package com.ultreon.devices.programs.email;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.Resources;
 import com.ultreon.devices.api.ApplicationManager;
 import com.ultreon.devices.api.app.Component;
@@ -14,7 +13,6 @@ import com.ultreon.devices.api.app.component.TextArea;
 import com.ultreon.devices.api.app.component.TextField;
 import com.ultreon.devices.api.app.component.*;
 import com.ultreon.devices.api.app.renderer.ListItemRenderer;
-import com.ultreon.devices.api.io.File;
 import com.ultreon.devices.api.task.TaskManager;
 import com.ultreon.devices.api.utils.RenderUtil;
 import com.ultreon.devices.core.Laptop;
@@ -24,16 +22,17 @@ import com.ultreon.devices.programs.email.object.Email;
 import com.ultreon.devices.programs.email.task.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceLocation;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -119,7 +118,7 @@ public class EmailApp extends Application {
     private Button btnCancelInsertContact; // TODO unused
 
     private String currentName;
-    private File attachedFile;
+    private AttachedFile attachedFile;
 
     private List<Contact> contacts; // TODO unused
 
@@ -214,7 +213,7 @@ public class EmailApp extends Application {
             RenderSystem.setShaderTexture(0, ENDER_MAIL_BACKGROUND);
             RenderUtil.drawRectWithTexture(ENDER_MAIL_BACKGROUND, graphics, x, y, 0, 0, width, height, 640, 360, 640, 360);
 
-            Color temp = new Color(Laptop.getSystem().getSettings().getColorScheme().getBackgroundColor());
+            Color temp = new Color(Laptop.getSystem().getSettings().getColorScheme().getBackgroundColor(), true);
             Color color = new Color(temp.getRed(), temp.getGreen(), temp.getBlue(), 150);
             graphics.fill(x, y, x + 125, y + height, color.getRGB());
             graphics.fill(x + 125, y, x + 126, y + height, color.darker().getRGB());
@@ -269,7 +268,7 @@ public class EmailApp extends Application {
                 if (attachedFile != null) {
                     btnSaveAttachment.setVisible(true);
                     labelAttachmentName.setVisible(true);
-                    labelAttachmentName.setText(attachedFile.getName());
+                    labelAttachmentName.setText(attachedFile.name());
                 }
                 setCurrentLayout(layoutViewEmail);
             }
@@ -332,8 +331,12 @@ public class EmailApp extends Application {
         layoutNewEmail = new Layout(231, 148);
         layoutNewEmail.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
             if (attachedFile != null) {
-                AppInfo info = ApplicationManager.getApplication(Objects.requireNonNull(ResourceLocation.tryParse(attachedFile.getOpeningApp()), "Attached file has no opening app"));
-                RenderUtil.drawApplicationIcon(graphics, info, x + 46, y + 130);
+//                AppInfo info = ApplicationManager.getApplication(Objects.requireNonNull(ResourceLocation.tryParse(attachedFile.getOpeningApp()), "Attached file has no opening app"));
+//                RenderUtil.drawApplicationIcon(graphics, info, x + 46, y + 130);
+                // TODO: Draw app icon
+                graphics.fill(x, y, x + width, y + height, Color.LIGHT_GRAY.getRGB());
+            } else {
+                graphics.fill(x, y, x + width, y + height, Color.GRAY.getRGB());
             }
         });
 
@@ -388,13 +391,17 @@ public class EmailApp extends Application {
                 Dialog.OpenFile dialog = new Dialog.OpenFile(this);
                 dialog.setResponseHandler((success, file) -> {
                     if (!file.isFolder()) {
-                        attachedFile = file.copy();
-                        labelAttachedFile.setText(file.getName());
-                        labelAttachedFile.left += 16;
-                        labelAttachedFile.xPosition += 16;
-                        btnAttachedFile.setVisible(false);
-                        btnRemoveAttachedFile.setVisible(true);
-                        dialog.close();
+                        file.read(response -> {
+                            if (response.success()) {
+                                attachedFile = new AttachedFile(file.getName(), response.data());
+                                labelAttachedFile.setText(file.getName());
+                                labelAttachedFile.left += 16;
+                                labelAttachedFile.xPosition += 16;
+                                btnAttachedFile.setVisible(false);
+                                btnRemoveAttachedFile.setVisible(true);
+                                dialog.close();
+                            }
+                        });
                     } else {
                         openDialog(new Dialog.Message("Attachment must be a file!"));
                     }
@@ -430,7 +437,13 @@ public class EmailApp extends Application {
 
             if (attachedFile != null) {
                 RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-                AppInfo info = ApplicationManager.getApplication(Objects.requireNonNull(ResourceLocation.tryParse(attachedFile.getOpeningApp()), "Attached file has no opening app"));
+                String name = attachedFile.name();
+                AppInfo info = ApplicationManager.getApplicationForExtension(name.substring(name.lastIndexOf(".") + 1).toUpperCase(Locale.ROOT));
+                if (info == null) {
+                    Dialog.Message dialog = new Dialog.Message("Unknown file type: " + name);
+                    openDialog(dialog);
+                    return;
+                }
                 RenderUtil.drawApplicationIcon(graphics, info, x + 204, y + 4);
             }
         });
@@ -464,7 +477,21 @@ public class EmailApp extends Application {
         btnSaveAttachment.setVisible(false);
         btnSaveAttachment.setClickListener((mouseX, mouseY, mouseButton) -> {
             if (mouseButton == 0 && attachedFile != null) {
-                Dialog.SaveFile dialog = new Dialog.SaveFile(this, attachedFile);
+                Dialog.SaveFile dialog = new Dialog.SaveFile(this);
+                dialog.setResponseHandler((success, file) -> {
+                    if (success) {
+                        file.write(attachedFile.data(), response -> {
+                            if (response.success()) {
+                                resetAttachedFile();
+                                dialog.close();
+                            } else {
+                                dialog.close();
+                                openDialog(new Dialog.Message("Failed to save file!\br" + response.message()));
+                            }
+                        });
+                    }
+                    return false;
+                });
                 openDialog(dialog);
             }
         });
@@ -477,6 +504,11 @@ public class EmailApp extends Application {
 
         this.setCurrentLayout(layoutInit);
 
+        TaskCheckEmailAccount taskCheckAccount = getTaskCheckAccount();
+        TaskManager.sendTask(taskCheckAccount);
+    }
+
+    private @NotNull TaskCheckEmailAccount getTaskCheckAccount() {
         TaskCheckEmailAccount taskCheckAccount = new TaskCheckEmailAccount();
         taskCheckAccount.setCallback((nbt, success) -> {
             if (success) {
@@ -491,7 +523,7 @@ public class EmailApp extends Application {
                 setCurrentLayout(layoutMainMenu);
             }
         });
-        TaskManager.sendTask(taskCheckAccount);
+        return taskCheckAccount;
     }
 
     private void resetAttachedFile() {

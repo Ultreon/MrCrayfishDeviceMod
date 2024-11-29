@@ -18,10 +18,8 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.util.Optional;
 
-/**
- * The Device Mod implementations of an internet browser. Originally created by MinecraftDoodler.
- * Licensed under GPL 3d
- */
+/// The Device Mod implementations of an internet browser. Originally created by MinecraftDoodler.
+/// Licensed under GPL 3d
 public class GitWebApp extends Application implements SystemAccessor, DataHandler {
     private Layout layoutBrowser;
     private Layout layoutPref;
@@ -45,7 +43,7 @@ public class GitWebApp extends Application implements SystemAccessor, DataHandle
     public void init(@Nullable CompoundTag intent) {
         layoutBrowser = new StandardLayout(null, 362, 240, this, null);
         layoutBrowser.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
-            Color color = new Color(Laptop.getSystem().getSettings().getColorScheme().getItemBackgroundColor());
+            Color color = new Color(Laptop.getSystem().getSettings().getColorScheme().getBackgroundColor(), true);
             graphics.fill(x, y + 21, x + width, y + 164, color.getRGB());
         });
 

@@ -26,9 +26,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * @author MrCrayfish
- */
+/// @author MrCrayfish
 @SuppressWarnings("unused")
 public class GitWebFrame extends Component {
     public static final Pattern PATTERN_LINK = Pattern.compile("(?<domain>[a-zA-Z0-9\\p{sc=Han}\\p{InHiragana}\\p{InKatakana}\\-]+)\\.(?<extension>[a-zA-Z0-9\\p{sc=Han}\\p{InHiragana}\\p{InKatakana}]+)(?<directory>(/[a-zA-Z0-9\\p{sc=Han}\\p{InHiragana}\\p{InKatakana}\\-]+)*)(/)?");
@@ -308,10 +306,10 @@ public class GitWebFrame extends Component {
         OnlineRequest.getInstance().make(url, (success, response) ->
         {
             if (success) {
-                generateLayout(response, true);
+                generateLayout(new String(response), true);
             }
             if (loadedCallback != null) {
-                loadedCallback.execute(response, success);
+                loadedCallback.execute(new String(response), success);
             }
         });
     }
@@ -342,7 +340,7 @@ public class GitWebFrame extends Component {
                 offset += height;
             }
 
-            if (modules.size() > 0) {
+            if (!modules.isEmpty()) {
                 ModuleEntry entry = modules.get(modules.size() - 1);
                 Module module = entry.getModule();
                 int height = module.calculateHeight(entry.getData(), width);

@@ -8,9 +8,7 @@ import com.ultreon.devices.programs.gitweb.component.GitWebFrame;
 
 import java.util.Map;
 
-/**
- * @author MrCrayfish
- */
+/// @author MrCrayfish
 public class HeaderModule extends Module {
     @Override
     public String[] getRequiredData() {

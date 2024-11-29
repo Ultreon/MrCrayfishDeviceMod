@@ -6,9 +6,7 @@ import com.ultreon.devices.programs.gitweb.layout.ModuleLayout;
 
 import java.util.Map;
 
-/**
- * @author MrCrayfish
- */
+/// @author MrCrayfish
 public abstract class Module {
 
     public abstract String[] getRequiredData();

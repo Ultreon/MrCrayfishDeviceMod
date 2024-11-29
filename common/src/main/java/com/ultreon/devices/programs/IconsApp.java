@@ -9,9 +9,7 @@ import net.minecraft.nbt.CompoundTag;
 
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author MrCrayfish
- */
+/// @author MrCrayfish
 public class IconsApp extends Application {
     private int offset;
 

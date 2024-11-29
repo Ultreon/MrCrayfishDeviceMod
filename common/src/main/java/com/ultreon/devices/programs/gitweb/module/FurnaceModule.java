@@ -9,9 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author MrCrayfish
- */
+/// @author MrCrayfish
 public class FurnaceModule extends ContainerModule {
     @Override
     public String[] getOptionalData() {

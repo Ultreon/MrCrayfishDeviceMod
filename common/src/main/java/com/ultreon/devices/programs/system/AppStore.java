@@ -8,10 +8,12 @@ import com.ultreon.devices.Devices;
 import com.ultreon.devices.Reference;
 import com.ultreon.devices.api.ApplicationManager;
 import com.ultreon.devices.api.app.Component;
+import com.ultreon.devices.api.app.Dialog;
 import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.ScrollableLayout;
 import com.ultreon.devices.api.app.component.Button;
+import com.ultreon.devices.api.app.component.Image;
 import com.ultreon.devices.api.app.component.Label;
 import com.ultreon.devices.api.app.component.Spinner;
 import com.ultreon.devices.api.utils.OnlineRequest;
@@ -25,10 +27,10 @@ import com.ultreon.devices.programs.system.object.AppEntry;
 import com.ultreon.devices.programs.system.object.RemoteEntry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.util.ArrayList;
@@ -52,23 +54,10 @@ public class AppStore extends SystemApp {
         var q = ApplicationManager.getAvailableApplications().size();
         var rows = (int)Math.round(Math.ceil(q/3D));
 
-        ScrollableLayout homePageLayout = new ScrollableLayout(0, 0, LAYOUT_WIDTH, 368-160+80*rows, LAYOUT_HEIGHT);
-        homePageLayout.setScrollSpeed(10);
-        homePageLayout.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
-            Color color = new Color(Laptop.getSystem().getSettings().getColorScheme().getBackgroundColor());
-            int offset = 60;
-            graphics.fill(x, y + offset, x + LAYOUT_WIDTH, y + offset + 1, color.brighter().getRGB());
-            graphics.fill(x, y + offset + 1, x + LAYOUT_WIDTH, y + offset + 19, color.getRGB());
-            graphics.fill(x, y + offset + 19, x + LAYOUT_WIDTH, y + offset + 20, color.darker().getRGB());
+        ScrollableLayout homePageLayout = getHomePageLayout(rows);
 
-            offset = 172;
-            graphics.fill(x, y + offset, x + LAYOUT_WIDTH, y + offset + 1, color.brighter().getRGB());
-            graphics.fill(x, y + offset + 1, x + LAYOUT_WIDTH, y + offset + 19, color.getRGB());
-            graphics.fill(x, y + offset + 19, x + LAYOUT_WIDTH, y + offset + 20, color.darker().getRGB());
-        });
-
-        com.ultreon.devices.api.app.component.Image imageBanner = new com.ultreon.devices.api.app.component.Image(0, 0, LAYOUT_WIDTH, 60);
-        imageBanner.setImage(new ResourceLocation(Reference.MOD_ID, "textures/gui/app_market_background.png"));
+        Image imageBanner = new Image(0, 0, LAYOUT_WIDTH, 60);
+        imageBanner.setImage(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "textures/gui/app_market_background.png"));
         imageBanner.setDrawFull(true);
         homePageLayout.addComponent(imageBanner);
 
@@ -85,7 +74,7 @@ public class AppStore extends SystemApp {
         btnManageApps.setToolTip("Manage Apps", "Manage your installed applications");
         homePageLayout.addComponent(btnManageApps);
 
-        com.ultreon.devices.api.app.component.Image image = new com.ultreon.devices.api.app.component.Image(5, 33, 20, 20, Icons.SHOP);
+        Image image = new Image(5, 33, 20, 20, Icons.SHOP);
         homePageLayout.addComponent(image);
 
         Label labelBanner = new Label("App Market", 32, 35);
@@ -110,13 +99,15 @@ public class AppStore extends SystemApp {
             if (success) {
                 Minecraft.getInstance().doRunTask(() -> {
                     AppGrid grid = new AppGrid(0, 81, 3, 1, this);
-                    certifiedApps.addAll(parseJson(response));
+                    certifiedApps.addAll(parseJson(new String(response)));
                     shuffleAndShrink(certifiedApps, 3).forEach(grid::addEntry);
                     homePageLayout.addComponent(grid);
                     grid.reloadIcons();
                 });
             } else {
-                // TODO error handling
+                Dialog.Message dialog = new Dialog.Message("Failed to load certified apps");
+                dialog.setTitle("Error");
+                openDialog(dialog);
             }
         });
 
@@ -136,6 +127,24 @@ public class AppStore extends SystemApp {
         layoutMain.addComponent(homePageLayout);
 
         this.setCurrentLayout(layoutMain);
+    }
+
+    private static @NotNull ScrollableLayout getHomePageLayout(int rows) {
+        ScrollableLayout homePageLayout = new ScrollableLayout(0, 0, LAYOUT_WIDTH, 368-160+ 80 * rows, LAYOUT_HEIGHT);
+        homePageLayout.setScrollSpeed(10);
+        homePageLayout.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
+            Color color = new Color(Laptop.getSystem().getSettings().getColorScheme().getBackgroundColor(), true);
+            int offset = 60;
+            graphics.fill(x, y + offset, x + LAYOUT_WIDTH, y + offset + 1, color.brighter().getRGB());
+            graphics.fill(x, y + offset + 1, x + LAYOUT_WIDTH, y + offset + 19, color.getRGB());
+            graphics.fill(x, y + offset + 19, x + LAYOUT_WIDTH, y + offset + 20, color.darker().getRGB());
+
+            offset = 172;
+            graphics.fill(x, y + offset, x + LAYOUT_WIDTH, y + offset + 1, color.brighter().getRGB());
+            graphics.fill(x, y + offset + 1, x + LAYOUT_WIDTH, y + offset + 19, color.getRGB());
+            graphics.fill(x, y + offset + 19, x + LAYOUT_WIDTH, y + offset + 20, color.darker().getRGB());
+        });
+        return homePageLayout;
     }
 
     @Override
@@ -197,7 +206,7 @@ public class AppStore extends SystemApp {
         public void handleClick(int mouseX, int mouseY, int mouseButton) {
             AppInfo info = ApplicationManager.getApplication(Devices.id("app_store"));
             if (info != null) {
-                Laptop.getSystem().openApplication(info);
+                Laptop.getSystem().launchApp(info);
             }
         }
     }

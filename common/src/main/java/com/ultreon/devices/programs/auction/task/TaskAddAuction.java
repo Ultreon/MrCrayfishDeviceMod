@@ -1,5 +1,6 @@
 package com.ultreon.devices.programs.auction.task;
 
+import com.ultreon.devices.Devices;
 import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.programs.auction.AuctionManager;
 import com.ultreon.devices.programs.auction.object.AuctionItem;
@@ -63,7 +64,7 @@ public class TaskAddAuction extends Task {
     @Override
     public void prepareResponse(CompoundTag nbt) {
         if (isSucessful()) {
-            item.writeToNBT(nbt);
+            item.writeToNBT(nbt, Devices.getServer().registryAccess());
         }
     }
 

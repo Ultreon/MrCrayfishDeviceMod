@@ -9,9 +9,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
 
-/**
- * @author MrCrayfish
- */
+/// @author MrCrayfish
 public class TaskPing extends Task {
     private BlockPos sourceDevicePos;
     private int strength;

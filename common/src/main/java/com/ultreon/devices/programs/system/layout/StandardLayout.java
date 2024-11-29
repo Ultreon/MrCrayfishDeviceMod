@@ -14,9 +14,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 
-/**
- * @author MrCrayfish
- */
+/// @author MrCrayfish
 public class StandardLayout extends Layout {
     protected Application app;
     private final String title;

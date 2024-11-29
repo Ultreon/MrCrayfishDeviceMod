@@ -8,13 +8,14 @@ import com.ultreon.devices.api.app.Dialog;
 import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.ScrollableLayout;
-import com.ultreon.devices.api.app.component.*;
 import com.ultreon.devices.api.app.component.Button;
+import com.ultreon.devices.api.app.component.ComboBox;
+import com.ultreon.devices.api.app.component.ItemList;
+import com.ultreon.devices.api.app.component.Text;
 import com.ultreon.devices.api.app.renderer.ItemRenderer;
 import com.ultreon.devices.api.app.renderer.ListItemRenderer;
 import com.ultreon.devices.api.utils.OnlineRequest;
 import com.ultreon.devices.core.Laptop;
-import com.ultreon.devices.core.Settings;
 import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.object.TrayItem;
 import com.ultreon.devices.programs.system.component.Palette;
@@ -24,11 +25,12 @@ import com.ultreon.devices.programs.system.object.Preset;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
-
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 import java.awt.*;
+import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.Objects;
 import java.util.Stack;
@@ -39,7 +41,6 @@ public class SettingsApp extends SystemApp {
 
     private Layout layoutMain;
     private Layout layoutGeneral;
-    private CheckBox checkBoxShowApps;
 
     private Layout layoutPersonalise;
     private Layout layoutWallpaper;
@@ -80,11 +81,9 @@ public class SettingsApp extends SystemApp {
         setCurrentLayout(layoutMain);
     }
 
-    /**
-     * Creates the main layout of the settings app
-     *
-     * @return the main layout.
-     */
+    /// Creates the main layout of the settings app
+    ///
+    /// @return the main layout.
     private Menu addMainLayout() {
         Menu layoutMain = new Menu("Home");
 
@@ -96,7 +95,7 @@ public class SettingsApp extends SystemApp {
         this.layoutColorSchemes = createColorSchemesLayout();
         this.layoutGeneral = createGeneralLayout();
 
-        Button buttonColorScheme = new Button(5, 26+20+4, "Personalise", Icons.EDIT);
+        Button buttonColorScheme = new Button(5, 26 + 20 + 4, "Personalise", Icons.EDIT);
         buttonColorScheme.setSize(90, 20);
         buttonColorScheme.setToolTip("Personalise", "Change the wallpaper, UI colors, and more!");
         buttonColorScheme.setClickListener((mouseX, mouseY, mouseButton) -> {
@@ -107,7 +106,7 @@ public class SettingsApp extends SystemApp {
 
         layoutMain.addComponent(buttonColorScheme);
 
-        Button buttonColorSchemes = new Button(5, 26+26+20+4, "Themes", Icons.WRENCH);
+        Button buttonColorSchemes = new Button(5, 26 + 26 + 20 + 4, "Themes", Icons.WRENCH);
         buttonColorSchemes.setSize(90, 20);
         buttonColorSchemes.setToolTip("Color Schemes", "Change the color scheme using presets or choose a custom one.");
         buttonColorSchemes.setClickListener((mouseX, mouseY, mouseButton) -> {
@@ -117,7 +116,7 @@ public class SettingsApp extends SystemApp {
         });
         layoutMain.addComponent(buttonColorSchemes);
 
-        Button buttonGeneral = new Button(5, 26+26+26+20+4, "Advanced", Icons.WRENCH);
+        Button buttonGeneral = new Button(5, 26 + 26 + 26 + 20 + 4, "Advanced", Icons.WRENCH);
         buttonGeneral.setSize(90, 20);
         buttonGeneral.setToolTip("General", "General settings.");
         buttonGeneral.setClickListener((mouseX, mouseY, mouseButton) -> {
@@ -140,8 +139,8 @@ public class SettingsApp extends SystemApp {
             var l = new ScrollableLayout(layoutMain.width, layoutMain.height, 124);
             l.top = 26;
             l = ScrollableLayout.create(0, 26, layoutMain.width, 124, MessageFormat.format("""
-                    Version: {0} ({1})
-                    """
+                            Version: {0} ({1})
+                            """
 //                    Model: CD1
 //                    STORAGE: 32MB
 //                    RAM: 512KB
@@ -156,7 +155,7 @@ public class SettingsApp extends SystemApp {
 //                    - alfff
 //                    - 6
 //                    - あ
-/*                    """*/, Reference.getVerInfo()[0], Reference.getVerInfo()[1]));
+                    /*                    """*/, Reference.getVerInfo()[0], Reference.getVerInfo()[1]));
             //l.height = 124;
             qq.addComponent(l);
             this.showMenu(qq);
@@ -168,11 +167,6 @@ public class SettingsApp extends SystemApp {
         var layoutGeneral = new Menu("General");
         layoutGeneral.addComponent(backBtn);
 
-        checkBoxShowApps = new CheckBox("Show All Apps", 5, 26);
-        checkBoxShowApps.setSelected(Settings.isShowAllApps());
-        checkBoxShowApps.setClickListener(this::showAllAppsClick);
-        layoutGeneral.addComponent(checkBoxShowApps);
-
         comboDisplayResolutions = new ComboBox.List<>(5, 26 + 20 + 4, PredefinedResolution.getResolutionList());
         comboDisplayResolutions.setListItemRenderer(new ListItemRenderer<>(20) {
             @Override
@@ -182,7 +176,10 @@ public class SettingsApp extends SystemApp {
         });
         comboDisplayResolutions.setChangeListener((oldValue, newValue) -> {
             if (newValue != null) {
-                getLaptop().setDisplayResolution(newValue);
+                Laptop laptop = getLaptop();
+                if (laptop != null) {
+                    laptop.setDisplayResolution(newValue);
+                }
             }
         });
 
@@ -191,11 +188,9 @@ public class SettingsApp extends SystemApp {
         return layoutGeneral;
     }
 
-    /**
-     * Create the layout for personalising the laptop
-     *
-     * @return the menu layout.
-     */
+    /// Create the layout for personalising the laptop
+    ///
+    /// @return the menu layout.
     private Layout createPersonaliseLayout() {
         Layout layoutPersonalise = new Menu("Personalise");
         layoutPersonalise.addComponent(backBtn);
@@ -265,11 +260,9 @@ public class SettingsApp extends SystemApp {
         return layoutColorSchemes;
     }
 
-    /**
-     * Create the layout for the color schemes
-     *
-     * @return the layout.
-     */
+    /// Create the layout for the color schemes
+    ///
+    /// @return the layout.
     private Layout createColorSchemeLayout() {
         final Layout layoutColorScheme = new Menu("UI Colors");
         layoutColorScheme.addComponent(backBtn);
@@ -324,17 +317,15 @@ public class SettingsApp extends SystemApp {
         return layoutColorScheme;
     }
 
-    /**
-     * Create the layout for the wallpaper settings
-     *
-     * @return the layout.
-     */
+    /// Create the layout for the wallpaper settings
+    ///
+    /// @return the layout.
     private Layout addWallpaperLayout() {
         // Create layout.
         Layout wallpaperLayout = new Menu("Wallpaper");
 
         // Wallpaper image.
-        var image = new com.ultreon.devices.api.app.component.Image(6, 29, 6+122, 29+70);
+        var image = new com.ultreon.devices.api.app.component.Image(6, 29, 6 + 122, 29 + 70);
         image.setBorderThickness(1);
         image.setBorderVisible(true);
         image.setImage(Objects.requireNonNull(getLaptop()).getCurrentWallpaper());
@@ -398,21 +389,66 @@ public class SettingsApp extends SystemApp {
             Dialog.Input dialog = new Dialog.Input("Enter the URL of the image");
             dialog.setResponseHandler((success, string) -> {
                 if (getLaptop() != null) {
-                    if (!OnlineRequest.isSafeAddress(string)) {
-                        openDialog(new Dialog.Message("Unsafe website."));
-                        return false;
-                    }
-                    getLaptop().setWallpaper(string);
-                    image.setImage(getLaptop().getCurrentWallpaper());
-                    prevWallpaperBtn.setEnabled(getLaptop().getCurrentWallpaper().isBuiltIn());
-                    nextWallpaperBtn.setEnabled(getLaptop().getCurrentWallpaper().isBuiltIn());
+                    // Download the image.
+                    OnlineRequest.getInstance().make(string, (success2, data) -> {
+                        dialog.close();
+                        if (!success2) {
+                            Dialog.Message message = new Dialog.Message("Failed to download image: " + new String(data));
+                            openDialog(message);
+                            return;
+                        }
+
+                        Path path = Path.of("/Home/Library/Backgrounds/loaded.png");
+                        Laptop.getOrLoadMainDrive((drive, success3) -> {
+                            if (!success3) {
+                                Dialog.Message message = new Dialog.Message("Failed to load main drive");
+                                openDialog(message);
+                                return;
+                            }
+
+                            if (drive != null) {
+                                drive.createDirectories(path.getParent(), (response) -> {
+                                    if (!response.success()) {
+                                        Dialog.Message message = new Dialog.Message("Failed to create backgrounds directory: " + response.message());
+                                        openDialog(message);
+                                        return;
+                                    }
+
+                                    Laptop.getMainDrive().createFile(path.getParent(), path.getFileName().toString(), true, (response2) -> {
+                                        if (!response2.success()) {
+                                            Dialog.Message message = new Dialog.Message("Failed to create background file: " + response2.message());
+                                            openDialog(message);
+                                            return;
+                                        }
+
+                                        Laptop.getMainDrive().write(path, data, (response3) -> {
+                                            if (!response3.success()) {
+                                                Dialog.Message message = new Dialog.Message("Failed to write background file: " + response3.message());
+                                                openDialog(message);
+                                                return;
+                                            }
+
+                                            getLaptop().setWallpaper(path);
+                                            image.setImage(getLaptop().getCurrentWallpaper());
+                                            prevWallpaperBtn.setEnabled(getLaptop().getCurrentWallpaper().isBuiltIn());
+                                            nextWallpaperBtn.setEnabled(getLaptop().getCurrentWallpaper().isBuiltIn());
+                                        });
+
+                                    });
+                                });
+                            } else {
+                                Dialog.Message message = new Dialog.Message("Main drive unavailable");
+                                openDialog(message);
+                            }
+                        });
+                    }, true);
                 }
                 return success;
             });
             openDialog(dialog);
         });
         wallpaperLayout.addComponent(urlWallpaperBtn);
-        var wallpaperText = new Text("Wallpaper", image.left+3, image.top+3, image.componentWidth-6);
+        var wallpaperText = new Text("Wallpaper", image.left + 3, image.top + 3, image.componentWidth - 6);
         wallpaperText.setShadow(true);
         wallpaperText.setTextColor(new Color(getLaptop().getSettings().getColorScheme().getTextColor()));
         wallpaperLayout.addComponent(wallpaperText);
@@ -454,11 +490,9 @@ public class SettingsApp extends SystemApp {
         }
     }
 
+    @Deprecated
     private void showAllAppsClick(int mouseX, int mouseY, int mouseButton) {
-        Settings.setShowAllApps(checkBoxShowApps.isSelected());
-        Laptop laptop = getLaptop();
-        assert laptop != null;
-        laptop.getTaskBar().setupApplications(laptop.getApplications());
+        // Nope
     }
 
     public static class Menu extends Layout {
@@ -491,7 +525,9 @@ public class SettingsApp extends SystemApp {
             }
         });
         colorPicker.setChangeListener((oldValue, newValue) ->
-        {if (buttonColorSchemeApply != null) buttonColorSchemeApply.setEnabled(true);});
+        {
+            if (buttonColorSchemeApply != null) buttonColorSchemeApply.setEnabled(true);
+        });
 
         Palette palette = new Palette(5, 5, colorPicker);
         Layout layout = colorPicker.getLayout();
@@ -509,7 +545,7 @@ public class SettingsApp extends SystemApp {
         public void handleClick(int mouseX, int mouseY, int mouseButton) {
             AppInfo info = ApplicationManager.getApplication(Devices.id("settings"));
             if (info != null) {
-                Laptop.getSystem().openApplication(info);
+                Laptop.getSystem().launchApp(info);
             }
         }
     }

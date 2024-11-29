@@ -4,11 +4,14 @@ import com.ultreon.devices.core.laptop.client.ClientLaptop;
 import com.ultreon.devices.core.laptop.server.ServerLaptop;
 import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.network.Packet;
+import com.ultreon.devices.network.PacketHandler;
 import dev.architectury.networking.NetworkManager;
 import net.fabricmc.api.EnvType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.UUID;
@@ -25,11 +28,11 @@ public class S2CUpdatePacket extends Packet<S2CUpdatePacket> {
     }
 
     @Deprecated // do not call
-    public S2CUpdatePacket(FriendlyByteBuf buf) {
+    public S2CUpdatePacket(RegistryFriendlyByteBuf buf) {
         this.nbt = buf.readNbt();
     }
     @Override
-    public void toBytes(FriendlyByteBuf buf) {
+    public void toBytes(RegistryFriendlyByteBuf buf) {
         buf.writeNbt(nbt);
     }
 
@@ -40,5 +43,10 @@ public class S2CUpdatePacket extends Packet<S2CUpdatePacket> {
             DebugLog.log("SQUARE: " + Arrays.toString(ClientLaptop.laptops.get(this.nbt.getUUID("uuid")).square));
         }
         return false;
+    }
+
+    @Override
+    public @NotNull Type<? extends CustomPacketPayload> type() {
+        return PacketHandler.getS2CUpdatePacket();
     }
 }

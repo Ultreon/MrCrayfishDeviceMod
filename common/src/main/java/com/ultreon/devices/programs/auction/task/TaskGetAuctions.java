@@ -1,5 +1,6 @@
 package com.ultreon.devices.programs.auction.task;
 
+import com.ultreon.devices.Devices;
 import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.programs.auction.AuctionManager;
 import com.ultreon.devices.programs.auction.object.AuctionItem;
@@ -44,7 +45,7 @@ public class TaskGetAuctions extends Task {
             ListTag tagList = new ListTag();
             items.forEach(i -> {
                 CompoundTag itemTag = new CompoundTag();
-                i.writeToNBT(itemTag);
+                i.writeToNBT(itemTag, Devices.getServer().registryAccess());
                 tagList.add(itemTag);
             });
             nbt.put("auctionItems", tagList);

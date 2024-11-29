@@ -3,49 +3,56 @@ package com.ultreon.devices.core.io.drive;
 import com.ultreon.devices.core.io.ServerFolder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jnode.fs.FileSystemException;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.UUID;
 import java.util.function.Predicate;
 
-/**
- * @author MrCrayfish
- */
+/// @author MrCrayfish
 public final class ExternalDrive extends AbstractDrive {
     private static final Predicate<CompoundTag> PREDICATE_DRIVE_TAG = tag -> tag.contains("name", Tag.TAG_STRING) && tag.contains("uuid", Tag.TAG_STRING) && tag.contains("root", Tag.TAG_COMPOUND);
 
     private ExternalDrive() {
+
     }
 
     public ExternalDrive(String displayName) {
         super(displayName);
     }
 
-    @Nullable
-    public static ExternalDrive fromTag(CompoundTag driveTag) {
-        if (!PREDICATE_DRIVE_TAG.test(driveTag)) return null;
+    private ExternalDrive(Path drivePath) throws FileSystemException, IOException {
+        super(drivePath);
+    }
 
-        ExternalDrive drive = new ExternalDrive();
-        drive.name = driveTag.getString("name");
-        drive.uuid = UUID.fromString(driveTag.getString("uuid"));
+    private ExternalDrive(String s, UUID uuid) {
+        super(s);
+        this.uuid = uuid;
+    }
 
-        CompoundTag folderTag = driveTag.getCompound("root");
-        drive.root = ServerFolder.fromTag(folderTag.getString("file_name"), folderTag.getCompound("data"));
+    public static ExternalDrive load(Path drivePath) {
+        try {
+            return new ExternalDrive(drivePath);
+        } catch (FileSystemException | IOException e) {
+            return null;
+        }
+    }
 
-        return drive;
+    @ApiStatus.Internal
+    public static @NotNull ExternalDrive fromTag(CompoundTag driveTag) {
+        return new ExternalDrive(driveTag.contains("name") ? driveTag.getString("name") : "Drive", UUID.fromString(driveTag.getString("uuid")));
     }
 
     @Override
+    @ApiStatus.Internal
     public CompoundTag toTag() {
         CompoundTag driveTag = new CompoundTag();
         driveTag.putString("name", name);
         driveTag.putString("uuid", uuid.toString());
-
-        CompoundTag folderTag = new CompoundTag();
-        folderTag.putString("file_name", root.getName());
-        folderTag.put("data", root.toTag());
-        driveTag.put("root", folderTag);
-
         return driveTag;
     }
 

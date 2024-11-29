@@ -6,9 +6,7 @@ import dev.architectury.registry.registries.RegistrySupplier;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvent;
 
-/**
- * @author MrCrayfish
- */
+/// @author MrCrayfish
 public class DeviceSounds {
     private static final Registrar<SoundEvent> REGISTER = Devices.REGISTRIES.get().get(Registries.SOUND_EVENT);
 

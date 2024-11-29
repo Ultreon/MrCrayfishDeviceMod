@@ -1,18 +1,23 @@
 package com.ultreon.devices.object;
 
-import com.ultreon.devices.api.io.File;
+import com.ultreon.devices.programs.system.component.FileInfo;
+import kotlin.Unit;
 import net.minecraft.nbt.CompoundTag;
 
 import java.awt.*;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutput;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
-import java.util.Objects;
+import java.util.function.Consumer;
 
 public class Picture {
     public int[] pixels;
     public Size size;
-    private File source;
+    private FileInfo source;
     private final String name;
-    private final String author;
+    private String author = "Unknown";
 
     public Picture(String name, String author, Size size) {
         this.name = name;
@@ -22,20 +27,25 @@ public class Picture {
         init();
     }
 
-    public static Picture fromFile(File file) {
-        CompoundTag data = file.getData();
-        assert data != null;
-        Picture picture = new Picture(data.getString("Name"), data.getString("Author"), Objects.requireNonNull(Size.getFromSize(data.getInt("Resolution"))));
-        picture.source = file;
-        picture.pixels = data.getIntArray("Pixels");
-        return picture;
+    public Picture(FileInfo source) {
+        this.name = source.getName();
+        this.source = source;
+        init();
+    }
+
+    public static Picture fromFile(FileInfo file) {
+        return new Picture(file);
+    }
+
+    public void load(Consumer<Result<Picture>> callback) {
+        callback.accept(Result.success(this));
     }
 
     private void init() {
         Arrays.fill(pixels, new Color(1.0F, 1.0F, 1.0F, 0.0F).getRGB());
     }
 
-    public File getSource() {
+    public FileInfo getSource() {
         return source;
     }
 
@@ -83,6 +93,34 @@ public class Picture {
         tagCompound.putString("Author", getAuthor());
         tagCompound.putIntArray("Pixels", pixels);
         tagCompound.putInt("Resolution", size.width);
+    }
+
+    public void writeToFile(FileInfo file, Consumer<Result<Unit>> callback) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        DataOutput output = new DataOutputStream(bos);
+        try {
+            output.writeUTF(getName());
+            output.writeUTF(getAuthor());
+            output.writeInt(size.pixelWidth);
+            output.writeInt(size.pixelHeight);
+
+            output.writeInt(pixels.length);
+            for (int pixel : pixels) {
+                output.writeInt(pixel);
+            }
+
+            file.write(bos.toByteArray(), response -> {
+                if (!response.success()) callback.accept(Result.failure(response.message()));
+                try {
+                    bos.close();
+                    callback.accept(Result.success(Unit.INSTANCE));
+                } catch (IOException e) {
+                    callback.accept(Result.failure(e.getMessage()));
+                }
+            });
+        } catch (IOException e) {
+            callback.accept(Result.failure(e.getMessage()));
+        }
     }
 
     public enum Size {

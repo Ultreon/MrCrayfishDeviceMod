@@ -1,6 +1,5 @@
 package com.ultreon.devices.core.io.task;
 
-import com.ultreon.devices.api.io.Drive;
 import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.block.entity.ComputerBlockEntity;
 import com.ultreon.devices.core.Laptop;
@@ -13,9 +12,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
 
-/**
- * @author MrCrayfish
- */
+import java.util.UUID;
+
+/// @author MrCrayfish
 public class TaskSendAction extends Task {
     private String uuid;
     private FileAction action;
@@ -27,9 +26,9 @@ public class TaskSendAction extends Task {
         super("send_action");
     }
 
-    public TaskSendAction(Drive drive, FileAction action) {
+    public TaskSendAction(UUID drive, FileAction action) {
         this();
-        this.uuid = drive.getUUID().toString();
+        this.uuid = drive.toString();
         this.action = action;
         this.pos = Laptop.getPos();
     }

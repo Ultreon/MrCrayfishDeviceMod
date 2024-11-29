@@ -4,9 +4,7 @@ import com.ultreon.devices.object.AppInfo;
 
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author MrCrayfish
- */
+/// @author MrCrayfish
 public class RemoteEntry implements AppEntry {
     public String id;
     public String name;

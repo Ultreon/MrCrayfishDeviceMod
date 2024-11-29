@@ -5,23 +5,22 @@ import com.ultreon.devices.api.app.Application;
 import com.ultreon.devices.api.app.Dialog;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.component.*;
-import com.ultreon.devices.api.io.File;
+import com.ultreon.devices.api.io.Drive;
+import com.ultreon.devices.api.task.Callback;
 import com.ultreon.devices.core.io.FileSystem;
+import com.ultreon.devices.programs.system.component.FileInfo;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.util.Unit;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-import org.jetbrains.annotations.Nullable;
-import java.util.Objects;
-import java.util.function.Predicate;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.util.List;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class NoteStashApp extends Application {
-    @SuppressWarnings("ConstantConditions")
-    private static final Predicate<File> PREDICATE_FILE_NOTE = file -> !file.isFolder()
-            && file.getData().contains("title", Tag.TAG_STRING)
-            && file.getData().contains("content", Tag.TAG_STRING);
     private static final Marker MARKER = MarkerFactory.getMarker("Note Stash App");
 
     /* Main */
@@ -55,15 +54,28 @@ public class NoteStashApp extends Application {
         layoutMain = new Layout(180, 80);
         layoutMain.setInitListener(() -> {
             notes.getItems().clear();
+            notes.setLoading(true);
             Devices.LOGGER.debug(MARKER, "Loading notes...");
-            FileSystem.getApplicationFolder(this, (folder, success) -> {
-                if (success) {
-                    assert folder != null;
-                    folder.search(file -> file.isForApplication(this)).forEach(file -> notes.addItem(Note.fromFile(file)));
-                } else {
-                    Devices.LOGGER.error(MARKER, "Failed to get application folder");
-                    //TODO error dialog
-                }
+            FileSystem.getApplicationFolder(this, (response) -> {
+                response.data().child("notes.json", (response2) -> {
+                    if (response2.success()) {
+                        FileInfo fileInfo = response2.data();
+                        fileInfo.read((response3) -> {
+                            if (response3.success()) {
+                                byte[] data = response3.data();
+                                List<String> lines = new String(data, StandardCharsets.UTF_8).lines().toList();
+                                for (String line : lines) {
+                                    String[] split = line.split(",", 2);
+                                    if (split.length == 2) {
+                                        notes.addItem(new Note(split[0], null, Path.of(split[1]), null));
+                                    }
+                                }
+
+                                notes.setLoading(false);
+                            }
+                        });
+                    }
+                });
             });
         });
 
@@ -87,8 +99,20 @@ public class NoteStashApp extends Application {
                 Note note = notes.getSelectedItem();
                 assert note != null;
                 noteTitle.setText(note.getTitle());
-                noteContent.setText(note.getContent());
+                noteContent.setLoading(true);
+                note.getContent((content, success) -> {
+                    if (success) {
+                        noteContent.setText(content);
+                        noteContent.setLoading(false);
+                    } else {
+                        Dialog.Message message = new Dialog.Message("Failed to load note!");
+                        message.setTitle("Error");
+                        openDialog(message);
+                    }
+                });
                 setCurrentLayout(layoutViewNote);
+            } else {
+                btnView.setEnabled(false);
             }
         });
         layoutMain.addComponent(btnView);
@@ -101,15 +125,18 @@ public class NoteStashApp extends Application {
                 if (notes.getSelectedIndex() != -1) {
                     Note note = notes.getSelectedItem();
                     assert note != null;
-                    File file = note.getSource();
+                    Path file = note.getSource();
+                    Drive drive = note.drive;
                     if (file != null) {
-                        file.delete((o, success) -> {
-                            if (success) {
+                        drive.delete(file, (response) -> {
+                            if (response.success()) {
                                 notes.removeItem(notes.getSelectedIndex());
                                 btnView.setEnabled(false);
                                 btnDelete.setEnabled(false);
                             } else {
-                                //TODO error dialog
+                                Dialog.Message message = new Dialog.Message(response.message());
+                                message.setTitle("I/O Error");
+                                openDialog(message);
                             }
                         });
                     } else {
@@ -140,19 +167,32 @@ public class NoteStashApp extends Application {
             data.putString("title", title.getText());
             data.putString("content", textArea.getText());
 
-            FileSystem.getApplicationFolder(this, (folder, success) -> {
-                if (success) {
-                    assert folder != null;
-                    folder.search(file -> file.isForApplication(this)).forEach(file -> notes.addItem(Note.fromFile(file)));
-                } else {
-                    Devices.LOGGER.error(MARKER, "Failed to get application folder");
-                    //TODO error dialog
+            FileSystem.getApplicationFolder(this, (response) -> {
+                if (!response.success()) {
+                    Devices.LOGGER.error(MARKER, "Failed to get application folder: {}", response.message());
+                    Dialog.Message message = new Dialog.Message("Failed to get app directory, report the log to the developers.");
+                    openDialog(message);
                 }
             });
 
-            Dialog.SaveFile dialog = new Dialog.SaveFile(NoteStashApp.this, data);
+            Dialog.SaveFile dialog;
+            dialog = new Dialog.SaveFile(NoteStashApp.this);
             dialog.setFolder(getApplicationFolderPath());
             dialog.setResponseHandler((success, file) -> {
+                FileInfo info = file.withExtension(".note");
+                String text = title.getText() + "\0" + textArea.getText();
+                info.write(text.getBytes(StandardCharsets.UTF_8), (response) -> {
+                    if (response.success()) {
+                        Note note = new Note(title.getText(), info, textArea.getText());
+                        notes.addItem(note);
+                        title.clear();
+                        textArea.clear();
+                        setCurrentLayout(layoutMain);
+                    } else {
+                        Dialog.Message message = new Dialog.Message("Failed to save note:\n" + response.message());
+                        openDialog(message);
+                    }
+                });
                 title.clear();
                 textArea.clear();
                 setCurrentLayout(layoutMain);
@@ -204,35 +244,49 @@ public class NoteStashApp extends Application {
         notes.removeAll();
     }
 
-    @Override
-    public boolean handleFile(File file) {
-        if (!PREDICATE_FILE_NOTE.test(file)) return false;
+    public boolean handleFile(FileInfo file, Callback<Unit> callback) {
+        if (!file.getName().endsWith(".note")) return false;
 
-        CompoundTag data = file.getData();
-        assert data != null;
-        noteTitle.setText(data.getString("title"));
-        noteContent.setText(data.getString("content"));
-        setCurrentLayout(layoutViewNote);
+        Note note = Note.fromFile(file);
+        note.getContent((content, success) -> {
+            if (!success) {
+                callback.execute(null, false);
+                return;
+            }
+            noteTitle.setText(note.getTitle());
+            noteContent.setText(content);
+            setCurrentLayout(layoutViewNote);
+            callback.execute(Unit.INSTANCE, true);
+        });
+
         return true;
     }
 
     private static class Note {
-        private File source;
         private final String title;
-        private final String content;
+        private FileInfo file;
+        private Drive drive;
+        private Path source;
+        private final @Nullable String content;
 
-        public Note(String title, String content) {
+        public Note(String title, Drive drive, Path source, @Nullable String content) {
             this.title = title;
+            this.drive = drive;
+            this.source = source;
             this.content = content;
         }
 
-        public static Note fromFile(File file) {
-            Note note = new Note(Objects.requireNonNull(file.getData(), "File data doesn't exist.").getString("title"), file.getData().getString("content"));
-            note.source = file;
-            return note;
+        public Note(String title, FileInfo file, String content) {
+            this.title = title;
+            this.file = file;
+            this.content = content;
         }
 
-        public File getSource() {
+        public static Note fromFile(FileInfo file) {
+            return new Note(file.getName(), file, null);
+        }
+
+        public Path getSource() {
             return source;
         }
 
@@ -240,8 +294,23 @@ public class NoteStashApp extends Application {
             return title;
         }
 
-        public String getContent() {
-            return content;
+        public void getContent(Callback<String> callback) {
+            if (content == null) {
+                loadContent(callback);
+                return;
+            }
+
+            callback.execute(content, true);
+        }
+
+        private void loadContent(Callback<String> callback) {
+            drive.read(source, (response) -> {
+                if (!response.success()) {
+                    callback.execute("", false);
+                    return;
+                }
+                callback.execute(new String(response.data(), StandardCharsets.UTF_8), true);
+            });
         }
 
         @Override
