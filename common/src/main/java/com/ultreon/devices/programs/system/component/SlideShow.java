@@ -4,7 +4,7 @@ import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.component.Image;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.ComputerScreen;
 import com.ultreon.devices.programs.system.object.ImageEntry;
 import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.client.Minecraft;
@@ -54,9 +54,9 @@ public class SlideShow extends Component {
     }
 
     @Override
-    protected void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    protected void render(GuiGraphics graphics, ComputerScreen computerScreen, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         if (!this.visible) return;
-        image.render(graphics, laptop, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
+        image.render(graphics, computerScreen, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
 
         if (currentImage > 0) {
             if (GuiHelper.isMouseWithin(mouseX, mouseY, x, y, 15, height)) {

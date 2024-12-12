@@ -1,7 +1,7 @@
 package com.ultreon.devices.api.app.component;
 
 import com.ultreon.devices.api.app.Component;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.ComputerScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 
@@ -30,7 +30,7 @@ public class ProgressBar extends Component {
     }
 
     @Override
-    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(GuiGraphics graphics, ComputerScreen computerScreen, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         if (this.visible) {
             Color bgColor = new Color(getColorScheme().getBackgroundColor(), true);
             graphics.fill(xPosition, yPosition, xPosition + barWidth, yPosition + barHeight, bgColor.darker().darker().getRGB());

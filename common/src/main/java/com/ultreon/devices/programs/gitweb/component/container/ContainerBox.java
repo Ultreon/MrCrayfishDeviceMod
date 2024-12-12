@@ -4,7 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.ultreon.devices.Reference;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.utils.RenderUtil;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.ComputerScreen;
 import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -37,12 +37,12 @@ public abstract class ContainerBox extends Component {
     }
 
     @Override
-    protected void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    protected void render(GuiGraphics graphics, ComputerScreen computerScreen, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         RenderSystem.setShaderTexture(0, CONTAINER_BOXES_TEXTURE);
         RenderUtil.drawRectWithTexture(CONTAINER_BOXES_TEXTURE, graphics, x, y + 12, boxU, boxV, WIDTH, height, WIDTH, height, 256, 256);
         //Gui.blit(pose, x, y + 12, WIDTH, height, boxU, boxV, 256, 256, WIDTH, height);
 
-        int contentOffset = (WIDTH - (Laptop.getFont().width(title) + 8 + 4)) / 2;
+        int contentOffset = (WIDTH - (ComputerScreen.getFont().width(title) + 8 + 4)) / 2;
         graphics.pose().pushPose();
         {
             graphics.pose().translate(x + contentOffset, y, 0);
@@ -57,8 +57,8 @@ public abstract class ContainerBox extends Component {
     }
 
     @Override
-    protected void renderOverlay(GuiGraphics graphics, Laptop laptop, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
-        slots.forEach(slot -> slot.renderOverlay(graphics, laptop, xPosition, yPosition + 12, mouseX, mouseY));
+    protected void renderOverlay(GuiGraphics graphics, ComputerScreen computerScreen, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
+        slots.forEach(slot -> slot.renderOverlay(graphics, computerScreen, xPosition, yPosition + 12, mouseX, mouseY));
     }
 
     protected static class Slot {
@@ -76,7 +76,7 @@ public abstract class ContainerBox extends Component {
             RenderUtil.renderItem(graphics, x + slotX, y + slotY, stack, true);
         }
 
-        public void renderOverlay(GuiGraphics graphics, Laptop laptop, int x, int y, int mouseX, int mouseY) {
+        public void renderOverlay(GuiGraphics graphics, ComputerScreen computerScreen, int x, int y, int mouseX, int mouseY) {
             if (GuiHelper.isMouseWithin(mouseX, mouseY, x + slotX, y + slotY, 16, 16)) {
                 if (!stack.isEmpty()) {
                     graphics.renderTooltip(Minecraft.getInstance().font, Screen.getTooltipFromItem(Minecraft.getInstance(), stack), Optional.empty(), mouseX, mouseY/*, stack*/);

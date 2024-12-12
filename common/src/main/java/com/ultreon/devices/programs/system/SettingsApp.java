@@ -15,7 +15,7 @@ import com.ultreon.devices.api.app.component.Text;
 import com.ultreon.devices.api.app.renderer.ItemRenderer;
 import com.ultreon.devices.api.app.renderer.ListItemRenderer;
 import com.ultreon.devices.api.utils.OnlineRequest;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.ComputerScreen;
 import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.object.TrayItem;
 import com.ultreon.devices.programs.system.component.Palette;
@@ -57,7 +57,7 @@ public class SettingsApp extends SystemApp {
 
     private void resetColorSchemeClick(int mouseX, int mouseY, int mouseButton) {
         if (mouseButton == 0) {
-            Laptop.getSystem().getSettings().getColorScheme().resetDefault();
+            ComputerScreen.getSystem().getSettings().getColorScheme().resetDefault();
         }
     }
 
@@ -147,7 +147,7 @@ public class SettingsApp extends SystemApp {
 //
 //                    Credits:
 //                    - MrCrayfish (https://mrcrayfish.com/)
-//                    - Qboi123
+//                    - XyperCode
 //                    - Jab125
 //                    - lizterzapzap
 //                    - MrBean6000
@@ -176,9 +176,9 @@ public class SettingsApp extends SystemApp {
         });
         comboDisplayResolutions.setChangeListener((oldValue, newValue) -> {
             if (newValue != null) {
-                Laptop laptop = getLaptop();
-                if (laptop != null) {
-                    laptop.setDisplayResolution(newValue);
+                ComputerScreen computerScreen = getLaptop();
+                if (computerScreen != null) {
+                    computerScreen.setDisplayResolution(newValue);
                 }
             }
         });
@@ -243,7 +243,7 @@ public class SettingsApp extends SystemApp {
 
         list.setItemClickListener((preset, index, button) -> {
             if (preset == custom) preset = null;
-            Laptop.getSystem().getSettings().setPreset(preset);
+            ComputerScreen.getSystem().getSettings().setPreset(preset);
         });
 
         list.setListItemRenderer(new ListItemRenderer<>(20) {
@@ -268,31 +268,31 @@ public class SettingsApp extends SystemApp {
         layoutColorScheme.addComponent(backBtn);
 
         ComboBox.Custom<Integer> comboBoxTextColor = createColorPicker(145, 26);
-        comboBoxTextColor.setValue(Laptop.getSystem().getSettings().getColorScheme().getTextColor());
+        comboBoxTextColor.setValue(ComputerScreen.getSystem().getSettings().getColorScheme().getTextColor());
         layoutColorScheme.addComponent(comboBoxTextColor);
 
         ComboBox.Custom<Integer> comboBoxTextSecondaryColor = createColorPicker(145, 44);
-        comboBoxTextSecondaryColor.setValue(Laptop.getSystem().getSettings().getColorScheme().getTextSecondaryColor());
+        comboBoxTextSecondaryColor.setValue(ComputerScreen.getSystem().getSettings().getColorScheme().getTextSecondaryColor());
         layoutColorScheme.addComponent(comboBoxTextSecondaryColor);
 
         ComboBox.Custom<Integer> comboBoxHeaderColor = createColorPicker(145, 62);
-        comboBoxHeaderColor.setValue(Laptop.getSystem().getSettings().getColorScheme().getHeaderColor());
+        comboBoxHeaderColor.setValue(ComputerScreen.getSystem().getSettings().getColorScheme().getHeaderColor());
         layoutColorScheme.addComponent(comboBoxHeaderColor);
 
         ComboBox.Custom<Integer> comboBoxBackgroundColor = createColorPicker(145, 80);
-        comboBoxBackgroundColor.setValue(Laptop.getSystem().getSettings().getColorScheme().getBackgroundColor());
+        comboBoxBackgroundColor.setValue(ComputerScreen.getSystem().getSettings().getColorScheme().getBackgroundColor());
         layoutColorScheme.addComponent(comboBoxBackgroundColor);
 
         ComboBox.Custom<Integer> comboBoxBackgroundSecondaryColor = createColorPicker(145, 98);
-        comboBoxBackgroundSecondaryColor.setValue(Laptop.getSystem().getSettings().getColorScheme().getBackgroundSecondaryColor());
+        comboBoxBackgroundSecondaryColor.setValue(ComputerScreen.getSystem().getSettings().getColorScheme().getBackgroundSecondaryColor());
         layoutColorScheme.addComponent(comboBoxBackgroundSecondaryColor);
 
         ComboBox.Custom<Integer> comboBoxItemBackgroundColor = createColorPicker(145, 116);
-        comboBoxItemBackgroundColor.setValue(Laptop.getSystem().getSettings().getColorScheme().getItemBackgroundColor());
+        comboBoxItemBackgroundColor.setValue(ComputerScreen.getSystem().getSettings().getColorScheme().getItemBackgroundColor());
         layoutColorScheme.addComponent(comboBoxItemBackgroundColor);
 
         ComboBox.Custom<Integer> comboBoxItemHighlightColor = createColorPicker(145, 134);
-        comboBoxItemHighlightColor.setValue(Laptop.getSystem().getSettings().getColorScheme().getItemHighlightColor());
+        comboBoxItemHighlightColor.setValue(ComputerScreen.getSystem().getSettings().getColorScheme().getItemHighlightColor());
         layoutColorScheme.addComponent(comboBoxItemHighlightColor);
 
         buttonColorSchemeApply = new Button(5, 79, Icons.CHECK);
@@ -301,7 +301,7 @@ public class SettingsApp extends SystemApp {
         buttonColorSchemeApply.setClickListener((mouseX, mouseY, mouseButton) ->
         {
             if (mouseButton == 0) {
-                ColorScheme colorScheme = Laptop.getSystem().getSettings().getColorScheme();
+                ColorScheme colorScheme = ComputerScreen.getSystem().getSettings().getColorScheme();
                 colorScheme.setTextColor(comboBoxTextColor.getValue());
                 colorScheme.setTextSecondaryColor(comboBoxTextSecondaryColor.getValue());
                 colorScheme.setHeaderColor(comboBoxHeaderColor.getValue());
@@ -338,9 +338,9 @@ public class SettingsApp extends SystemApp {
             if (mouseButton != 0)
                 return;
 
-            Laptop laptop = getLaptop();
-            if (laptop != null) {
-                laptop.prevWallpaper();
+            ComputerScreen computerScreen = getLaptop();
+            if (computerScreen != null) {
+                computerScreen.prevWallpaper();
                 image.setImage(getLaptop().getCurrentWallpaper());
             }
         });
@@ -354,9 +354,9 @@ public class SettingsApp extends SystemApp {
             if (mouseButton != 0)
                 return;
 
-            Laptop laptop = getLaptop();
-            if (laptop != null) {
-                laptop.nextWallpaper();
+            ComputerScreen computerScreen = getLaptop();
+            if (computerScreen != null) {
+                computerScreen.nextWallpaper();
                 image.setImage(getLaptop().getCurrentWallpaper());
             }
         });
@@ -399,7 +399,7 @@ public class SettingsApp extends SystemApp {
                         }
 
                         Path path = Path.of("/Home/Library/Backgrounds/loaded.png");
-                        Laptop.getOrLoadMainDrive((drive, success3) -> {
+                        ComputerScreen.getOrLoadMainDrive((drive, success3) -> {
                             if (!success3) {
                                 Dialog.Message message = new Dialog.Message("Failed to load main drive");
                                 openDialog(message);
@@ -414,14 +414,14 @@ public class SettingsApp extends SystemApp {
                                         return;
                                     }
 
-                                    Laptop.getMainDrive().createFile(path.getParent(), path.getFileName().toString(), true, (response2) -> {
+                                    ComputerScreen.getMainDrive().createFile(path.getParent(), path.getFileName().toString(), true, (response2) -> {
                                         if (!response2.success()) {
                                             Dialog.Message message = new Dialog.Message("Failed to create background file: " + response2.message());
                                             openDialog(message);
                                             return;
                                         }
 
-                                        Laptop.getMainDrive().write(path, data, (response3) -> {
+                                        ComputerScreen.getMainDrive().write(path, data, (response3) -> {
                                             if (!response3.success()) {
                                                 Dialog.Message message = new Dialog.Message("Failed to write background file: " + response3.message());
                                                 openDialog(message);
@@ -504,12 +504,12 @@ public class SettingsApp extends SystemApp {
         }
 
         @Override
-        public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
-            Color color = new Color(Laptop.getSystem().getSettings().getColorScheme().getHeaderColor());
+        public void render(GuiGraphics graphics, ComputerScreen computerScreen, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+            Color color = new Color(ComputerScreen.getSystem().getSettings().getColorScheme().getHeaderColor());
             graphics.fill(x, y, x + width, y + 20, color.getRGB());
             graphics.fill(x, y + 20, x + width, y + 21, color.darker().getRGB());
             graphics.drawString(mc.font, title, x + 22, y + 6, Color.WHITE.getRGB());
-            super.render(graphics, laptop, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
+            super.render(graphics, computerScreen, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
         }
     }
 
@@ -545,7 +545,7 @@ public class SettingsApp extends SystemApp {
         public void handleClick(int mouseX, int mouseY, int mouseButton) {
             AppInfo info = ApplicationManager.getApplication(Devices.id("settings"));
             if (info != null) {
-                Laptop.getSystem().launchApp(info);
+                ComputerScreen.getSystem().launchApp(info);
             }
         }
     }

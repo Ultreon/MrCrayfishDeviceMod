@@ -15,7 +15,7 @@ import com.ultreon.devices.api.app.component.Image;
 import com.ultreon.devices.api.app.component.Label;
 import com.ultreon.devices.api.app.component.Spinner;
 import com.ultreon.devices.api.utils.OnlineRequest;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.ComputerScreen;
 import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.object.TrayItem;
 import com.ultreon.devices.programs.system.component.AppGrid;
@@ -131,7 +131,7 @@ public class AppStore extends SystemApp {
         ScrollableLayout homePageLayout = new ScrollableLayout(0, 0, LAYOUT_WIDTH, 368-160+ 80 * rows, LAYOUT_HEIGHT);
         homePageLayout.setScrollSpeed(10);
         homePageLayout.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
-            Color color = new Color(Laptop.getSystem().getSettings().getColorScheme().getBackgroundColor(), true);
+            Color color = new Color(ComputerScreen.getSystem().getSettings().getColorScheme().getBackgroundColor(), true);
             int offset = 60;
             graphics.fill(x, y + offset, x + LAYOUT_WIDTH, y + offset + 1, color.brighter().getRGB());
             graphics.fill(x, y + offset + 1, x + LAYOUT_WIDTH, y + offset + 19, color.getRGB());
@@ -204,7 +204,7 @@ public class AppStore extends SystemApp {
         public void handleClick(int mouseX, int mouseY, int mouseButton) {
             AppInfo info = ApplicationManager.getApplication(Devices.id("app_store"));
             if (info != null) {
-                Laptop.getSystem().launchApp(info);
+                ComputerScreen.getSystem().launchApp(info);
             }
         }
     }

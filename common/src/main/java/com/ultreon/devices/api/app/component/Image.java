@@ -10,7 +10,7 @@ import com.ultreon.devices.api.app.IIcon;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.utils.OnlineRequest;
 import com.ultreon.devices.api.utils.RenderUtil;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.ComputerScreen;
 import com.ultreon.devices.object.AppInfo;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -72,13 +72,13 @@ public class Image extends Component {
         public void init(Layout layout) {
             super.init(layout);
             if (appInfo.getIcon().getBase().getU() == -1 && appInfo.getIcon().getBase().getV() == -1) {
-                var image = new Image(0, 0, componentWidth, componentHeight, 0, 0, 14, 14, 224, 224, Laptop.ICON_TEXTURES);
+                var image = new Image(0, 0, componentWidth, componentHeight, 0, 0, 14, 14, 224, 224, ComputerScreen.ICON_TEXTURES);
                 this.addComponent(image);
                 return;
             }
             for (AppInfo.Icon.Glyph glyph : glyphs) {
                 if (glyph.getU() == -1 || glyph.getV() == -1) continue;
-                var image = new Image(0, 0, componentWidth, componentHeight, glyph.getU(), glyph.getV(), 14, 14, 224, 224, Laptop.ICON_TEXTURES);
+                var image = new Image(0, 0, componentWidth, componentHeight, glyph.getU(), glyph.getV(), 14, 14, 224, 224, ComputerScreen.ICON_TEXTURES);
                 Supplier<ColorSupplier> suscs = () -> {
                     int tint = appInfo.getTint(glyph.getType());
                     var col = new Color(tint);
@@ -253,7 +253,7 @@ public class Image extends Component {
     }
 
     @Override
-    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(GuiGraphics graphics, ComputerScreen computerScreen, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         if (this.visible) {
             if (loader != null && loader.setup) {
                 image = loader.load(this);
@@ -317,9 +317,9 @@ public class Image extends Component {
         this.drawFull = true;
     }
 
-    public void setImage(Laptop.Wallpaper wallpaper) {
+    public void setImage(ComputerScreen.Wallpaper wallpaper) {
         if (wallpaper.isBuiltIn()) {
-            setImage(Laptop.getWallpapers().get(wallpaper.getLocation()));
+            setImage(ComputerScreen.getWallpapers().get(wallpaper.getLocation()));
         } else {
             setImage(wallpaper.getPath());
         }
@@ -508,7 +508,7 @@ public class Image extends Component {
             }
             Runnable r = () -> {
                 if (path != null) {
-                    Laptop.getOrLoadMainDrive(((drive, success) -> {
+                    ComputerScreen.getOrLoadMainDrive(((drive, success) -> {
                         if (!success) {
                             texture = MissingTextureAtlasSprite.getTexture();
                             setup = true;
@@ -519,7 +519,7 @@ public class Image extends Component {
                             drive.read(path, response -> {
                                 if (!response.success()) {
                                     Dialog.Message dialog = new Dialog.Message("Failed to load image: " + response.message());
-                                    Laptop.getInstance().setSystemDialog(dialog);
+                                    ComputerScreen.getInstance().setSystemDialog(dialog);
                                     texture = MissingTextureAtlasSprite.getTexture();
                                     setup = true;
                                     return;
@@ -528,7 +528,7 @@ public class Image extends Component {
                                 ByteArrayInputStream in = new ByteArrayInputStream(response.data());
 
                                 try (NativeImage nativeImage = Image.read(in)) {
-                                    Laptop.runLater(() -> {
+                                    ComputerScreen.runLater(() -> {
                                         Devices.LOGGER.debug("Loaded image: {}", path);
                                         texture = new DynamicTexture(nativeImage);
                                         setup = true;
@@ -559,7 +559,7 @@ public class Image extends Component {
 
                     NativeImage nativeImage = Image.read(in);
 
-                    Laptop.runLater(() -> {
+                    ComputerScreen.runLater(() -> {
                         Devices.LOGGER.debug("Loaded image: {}", url);
                         texture = new DynamicTexture(nativeImage);
                         setup = true;

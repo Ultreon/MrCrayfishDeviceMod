@@ -1,14 +1,9 @@
 package com.ultreon.devices.api.event;
 
-import com.ultreon.devices.api.TrayItemAdder;
-import com.ultreon.devices.core.Laptop;
-import dev.architectury.event.Event;
-import dev.architectury.event.EventFactory;
+import com.ultreon.devices.block.entity.LaptopBlockEntity;
+import org.jetbrains.annotations.NotNull;
 
-public interface LaptopEvent {
-    Event<SetupTrayItems> SETUP_TRAY_ITEMS = EventFactory.createLoop();
-
-    interface SetupTrayItems extends LaptopEvent {
-        void setupTrayItems(Laptop laptop, TrayItemAdder trayItems);
-    }
+public interface LaptopEvent extends ComputerEvent {
+    @Override
+    @NotNull LaptopBlockEntity getComputerBlockEntity();
 }

@@ -3,7 +3,7 @@ package com.ultreon.devices.api.app.component;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.listener.ClickListener;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.ComputerScreen;
 import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -50,7 +50,7 @@ public class CheckBox extends Component implements RadioGroup.Item {
     }
 
     @Override
-    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(GuiGraphics graphics, ComputerScreen computerScreen, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         if (this.visible) {
             if (group == null) {
                 Color bgColor = new Color(getColorScheme().getBackgroundColor(), true);

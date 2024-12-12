@@ -1,22 +1,34 @@
 package com.ultreon.devices.network;
 
-import dev.architectury.networking.NetworkManager;
+import dev.ultreon.mods.xinexlib.network.Networker;
+import dev.ultreon.mods.xinexlib.network.PacketInfo;
+import dev.ultreon.mods.xinexlib.network.packet.PacketToClient;
+import dev.ultreon.mods.xinexlib.network.packet.PacketToServer;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.level.ServerPlayer;
 
-import java.util.function.Supplier;
-
-public abstract class Packet<T extends Packet<T>> implements CustomPacketPayload {
-    public Packet() {
+@Deprecated
+public abstract class Packet<T extends Packet<T>> implements PacketToClient<T>, PacketToServer<T> {
+    protected Packet() {
 
     }
 
     public abstract void toBytes(RegistryFriendlyByteBuf buf);
 
-    @Deprecated
-    public void fromBytes(RegistryFriendlyByteBuf buf) {
-
+    @Override
+    public void write(RegistryFriendlyByteBuf buf) {
+        toBytes(buf);
     }
 
-    public abstract boolean onMessage(Supplier<NetworkManager.PacketContext> ctx);
+    public abstract boolean onMessage(Networker networker, PacketInfo info);
+
+    @Override
+    public void handle(Networker networker, ServerPlayer serverPlayer) {
+        onMessage(networker, new PacketInfo(serverPlayer));
+    }
+
+    @Override
+    public void handle(Networker networker) {
+        onMessage(networker, new PacketInfo());
+    }
 }

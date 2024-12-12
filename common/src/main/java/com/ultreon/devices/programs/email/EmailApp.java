@@ -15,7 +15,7 @@ import com.ultreon.devices.api.app.component.*;
 import com.ultreon.devices.api.app.renderer.ListItemRenderer;
 import com.ultreon.devices.api.task.TaskManager;
 import com.ultreon.devices.api.utils.RenderUtil;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.ComputerScreen;
 import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.programs.email.object.Contact;
 import com.ultreon.devices.programs.email.object.Email;
@@ -213,7 +213,7 @@ public class EmailApp extends Application {
             RenderSystem.setShaderTexture(0, ENDER_MAIL_BACKGROUND);
             RenderUtil.drawRectWithTexture(ENDER_MAIL_BACKGROUND, graphics, x, y, 0, 0, width, height, 640, 360, 640, 360);
 
-            Color temp = new Color(Laptop.getSystem().getSettings().getColorScheme().getBackgroundColor(), true);
+            Color temp = new Color(ComputerScreen.getSystem().getSettings().getColorScheme().getBackgroundColor(), true);
             Color color = new Color(temp.getRed(), temp.getGreen(), temp.getBlue(), 150);
             graphics.fill(x, y, x + 125, y + height, color.getRGB());
             graphics.fill(x + 125, y, x + 126, y + height, color.darker().getRGB());
@@ -225,7 +225,7 @@ public class EmailApp extends Application {
                 graphics.fill(x + 130, y + 35, x + width - 5, y + height - 5, new Color(1f, 1f, 1f, 0.25f).getRGB());
                 RenderUtil.drawStringClipped(graphics, e.getSubject(), x + 135, y + 10, 120, Color.WHITE.getRGB(), true);
                 RenderUtil.drawStringClipped(graphics, e.getAuthor() + "@endermail.official", x + 135, y + 22, 120, Color.LIGHT_GRAY.getRGB(), false);
-                graphics.drawWordWrap(Laptop.getFont(), FormattedText.of(e.getMessage()), x + 135, y + 40, 115, Color.WHITE.getRGB());
+                graphics.drawWordWrap(ComputerScreen.getFont(), FormattedText.of(e.getMessage()), x + 135, y + 40, 115, Color.WHITE.getRGB());
             }
         });
 

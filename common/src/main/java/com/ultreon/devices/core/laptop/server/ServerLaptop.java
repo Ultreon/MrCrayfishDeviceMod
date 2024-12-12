@@ -11,7 +11,7 @@ import java.util.UUID;
 public class ServerLaptop {
     public static HashMap<UUID, ServerLaptop> laptops = new HashMap<>();
     private final UUID uuid = new UUID(430985038594038L, 493058808830598L);
-    public void sendPacket(Player player, String type, CompoundTag nbt) {
+    public void sendPacket(ServerPlayer player, String type, CompoundTag nbt) {
         PacketHandler.sendToClient(new S2CUpdatePacket(this.uuid, type, nbt), player);
     }
 
@@ -19,7 +19,7 @@ public class ServerLaptop {
         return uuid;
     }
 
-    public void handlePacket(Player player, String type, CompoundTag data) {
+    public void handlePacket(ServerPlayer player, String type, CompoundTag data) {
         System.out.printf("Handling %s, %s%n", type, data);
         if (type.equals("mouseMoved")) {
             var x = data.getDouble("x");

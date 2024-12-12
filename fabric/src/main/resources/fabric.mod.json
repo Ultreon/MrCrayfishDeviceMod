@@ -2,13 +2,13 @@
   "schemaVersion": 1,
   "id": "devices",
   "version": "${version}",
-  "name": "Devices Mod",
+  "name": "Ultreon Devices Mod",
   "description": "${description}",
   "authors": [
     "Ultreon Team"
   ],
   "contributors": [
-    "Qboi123",
+    "XyperCode",
     "Jab125",
     "MrCrayfish",
     "MinecraftDoodler",
@@ -46,13 +46,13 @@
     ]
   },
   "mixins": [
-    "devices.mixins.json",
-    "devices-common.mixins.json"
+    "devices.fabric.mixins.json",
+    "devices.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=${loaderVersion}",
+    "fabricloader": ">=${fabric_loader_version}",
     "minecraft": [">=1.21"],
-    "architectury": ">=13 <14"
+    "xinexlib": "*"
   },
   "custom": {
     "modmenu": {

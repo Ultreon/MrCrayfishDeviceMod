@@ -9,19 +9,29 @@ import com.ultreon.devices.api.app.Application;
 import com.ultreon.devices.api.print.IPrint;
 import com.ultreon.devices.api.print.PrintingManager;
 import com.ultreon.devices.init.RegistrationHandler;
+import fuzs.forgeconfigapiport.forge.api.neoforge.v4.NeoForgeConfigRegistry;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.MavenVersionStringHelper;
+import net.minecraftforge.data.loading.DatagenModLoader;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Map;
 
-// The value here should match an entry in the META-INF/mods.neoforge.toml file
+// The value here should match an entry in the META-INF/mods.toml file
 @Mod(Reference.MOD_ID)
 public final class DevicesForge {
     public static final Logger LOGGER = LogUtils.getLogger();
@@ -31,6 +41,11 @@ public final class DevicesForge {
         @Override
         protected void registerApplicationEvent() {
             DevicesForge.this.modEventBus.post(new ForgeApplicationRegistration());
+        }
+
+        @Override
+        public String getVersion() {
+            return MavenVersionStringHelper.artifactVersionToString(ModList.get().getModContainerById("devices").orElseThrow().getModInfo().getVersion());
         }
 
         @Override
@@ -67,7 +82,7 @@ public final class DevicesForge {
         // Common side stuff
         LOGGER.info("Initializing registration handler and mod config.");
         RegistrationHandler.register();
-        context.getContainer().addConfig(new ModConfig(ModConfig.Type.CLIENT, DeviceConfig.CONFIG, context.getContainer()));
+        NeoForgeConfigRegistry.INSTANCE.register(context.getContainer(), ModConfig.Type.CLIENT, DeviceConfig.CONFIG);
 
         forgeEventBus.register(this);
 

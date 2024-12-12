@@ -18,12 +18,26 @@ repositories {
         dir rootProject.file("libs")
     }
     maven {
+        url = uri("https://maven.pkg.github.com/Ultreon/XinexLib")
+        credentials {
+            username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+            password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+        }
+    }
+    maven {
         name = 'MinecraftForge'
         url = 'https://maven.minecraftforge.net'
     }
-    maven {
-        name = 'Quilt'
-        url = 'https://maven.quiltmc.org/repository/release'
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = 'Quilt'
+                url = 'https://maven.quiltmc.org/repository/release'
+            }
+        }
+        filter { {
+            includeGroupAndSubgroups('org.quiltmc')
+        } }
     }
     // https://docs.gradle.org/current/userguide/declaring_repositories.html#declaring_content_exclusively_found_in_one_repository
     exclusiveContent {
@@ -62,9 +76,14 @@ repositories {
         name = "Fuzs Mod Resources"
         url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
     }
-    maven {
-        name = "Jitpack"
-        url = 'https://jitpack.io'
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = "Jitpack"
+                url = 'https://jitpack.io'
+            }
+        }
+        filter { includeGroupAndSubgroups('com.github.Nuix') }
     }
     mavenCentral()
 }
@@ -123,7 +142,7 @@ processResources {
                        'credits'                      : credits,
                        'java_version'                 : java_version]
 
-    filesMatching(['pack.mcmeta', 'fabric.mod.json', 'META-INF/mods.toml', 'META-INF/neoforge.mods.toml', '*.mixins.json']) {
+    filesMatching(['pack.mcmeta', 'fabric.mod.json', 'quilt.mod.json', 'META-INF/mods.toml', 'META-INF/neoforge.mods.toml', '*.mixins.json']) {
         expand expandProps
     }
     inputs.properties(expandProps)

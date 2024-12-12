@@ -8,7 +8,7 @@ import com.ultreon.devices.api.print.IPrint;
 import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.api.task.TaskManager;
 import com.ultreon.devices.api.utils.RenderUtil;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.ComputerScreen;
 import com.ultreon.devices.core.PermissionRequest;
 import com.ultreon.devices.core.PermissionResult;
 import com.ultreon.devices.core.Wrappable;
@@ -37,7 +37,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public abstract class Dialog extends Wrappable {
-    protected final ColorScheme colorScheme = Laptop.getInstance().getSettings().getColorScheme();
+    protected final ColorScheme colorScheme = ComputerScreen.getInstance().getSettings().getColorScheme();
     protected final Layout defaultLayout;
     private String title = "Message";
     private int width;
@@ -82,15 +82,15 @@ public abstract class Dialog extends Wrappable {
     }
 
     @Override
-    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
+    public void render(GuiGraphics graphics, ComputerScreen computerScreen, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
         if (customLayout == null)
             return;
 
         GLHelper.pushScissor(x, y, width, height);
-        customLayout.render(graphics, laptop, mc, x, y, mouseX, mouseY, active, partialTicks);
+        customLayout.render(graphics, computerScreen, mc, x, y, mouseX, mouseY, active, partialTicks);
         GLHelper.popScissor();
 
-        customLayout.renderOverlay(graphics, laptop, mc, mouseX, mouseY, active);
+        customLayout.renderOverlay(graphics, computerScreen, mc, mouseX, mouseY, active);
     }
 
     @Override
@@ -740,10 +740,10 @@ public abstract class Dialog extends Wrappable {
             itemListPrinters.setListItemRenderer(new ListItemRenderer<>(16) {
                 @Override
                 public void render(GuiGraphics graphics, NetworkDevice networkDevice, Minecraft mc, int x, int y, int width, int height, boolean selected) {
-                    ColorScheme colorScheme = Laptop.getSystem().getSettings().getColorScheme();
+                    ColorScheme colorScheme = ComputerScreen.getSystem().getSettings().getColorScheme();
                     graphics.fill(x, y, x + width, y + height, selected ? colorScheme.getItemHighlightColor() : colorScheme.getItemBackgroundColor());
                     Icons.PRINTER.draw(graphics, mc, x + 3, y + 3);
-                    RenderUtil.drawStringClipped(graphics, networkDevice.getName(), x + 18, y + 4, 118, Laptop.getSystem().getSettings().getColorScheme().getTextColor(), true);
+                    RenderUtil.drawStringClipped(graphics, networkDevice.getName(), x + 18, y + 4, 118, ComputerScreen.getSystem().getSettings().getColorScheme().getTextColor(), true);
                 }
             });
             itemListPrinters.setItemClickListener((blockPos, index, mouseButton) -> {
@@ -753,7 +753,7 @@ public abstract class Dialog extends Wrappable {
                 }
             });
             itemListPrinters.sortBy((o1, o2) -> {
-                BlockPos laptopPos = Laptop.getPos();
+                BlockPos laptopPos = ComputerScreen.getPos();
                 assert laptopPos != null;
 
                 BlockPos pos1 = o1.getPos();
@@ -775,7 +775,7 @@ public abstract class Dialog extends Wrappable {
                 if (mouseButton == 0) {
                     NetworkDevice networkDevice = itemListPrinters.getSelectedItem();
                     if (networkDevice != null) {
-                        TaskPrint task = new TaskPrint(Laptop.getPos(), networkDevice, print);
+                        TaskPrint task = new TaskPrint(ComputerScreen.getPos(), networkDevice, print);
                         task.setCallback((tag, success) -> {
                             if (success) {
                                 close();
@@ -818,7 +818,7 @@ public abstract class Dialog extends Wrappable {
         private void getPrinters(ItemList<NetworkDevice> itemList) {
             itemList.removeAll();
             itemList.setLoading(true);
-            Task task = new TaskGetDevices(Laptop.getPos(), DeviceBlockEntities.PRINTER.get());
+            Task task = new TaskGetDevices(ComputerScreen.getPos(), DeviceBlockEntities.PRINTER.get());
             task.setCallback((tag, success) -> {
                 if (success) {
                     assert tag != null;

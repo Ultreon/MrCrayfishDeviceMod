@@ -4,7 +4,7 @@ import com.ultreon.devices.api.task.Callback;
 import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.api.task.TaskManager;
 import com.ultreon.devices.core.DataPath;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.ComputerScreen;
 import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.core.io.action.FileAction;
 import com.ultreon.devices.debug.DebugLog;
@@ -421,7 +421,7 @@ public class Folder extends File {
         if (!valid) throw new IllegalStateException("Folder must be added to the system before it can be synced");
 
         if (!isSynced()) {
-            BlockPos pos = Laptop.getPos();
+            BlockPos pos = ComputerScreen.getPos();
             if (pos == null) {
                 if (callback != null) {
                     callback.execute(this, false);

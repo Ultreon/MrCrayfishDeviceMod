@@ -52,7 +52,7 @@ public abstract class Application extends Wrappable implements DataHandler {
     public final void install() throws AccessDeniedException {
         if (!PermissionManager.hasPermission(Permission.SOFTWARE_MANAGEMENT))
             throw new AccessDeniedException("You do not have permission to install applications");
-        if (Laptop.getInstance().isApplicationInstalled(info))
+        if (ComputerScreen.getInstance().isApplicationInstalled(info))
             throw new AccessDeniedException("Application is already installed");
     }
 
@@ -118,7 +118,7 @@ public abstract class Application extends Wrappable implements DataHandler {
     /// Renders the application. This method is called every frame.
     ///
     /// @param graphics     gui graphics helper
-    /// @param laptop       the laptop instance.
+    /// @param computerScreen       the laptop instance.
     /// @param mc           the minecraft instance.
     /// @param x            the x position of the top left corner of the application window.
     /// @param y            the y position of the top left corner of the application window.
@@ -127,11 +127,11 @@ public abstract class Application extends Wrappable implements DataHandler {
     /// @param active       if the application is focused.
     /// @param partialTicks the render partial ticks.
     @Override
-    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
+    public void render(GuiGraphics graphics, ComputerScreen computerScreen, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
 //        GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
         GLHelper.pushScissor(x, y, width, height);
-        currentLayout.render(graphics, laptop, mc, x, y, mouseX, mouseY, active, partialTicks);
+        currentLayout.render(graphics, computerScreen, mc, x, y, mouseX, mouseY, active, partialTicks);
         GLHelper.popScissor();
 
         // TODO Port this to 1.18.2 if possible
@@ -142,7 +142,7 @@ public abstract class Application extends Wrappable implements DataHandler {
 
 //        GL11.glDisable(GL11.GL_SCISSOR_TEST);
 
-        currentLayout.renderOverlay(graphics, laptop, mc, mouseX, mouseY, active);
+        currentLayout.renderOverlay(graphics, computerScreen, mc, mouseX, mouseY, active);
 
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 

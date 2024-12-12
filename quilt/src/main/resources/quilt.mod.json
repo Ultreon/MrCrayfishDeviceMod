@@ -2,7 +2,7 @@
   "schema_version": 1,
   "quilt_loader": {
     "group": "${group}",
-    "id": "devices",
+    "id": "${mod_id}",
     "version": "${version}",
     "metadata": {
       "name": "Ultreon Devices Mod",
@@ -24,20 +24,17 @@
         "version": "*"
       },
       {
-        "id": "quilt_base",
-        "version": "*"
+        "id": "quilted_fabric_api",
+        "versions": ">=7.0.2"
       },
       {
         "id": "minecraft",
         "version": ">=1.21"
-      },
-      {
-        "id": "architectury",
-        "version": ">=13.0.2"
       }
     ]
   },
   "mixin": [
+    "devices.quilt.mixins.json",
     "devices.mixins.json"
   ]
 }

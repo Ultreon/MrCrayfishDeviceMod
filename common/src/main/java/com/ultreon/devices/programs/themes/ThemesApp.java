@@ -7,7 +7,7 @@ import com.ultreon.devices.api.app.*;
 import com.ultreon.devices.api.app.component.Button;
 import com.ultreon.devices.api.app.component.TextField;
 import com.ultreon.devices.api.utils.RenderUtil;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.ComputerScreen;
 import com.ultreon.devices.object.AppInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -46,8 +46,8 @@ public class ThemesApp extends Application implements SystemAccessor {
     }
 
     @Override
-    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
-        super.render(graphics, laptop, mc, x, y, mouseX, mouseY, active, partialTicks);
+    public void render(GuiGraphics graphics, ComputerScreen computerScreen, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
+        super.render(graphics, computerScreen, mc, x, y, mouseX, mouseY, active, partialTicks);
     }
 
     @Override
@@ -237,8 +237,8 @@ public class ThemesApp extends Application implements SystemAccessor {
         }
 
         @Override
-        protected void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
-            super.render(graphics, laptop, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
+        protected void render(GuiGraphics graphics, ComputerScreen computerScreen, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+            super.render(graphics, computerScreen, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
             graphics.pose().pushPose();
             RenderUtil.drawIcon(graphics, x, y, info, height, height); // height is intended
             graphics.pose().popPose();

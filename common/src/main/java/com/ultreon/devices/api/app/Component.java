@@ -1,6 +1,6 @@
 package com.ultreon.devices.api.app;
 
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.ComputerScreen;
 import com.ultreon.devices.programs.system.object.ColorScheme;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -66,25 +66,25 @@ public abstract class Component {
     /// The main render loop. This is where you draw your component.
     ///
     /// @param graphics     gui graphics helper
-    /// @param laptop       a Laptop instance
+    /// @param computerScreen       a Laptop instance
     /// @param mc           a Minecraft instance
     /// @param mouseX       the current x position of the mouse
     /// @param mouseY       the current y position of the mouse
     /// @param windowActive if the window is active (at front)
     /// @param partialTicks percentage passed in-between two ticks
-    protected void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    protected void render(GuiGraphics graphics, ComputerScreen computerScreen, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
     }
 
     /// The overlay render loop. Renders over the top of the main render
     /// loop.
     ///
     /// @param graphics     gui graphics helper
-    /// @param laptop       a Laptop instance
+    /// @param computerScreen       a Laptop instance
     /// @param mc           a Minecraft instance
     /// @param mouseX       the current x position of the mouse
     /// @param mouseY       the current y position of the mouse
     /// @param windowActive if the window is active (at front)
-    protected void renderOverlay(GuiGraphics graphics, Laptop laptop, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
+    protected void renderOverlay(GuiGraphics graphics, ComputerScreen computerScreen, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
     }
 
     /// Called when you mouse button has been pressed. You have to do
@@ -190,7 +190,7 @@ public abstract class Component {
 
     /// Gets the laptop's Color scheme. A simple helper method to clean up code.
     protected ColorScheme getColorScheme() {
-        return Laptop.getSystem().getSettings().getColorScheme();
+        return ComputerScreen.getSystem().getSettings().getColorScheme();
     }
 
     public void drawVerticalLine(GuiGraphics graphics, int x, int y1, int y2, int rgb) {

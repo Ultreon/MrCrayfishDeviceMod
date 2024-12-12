@@ -12,7 +12,7 @@ import com.ultreon.devices.block.entity.DriveInfo;
 import com.ultreon.devices.core.DeviceFSException;
 import com.ultreon.devices.core.DriveManager;
 import com.ultreon.devices.core.Ext2FS;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.ComputerScreen;
 import com.ultreon.devices.core.io.action.FileAction;
 import com.ultreon.devices.core.io.drive.AbstractDrive;
 import com.ultreon.devices.core.io.drive.ExternalDrive;
@@ -75,7 +75,7 @@ public class FileSystem {
 
     @Deprecated
     public static void sendAction(UUID drive, FileAction<?> action, @Nullable Callback<Response> callback) {
-        if (Laptop.getPos() != null) {
+        if (ComputerScreen.getPos() != null) {
             DebugLog.log("Sending action " + action + " to " + drive);
             Task task = new TaskSendAction(drive, action);
             task.setCallback((tag, success) -> {
@@ -94,7 +94,7 @@ public class FileSystem {
     }
 
     public static <T> void request(UUID drive, FileAction<T> action, @Nullable Consumer<FSResponse<T>> callback) {
-        if (Laptop.getPos() != null) {
+        if (ComputerScreen.getPos() != null) {
             DebugLog.log("Sending action " + action + " to " + drive);
             Task task = new TaskSendAction(drive, action);
             task.setCallback((tag, success) -> {
@@ -122,8 +122,8 @@ public class FileSystem {
             return;
         }
 
-        if (Laptop.getMainDrive() == null) {
-            Task task = new TaskGetMainDrive(Laptop.getPos());
+        if (ComputerScreen.getMainDrive() == null) {
+            Task task = new TaskGetMainDrive(ComputerScreen.getPos());
             task.setCallback((tag, success) -> {
                 if (success) setupApplicationFolder(app, callback);
                 else callback.accept(new FSResponse<>(false, Status.DRIVE_UNAVAILABLE, null, "Drive unavailable"));
@@ -136,7 +136,7 @@ public class FileSystem {
     }
 
     private static void setupApplicationFolder(Application app, Consumer<FSResponse<FileInfo>> callback) {
-        Drive mainDrive = Laptop.getMainDrive();
+        Drive mainDrive = ComputerScreen.getMainDrive();
         assert mainDrive != null;
         mainDrive.info(FileSystem.DIR_APPLICATION_DATA.resolve(app.getInfo().getFormattedId()), (info) -> mainDrive.exists(FileSystem.DIR_APPLICATION_DATA.resolve(app.getInfo().getFormattedId()), (appDirExist) -> {
             if (!appDirExist.data()) {
@@ -161,8 +161,8 @@ public class FileSystem {
     }
 
     public static UUID getMainDriveId() {
-        if (Laptop.getMainDrive() != null)
-            return Laptop.getMainDrive().getUUID();
+        if (ComputerScreen.getMainDrive() != null)
+            return ComputerScreen.getMainDrive().getUUID();
         return null;
     }
 

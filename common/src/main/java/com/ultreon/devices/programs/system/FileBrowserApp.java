@@ -4,7 +4,7 @@ package com.ultreon.devices.programs.system;
 import com.ultreon.devices.Devices;
 import com.ultreon.devices.api.ApplicationManager;
 import com.ultreon.devices.api.app.Icons;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.ComputerScreen;
 import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.object.TrayItem;
@@ -46,7 +46,7 @@ public class FileBrowserApp extends SystemApp {
         public void handleClick(int mouseX, int mouseY, int mouseButton) {
             AppInfo info = ApplicationManager.getApplication(Devices.id("file_browser"));
             if (info != null) {
-                Laptop.getSystem().launchApp(info);
+                ComputerScreen.getSystem().launchApp(info);
             }
         }
     }

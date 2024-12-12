@@ -1,22 +1,21 @@
 package com.ultreon.devices.network.task;
 
 import com.ultreon.devices.block.entity.RouterBlockEntity;
-import com.ultreon.devices.network.Packet;
-import com.ultreon.devices.network.PacketHandler;
-import dev.architectury.networking.NetworkManager;
+import dev.ultreon.mods.xinexlib.network.Networker;
+import dev.ultreon.mods.xinexlib.network.packet.PacketToClient;
+import dev.ultreon.mods.xinexlib.network.packet.PacketToServer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
-import java.util.function.Supplier;
 
 /// @author MrCrayfish
-public class SyncBlockPacket extends Packet<SyncBlockPacket> {
+public class SyncBlockPacket implements PacketToClient<SyncBlockPacket>, PacketToServer<SyncBlockPacket> {
     private final BlockPos routerPos;
 
     public SyncBlockPacket(RegistryFriendlyByteBuf buf) {
@@ -28,22 +27,21 @@ public class SyncBlockPacket extends Packet<SyncBlockPacket> {
     }
 
     @Override
-    public void toBytes(RegistryFriendlyByteBuf buf) {
+    public void write(RegistryFriendlyByteBuf buf) {
         buf.writeBlockPos(routerPos);
     }
 
     @Override
-    public boolean onMessage(Supplier<NetworkManager.PacketContext> ctx) {
-        Level level = Objects.requireNonNull(ctx.get().getPlayer()).level();
+    public void handle(Networker networker) {
+        Level level = Objects.requireNonNull(Minecraft.getInstance().level);
         BlockEntity blockEntity = level.getChunkAt(routerPos).getBlockEntity(routerPos, LevelChunk.EntityCreationType.IMMEDIATE);
         if (blockEntity instanceof RouterBlockEntity router) {
             router.syncDevicesToClient();
         }
-        return true;
     }
 
     @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
-        return PacketHandler.getSyncBlockPacket();
+    public void handle(Networker networker, ServerPlayer serverPlayer) {
+        handle(networker);
     }
 }

@@ -2,7 +2,7 @@ package com.ultreon.devices.core.io.task;
 
 import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.block.entity.ComputerBlockEntity;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.ComputerScreen;
 import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.core.io.action.FileAction;
 import net.minecraft.core.BlockPos;
@@ -30,7 +30,7 @@ public class TaskSendAction extends Task {
         this();
         this.uuid = drive.toString();
         this.action = action;
-        this.pos = Laptop.getPos();
+        this.pos = ComputerScreen.getPos();
     }
 
     @Override

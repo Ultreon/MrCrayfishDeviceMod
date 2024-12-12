@@ -60,8 +60,8 @@ import java.util.function.Consumer;
 
 /// Laptop GUI class.
 ///
-/// @author MrCrayfish, Qboi123
-public class Laptop extends Screen implements System {
+/// @author MrCrayfish, XyperCode
+public class ComputerScreen extends Screen implements System {
     public static final int ID = 1;
     public static final ResourceLocation ICON_TEXTURES = ResourceLocation.fromNamespaceAndPath(Devices.MOD_ID, "textures/atlas/app_icons.png");
     public static final int ICON_SIZE = 14;
@@ -70,7 +70,7 @@ public class Laptop extends Screen implements System {
     private static final ResourceLocation LAPTOP_GUI = ResourceLocation.fromNamespaceAndPath(Devices.MOD_ID, "textures/gui/laptop.png");
     private static final List<Application> APPLICATIONS = new ArrayList<>();
     private static boolean worldLess;
-    private static Laptop instance;
+    private static ComputerScreen instance;
     private Double dragWindowFromX;
     private Double dragWindowFromY;
     private final VideoInfo videoInfo;
@@ -120,14 +120,14 @@ public class Laptop extends Screen implements System {
     /// Creates a new laptop GUI.
     ///
     /// @param laptop the block entity of the laptop in-game, if the laptop is not in-game, the level passed to it should be null.
-    public Laptop(ComputerBlockEntity laptop) {
+    public ComputerScreen(ComputerBlockEntity laptop) {
         this(laptop, false);
     }
 
     /// Creates a new laptop GUI.
     ///
     /// @param laptop the block entity of the laptop in-game, if the laptop is not in-game, the level passed to it should be null.
-    public Laptop(ComputerBlockEntity laptop, boolean worldLess) {
+    public ComputerScreen(ComputerBlockEntity laptop, boolean worldLess) {
         super(Component.literal("Laptop"));
 
         instance = this;
@@ -169,8 +169,8 @@ public class Laptop extends Screen implements System {
         // Wallpaper stuff
         this.currentWallpaper = systemData.contains("CurrentWallpaper", 10) ? new Wallpaper(systemData.getCompound("CurrentWallpaper")) : null;
         if (this.currentWallpaper == null) this.currentWallpaper = new Wallpaper(0);
-        Laptop.system = this;
-        Laptop.pos = laptop.getBlockPos();
+        ComputerScreen.system = this;
+        ComputerScreen.pos = laptop.getBlockPos();
         this.wallpaperLayout = new Layout(getScreenWidth(), getScreenHeight());
         this.wallpaper = new Image(0, 0, getScreenWidth(), getScreenHeight());
         if (currentWallpaper.isBuiltIn()) {
@@ -182,7 +182,7 @@ public class Laptop extends Screen implements System {
         this.wallpaperLayout.handleLoad();
 
         // World-less flag.
-        Laptop.worldLess = worldLess;
+        ComputerScreen.worldLess = worldLess;
     }
 
     private Bios determineBios(ComputerBlockEntity laptop) {
@@ -190,7 +190,7 @@ public class Laptop extends Screen implements System {
         return laptop.getBios();
     }
 
-    public static Laptop getInstance() {
+    public static ComputerScreen getInstance() {
         return instance;
     }
 
@@ -251,8 +251,8 @@ public class Laptop extends Screen implements System {
     }
 
     public static void getOrLoadMainDrive(Callback<@NotNull Drive> callback) {
-        if (Laptop.mainDrive != null) {
-            callback.execute(Laptop.mainDrive, true);
+        if (ComputerScreen.mainDrive != null) {
+            callback.execute(ComputerScreen.mainDrive, true);
             return;
         }
 
@@ -264,8 +264,8 @@ public class Laptop extends Screen implements System {
             }
 
             if (tag != null) {
-                Laptop.mainDrive = new Drive(tag.getCompound("main_drive"));
-                callback.execute(Laptop.mainDrive, true);
+                ComputerScreen.mainDrive = new Drive(tag.getCompound("main_drive"));
+                callback.execute(ComputerScreen.mainDrive, true);
                 return;
             }
 
@@ -276,8 +276,8 @@ public class Laptop extends Screen implements System {
     }
 
     public static void setMainDrive(Drive mainDrive) {
-        if (Laptop.mainDrive == null) {
-            Laptop.mainDrive = mainDrive;
+        if (ComputerScreen.mainDrive == null) {
+            ComputerScreen.mainDrive = mainDrive;
         }
     }
 
@@ -331,9 +331,9 @@ public class Laptop extends Screen implements System {
         /* Send system data */
         this.updateSystemData();
 
-        Laptop.pos = null;
-        Laptop.system = null;
-        Laptop.mainDrive = null;
+        ComputerScreen.pos = null;
+        ComputerScreen.system = null;
+        ComputerScreen.mainDrive = null;
     }
 
     private void updateSystemData() {
@@ -438,7 +438,7 @@ public class Laptop extends Screen implements System {
         var b = new PrintStream(bo);
         bsod.throwable.printStackTrace(b);
         var str = bo.toString();
-        drawLines(graphics, Laptop.getFont(), str, posX + 10, posY + 10 + getFont().lineHeight * 2, (int) ((getDeviceWidth() - 10) * scale), new Color(255, 255, 255).getRGB());
+        drawLines(graphics, ComputerScreen.getFont(), str, posX + 10, posY + 10 + getFont().lineHeight * 2, (int) ((getDeviceWidth() - 10) * scale), new Color(255, 255, 255).getRGB());
         graphics.pose().pushPose();
         graphics.pose().scale(2, 2, 0);
         graphics.pose().translate((posX + 10) / 2f, (posY + 10) / 2f, 0);

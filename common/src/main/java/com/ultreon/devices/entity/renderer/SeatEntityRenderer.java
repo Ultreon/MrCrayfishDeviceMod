@@ -1,7 +1,6 @@
 package com.ultreon.devices.entity.renderer;
 
 import dev.ultreon.mods.xinexlib.Env;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -13,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 /// This renderer is used to render the seat entity
 ///
 /// @author [MrCrayfish](https://github.com/MrCrayfish), [XyperCode](https://github.com/XyperCode)
-@Environment(Env.CLIENT)
 public class SeatEntityRenderer<T extends Entity> extends EntityRenderer<T> {
 
     public SeatEntityRenderer(EntityRendererProvider.Context context) {

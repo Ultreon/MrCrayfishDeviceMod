@@ -1,7 +1,7 @@
 package com.ultreon.devices.programs.gitweb.component.container;
 
 import com.mojang.blaze3d.platform.Lighting;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.ComputerScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.model.geom.ModelLayers;
@@ -40,8 +40,8 @@ public class LoomBox extends ContainerBox {
     }
 
     @Override
-    protected void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
-        super.render(graphics, laptop, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
+    protected void render(GuiGraphics graphics, ComputerScreen computerScreen, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+        super.render(graphics, computerScreen, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
         int j = y + 12;
         if (result.isEmpty()) return;
         Lighting.setupForFlatItems();

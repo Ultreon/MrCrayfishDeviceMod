@@ -5,7 +5,7 @@ import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.component.Button;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.ComputerScreen;
 import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.programs.snake.SnakeApp;
 import net.minecraft.client.Minecraft;
@@ -31,8 +31,8 @@ public class SnakeLayout extends Layout {
     }
 
     @Override
-    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
-        super.render(graphics, laptop, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
+    public void render(GuiGraphics graphics, ComputerScreen computerScreen, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+        super.render(graphics, computerScreen, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
     }
 
     @Override
@@ -95,8 +95,8 @@ public class SnakeLayout extends Layout {
         }
 
         @Override
-        protected void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
-            super.render(graphics, laptop, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
+        protected void render(GuiGraphics graphics, ComputerScreen computerScreen, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+            super.render(graphics, computerScreen, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
             var black = new Color(0, 0, 0, 0.5f);
             var intBlack = black.getRGB();
 //            for (var i = 0;i<15;i++) {

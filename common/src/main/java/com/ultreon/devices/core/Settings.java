@@ -49,7 +49,7 @@ public class Settings {
 
     private CompoundTag appTintInfo() {
         var ct = new CompoundTag();
-        for (AppInfo installedApplication : Laptop.getSystem().getInstalledApplications()) {
+        for (AppInfo installedApplication : ComputerScreen.getSystem().getInstalledApplications()) {
             ct.put(installedApplication.getId().toString(), installedApplication.getTintProvider().toTag());
         }
         return ct;

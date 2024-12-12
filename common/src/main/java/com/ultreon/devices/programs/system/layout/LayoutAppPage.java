@@ -9,7 +9,7 @@ import com.ultreon.devices.api.app.ScrollableLayout;
 import com.ultreon.devices.api.app.component.Button;
 import com.ultreon.devices.api.app.component.Image;
 import com.ultreon.devices.api.app.component.Label;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.ComputerScreen;
 import com.ultreon.devices.core.Permission;
 import com.ultreon.devices.core.PermissionRequest;
 import com.ultreon.devices.core.PermissionResult;
@@ -34,7 +34,7 @@ import java.nio.file.AccessDeniedException;
 
 /// @author MrCrayfish
 public class LayoutAppPage extends Layout {
-    private final Laptop laptop;
+    private final ComputerScreen computerScreen;
     private final AppEntry entry;
     private final AppStore store;
 
@@ -42,9 +42,9 @@ public class LayoutAppPage extends Layout {
 
     private boolean installed;
 
-    public LayoutAppPage(Laptop laptop, AppEntry entry, AppStore store) {
+    public LayoutAppPage(ComputerScreen computerScreen, AppEntry entry, AppStore store) {
         super(250, 150);
-        this.laptop = laptop;
+        this.computerScreen = computerScreen;
         this.entry = entry;
         this.store = store;
     }
@@ -52,12 +52,12 @@ public class LayoutAppPage extends Layout {
     @Override
     public void init() {
         if (entry instanceof LocalEntry) {
-            installed = Laptop.getSystem().getInstalledApplications().contains(((LocalEntry) entry).info());
+            installed = ComputerScreen.getSystem().getInstalledApplications().contains(((LocalEntry) entry).info());
         }
 
         this.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) ->
         {
-            Color color = new Color(Laptop.getSystem().getSettings().getColorScheme().getBackgroundColor(), true);
+            Color color = new Color(ComputerScreen.getSystem().getSettings().getColorScheme().getBackgroundColor(), true);
             graphics.fill(x, y + 40, x + width, y + 41, color.brighter().getRGB());
             graphics.fill(x, y + 41, x + width, y + 60, color.getRGB());
             graphics.fill(x, y + 60, x + width, y + 61, color.darker().getRGB());
@@ -66,7 +66,7 @@ public class LayoutAppPage extends Layout {
         ResourceLocation resource = ResourceLocation.tryParse(entry.id());
         if (resource == null) {
             store.getWindow().close();
-            laptop.openDialog(new Dialog.Message("Invalid app id: " + entry.id()));
+            computerScreen.openDialog(new Dialog.Message("Invalid app id: " + entry.id()));
             return;
         }
 
@@ -90,7 +90,7 @@ public class LayoutAppPage extends Layout {
         this.addComponent(imageIcon);
 
         if (store.certifiedApps.contains(entry)) {
-            int width = Laptop.getFont().width(entry.name()) * 2;
+            int width = ComputerScreen.getFont().width(entry.name()) * 2;
             com.ultreon.devices.api.app.component.Image certifiedIcon = new com.ultreon.devices.api.app.component.Image(38 + width + 3, 29, 20, 20, Icons.VERIFIED);
             this.addComponent(certifiedIcon);
         }
@@ -139,19 +139,19 @@ public class LayoutAppPage extends Layout {
             {
                 if (mouseButton == 0) {
                     if (installed) {
-                        laptop.removeApplication(info, (o, success) ->
+                        computerScreen.removeApplication(info, (o, success) ->
                         {
                             btnInstall.setText("Install");
                             btnInstall.setIcon(Icons.PLUS);
                             installed = false;
                         });
                     } else {
-                        laptop.requestPermission(new PermissionRequest(
+                        computerScreen.requestPermission(new PermissionRequest(
                                 "Software installation", Permission.SOFTWARE_MANAGEMENT, info),
                                 (PermissionResult result) -> {
                                     if (result.granted()) {
                                         try {
-                                            laptop.installApplication(info, (o, success) ->
+                                            computerScreen.installApplication(info, (o, success) ->
                                             {
                                                 DebugLog.log("Installation Succeeded: " + success);
                                                 btnInstall.setText("Delete");
@@ -185,12 +185,12 @@ public class LayoutAppPage extends Layout {
     }
 
     @Override
-    public void renderOverlay(GuiGraphics graphics, Laptop laptop, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
-        super.renderOverlay(graphics, laptop, mc, mouseX, mouseY, windowActive);
+    public void renderOverlay(GuiGraphics graphics, ComputerScreen computerScreen, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
+        super.renderOverlay(graphics, computerScreen, mc, mouseX, mouseY, windowActive);
         if (store.certifiedApps.contains(entry)) {
-            int width = Laptop.getFont().width(entry.name()) * 2;
+            int width = ComputerScreen.getFont().width(entry.name()) * 2;
             if (GuiHelper.isMouseWithin(mouseX, mouseY, xPosition + 38 + width + 3, yPosition + 29, 20, 20)) {
-                laptop.renderComponentTooltip(graphics, Lists.newArrayList(Component.literal("Certified App").withStyle(ChatFormatting.GREEN)), mouseX, mouseY);
+                computerScreen.renderComponentTooltip(graphics, Lists.newArrayList(Component.literal("Certified App").withStyle(ChatFormatting.GREEN)), mouseX, mouseY);
             }
         }
     }

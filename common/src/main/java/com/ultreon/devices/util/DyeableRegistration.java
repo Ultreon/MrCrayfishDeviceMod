@@ -1,23 +1,23 @@
 package com.ultreon.devices.util;
 
 import com.google.common.collect.ImmutableMap;
-import dev.ultreon.mods.xinexlib.platform.services.IRegistrar;
-import dev.ultreon.mods.xinexlib.platform.services.IRegistrySupplier;
+import dev.ultreon.mods.xinexlib.registrar.Registrar;
+import dev.ultreon.mods.xinexlib.registrar.RegistrySupplier;
 import net.minecraft.world.item.DyeColor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public abstract class DyeableRegistration<T extends O, O> implements Iterable<IRegistrySupplier<T, O>> {
-    private final Map<DyeColor, IRegistrySupplier<T, O>> map = new EnumMap<>(DyeColor.class);
-    private final List<IRegistrySupplier<T, O>> l = new ArrayList<>();
+public abstract class DyeableRegistration<T extends O, O> implements Iterable<RegistrySupplier<T, O>> {
+    private final Map<DyeColor, RegistrySupplier<T, O>> map = new EnumMap<>(DyeColor.class);
+    private final List<RegistrySupplier<T, O>> l = new ArrayList<>();
     protected DyeableRegistration() {
         var registrar = this.autoInit();
         if (registrar != null) {
             register(registrar, this);
         }
     }
-    public static <T extends O, O> void register(IRegistrar<O> registrar, DyeableRegistration<T, O> dyeableRegistration) {
+    public static <T extends O, O> void register(Registrar<O> registrar, DyeableRegistration<T, O> dyeableRegistration) {
         for (DyeColor dye : getDyes()) {
             var dg = dyeableRegistration.register(registrar, dye);
             dyeableRegistration.l.add(dg);
@@ -45,23 +45,23 @@ public abstract class DyeableRegistration<T extends O, O> implements Iterable<IR
                 DyeColor.PINK
         );
     }
-    public abstract IRegistrySupplier<T, O> register(IRegistrar<O> registrar, DyeColor color);
+    public abstract RegistrySupplier<T, O> register(Registrar<O> registrar, DyeColor color);
 
-    public ImmutableMap<DyeColor, IRegistrySupplier<T, O>> getMap() {
+    public ImmutableMap<DyeColor, RegistrySupplier<T, O>> getMap() {
         return ImmutableMap.copyOf(map);
     }
 
-    protected IRegistrar<O> autoInit() {
+    protected Registrar<O> autoInit() {
         return null;
     }
 
-    public IRegistrySupplier<T, O> of(DyeColor dyeColor) {
+    public RegistrySupplier<T, O> of(DyeColor dyeColor) {
         return map.get(dyeColor);
     }
 
     @NotNull
     @Override
-    public Iterator<IRegistrySupplier<T, O>> iterator() {
+    public Iterator<RegistrySupplier<T, O>> iterator() {
         return l.iterator();
     }
 }

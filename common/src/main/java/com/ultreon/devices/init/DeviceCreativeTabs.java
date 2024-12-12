@@ -4,8 +4,8 @@ import com.ultreon.devices.Devices;
 import com.ultreon.devices.item.ColoredDeviceItem;
 import com.ultreon.devices.item.FlashDriveItem;
 import dev.ultreon.mods.xinexlib.platform.Services;
-import dev.ultreon.mods.xinexlib.platform.services.IRegistrar;
-import dev.ultreon.mods.xinexlib.platform.services.IRegistrySupplier;
+import dev.ultreon.mods.xinexlib.registrar.Registrar;
+import dev.ultreon.mods.xinexlib.registrar.RegistrySupplier;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -14,29 +14,30 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 public class DeviceCreativeTabs {
-    private static final IRegistrar<CreativeModeTab> REGISTER = Devices.REGISTRIES.get().getRegistrar(Registries.CREATIVE_MODE_TAB);
+    private static final Registrar<CreativeModeTab> REGISTER = Devices.REGISTRIES.get().getRegistrar(Registries.CREATIVE_MODE_TAB);
 
     public static void register() {
+        REGISTER.load();
     }
 
-    public static final IRegistrySupplier<CreativeModeTab, CreativeModeTab> TAB = REGISTER.register("devices:devices_tab_device", () -> Services.creativeTabBuilder()
+    public static final RegistrySupplier<CreativeModeTab, CreativeModeTab> TAB = REGISTER.register("devices_tab_device", () -> Services.creativeTabBuilder()
             .title(Component.translatable("itemGroup.devices.devices_tab_device"))
             .icon(() -> new ItemStack(DeviceBlocks.LAPTOPS.of(DyeColor.RED).get()))
             .displayItems((flags, output) -> {
-                for (IRegistrySupplier<ColoredDeviceItem, Item> laptop : DeviceItems.LAPTOPS) {
+                for (RegistrySupplier<ColoredDeviceItem, Item> laptop : DeviceItems.LAPTOPS) {
                     output.accept(laptop.get());
                 }
                 output.accept(DeviceItems.MAC_MAX_X.get());
-                for (IRegistrySupplier<ColoredDeviceItem, Item> printer : DeviceItems.PRINTERS) {
+                for (RegistrySupplier<ColoredDeviceItem, Item> printer : DeviceItems.PRINTERS) {
                     output.accept(printer.get());
                 }
-                for (IRegistrySupplier<ColoredDeviceItem, Item> router : DeviceItems.ROUTERS) {
+                for (RegistrySupplier<ColoredDeviceItem, Item> router : DeviceItems.ROUTERS) {
                     output.accept(router.get());
                 }
-                for (IRegistrySupplier<ColoredDeviceItem, Item> office_chair : DeviceItems.OFFICE_CHAIRS) {
+                for (RegistrySupplier<ColoredDeviceItem, Item> office_chair : DeviceItems.OFFICE_CHAIRS) {
                     output.accept(office_chair.get());
                 }
-                for (IRegistrySupplier<FlashDriveItem, Item> flashdrive : DeviceItems.FLASH_DRIVE) {
+                for (RegistrySupplier<FlashDriveItem, Item> flashdrive : DeviceItems.FLASH_DRIVE) {
                     output.accept(flashdrive.get());
                 }
                 output.accept(DeviceItems.COMPONENT_CPU.get());

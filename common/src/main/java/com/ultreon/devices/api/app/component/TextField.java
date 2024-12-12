@@ -2,7 +2,7 @@ package com.ultreon.devices.api.app.component;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.ultreon.devices.api.app.IIcon;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.ComputerScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 
@@ -23,7 +23,7 @@ public class TextField extends TextArea {
     }
 
     @Override
-    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(GuiGraphics graphics, ComputerScreen computerScreen, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         if (icon != null) {
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
             Color bgColor = new Color(color(backgroundColor, getColorScheme().getBackgroundColor()));
@@ -31,7 +31,7 @@ public class TextField extends TextArea {
             graphics.fill(x + 1, y + 1, x + 15, y + 15, bgColor.brighter().getRGB());
             icon.draw(graphics, mc, x + 3, y + 3);
         }
-        super.render(graphics, laptop, mc, x + (icon != null ? 15 : 0), y, mouseX, mouseY, windowActive, partialTicks);
+        super.render(graphics, computerScreen, mc, x + (icon != null ? 15 : 0), y, mouseX, mouseY, windowActive, partialTicks);
     }
 
     @Override

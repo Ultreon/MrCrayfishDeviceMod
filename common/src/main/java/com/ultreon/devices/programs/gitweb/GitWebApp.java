@@ -5,7 +5,7 @@ import com.ultreon.devices.api.app.*;
 import com.ultreon.devices.api.app.component.Button;
 import com.ultreon.devices.api.app.component.Spinner;
 import com.ultreon.devices.api.app.component.TextField;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.ComputerScreen;
 import com.ultreon.devices.programs.gitweb.component.GitWebFrame;
 import com.ultreon.devices.programs.gitweb.layout.TextLayout;
 import com.ultreon.devices.programs.system.SettingsApp;
@@ -42,7 +42,7 @@ public class GitWebApp extends Application implements SystemAccessor, DataHandle
     public void init(@Nullable CompoundTag intent) {
         layoutBrowser = new StandardLayout(null, 362, 240, this, null);
         layoutBrowser.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
-            Color color = new Color(Laptop.getSystem().getSettings().getColorScheme().getBackgroundColor(), true);
+            Color color = new Color(ComputerScreen.getSystem().getSettings().getColorScheme().getBackgroundColor(), true);
             graphics.fill(x, y + 21, x + width, y + 164, color.getRGB());
         });
 

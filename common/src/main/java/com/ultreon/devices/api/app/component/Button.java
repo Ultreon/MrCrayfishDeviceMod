@@ -4,7 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.IIcon;
 import com.ultreon.devices.api.app.listener.ClickListener;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.ComputerScreen;
 import com.ultreon.devices.util.GuiHelper;
 import com.ultreon.devices.util.StringUtils;
 import net.minecraft.ChatFormatting;
@@ -189,12 +189,12 @@ public class Button extends Component {
     }
 
     @Override
-    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(GuiGraphics graphics, ComputerScreen computerScreen, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         if (this.visible) {
             RenderSystem.setShaderTexture(0, Component.COMPONENTS_GUI);
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 
-            Color color = new Color(Laptop.getSystem().getSettings().getColorScheme().getButtonColor());
+            Color color = new Color(ComputerScreen.getSystem().getSettings().getColorScheme().getButtonColor());
             RenderSystem.setShaderColor(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, 1);
 
             this.hovered = GuiHelper.isMouseWithin(mouseX, mouseY, x, y, width, height) && windowActive;
@@ -222,7 +222,7 @@ public class Button extends Component {
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 
             if (this.hovered) {
-                graphics.renderOutline(x, y, width, height, Laptop.getSystem().getSettings().getColorScheme().getButtonOutlineColor());
+                graphics.renderOutline(x, y, width, height, ComputerScreen.getSystem().getSettings().getColorScheme().getButtonOutlineColor());
             }
 
             int contentWidth = (iconResource != null ? iconWidth : 0) + getTextWidth(text);
@@ -245,9 +245,9 @@ public class Button extends Component {
     }
 
     @Override
-    public void renderOverlay(GuiGraphics graphics, Laptop laptop, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
+    public void renderOverlay(GuiGraphics graphics, ComputerScreen computerScreen, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
         if (this.hovered && this.toolTip != null && toolTipTick >= TOOLTIP_DELAY) {
-            laptop.renderComponentTooltip(graphics, Arrays.asList(net.minecraft.network.chat.Component.literal(this.toolTipTitle).withStyle(ChatFormatting.GOLD), net.minecraft.network.chat.Component.literal(this.toolTip)), mouseX, mouseY);
+            computerScreen.renderComponentTooltip(graphics, Arrays.asList(net.minecraft.network.chat.Component.literal(this.toolTipTitle).withStyle(ChatFormatting.GOLD), net.minecraft.network.chat.Component.literal(this.toolTip)), mouseX, mouseY);
         }
     }
 

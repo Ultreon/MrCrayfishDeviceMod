@@ -15,7 +15,7 @@ import com.ultreon.devices.api.task.Callback;
 import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.api.task.TaskManager;
 import com.ultreon.devices.api.utils.RenderUtil;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.ComputerScreen;
 import com.ultreon.devices.core.Window;
 import com.ultreon.devices.core.Wrappable;
 import com.ultreon.devices.core.io.FileSystem;
@@ -53,7 +53,7 @@ public class FileBrowser extends Component {
     private static final ListItemRenderer<FileInfo> ITEM_RENDERER = new ListItemRenderer<>(18) {
         @Override
         public void render(GuiGraphics graphics, FileInfo file, Minecraft mc, int x, int y, int width, int height, boolean selected) {
-            Color bgColor = new Color(Laptop.getSystem().getSettings().getColorScheme().getBackgroundColor(), true);
+            Color bgColor = new Color(ComputerScreen.getSystem().getSettings().getColorScheme().getBackgroundColor(), true);
             graphics.fill(x, y, x + width, y + height, selected ? bgColor.brighter().brighter().getRGB() : bgColor.brighter().getRGB());
 
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
@@ -65,7 +65,7 @@ public class FileBrowser extends Component {
                 AppInfo info = ApplicationManager.getApplication(ResourceLocation.tryParse(file.getOpeningApp()));
                 RenderUtil.drawApplicationIcon(graphics, info, x + 3, y + 2);
             }
-            graphics.drawString(Minecraft.getInstance().font, file.getName(), x + 22, y + 5, file.protectedFile() ? PROTECTED_FILE.getRGB() : Laptop.getSystem().getSettings().getColorScheme().getTextColor());
+            graphics.drawString(Minecraft.getInstance().font, file.getName(), x + 22, y + 5, file.protectedFile() ? PROTECTED_FILE.getRGB() : ComputerScreen.getSystem().getSettings().getColorScheme().getTextColor());
         }
     };
 
@@ -128,7 +128,7 @@ public class FileBrowser extends Component {
     public void init(Layout layout) {
         layoutMain = new Layout(mode.getWidth(), mode.getHeight());
         layoutMain.setBackground((graphics, mc, x, y, width, height, mouseX, mouseY, windowActive) -> {
-            Color color = new Color(Laptop.getSystem().getSettings().getColorScheme().getHeaderColor());
+            Color color = new Color(ComputerScreen.getSystem().getSettings().getColorScheme().getHeaderColor());
             graphics.fill(x, y, x + width, y + 20, color.getRGB());
             graphics.fill(x, y + 20, x + width, y + 21, color.darker().getRGB());
         });
@@ -240,23 +240,23 @@ public class FileBrowser extends Component {
                             }
                         });
                     } else if (mode == Mode.FULL && wrappable instanceof SystemApp systemApp) {
-                        Laptop laptop = systemApp.getLaptop();
-                        if (laptop != null) {
+                        ComputerScreen computerScreen = systemApp.getLaptop();
+                        if (computerScreen != null) {
                             //TODO change to check if application is installed
                             String openingApp = file.getOpeningApp();
                             if (openingApp == null) {
                                 createErrorDialog("This file does not have an application associated with it.");
                                 return;
                             }
-                            Application targetApp = laptop.getApplication(openingApp);
+                            Application targetApp = computerScreen.getApplication(openingApp);
                             if (targetApp == null) {
                                 createErrorDialog("This file does not have an application associated with it.");
                                 return;
                             }
-                            if (!laptop.isApplicationInstalled(targetApp.getInfo()))
+                            if (!computerScreen.isApplicationInstalled(targetApp.getInfo()))
                                 createErrorDialog(targetApp.getInfo().getName() + " is not installed.");
-                            if (laptop.isApplicationInstalled(targetApp.getInfo())) {
-                                laptop.launchApp(targetApp.getInfo(), file, launcherResponse -> {
+                            if (computerScreen.isApplicationInstalled(targetApp.getInfo())) {
+                                computerScreen.launchApp(targetApp.getInfo(), file, launcherResponse -> {
                                     if (launcherResponse.error() != null) {
                                         createErrorDialog(launcherResponse.error());
                                         return;
@@ -266,7 +266,7 @@ public class FileBrowser extends Component {
                                         return;
                                     }
 
-                                    laptop.sendApplicationToFront(targetApp.getInfo());
+                                    computerScreen.sendApplicationToFront(targetApp.getInfo());
                                 });
                             } else {
                                 createErrorDialog("This file could not be open because the application '" + ChatFormatting.YELLOW + targetApp.getInfo().getName() + ChatFormatting.RESET + "' is not installed.");
@@ -323,24 +323,24 @@ public class FileBrowser extends Component {
     public void handleLoad() {
         if (!loadedStructure) {
             setLoading(true);
-            Task task = new TaskSetupFileBrowser(Laptop.getPos(), Laptop.getMainDrive() == null);
+            Task task = new TaskSetupFileBrowser(ComputerScreen.getPos(), ComputerScreen.getMainDrive() == null);
             task.setCallback((tag, success) -> {
                 if (success) {
-                    if (Laptop.getMainDrive() == null) {
+                    if (ComputerScreen.getMainDrive() == null) {
                         assert tag != null;
                         if (!tag.contains("main_drive", Tag.TAG_COMPOUND)) {
                             createErrorDialog("Unable to find main drive.");
                             return;
                         }
                         Drive drive = new Drive(tag.getCompound("main_drive"));
-                        Laptop.setMainDrive(drive);
+                        ComputerScreen.setMainDrive(drive);
                     }
 
                     assert tag != null;
                     ListTag driveList = tag.getList("available_drives", Tag.TAG_COMPOUND);
                     Drive[] drives = new Drive[driveList.size() + 1];
                     Drive currentDrive1;
-                    drives[0] = currentDrive1 = Laptop.getMainDrive();
+                    drives[0] = currentDrive1 = ComputerScreen.getMainDrive();
                     for (int i = 0; i < driveList.size(); i++) {
                         CompoundTag driveTag = driveList.getCompound(i);
                         drives[i + 1] = new Drive(driveTag);
@@ -427,7 +427,7 @@ public class FileBrowser extends Component {
     }
 
     private void openFolder(FileInfo info, boolean push, Callback<FileInfo> callback) {
-        BlockPos pos = Laptop.getPos();
+        BlockPos pos = ComputerScreen.getPos();
         if (pos == null) {
             if (callback != null) {
                 callback.execute(info, false);

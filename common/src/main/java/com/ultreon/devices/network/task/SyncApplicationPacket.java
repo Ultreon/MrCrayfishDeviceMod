@@ -3,20 +3,16 @@ package com.ultreon.devices.network.task;
 import com.google.common.collect.ImmutableList;
 import com.ultreon.devices.Devices;
 import com.ultreon.devices.api.ApplicationManager;
-import com.ultreon.devices.network.Packet;
-import com.ultreon.devices.network.PacketHandler;
 import com.ultreon.devices.object.AppInfo;
-import dev.architectury.networking.NetworkManager;
+import dev.ultreon.mods.xinexlib.network.Networker;
+import dev.ultreon.mods.xinexlib.network.packet.PacketToClient;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 /// @author MrCrayfish
-public class SyncApplicationPacket extends Packet<SyncApplicationPacket> {
+public class SyncApplicationPacket implements PacketToClient<SyncApplicationPacket> {
     private final List<AppInfo> allowedApps;
 
     public SyncApplicationPacket(RegistryFriendlyByteBuf buf) {
@@ -40,7 +36,7 @@ public class SyncApplicationPacket extends Packet<SyncApplicationPacket> {
     }
 
     @Override
-    public void toBytes(RegistryFriendlyByteBuf buf) {
+    public void write(RegistryFriendlyByteBuf buf) {
         buf.writeInt(allowedApps.size());
         for (AppInfo appInfo : allowedApps) {
             buf.writeResourceLocation(appInfo.getId());
@@ -48,13 +44,7 @@ public class SyncApplicationPacket extends Packet<SyncApplicationPacket> {
     }
 
     @Override
-    public boolean onMessage(Supplier<NetworkManager.PacketContext> ctx) {
+    public void handle(Networker networker) {
         Devices.setAllowedApps(allowedApps);
-        return true;
-    }
-
-    @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
-        return PacketHandler.getSyncApplicationPacket();
     }
 }

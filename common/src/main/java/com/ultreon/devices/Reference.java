@@ -11,7 +11,7 @@ public class Reference {
     }
 
     public static String getVersion() {
-        return Services.getMod(Devices.MOD_ID).getVersion();
+        return DeviceServices.getVersion();
     }
 
     public static String[] getVerInfo() {

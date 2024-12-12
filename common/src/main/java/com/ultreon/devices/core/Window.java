@@ -17,7 +17,7 @@ public class Window<T extends Wrappable> {
     public static final ResourceLocation WINDOW_GUI = ResourceLocation.parse("devices:textures/gui/application.png");
 
     public static final int COLOR_WINDOW_DARK = new Color(0f, 0f, 0f, 0.25f).getRGB();
-    final Laptop laptop;
+    final ComputerScreen computerScreen;
     double dragFromX;
     double dragFromY;
     protected GuiButtonClose btnClose;
@@ -29,16 +29,16 @@ public class Window<T extends Wrappable> {
     protected boolean removed;
     protected final Minecraft minecraft = Minecraft.getInstance();
 
-    public Window(T wrappable, Laptop laptop) {
+    public Window(T wrappable, ComputerScreen computerScreen) {
         this.content = wrappable;
-        this.laptop = laptop;
+        this.computerScreen = computerScreen;
         wrappable.setWindow(this);
     }
 
     void setWidth(int width) {
         this.width = width + 2;
-        if (this.width > Laptop.getScreenWidth()) {
-            this.width = Laptop.getScreenWidth();
+        if (this.width > ComputerScreen.getScreenWidth()) {
+            this.width = ComputerScreen.getScreenWidth();
         }
     }
 
@@ -76,12 +76,12 @@ public class Window<T extends Wrappable> {
         content.onTick();
     }
 
-    public void render(GuiGraphics graphics, Laptop gui, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
+    public void render(GuiGraphics graphics, ComputerScreen gui, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
         if (content.isPendingLayoutUpdate()) {
             this.setWidth(content.getWidth());
             this.setHeight(content.getHeight());
-            this.offsetX = (Laptop.getScreenWidth() - width) / 2;
-            this.offsetY = (Laptop.getScreenHeight() - TaskBar.BAR_HEIGHT - height) / 2;
+            this.offsetX = (ComputerScreen.getScreenWidth() - width) / 2;
+            this.offsetY = (ComputerScreen.getScreenHeight() - TaskBar.BAR_HEIGHT - height) / 2;
             updateComponents(x, y);
             content.clearPendingLayout();
         }
@@ -95,7 +95,7 @@ public class Window<T extends Wrappable> {
 
             graphics.pose().translate(0, 0, 1);
 
-            Color color = new Color(Laptop.getSystem().getSettings().getColorScheme().getWindowBackgroundColor(), true);
+            Color color = new Color(ComputerScreen.getSystem().getSettings().getColorScheme().getWindowBackgroundColor(), true);
             RenderSystem.enableBlend();
             RenderSystem.setShaderTexture(0, WINDOW_GUI);
             RenderSystem.setShaderColor(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, 1);
@@ -140,7 +140,7 @@ public class Window<T extends Wrappable> {
         graphics.pose().popPose();
     }
 
-    public final void renderOverlay(GuiGraphics graphics, Laptop gui, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
+    public final void renderOverlay(GuiGraphics graphics, ComputerScreen gui, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks) {
         if (dialogWindow != null) {
             graphics.fill(x + offsetX, y + offsetY, x + offsetX + width, y + offsetY + height, COLOR_WINDOW_DARK);
             dialogWindow.render(graphics, gui, mc, x, y, mouseX, mouseY, active, partialTicks);
@@ -190,27 +190,27 @@ public class Window<T extends Wrappable> {
     }
 
     public void handleWindowMove(int screenStartX, int screenStartY, int newX, int newY) {
-        if (newX >= 0 && newX <= Laptop.getScreenWidth() - width) {
+        if (newX >= 0 && newX <= ComputerScreen.getScreenWidth() - width) {
             this.offsetX = newX;
         } else if (newX < 0) {
             this.offsetX = 0;
         } else {
-            this.offsetX = Laptop.getScreenWidth() - width;
+            this.offsetX = ComputerScreen.getScreenWidth() - width;
         }
 
-        if (newY >= 0 && newY <= Laptop.getScreenHeight() - TaskBar.BAR_HEIGHT - height) {
+        if (newY >= 0 && newY <= ComputerScreen.getScreenHeight() - TaskBar.BAR_HEIGHT - height) {
             this.offsetY = newY;
         } else if (newY < 0) {
             this.offsetY = 0;
         } else {
-            this.offsetY = Laptop.getScreenHeight() - TaskBar.BAR_HEIGHT - height;
+            this.offsetY = ComputerScreen.getScreenHeight() - TaskBar.BAR_HEIGHT - height;
         }
 
         updateComponents(screenStartX, screenStartY);
     }
 
     @SuppressWarnings("unused")
-    void handleMouseClick(Laptop gui, int x, int y, int mouseX, int mouseY, int mouseButton) {
+    void handleMouseClick(ComputerScreen gui, int x, int y, int mouseX, int mouseY, int mouseButton) {
         if (btnClose.isHovered()) {
             if (content instanceof Application) {
                 gui.closeApplication(((Application) content).getInfo());
@@ -296,7 +296,7 @@ public class Window<T extends Wrappable> {
     public final void close() {
         this.removed = true;
         if (content instanceof Application) {
-            laptop.closeApplication(((Application) content).getInfo());
+            computerScreen.closeApplication(((Application) content).getInfo());
             return;
         }
         if (parent != null) {

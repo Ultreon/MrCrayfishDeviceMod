@@ -25,7 +25,7 @@ public abstract class Wrappable {
     /// method.
     ///
     /// @param graphics
-    /// @param laptop       laptop instance
+    /// @param computerScreen       laptop instance
     /// @param mc           a Minecraft instance
     /// @param x            the starting x position
     /// @param y            the start y position
@@ -33,7 +33,7 @@ public abstract class Wrappable {
     /// @param mouseY       the mouse position y
     /// @param active       if the window active
     /// @param partialTicks time passed since tick
-    public abstract void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks);
+    public abstract void render(GuiGraphics graphics, ComputerScreen computerScreen, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean active, float partialTicks);
 
     /// Called when a key is typed from your keyboard. Note if you override, make
     /// sure you call this super method.

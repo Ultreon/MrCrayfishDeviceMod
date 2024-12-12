@@ -41,7 +41,7 @@ public class LaptopRenderer implements BlockEntityRenderer<LaptopBlockEntity> {
             }
         };
 
-        entityItem.bobOffs = 0;
+//        entityItem.bobOffs = 0; // TODO fix
         entityItem.setYRot(0);
         BlockState state = blockEntity.getBlock().defaultBlockState().setValue(LaptopBlock.TYPE, LaptopBlock.Type.SCREEN);
 

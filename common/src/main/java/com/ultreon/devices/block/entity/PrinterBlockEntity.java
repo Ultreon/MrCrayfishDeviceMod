@@ -1,9 +1,13 @@
 package com.ultreon.devices.block.entity;
 
 import com.ultreon.devices.DeviceConfig;
+import com.ultreon.devices.api.event.PrinterPrintQueuedEvent;
+import com.ultreon.devices.api.event.PrinterPrintedEvent;
+import com.ultreon.devices.api.event.PrinterStartPrintingEvent;
 import com.ultreon.devices.api.print.IPrint;
 import com.ultreon.devices.init.DeviceBlockEntities;
 import com.ultreon.devices.init.DeviceSounds;
+import dev.ultreon.mods.xinexlib.event.system.EventSystem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -64,6 +68,7 @@ public class PrinterBlockEntity extends NetworkDeviceBlockEntity.Colored {
                 entity.setDeltaMovement(new Vec3(0, 0, 0));
                 level.addFreshEntity(entity);
             }
+            EventSystem.MAIN.publish(new PrinterPrintedEvent(this, currentPrint));
             currentPrint = null;
         }
 
@@ -151,6 +156,7 @@ public class PrinterBlockEntity extends NetworkDeviceBlockEntity.Colored {
     }
 
     public void addToQueue(IPrint print) {
+        EventSystem.MAIN.publish(new PrinterPrintQueuedEvent(this, print));
         printQueue.offer(print);
     }
 
@@ -164,6 +170,7 @@ public class PrinterBlockEntity extends NetworkDeviceBlockEntity.Colored {
 
         pipeline.putInt("paperCount", paperCount);
         pipeline.put("currentPrint", IPrint.save(currentPrint));
+        EventSystem.MAIN.publish(new PrinterStartPrintingEvent(this, print));
         sync();
     }
 

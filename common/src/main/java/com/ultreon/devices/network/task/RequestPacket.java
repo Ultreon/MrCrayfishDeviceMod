@@ -4,17 +4,16 @@ import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.api.task.TaskManager;
 import com.ultreon.devices.network.Packet;
 import com.ultreon.devices.network.PacketHandler;
-import dev.architectury.networking.NetworkManager;
+import dev.ultreon.mods.xinexlib.network.Networker;
+import dev.ultreon.mods.xinexlib.network.PacketInfo;
+import dev.ultreon.mods.xinexlib.network.packet.PacketToServer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
-import java.util.function.Supplier;
 
-public class RequestPacket extends Packet<RequestPacket> {
+public class RequestPacket implements PacketToServer<RequestPacket> {
     private final int id;
     private final Task request;
     private CompoundTag tag;
@@ -33,7 +32,7 @@ public class RequestPacket extends Packet<RequestPacket> {
     }
 
     @Override
-    public void toBytes(RegistryFriendlyByteBuf buf) {
+    public void write(RegistryFriendlyByteBuf buf) {
         buf.writeInt(this.id);
         buf.writeUtf(this.request.getName());
         CompoundTag tag = new CompoundTag();
@@ -42,20 +41,12 @@ public class RequestPacket extends Packet<RequestPacket> {
     }
 
     @Override
-    public boolean onMessage(Supplier<NetworkManager.PacketContext> ctx) {
-        //DebugLog.log("RECEIVED from " + ctx.get().getPlayer().getUUID());
-        request.processRequest(tag, Objects.requireNonNull(ctx.get().getPlayer()).level(), ctx.get().getPlayer());
-        if (ctx.get().getPlayer() instanceof ServerPlayer player)
-            PacketHandler.sendToClient(new ResponsePacket(id, request), player);
-        return true;
+    public void handle(Networker networker, ServerPlayer player) {
+        request.processRequest(tag, Objects.requireNonNull(player).level(), player);
+        PacketHandler.sendToClient(new ResponsePacket(id, request), player);
     }
 
     public int getId() {
         return id;
-    }
-
-    @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
-        return PacketHandler.getRequestPacket();
     }
 }

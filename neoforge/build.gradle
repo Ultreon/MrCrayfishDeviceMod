@@ -38,24 +38,15 @@ neoForge {
 }
 
 dependencies {
-    implementation(group: 'io.projectreactor', name: 'reactor-core', version: '3.5.5') {
-        version {
-            // The version range your mod is actually compatible with.
-            // Note that you may receive a *lower* version than your preferred if another
-            // Mod is only compatible up to 1.7.24, for example, your mod might get 1.7.24 at runtime.
-            strictly '[3.5.5, 4.0.0)'
-            prefer '3.5.5' // The version actually used in your dev workspace
-        }
-    }
+    implementation(group: 'io.projectreactor', name: 'reactor-core', version: '3.5.5')
 
     implementation group: "io.github.llamalad7", name: 'mixinextras-neoforge', version: '0.4.1'
     annotationProcessor group: "io.github.llamalad7", name: 'mixinextras-neoforge', version: '0.4.1'
 
-    implementation "fuzs.forgeconfigapiport:forgeconfigapiport-neoforge:21.1.0"
-
-    implementation "dev.ultreon.mods:xinexlib-neoforge-1.21.1:0.1.0"
+    implementation "dev.ultreon.mods:xinexlib-neoforge-1.21.1:1.21.1-SNAPSHOT"
 
     jarJar('com.github.Nuix:jnode-fs:v1.0.1')
+    implementation('com.github.Nuix:jnode-fs:v1.0.1')
     clientAdditionalRuntimeClasspath('com.github.Nuix:jnode-fs:v1.0.1')
     dataAdditionalRuntimeClasspath('com.github.Nuix:jnode-fs:v1.0.1')
     serverAdditionalRuntimeClasspath('com.github.Nuix:jnode-fs:v1.0.1')

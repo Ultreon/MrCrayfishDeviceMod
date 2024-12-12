@@ -1,7 +1,7 @@
 package com.ultreon.devices.api.app;
 
 import com.ultreon.devices.api.app.component.Text;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.ComputerScreen;
 import com.ultreon.devices.util.GLHelper;
 import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.client.Minecraft;
@@ -37,21 +37,21 @@ public class ScrollableLayout extends Layout {
     }
 
     @Override
-    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(GuiGraphics graphics, ComputerScreen computerScreen, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         if (!visible)
             return;
 
         GLHelper.pushScissor(x, y, width, visibleHeight);
-        super.render(graphics, laptop, mc, x, y - scroll, mouseX, mouseY, windowActive, partialTicks);
+        super.render(graphics, computerScreen, mc, x, y - scroll, mouseX, mouseY, windowActive, partialTicks);
         GLHelper.popScissor();
     }
 
     @Override
-    public void renderOverlay(GuiGraphics graphics, Laptop laptop, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
+    public void renderOverlay(GuiGraphics graphics, ComputerScreen computerScreen, Minecraft mc, int mouseX, int mouseY, boolean windowActive) {
         if (!visible)
             return;
 
-        super.renderOverlay(graphics, laptop, mc, mouseX, mouseY, windowActive);
+        super.renderOverlay(graphics, computerScreen, mc, mouseX, mouseY, windowActive);
 
         if (this.height > this.visibleHeight) {
             int visibleScrollBarHeight = visibleHeight;

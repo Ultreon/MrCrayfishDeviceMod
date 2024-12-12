@@ -4,8 +4,8 @@ import com.google.common.collect.Lists;
 import com.ultreon.devices.Devices;
 import com.ultreon.devices.block.*;
 import com.ultreon.devices.util.DyeableRegistration;
-import dev.ultreon.mods.xinexlib.platform.services.IRegistrar;
-import dev.ultreon.mods.xinexlib.platform.services.IRegistrySupplier;
+import dev.ultreon.mods.xinexlib.registrar.Registrar;
+import dev.ultreon.mods.xinexlib.registrar.RegistrySupplier;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
@@ -14,68 +14,69 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class DeviceBlocks {
-    private static final IRegistrar<Block> REGISTER = Devices.REGISTRIES.get().getRegistrar(Registries.BLOCK);
+    private static final Registrar<Block> REGISTER = Devices.REGISTRIES.get().getRegistrar(Registries.BLOCK);
 
     public static void register() {
+        REGISTER.load();
     }
 
     public static final DyeableRegistration<LaptopBlock, Block> LAPTOPS = new DyeableRegistration<>() {
         @Override
-        public IRegistrySupplier<LaptopBlock, Block> register(IRegistrar<Block> registrar, DyeColor color) {
+        public RegistrySupplier<LaptopBlock, Block> register(Registrar<Block> registrar, DyeColor color) {
             return registrar.register(color.getName() + "_laptop", () -> new LaptopBlock(color));
         }
 
         @Override
-        protected IRegistrar<Block> autoInit() {
+        protected Registrar<Block> autoInit() {
             return REGISTER;
         }
     };
 
-    public static final IRegistrySupplier<MacMaxXBlock, Block> MAC_MAX_X = REGISTER.register("mac_max_x", MacMaxXBlock::new);
-    public static final IRegistrySupplier<MacMaxXBlockPart, Block> MAC_MAX_X_PART = REGISTER.register("mac_max_x_part", MacMaxXBlockPart::new);
+    public static final RegistrySupplier<MacMaxXBlock, Block> MAC_MAX_X = REGISTER.register("mac_max_x", MacMaxXBlock::new);
+    public static final RegistrySupplier<MacMaxXBlockPart, Block> MAC_MAX_X_PART = REGISTER.register("mac_max_x_part", MacMaxXBlockPart::new);
 
     public static final DyeableRegistration<PrinterBlock, Block> PRINTERS = new DyeableRegistration<>() {
         @Override
-        public IRegistrySupplier<PrinterBlock, Block> register(IRegistrar<Block> registrar, DyeColor color) {
+        public RegistrySupplier<PrinterBlock, Block> register(Registrar<Block> registrar, DyeColor color) {
             return registrar.register(color.getName() + "_printer", () -> new PrinterBlock(color));
         }
 
         @Override
-        protected IRegistrar<Block> autoInit() {
+        protected Registrar<Block> autoInit() {
             return REGISTER;
         }
     };
 
     public static final DyeableRegistration<RouterBlock, Block> ROUTERS = new DyeableRegistration<>() {
         @Override
-        public IRegistrySupplier<RouterBlock, Block> register(IRegistrar<Block> registrar, DyeColor color) {
+        public RegistrySupplier<RouterBlock, Block> register(Registrar<Block> registrar, DyeColor color) {
             return registrar.register(color.getName() + "_router", () -> new RouterBlock(color));
         }
 
         @Override
-        protected IRegistrar<Block> autoInit() {
+        protected Registrar<Block> autoInit() {
             return REGISTER;
         }
     };
 
     public static final DyeableRegistration<OfficeChairBlock, Block> OFFICE_CHAIRS = new DyeableRegistration<>() {
         @Override
-        public IRegistrySupplier<OfficeChairBlock, Block> register(IRegistrar<Block> registrar, DyeColor color) {
+        public RegistrySupplier<OfficeChairBlock, Block> register(Registrar<Block> registrar, DyeColor color) {
             return registrar.register(color.getName() + "_office_chair", () -> new OfficeChairBlock(color));
         }
 
         @Override
-        protected IRegistrar<Block> autoInit() {
+        protected Registrar<Block> autoInit() {
             return REGISTER;
         }
     };
 
 
-    public static final IRegistrySupplier<PaperBlock, Block> PAPER = REGISTER.register("paper", PaperBlock::new);
+    public static final RegistrySupplier<PaperBlock, Block> PAPER = REGISTER.register("paper", PaperBlock::new);
 
 
     public static Stream<Block> getAllBlocks() {
-        return Lists.newArrayList(REGISTER).stream().map(IRegistrySupplier::get);
+        return Lists.newArrayList(REGISTER).stream().map(RegistrySupplier::get);
     }
 
     public static List<LaptopBlock> getAllLaptops() {

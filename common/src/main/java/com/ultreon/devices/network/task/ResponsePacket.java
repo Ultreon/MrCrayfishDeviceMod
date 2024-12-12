@@ -2,17 +2,12 @@ package com.ultreon.devices.network.task;
 
 import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.api.task.TaskManager;
-import com.ultreon.devices.network.Packet;
-import com.ultreon.devices.network.PacketHandler;
-import dev.architectury.networking.NetworkManager;
+import dev.ultreon.mods.xinexlib.network.Networker;
+import dev.ultreon.mods.xinexlib.network.packet.PacketToClient;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Supplier;
-
-public class ResponsePacket extends Packet<ResponsePacket> {
+public class ResponsePacket implements PacketToClient<ResponsePacket> {
     private final int id;
     private final Task request;
     private CompoundTag tag;
@@ -32,7 +27,7 @@ public class ResponsePacket extends Packet<ResponsePacket> {
     }
 
     @Override
-    public void toBytes(RegistryFriendlyByteBuf buf) {
+    public void write(RegistryFriendlyByteBuf buf) {
         buf.writeInt(this.id);
         buf.writeBoolean(this.request.isSucessful());
         buf.writeUtf(this.request.getName());
@@ -43,14 +38,8 @@ public class ResponsePacket extends Packet<ResponsePacket> {
     }
 
     @Override
-    public boolean onMessage(Supplier<NetworkManager.PacketContext> ctx) {
+    public void handle(Networker networker) {
         request.processResponse(tag);
         request.callback(tag);
-        return false;
-    }
-
-    @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
-        return PacketHandler.getResponsePacket();
     }
 }

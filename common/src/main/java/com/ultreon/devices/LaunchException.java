@@ -1,6 +1,7 @@
 package com.ultreon.devices;
 
-import dev.architectury.injectables.targets.ArchitecturyTarget;
+import dev.ultreon.mods.xinexlib.ModPlatform;
+import dev.ultreon.mods.xinexlib.platform.Services;
 
 public class LaunchException extends RuntimeException {
     @Override
@@ -10,9 +11,10 @@ public class LaunchException extends RuntimeException {
     }
 
     private static String getPlatform() {
-        var target = ArchitecturyTarget.getCurrentTarget();
-        if (target.equals("forge")) return "Forge";
-        if (target.equals("fabric")) return "Fabric";
-        return "modded";
+        var target = Services.getPlatformName();
+        if (target.equals(ModPlatform.Forge)) return "Minecraft Forge";
+        if (target.equals(ModPlatform.Fabric)) return "FabricMC";
+        if (target.equals(ModPlatform.NeoForge)) return "NeoForge";
+        return "<insert-modloader>";
     }
 }

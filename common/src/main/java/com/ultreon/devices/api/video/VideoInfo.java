@@ -1,7 +1,7 @@
 package com.ultreon.devices.api.video;
 
 import com.mojang.blaze3d.platform.Window;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.ComputerScreen;
 import com.ultreon.devices.programs.system.DisplayResolution;
 import com.ultreon.devices.programs.system.PredefinedResolution;
 import net.minecraft.client.Minecraft;
@@ -28,7 +28,7 @@ public class VideoInfo {
     public void setResolution(DisplayResolution value) {
         this.resolution = value;
 
-        Laptop.getInstance().revalidateDisplay();
+        ComputerScreen.getInstance().revalidateDisplay();
     }
 
     public DisplayResolution getResolution() {

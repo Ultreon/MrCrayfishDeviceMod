@@ -3,7 +3,7 @@ package com.ultreon.devices.api.utils;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.ComputerScreen;
 import com.ultreon.devices.object.AppInfo;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -38,19 +38,19 @@ public class RenderUtil {
     public static void drawIcon(GuiGraphics graphics, double x, double y, AppInfo info, int width, int height) {
         //Gui.blit(pose, (int) x, (int) y, width, height, u, v, sourceWidth, sourceHeight, (int) textureWidth, (int) textureHeight);
         if (info == null || (info.getIcon().getBase().getU() == -1 && info.getIcon().getBase().getV() == -1)) {
-            RenderSystem.setShaderTexture(0, Laptop.ICON_TEXTURES);
-            drawRectWithTexture(Laptop.ICON_TEXTURES, graphics, x, y, 0, 0, width, height, 14, 14, 224, 224);
+            RenderSystem.setShaderTexture(0, ComputerScreen.ICON_TEXTURES);
+            drawRectWithTexture(ComputerScreen.ICON_TEXTURES, graphics, x, y, 0, 0, width, height, 14, 14, 224, 224);
             return;
         }
         RenderSystem.enableBlend();
         var glyphs = new AppInfo.Icon.Glyph[]{info.getIcon().getBase(), info.getIcon().getOverlay0(), info.getIcon().getOverlay1()};
-        RenderSystem.setShaderTexture(0, Laptop.ICON_TEXTURES);
+        RenderSystem.setShaderTexture(0, ComputerScreen.ICON_TEXTURES);
         for (AppInfo.Icon.Glyph glyph : glyphs) {
             if (glyph.getU() == -1 || glyph.getV() == -1) continue;
             var col = new Color(info.getTint(glyph.getType()));
             int[] tint = new int[]{col.getRed(), col.getGreen(), col.getBlue()};
             RenderSystem.setShaderColor(tint[0]/255f, tint[1]/255f, tint[2]/255f, 1f);
-            drawRectWithTexture(Laptop.ICON_TEXTURES, graphics, x, y, glyph.getU(), glyph.getV(), width, height, 14, 14, 224, 224);
+            drawRectWithTexture(ComputerScreen.ICON_TEXTURES, graphics, x, y, glyph.getU(), glyph.getV(), width, height, 14, 14, 224, 224);
             //image.init(layout);
         }
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
@@ -122,22 +122,22 @@ public class RenderUtil {
 
     public static void drawApplicationIcon(GuiGraphics graphics, @Nullable AppInfo info, double x, double y) {
         //TODO: Reset color GlStateManager.color(1f, 1f, 1f);
-        RenderSystem.setShaderTexture(0, Laptop.ICON_TEXTURES);
+        RenderSystem.setShaderTexture(0, ComputerScreen.ICON_TEXTURES);
         if (info != null) {
             drawIcon(graphics, x, y, info, 14, 14);
           //  drawRectWithTexture(pose, x, y, info.getIconU(), info.getIconV(), 14, 14, 14, 14, 224, 224);
         } else {
-            drawRectWithTexture(Laptop.ICON_TEXTURES, graphics, x, y, 0, 0, 14, 14, 14, 14, 224, 224);
+            drawRectWithTexture(ComputerScreen.ICON_TEXTURES, graphics, x, y, 0, 0, 14, 14, 14, 14, 224, 224);
         }
     }
 
     public static void drawStringClipped(GuiGraphics graphics, String text, int x, int y, int width, int color, boolean shadow) {
-        if (shadow) graphics.drawString(Laptop.getFont(), clipStringToWidth(text, width) + ChatFormatting.RESET, x, y, color);
-        else graphics.drawString(Laptop.getFont(), Laptop.getFont().plainSubstrByWidth(text, width) + ChatFormatting.RESET, x, y, color, false);
+        if (shadow) graphics.drawString(ComputerScreen.getFont(), clipStringToWidth(text, width) + ChatFormatting.RESET, x, y, color);
+        else graphics.drawString(ComputerScreen.getFont(), ComputerScreen.getFont().plainSubstrByWidth(text, width) + ChatFormatting.RESET, x, y, color, false);
     }
 
     public static String clipStringToWidth(String text, int width) {
-        Font fontRenderer = Laptop.getFont();
+        Font fontRenderer = ComputerScreen.getFont();
         String clipped = text;
         if (fontRenderer.width(clipped) > width) {
             clipped = fontRenderer.plainSubstrByWidth(clipped, width - 8) + "...";

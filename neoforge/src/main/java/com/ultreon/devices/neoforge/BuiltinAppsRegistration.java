@@ -1,12 +1,12 @@
 package com.ultreon.devices.neoforge;
 
 import com.ultreon.devices.BuiltinApps;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.SubscribeEvent;
 
 public class BuiltinAppsRegistration {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void registerBuiltinApps(ForgeApplicationRegistration event) {
+    public static void registerBuiltinApps(NeoForgeApplicationRegistration event) {
         BuiltinApps.registerBuiltinApps();
     }
 }

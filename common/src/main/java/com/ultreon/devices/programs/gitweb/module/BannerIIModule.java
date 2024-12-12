@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.datafixers.util.Pair;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.Layout;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.ComputerScreen;
 import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.programs.gitweb.component.GitWebFrame;
 import net.minecraft.client.Minecraft;
@@ -69,8 +69,8 @@ public class BannerIIModule extends Module {
         }
 
         @Override
-        protected void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
-            super.render(graphics, laptop, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
+        protected void render(GuiGraphics graphics, ComputerScreen computerScreen, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+            super.render(graphics, computerScreen, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
             int i = x;//this.leftPos;
             int j = y;//this.topPos;
             if (banner.isEmpty())return;

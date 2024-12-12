@@ -7,7 +7,7 @@ import com.ultreon.devices.api.app.listener.ChangeListener;
 import com.ultreon.devices.api.app.renderer.ItemRenderer;
 import com.ultreon.devices.api.app.renderer.ListItemRenderer;
 import com.ultreon.devices.api.utils.RenderUtil;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.ComputerScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +39,7 @@ public abstract class ComboBox<T> extends Component {
     @Override
     public void handleTick() {
         super.handleTick();
-        if (opened && !Laptop.getSystem().hasContext()) {
+        if (opened && !ComputerScreen.getSystem().hasContext()) {
             opened = false;
         }
     }
@@ -50,7 +50,7 @@ public abstract class ComboBox<T> extends Component {
     }
 
     @Override
-    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(GuiGraphics graphics, ComputerScreen computerScreen, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         if (this.visible) {
             RenderSystem.setShaderTexture(0, Component.COMPONENTS_GUI);
 
@@ -113,7 +113,7 @@ public abstract class ComboBox<T> extends Component {
 
         if (this.hovered && !this.opened) {
             this.opened = true;
-            Laptop.getSystem().openContext(this.layout, xPosition, yPosition + 13);
+            ComputerScreen.getSystem().openContext(this.layout, xPosition, yPosition + 13);
         }
     }
 
@@ -154,7 +154,7 @@ public abstract class ComboBox<T> extends Component {
     }
 
     public void closeContext() {
-        Laptop.getSystem().closeContext();
+        ComputerScreen.getSystem().closeContext();
     }
 
     public static class List<T> extends ComboBox<T> {
@@ -199,7 +199,7 @@ public abstract class ComboBox<T> extends Component {
                 if (mouseButton == 0) {
                     selected = t;
                     updateValue(t);
-                    Laptop.getSystem().closeContext();
+                    ComputerScreen.getSystem().closeContext();
                 }
             });
             this.layout.addComponent(list);

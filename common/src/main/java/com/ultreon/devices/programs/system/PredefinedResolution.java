@@ -1,6 +1,6 @@
 package com.ultreon.devices.programs.system;
 
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.ComputerScreen;
 
 import java.util.Collection;
 
@@ -39,7 +39,7 @@ public enum PredefinedResolution implements DisplayResolution {
     }
 
     public static PredefinedResolution[] getResolutionList() {
-        Collection<PredefinedResolution> resolutionList = Laptop.getInstance().getVideoInfo().getResolutionList();
+        Collection<PredefinedResolution> resolutionList = ComputerScreen.getInstance().getVideoInfo().getResolutionList();
 
         if (resolutionList == null) {
             return new PredefinedResolution[0];

@@ -39,7 +39,7 @@ public class RouterBlockEntity extends DeviceBlockEntity.Colored {
     public void tick() {
         assert level != null;
         if (!level.isClientSide) {
-            getRouter().tick(level);
+            getRouter().tick(this, level);
         } else if (debugTimer > 0) {
             debugTimer--;
         }

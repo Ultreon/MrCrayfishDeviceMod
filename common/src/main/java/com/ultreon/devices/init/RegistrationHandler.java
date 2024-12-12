@@ -6,9 +6,9 @@ import dev.ultreon.mods.xinexlib.EnvExecutor;
 /// @author MrCrayfish
 public class RegistrationHandler {
     public static void register() {
+        DeviceBlocks.register();
         DeviceEntities.register();
         DeviceBlockEntities.register();
-        DeviceBlocks.register();
         DeviceTags.register();
         DeviceItems.register();
         DeviceSounds.register();

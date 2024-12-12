@@ -1,7 +1,7 @@
 package com.ultreon.devices.api.app.component;
 
 import com.ultreon.devices.api.app.Component;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.ComputerScreen;
 import com.ultreon.devices.util.GuiHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -39,7 +39,7 @@ public class Text extends Component {
     }
 
     @Override
-    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(GuiGraphics graphics, ComputerScreen computerScreen, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
 //        DebugLog.log(lines.size() + ", " + rawText + ", " + lines);
         if (loading) {
 
@@ -53,8 +53,8 @@ public class Text extends Component {
                     text = text.substring(0, text.length() - 1);
                 }
                 assert text != null;
-                if (shadow) graphics.drawString(Laptop.getFont(), text, x + padding, y + (i * 10) + padding, textColor);
-                else graphics.drawString(Laptop.getFont(), text, x + padding, y + (i * 10) + padding, textColor, false);
+                if (shadow) graphics.drawString(ComputerScreen.getFont(), text, x + padding, y + (i * 10) + padding, textColor);
+                else graphics.drawString(ComputerScreen.getFont(), text, x + padding, y + (i * 10) + padding, textColor, false);
             }
         }
     }
@@ -66,7 +66,7 @@ public class Text extends Component {
         rawText = text;
         text = text.replace("\\n", "\n");
         var a = new ArrayList<String>();
-        Laptop.getFont().getSplitter().splitLines(FormattedText.of(text), width - padding * 2, Style.EMPTY).forEach(b -> a.add(b.getString()));
+        ComputerScreen.getFont().getSplitter().splitLines(FormattedText.of(text), width - padding * 2, Style.EMPTY).forEach(b -> a.add(b.getString()));
         this.lines = a;
     }
 
@@ -102,7 +102,7 @@ public class Text extends Component {
                 if (lineIndex < lines.size()) {
                     int cursorX = mouseX - (xPosition + padding);
                     String line = lines.get(lineIndex);
-                    int index = Laptop.getFont().plainSubstrByWidth(line, cursorX).length();
+                    int index = ComputerScreen.getFont().plainSubstrByWidth(line, cursorX).length();
                     String clickedWord = getWord(line, index);
                     if (clickedWord != null) {
                         this.wordListener.onWordClicked(clickedWord, mouseButton);

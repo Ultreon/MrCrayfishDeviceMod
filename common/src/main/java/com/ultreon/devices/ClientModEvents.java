@@ -2,21 +2,26 @@ package com.ultreon.devices;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import com.ultreon.devices.api.ApplicationManager;
+import com.ultreon.devices.block.entity.LaptopBlockEntity;
+import com.ultreon.devices.block.entity.PrinterBlockEntity;
 import com.ultreon.devices.block.entity.renderer.*;
 import com.ultreon.devices.client.RenderRegistry;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.ComputerScreen;
 import com.ultreon.devices.debug.DebugFlags;
 import com.ultreon.devices.debug.DebugUtils;
 import com.ultreon.devices.debug.DumpType;
 import com.ultreon.devices.init.DeviceBlockEntities;
 import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.programs.system.object.ColorSchemePresets;
+import dev.ultreon.mods.xinexlib.ModPlatform;
 import dev.ultreon.mods.xinexlib.platform.Services;
-import dev.architectury.registry.ReloadListenerRegistry;
-import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
+import dev.ultreon.mods.xinexlib.platform.services.EntityRendererRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
@@ -24,6 +29,8 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -47,19 +54,19 @@ public class ClientModEvents {
 
         if (Devices.DEVELOPER_MODE) {
             LOGGER.info(SETUP, "Adding developer wallpaper.");
-            Laptop.addWallpaper(ResourceLocation.parse("devices:textures/gui/developer_wallpaper.png"));
+            ComputerScreen.addWallpaper(ResourceLocation.parse("devices:textures/gui/developer_wallpaper.png"));
         } else {
             LOGGER.info(SETUP, "Adding default wallpapers.");
-            Laptop.addWallpaper(ResourceLocation.parse("devices:textures/gui/laptop_wallpaper_1.png"));
-            Laptop.addWallpaper(ResourceLocation.parse("devices:textures/gui/laptop_wallpaper_2.png"));
-            Laptop.addWallpaper(ResourceLocation.parse("devices:textures/gui/laptop_wallpaper_3.png"));
-            Laptop.addWallpaper(ResourceLocation.parse("devices:textures/gui/laptop_wallpaper_4.png"));
-            Laptop.addWallpaper(ResourceLocation.parse("devices:textures/gui/laptop_wallpaper_5.png"));
-            Laptop.addWallpaper(ResourceLocation.parse("devices:textures/gui/laptop_wallpaper_6.png"));
-            Laptop.addWallpaper(ResourceLocation.parse("devices:textures/gui/laptop_wallpaper_7.png"));
-            Laptop.addWallpaper(ResourceLocation.parse("devices:textures/gui/laptop_wallpaper_8.png"));
-            Laptop.addWallpaper(ResourceLocation.parse("devices:textures/gui/laptop_wallpaper_9.png"));
-            Laptop.addWallpaper(ResourceLocation.parse("devices:textures/gui/laptop_wallpaper_10.png"));
+            ComputerScreen.addWallpaper(ResourceLocation.parse("devices:textures/gui/laptop_wallpaper_1.png"));
+            ComputerScreen.addWallpaper(ResourceLocation.parse("devices:textures/gui/laptop_wallpaper_2.png"));
+            ComputerScreen.addWallpaper(ResourceLocation.parse("devices:textures/gui/laptop_wallpaper_3.png"));
+            ComputerScreen.addWallpaper(ResourceLocation.parse("devices:textures/gui/laptop_wallpaper_4.png"));
+            ComputerScreen.addWallpaper(ResourceLocation.parse("devices:textures/gui/laptop_wallpaper_5.png"));
+            ComputerScreen.addWallpaper(ResourceLocation.parse("devices:textures/gui/laptop_wallpaper_6.png"));
+            ComputerScreen.addWallpaper(ResourceLocation.parse("devices:textures/gui/laptop_wallpaper_7.png"));
+            ComputerScreen.addWallpaper(ResourceLocation.parse("devices:textures/gui/laptop_wallpaper_8.png"));
+            ComputerScreen.addWallpaper(ResourceLocation.parse("devices:textures/gui/laptop_wallpaper_9.png"));
+            ComputerScreen.addWallpaper(ResourceLocation.parse("devices:textures/gui/laptop_wallpaper_10.png"));
         }
 
 
@@ -67,13 +74,14 @@ public class ClientModEvents {
         registerRenderLayers();
         registerRenderers();
         registerLayerDefinitions();
-        if (Services.isForgeLike()) { // Note: Forge requires the icon atlas to be generator beforehand.
+        if (Services.getPlatformName() == ModPlatform.Forge || Services.getPlatformName() == ModPlatform.NeoForge) { // Note: Forge requires the icon atlas to be generator beforehand.
             generateIconAtlas();
         }
 
         registerOSContent();
 
-        ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, new ReloaderListener());
+        // TODO: Add ReloadListenerRegistry to XinexLib
+//        ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, new ReloaderListener());
     }
 
     private static void registerOSContent() {
@@ -189,7 +197,7 @@ public class ClientModEvents {
 
                 if (DebugFlags.DUMP_APP_ICON_ATLAS) {
                     try {
-                        DebugUtils.dump(DumpType.ATLAS, Laptop.ICON_TEXTURES, (stream) -> ImageIO.write(atlas, "png", stream));
+                        DebugUtils.dump(DumpType.ATLAS, ComputerScreen.ICON_TEXTURES, (stream) -> ImageIO.write(atlas, "png", stream));
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -202,7 +210,7 @@ public class ClientModEvents {
                     ByteArrayInputStream input = new ByteArrayInputStream(bytes);
                     CompletableFuture<Void> submit = Minecraft.getInstance().submit(() -> {
                         try {
-                            Minecraft.getInstance().getTextureManager().register(Laptop.ICON_TEXTURES, new DynamicTexture(NativeImage.read(input)));
+                            Minecraft.getInstance().getTextureManager().register(ComputerScreen.ICON_TEXTURES, new DynamicTexture(NativeImage.read(input)));
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
@@ -240,18 +248,19 @@ public class ClientModEvents {
 //    }
 
     public static void setRenderLayer(Block block, RenderType type) {
-        RenderRegistry.register(block, type
-        );
+        RenderRegistry.register(block, type);
     }
 
     public static void registerRenderers() {
         LOGGER.info("Registering renderers.");
 
-        BlockEntityRendererRegistry.register(DeviceBlockEntities.LAPTOP.get(), LaptopRenderer::new);
-        BlockEntityRendererRegistry.register(DeviceBlockEntities.PRINTER.get(), PrinterRenderer::new);
-        BlockEntityRendererRegistry.register(DeviceBlockEntities.PAPER.get(), PaperRenderer::new);
-        BlockEntityRendererRegistry.register(DeviceBlockEntities.ROUTER.get(), RouterRenderer::new);
-        BlockEntityRendererRegistry.register(DeviceBlockEntities.SEAT.get(), OfficeChairRenderer::new);
+        EntityRendererRegistry entityRendererRegistry = Services.PLATFORM.client().entityRenderers();
+
+        entityRendererRegistry.register((Holder) DeviceBlockEntities.LAPTOP, LaptopRenderer::new);
+        entityRendererRegistry.register((Holder) DeviceBlockEntities.PRINTER, PrinterRenderer::new);
+        entityRendererRegistry.register((Holder) DeviceBlockEntities.PAPER, PaperRenderer::new);
+        entityRendererRegistry.register((Holder) DeviceBlockEntities.ROUTER, RouterRenderer::new);
+        entityRendererRegistry.register((Holder) DeviceBlockEntities.SEAT, OfficeChairRenderer::new);
     }
 
     public static void registerLayerDefinitions() {

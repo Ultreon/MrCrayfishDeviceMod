@@ -5,7 +5,7 @@ import com.ultreon.devices.api.app.IIcon;
 import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.component.Button;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.ComputerScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import org.jetbrains.annotations.Nullable;
@@ -41,8 +41,8 @@ public class StandardLayout extends Layout {
     }
 
     @Override
-    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
-        Color color = new Color(Laptop.getSystem().getSettings().getColorScheme().getHeaderColor());
+    public void render(GuiGraphics graphics, ComputerScreen computerScreen, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+        Color color = new Color(ComputerScreen.getSystem().getSettings().getColorScheme().getHeaderColor());
         graphics.fill(x, y, x + width, y + 20, color.getRGB());
         graphics.fill(x, y + 20, x + width, y + 21, color.darker().getRGB());
 
@@ -54,7 +54,7 @@ public class StandardLayout extends Layout {
             graphics.drawString(mc.font, title, x + 5 + (previous != null || icon != null ? 16 : 0), y + 7, Color.WHITE.getRGB());
         }
 
-        super.render(graphics, laptop, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
+        super.render(graphics, computerScreen, mc, x, y, mouseX, mouseY, windowActive, partialTicks);
     }
 
     public void setIcon(IIcon icon) {

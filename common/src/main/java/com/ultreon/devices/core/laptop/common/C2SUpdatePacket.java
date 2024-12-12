@@ -1,19 +1,15 @@
 package com.ultreon.devices.core.laptop.common;
 
 import com.ultreon.devices.core.laptop.server.ServerLaptop;
-import com.ultreon.devices.network.Packet;
-import com.ultreon.devices.network.PacketHandler;
-import dev.architectury.networking.NetworkManager;
-import dev.ultreon.mods.xinexlib.Env;
+import dev.ultreon.mods.xinexlib.network.Networker;
+import dev.ultreon.mods.xinexlib.network.packet.PacketToServer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.util.UUID;
-import java.util.function.Supplier;
 
-public class C2SUpdatePacket extends Packet<C2SUpdatePacket> {
+public class C2SUpdatePacket implements PacketToServer<C2SUpdatePacket> {
     private final CompoundTag nbt;
 
     public C2SUpdatePacket(UUID laptop, String type, CompoundTag nbt) {
@@ -27,21 +23,14 @@ public class C2SUpdatePacket extends Packet<C2SUpdatePacket> {
     public C2SUpdatePacket(RegistryFriendlyByteBuf buf) {
         this.nbt = buf.readNbt();
     }
+
     @Override
-    public void toBytes(RegistryFriendlyByteBuf buf) {
+    public void write(RegistryFriendlyByteBuf buf) {
         buf.writeNbt(nbt);
     }
 
     @Override
-    public boolean onMessage(Supplier<NetworkManager.PacketContext> ctx) {
-        if (ctx.get().getEnv().equals(Env.SERVER)) {
-            ServerLaptop.laptops.get(this.nbt.getUUID("uuid")).handlePacket(ctx.get().getPlayer(), this.nbt.getString("type"), this.nbt.getCompound("data"));
-        }
-        return false;
-    }
-
-    @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
-        return PacketHandler.getC2SUpdatePacket();
+    public void handle(Networker networker, ServerPlayer player) {
+        ServerLaptop.laptops.get(this.nbt.getUUID("uuid")).handlePacket(player, this.nbt.getString("type"), this.nbt.getCompound("data"));
     }
 }

@@ -4,9 +4,10 @@ import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import com.ultreon.devices.Devices;
 import com.ultreon.devices.Reference;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.ComputerScreen;
 import com.ultreon.devices.core.Permission;
 import com.ultreon.devices.core.PermissionManager;
+import com.ultreon.devices.debug.DebugLog;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.nbt.CompoundTag;
@@ -35,8 +36,8 @@ public class AppInfo {
         @Override
         public int getTintColor(AppInfo info, int o) {
             return switch (o) {
-                case 1 -> Laptop.getSystem().getSettings().getColorScheme().getBackgroundColor();
-                case 2 -> Laptop.getSystem().getSettings().getColorScheme().getBackgroundSecondaryColor();
+                case 1 -> ComputerScreen.getSystem().getSettings().getColorScheme().getBackgroundColor();
+                case 2 -> ComputerScreen.getSystem().getSettings().getColorScheme().getBackgroundSecondaryColor();
                 default -> new Color(255, 255, 255).getRGB();
             };
         }
@@ -248,10 +249,12 @@ public class AppInfo {
         resetInfo();
         if (Minecraft.getInstance().getResourceManager() == null) return;
         // TODO "Check if the resource manager can be used on client side."
-        Resource resource = Minecraft.getInstance().getResourceManager().getResource(ResourceLocation.fromNamespaceAndPath(APP_ID.getNamespace(), "/apps/" + APP_ID.getPath() + ".json")).orElse(null);
+        ResourceLocation resourceLocation = ResourceLocation.fromNamespaceAndPath(APP_ID.getNamespace(), "apps/" + APP_ID.getPath() + ".json");
+        DebugLog.log("Reloading app info for '" + APP_ID + "'");
+        Resource resource = Minecraft.getInstance().getResourceManager().getResource(resourceLocation).orElse(null);
 
         if (resource == null)
-            throw new RuntimeException("Missing app info json for '" + APP_ID + "'");
+            throw new NoSuchElementException("Missing app info json for '" + APP_ID + "'");
 
         try (Reader reader = resource.openAsReader()) {
             JsonElement obj = JsonParser.parseReader(reader);

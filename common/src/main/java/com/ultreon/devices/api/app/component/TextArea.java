@@ -6,7 +6,7 @@ import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.api.app.interfaces.IHighlight;
 import com.ultreon.devices.api.app.listener.KeyListener;
 import com.ultreon.devices.api.utils.RenderUtil;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.ComputerScreen;
 import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.util.GLHelper;
 import com.ultreon.devices.util.GuiHelper;
@@ -79,7 +79,7 @@ public class TextArea extends Component {
     /// @param height the height of the text area
     public TextArea(int left, int top, int width, int height) {
         super(left, top);
-        this.font = Laptop.getFont();
+        this.font = ComputerScreen.getFont();
         this.width = width;
         this.height = height;
         this.visibleLines = (int) Math.floor((float) ((height - padding * 2 + 1) / font.lineHeight));
@@ -92,7 +92,7 @@ public class TextArea extends Component {
     }
 
     @Override
-    public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    public void render(GuiGraphics graphics, ComputerScreen computerScreen, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         if (this.visible) {
             RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 

@@ -9,6 +9,6 @@ public class WorldLessBios implements Bios {
     @Override
     public void systemExit(PowerMode state) {
         if (state == PowerMode.SHUTDOWN) Minecraft.getInstance().setScreen(null);
-        else Minecraft.getInstance().setScreen(new Laptop(null, true));
+        else Minecraft.getInstance().setScreen(new ComputerScreen(null, true));
     }
 }

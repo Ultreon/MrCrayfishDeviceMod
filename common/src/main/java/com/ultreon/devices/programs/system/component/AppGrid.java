@@ -7,7 +7,7 @@ import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.component.Image;
 import com.ultreon.devices.api.app.component.Label;
 import com.ultreon.devices.api.utils.RenderUtil;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.ComputerScreen;
 import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.programs.system.AppStore;
 import com.ultreon.devices.programs.system.object.AppEntry;
@@ -61,14 +61,14 @@ public class AppGrid extends Component {
     }
 
     @Override
-    protected void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
+    protected void render(GuiGraphics graphics, ComputerScreen computerScreen, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         int size = Math.min(entries.size(), verticalItems * horizontalItems);
         for (int i = 0; i < size; i++) {
             int itemX = x + (i % horizontalItems) * (itemWidth + padding) + padding;
             int itemY = y + (i / horizontalItems) * (itemHeight + padding) + padding;
             if (GuiHelper.isMouseWithin(mouseX, mouseY, itemX, itemY, itemWidth, itemHeight)) {
                 graphics.fill(itemX, itemY, itemX + itemWidth, itemY + itemHeight, Color.GRAY.getRGB());
-                graphics.fill(itemX + 1, itemY + 1, itemX + itemWidth - 1, itemY + itemHeight - 1, Laptop.getSystem().getSettings().getColorScheme().getItemBackgroundColor());
+                graphics.fill(itemX + 1, itemY + 1, itemX + itemWidth - 1, itemY + itemHeight - 1, ComputerScreen.getSystem().getSettings().getColorScheme().getItemBackgroundColor());
             }
         }
     }
@@ -143,7 +143,7 @@ public class AppGrid extends Component {
 
         if (entry instanceof LocalEntry) {
             AppInfo info = ((LocalEntry) entry).info();
-            if (Laptop.getSystem().getInstalledApplications().contains(info)) {
+            if (ComputerScreen.getSystem().getInstalledApplications().contains(info)) {
                 com.ultreon.devices.api.app.component.Image installedIcon = new com.ultreon.devices.api.app.component.Image(itemWidth - 10 - 15, 38, Icons.CHECK);
                 layout.addComponent(installedIcon);
             }

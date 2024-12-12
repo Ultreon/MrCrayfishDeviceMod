@@ -4,8 +4,10 @@ import com.ultreon.devices.IDeviceType;
 import com.ultreon.devices.ModDeviceTypes;
 import com.ultreon.devices.Reference;
 import com.ultreon.devices.util.Colored;
+import dev.ultreon.mods.xinexlib.registrar.RegistrarManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -41,7 +43,7 @@ public class FlashDriveItem extends Item implements Colored, SubItems, IDeviceTy
     public NonNullList<ResourceLocation> getModels() {
         NonNullList<ResourceLocation> modelLocations = NonNullList.create();
         for (DyeColor color : DyeColor.values())
-            modelLocations.add(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, Objects.requireNonNull(RegistrarManager.getId(this, Registries.ITEM)).getPath().substring(5) + "/" + color.getName()));
+            modelLocations.add(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, BuiltInRegistries.ITEM.getKey(this).getPath().substring(5) + "/" + color.getName()));
         return modelLocations;
     }
 

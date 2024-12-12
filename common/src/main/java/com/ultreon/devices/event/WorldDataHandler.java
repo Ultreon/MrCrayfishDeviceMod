@@ -3,6 +3,7 @@ package com.ultreon.devices.event;
 import com.ultreon.devices.api.WorldSavedData;
 import com.ultreon.devices.api.utils.BankUtil;
 import com.ultreon.devices.programs.email.EmailManager;
+import dev.ultreon.mods.xinexlib.event.server.ServerLevelSaveEvent;
 import dev.ultreon.mods.xinexlib.event.server.ServerStartingEvent;
 import dev.ultreon.mods.xinexlib.event.system.EventSystem;
 import net.minecraft.nbt.CompoundTag;
@@ -27,7 +28,7 @@ public class WorldDataHandler {
 
     static {
         EventSystem.MAIN.on(ServerStartingEvent.class, WorldDataHandler::load);
-        EventSystem.MAIN.on(ServerLevelSave.class, WorldDataHandler::save);
+        EventSystem.MAIN.on(ServerLevelSaveEvent.class, WorldDataHandler::save);
     }
 
     /// Class initializer, does nothing :D
@@ -35,7 +36,9 @@ public class WorldDataHandler {
         // No-op
     }
 
-    private static void load(MinecraftServer minecraftServer) {
+    private static void load(ServerStartingEvent event) {
+        final MinecraftServer minecraftServer = event.getServer();
+
         final Path modData = Objects.requireNonNull(minecraftServer, "World loaded without server").getWorldPath(DEVICES_MOD_DATA);
         if (Files.notExists(modData)) {
             try {
@@ -49,7 +52,9 @@ public class WorldDataHandler {
         loadData(modData, "bank.dat", BankUtil.INSTANCE);
     }
 
-    private static void save(ServerLevel serverLevel) {
+    private static void save(ServerLevelSaveEvent event) {
+        final ServerLevel serverLevel = event.getServerLevel();
+
         if (!serverLevel.dimension().equals(ServerLevel.OVERWORLD)) return;
 
 

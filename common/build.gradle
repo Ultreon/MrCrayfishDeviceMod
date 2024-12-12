@@ -24,9 +24,9 @@ dependencies {
 
     // Project Reactor
     implementation group: 'io.projectreactor', name: 'reactor-core', version: '3.5.5'
-    implementation "fuzs.forgeconfigapiport:forgeconfigapiport-common-forgeapi:21.1.0"
+    implementation "fuzs.forgeconfigapiport:forgeconfigapiport-common-neoforgeapi:21.1.0"
 
-    implementation "dev.ultreon.mods:xinexlib-common-1.21.1:0.1.0"
+    implementation "dev.ultreon.mods:xinexlib-common-1.21.1:1.21.1-SNAPSHOT"
     implementation 'com.github.Nuix:jnode-fs:v1.0.1'
 }
 

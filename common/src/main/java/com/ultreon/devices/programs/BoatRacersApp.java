@@ -8,7 +8,7 @@ import com.ultreon.devices.api.app.Layout;
 import com.ultreon.devices.api.app.component.Button;
 import com.ultreon.devices.api.app.component.CheckBox;
 import com.ultreon.devices.api.app.component.Label;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.ComputerScreen;
 import com.ultreon.devices.exception.WorldLessException;
 import com.ultreon.devices.object.Game;
 import com.ultreon.devices.object.TileGrid;
@@ -100,7 +100,7 @@ public class BoatRacersApp extends Application {
 
     @Override
     public void onTick() {
-        if (Laptop.isWorldLess()) {
+        if (ComputerScreen.isWorldLess()) {
             return;
         }
         super.onTick();

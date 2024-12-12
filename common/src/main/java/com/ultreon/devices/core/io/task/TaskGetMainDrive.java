@@ -3,7 +3,7 @@ package com.ultreon.devices.core.io.task;
 import com.ultreon.devices.api.io.Drive;
 import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.block.entity.ComputerBlockEntity;
-import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.ComputerScreen;
 import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.core.io.drive.AbstractDrive;
 import net.minecraft.client.Minecraft;
@@ -58,11 +58,11 @@ public class TaskGetMainDrive extends Task {
     @Override
     public void processResponse(CompoundTag tag) {
         if (this.isSucessful()) {
-            if (Minecraft.getInstance().screen instanceof Laptop) {
+            if (Minecraft.getInstance().screen instanceof ComputerScreen) {
                 Drive drive = new Drive(tag.getCompound("main_drive"));
 
-                if (Laptop.getMainDrive() == null) {
-                    Laptop.setMainDrive(drive);
+                if (ComputerScreen.getMainDrive() == null) {
+                    ComputerScreen.setMainDrive(drive);
                 }
             }
         }
