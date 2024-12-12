@@ -3,7 +3,8 @@ package com.ultreon.devices.event;
 import com.ultreon.devices.api.WorldSavedData;
 import com.ultreon.devices.api.utils.BankUtil;
 import com.ultreon.devices.programs.email.EmailManager;
-import dev.architectury.event.events.common.LifecycleEvent;
+import dev.ultreon.mods.xinexlib.event.server.ServerStartingEvent;
+import dev.ultreon.mods.xinexlib.event.system.EventSystem;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtIo;
@@ -25,8 +26,8 @@ public class WorldDataHandler {
     private static final LevelResource DEVICES_MOD_DATA = new LevelResource("data/devices-mod");
 
     static {
-        LifecycleEvent.SERVER_STARTING.register(WorldDataHandler::load);
-        LifecycleEvent.SERVER_LEVEL_SAVE.register(WorldDataHandler::save);
+        EventSystem.MAIN.on(ServerStartingEvent.class, WorldDataHandler::load);
+        EventSystem.MAIN.on(ServerLevelSave.class, WorldDataHandler::save);
     }
 
     /// Class initializer, does nothing :D

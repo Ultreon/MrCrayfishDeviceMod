@@ -1,27 +1,23 @@
 package com.ultreon.devices.util;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import dev.architectury.registry.registries.Registrar;
-import dev.architectury.registry.registries.RegistrySupplier;
+import dev.ultreon.mods.xinexlib.platform.services.IRegistrar;
+import dev.ultreon.mods.xinexlib.platform.services.IRegistrySupplier;
 import net.minecraft.world.item.DyeColor;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
-public abstract class DyeableRegistration<T> implements Iterable<RegistrySupplier<T>> {
-    private final HashMap<DyeColor, RegistrySupplier<T>> map = new HashMap<>();
-    private final List<RegistrySupplier<T>> l = new ArrayList<>();
-    public DyeableRegistration() {
+public abstract class DyeableRegistration<T extends O, O> implements Iterable<IRegistrySupplier<T, O>> {
+    private final Map<DyeColor, IRegistrySupplier<T, O>> map = new EnumMap<>(DyeColor.class);
+    private final List<IRegistrySupplier<T, O>> l = new ArrayList<>();
+    protected DyeableRegistration() {
         var registrar = this.autoInit();
         if (registrar != null) {
             register(registrar, this);
         }
     }
-    public static <T> void register(Registrar<T> registrar, DyeableRegistration<T> dyeableRegistration) {
+    public static <T extends O, O> void register(IRegistrar<O> registrar, DyeableRegistration<T, O> dyeableRegistration) {
         for (DyeColor dye : getDyes()) {
             var dg = dyeableRegistration.register(registrar, dye);
             dyeableRegistration.l.add(dg);
@@ -29,8 +25,8 @@ public abstract class DyeableRegistration<T> implements Iterable<RegistrySupplie
         }
     }
 
-    private static ImmutableList<DyeColor> getDyes() {
-        return ImmutableList.of(
+    private static List<@NotNull DyeColor> getDyes() {
+        return List.of(
                 DyeColor.WHITE,
                 DyeColor.LIGHT_GRAY,
                 DyeColor.GRAY,
@@ -49,23 +45,23 @@ public abstract class DyeableRegistration<T> implements Iterable<RegistrySupplie
                 DyeColor.PINK
         );
     }
-    public abstract RegistrySupplier<T> register(Registrar<T> registrar, DyeColor color);
+    public abstract IRegistrySupplier<T, O> register(IRegistrar<O> registrar, DyeColor color);
 
-    public ImmutableMap<DyeColor, RegistrySupplier<T>> getMap() {
+    public ImmutableMap<DyeColor, IRegistrySupplier<T, O>> getMap() {
         return ImmutableMap.copyOf(map);
     }
 
-    protected Registrar<T> autoInit() {
+    protected IRegistrar<O> autoInit() {
         return null;
     }
 
-    public RegistrySupplier<T> of(DyeColor dyeColor) {
+    public IRegistrySupplier<T, O> of(DyeColor dyeColor) {
         return map.get(dyeColor);
     }
 
     @NotNull
     @Override
-    public Iterator<RegistrySupplier<T>> iterator() {
+    public Iterator<IRegistrySupplier<T, O>> iterator() {
         return l.iterator();
     }
 }

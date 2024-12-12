@@ -1,8 +1,8 @@
 package com.ultreon.devices.programs.system.object;
 
 import com.ultreon.devices.object.AppInfo;
-
 import org.jetbrains.annotations.Nullable;
+
 import java.util.Arrays;
 
 /// @author MrCrayfish

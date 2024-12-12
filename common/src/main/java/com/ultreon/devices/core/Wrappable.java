@@ -1,6 +1,5 @@
 package com.ultreon.devices.core;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.app.Dialog;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;

@@ -7,7 +7,6 @@ import com.ultreon.devices.core.DataPath;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.core.io.action.FileAction;
-import com.ultreon.devices.core.io.task.TaskGetFiles;
 import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.programs.system.component.FileBrowser;
 import net.minecraft.core.BlockPos;
@@ -15,7 +14,6 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -4,8 +4,6 @@ import com.ultreon.devices.block.RouterBlock;
 import com.ultreon.devices.block.entity.renderer.RouterRenderer;
 import com.ultreon.devices.core.network.Router;
 import com.ultreon.devices.init.DeviceBlockEntities;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -24,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 public class RouterBlockEntity extends DeviceBlockEntity.Colored {
     private Router router;
 
-    @Environment(EnvType.CLIENT)
     private int debugTimer;
 
     public RouterBlockEntity(BlockPos pWorldPosition, BlockState pBlockState) {
@@ -48,12 +45,10 @@ public class RouterBlockEntity extends DeviceBlockEntity.Colored {
         }
     }
 
-    @Environment(EnvType.CLIENT)
     public boolean isDebug() {
         return debugTimer > 0;
     }
 
-    @Environment(EnvType.CLIENT)
     public void setDebug(boolean debug) {
         if (debug) {
             debugTimer = 1200;

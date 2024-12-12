@@ -3,8 +3,8 @@ package com.ultreon.devices.core.io;
 import com.ultreon.devices.api.app.Application;
 import com.ultreon.devices.api.io.MimeType;
 import net.minecraft.nbt.CompoundTag;
-
 import org.jetbrains.annotations.Nullable;
+
 import java.util.Comparator;
 
 /// @author MrCrayfish

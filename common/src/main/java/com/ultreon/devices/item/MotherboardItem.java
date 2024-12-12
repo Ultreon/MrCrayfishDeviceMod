@@ -1,7 +1,7 @@
 package com.ultreon.devices.item;
 
-import com.ultreon.devices.init.HardwareComponents;
 import com.ultreon.devices.init.DeviceDataComponents;
+import com.ultreon.devices.init.HardwareComponents;
 import com.ultreon.devices.util.KeyboardHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;

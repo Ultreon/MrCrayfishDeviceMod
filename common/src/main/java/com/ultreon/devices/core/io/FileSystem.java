@@ -20,12 +20,10 @@ import com.ultreon.devices.core.io.drive.InternalDrive;
 import com.ultreon.devices.core.io.task.TaskGetMainDrive;
 import com.ultreon.devices.core.io.task.TaskSendAction;
 import com.ultreon.devices.debug.DebugLog;
-import com.ultreon.devices.init.DeviceItems;
 import com.ultreon.devices.init.DeviceDataComponents;
+import com.ultreon.devices.init.DeviceItems;
 import com.ultreon.devices.item.FlashDriveItem;
 import com.ultreon.devices.programs.system.component.FileInfo;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -76,7 +74,6 @@ public class FileSystem {
     }
 
     @Deprecated
-    @Environment(EnvType.CLIENT)
     public static void sendAction(UUID drive, FileAction<?> action, @Nullable Callback<Response> callback) {
         if (Laptop.getPos() != null) {
             DebugLog.log("Sending action " + action + " to " + drive);
@@ -96,7 +93,6 @@ public class FileSystem {
         }
     }
 
-    @Environment(EnvType.CLIENT)
     public static <T> void request(UUID drive, FileAction<T> action, @Nullable Consumer<FSResponse<T>> callback) {
         if (Laptop.getPos() != null) {
             DebugLog.log("Sending action " + action + " to " + drive);

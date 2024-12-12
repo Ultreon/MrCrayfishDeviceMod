@@ -10,7 +10,7 @@ import com.ultreon.devices.programs.gitweb.GitWebApp;
 import com.ultreon.devices.programs.snake.SnakeApp;
 import com.ultreon.devices.programs.system.*;
 import com.ultreon.devices.programs.themes.ThemesApp;
-import dev.architectury.platform.Platform;
+import dev.ultreon.mods.xinexlib.platform.Services;
 import net.minecraft.resources.ResourceLocation;
 
 public class BuiltinApps {
@@ -24,7 +24,7 @@ public class BuiltinApps {
         ApplicationManager.registerApplication(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "ender_mail"), () -> EmailApp::new, false);
         ApplicationManager.registerApplication(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "app_store"), () -> AppStore::new, true);
 
-        if (Platform.isDevelopmentEnvironment() || Devices.EARLY_CONFIG.enableBetaApps) {
+        if (Services.isDevelopmentEnvironment() || Devices.EARLY_CONFIG.enableBetaApps) {
             ApplicationManager.registerApplication(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "bank"), () -> BankApp::new, false);
             ApplicationManager.registerApplication(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "boat_racers"), () -> BoatRacersApp::new, false);
             ApplicationManager.registerApplication(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "mine_bay"), () -> MineBayApp::new, false);

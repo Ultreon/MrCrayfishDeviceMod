@@ -1,6 +1,5 @@
 package com.ultreon.devices.api.app;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.app.component.Text;
 import com.ultreon.devices.core.Laptop;
 import com.ultreon.devices.util.GLHelper;

@@ -1,7 +1,6 @@
 package com.ultreon.devices.object.tiles;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.utils.RenderUtil;
 import com.ultreon.devices.object.Game;
 import net.minecraft.client.gui.GuiGraphics;

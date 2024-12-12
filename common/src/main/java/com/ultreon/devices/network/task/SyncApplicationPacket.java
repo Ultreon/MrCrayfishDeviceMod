@@ -28,7 +28,7 @@ public class SyncApplicationPacket extends Packet<SyncApplicationPacket> {
             if (info != null) {
                 builder.add(info);
             } else {
-                Devices.LOGGER.error("Missing application '" + appId + "'");
+                Devices.LOGGER.error("Missing application '{}'", appId);
             }
         }
 

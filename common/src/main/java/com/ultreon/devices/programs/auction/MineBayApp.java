@@ -1,7 +1,6 @@
 package com.ultreon.devices.programs.auction;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.app.Application;
 import com.ultreon.devices.api.app.Dialog;
 import com.ultreon.devices.api.app.Layout;
@@ -20,14 +19,13 @@ import com.ultreon.devices.programs.system.layout.StandardLayout;
 import com.ultreon.devices.util.TimeUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-
 import org.jetbrains.annotations.Nullable;
+
 import java.awt.*;
 import java.text.DecimalFormat;
 import java.util.List;

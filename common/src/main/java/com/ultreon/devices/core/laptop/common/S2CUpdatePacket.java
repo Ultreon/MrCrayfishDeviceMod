@@ -1,13 +1,11 @@
 package com.ultreon.devices.core.laptop.common;
 
 import com.ultreon.devices.core.laptop.client.ClientLaptop;
-import com.ultreon.devices.core.laptop.server.ServerLaptop;
 import com.ultreon.devices.debug.DebugLog;
 import com.ultreon.devices.network.Packet;
 import com.ultreon.devices.network.PacketHandler;
 import dev.architectury.networking.NetworkManager;
-import net.fabricmc.api.EnvType;
-import net.minecraft.client.Minecraft;
+import dev.ultreon.mods.xinexlib.Env;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -38,7 +36,7 @@ public class S2CUpdatePacket extends Packet<S2CUpdatePacket> {
 
     @Override
     public boolean onMessage(Supplier<NetworkManager.PacketContext> ctx) {
-        if (ctx.get().getEnv().equals(EnvType.CLIENT)) {
+        if (ctx.get().getEnv().equals(Env.CLIENT)) {
             ClientLaptop.laptops.get(this.nbt.getUUID("uuid")).handlePacket(this.nbt.getString("type"), this.nbt.getCompound("data"));
             DebugLog.log("SQUARE: " + Arrays.toString(ClientLaptop.laptops.get(this.nbt.getUUID("uuid")).square));
         }

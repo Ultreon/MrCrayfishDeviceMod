@@ -1,7 +1,5 @@
 package com.ultreon.devices.api.app.listener;
 
-import com.ultreon.devices.programs.system.component.FileInfo;
-
 /// The click listener interface. Used for handling clicks
 /// on components.
 ///

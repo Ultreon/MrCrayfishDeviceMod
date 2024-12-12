@@ -1,7 +1,6 @@
 package com.ultreon.devices.programs.system.object;
 
 import com.ultreon.devices.object.AppInfo;
-
 import org.jetbrains.annotations.Nullable;
 
 /// @author MrCrayfish

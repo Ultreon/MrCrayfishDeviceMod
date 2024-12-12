@@ -1,6 +1,5 @@
 package com.ultreon.devices.api.app.component;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.api.app.Component;
 import com.ultreon.devices.core.Laptop;
 import net.minecraft.client.Minecraft;
@@ -9,7 +8,8 @@ import net.minecraft.client.gui.GuiGraphics;
 import java.awt.*;
 
 public class ProgressBar extends Component {
-    protected int width, height;
+    protected int barWidth;
+    protected int barHeight;
     protected int progress = 0;
     protected int max = 100;
 
@@ -25,22 +25,22 @@ public class ProgressBar extends Component {
     /// @param height height of the progress bar
     public ProgressBar(int left, int top, int width, int height) {
         super(left, top);
-        this.width = width;
-        this.height = height;
+        this.barWidth = width;
+        this.barHeight = height;
     }
 
     @Override
     public void render(GuiGraphics graphics, Laptop laptop, Minecraft mc, int x, int y, int mouseX, int mouseY, boolean windowActive, float partialTicks) {
         if (this.visible) {
             Color bgColor = new Color(getColorScheme().getBackgroundColor(), true);
-            graphics.fill(xPosition, yPosition, xPosition + width, yPosition + height, bgColor.darker().darker().getRGB());
-            graphics.fill(xPosition + 1, yPosition + 1, xPosition + width - 1, yPosition + height - 1, bgColor.getRGB());
-            graphics.fill(xPosition + 2, yPosition + 2, xPosition + 2 + getProgressScaled(), yPosition + height - 2, bgColor.brighter().brighter().getRGB());
+            graphics.fill(xPosition, yPosition, xPosition + barWidth, yPosition + barHeight, bgColor.darker().darker().getRGB());
+            graphics.fill(xPosition + 1, yPosition + 1, xPosition + barWidth - 1, yPosition + barHeight - 1, bgColor.getRGB());
+            graphics.fill(xPosition + 2, yPosition + 2, xPosition + 2 + getProgressScaled(), yPosition + barHeight - 2, bgColor.brighter().brighter().getRGB());
         }
     }
 
     private int getProgressScaled() {
-        return (int) Math.ceil(((width - 4) * ((double) progress / (double) max)));
+        return (int) Math.ceil(((barWidth - 4) * ((double) progress / (double) max)));
     }
 
     /// Gets the current progress.

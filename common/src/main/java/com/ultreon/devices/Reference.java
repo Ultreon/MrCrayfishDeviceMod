@@ -1,7 +1,6 @@
 package com.ultreon.devices;
 
-import dev.architectury.injectables.annotations.ExpectPlatform;
-import dev.architectury.platform.Platform;
+import dev.ultreon.mods.xinexlib.platform.Services;
 
 public class Reference {
     public static final String MOD_ID = "devices";
@@ -12,7 +11,7 @@ public class Reference {
     }
 
     public static String getVersion() {
-        return Platform.getMod(Devices.MOD_ID).getVersion();
+        return Services.getMod(Devices.MOD_ID).getVersion();
     }
 
     public static String[] getVerInfo() {

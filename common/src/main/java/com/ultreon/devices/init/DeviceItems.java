@@ -4,9 +4,9 @@ import com.ultreon.devices.Devices;
 import com.ultreon.devices.ModDeviceTypes;
 import com.ultreon.devices.item.*;
 import com.ultreon.devices.util.DyeableRegistration;
-import dev.architectury.platform.Platform;
-import dev.architectury.registry.registries.Registrar;
-import dev.architectury.registry.registries.RegistrySupplier;
+import dev.ultreon.mods.xinexlib.platform.Services;
+import dev.ultreon.mods.xinexlib.platform.services.IRegistrar;
+import dev.ultreon.mods.xinexlib.platform.services.IRegistrySupplier;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -22,28 +22,28 @@ import java.util.stream.Stream;
 
 @SuppressWarnings("unused")
 public class DeviceItems {
-    private static final Registrar<Item> REGISTER = Devices.REGISTRIES.get().get(Registries.ITEM);
+    private static final IRegistrar<Item> REGISTER = Devices.REGISTRIES.get().getRegistrar(Registries.ITEM);
 
     // Laptops
-    public static final DyeableRegistration<Item> LAPTOPS = new DyeableRegistration<>() {
+    public static final DyeableRegistration<ColoredDeviceItem, Item> LAPTOPS = new DyeableRegistration<>() {
         @Override
-        public RegistrySupplier<Item> register(Registrar<Item> registrar, DyeColor color) {
-            return registrar.register(Devices.id(color.getName() + "_laptop"), () -> new ColoredDeviceItem(DeviceBlocks.LAPTOPS.of(color).get(), new Item.Properties(), color, ModDeviceTypes.COMPUTER));
+        public IRegistrySupplier<ColoredDeviceItem, Item> register(IRegistrar<Item> registrar, DyeColor color) {
+            return registrar.register(color.getName() + "_laptop", () -> new ColoredDeviceItem(DeviceBlocks.LAPTOPS.of(color).get(), new Item.Properties(), color, ModDeviceTypes.COMPUTER));
         }
 
         @Override
-        protected Registrar<Item> autoInit() {
+        protected IRegistrar<Item> autoInit() {
             return REGISTER;
         }
     };
 
     // Custom Computers
-    public static final RegistrySupplier<BlockItem> MAC_MAX_X = REGISTER.register(Devices.id("mac_max_x"), () -> new DeviceItem(DeviceBlocks.MAC_MAX_X.get(), new Item.Properties(), ModDeviceTypes.COMPUTER) {
+    public static final IRegistrySupplier<DeviceItem, Item> MAC_MAX_X = REGISTER.register("mac_max_x", () -> new DeviceItem(DeviceBlocks.MAC_MAX_X.get(), new Item.Properties(), ModDeviceTypes.COMPUTER) {
         @NotNull
         @Override
         public Component getDescription() {
             MutableComponent normalName = Component.translatable("block.devices.mac_max_x");
-            if (Platform.isModLoaded("emojiful")) {
+            if (Services.isModLoaded("emojiful")) {
                 return Component.translatable("block.devices.mac_max_x_emoji");
             }
             return normalName;
@@ -57,91 +57,91 @@ public class DeviceItems {
     });
 
     // Printers
-    public static final DyeableRegistration<Item> PRINTERS = new DyeableRegistration<>() {
+    public static final DyeableRegistration<ColoredDeviceItem, Item> PRINTERS = new DyeableRegistration<>() {
         @Override
-        public RegistrySupplier<Item> register(Registrar<Item> registrar, DyeColor color) {
-            return registrar.register(Devices.id(color.getName() + "_printer"), () -> new ColoredDeviceItem(DeviceBlocks.PRINTERS.of(color).get(), new Item.Properties(), color, ModDeviceTypes.PRINTER));
+        public IRegistrySupplier<ColoredDeviceItem, Item> register(IRegistrar<Item> registrar, DyeColor color) {
+            return registrar.register(color.getName() + "_printer", () -> new ColoredDeviceItem(DeviceBlocks.PRINTERS.of(color).get(), new Item.Properties(), color, ModDeviceTypes.PRINTER));
         }
 
         @Override
-        protected Registrar<Item> autoInit() {
+        protected IRegistrar<Item> autoInit() {
             return REGISTER;
         }
     };
 
     // Routers
-    public static final DyeableRegistration<Item> ROUTERS = new DyeableRegistration<>() {
+    public static final DyeableRegistration<ColoredDeviceItem, Item> ROUTERS = new DyeableRegistration<>() {
         @Override
-        public RegistrySupplier<Item> register(Registrar<Item> registrar, DyeColor color) {
-            return registrar.register(Devices.id(color.getName() + "_router"), () -> new ColoredDeviceItem(DeviceBlocks.ROUTERS.of(color).get(), new Item.Properties(), color, ModDeviceTypes.ROUTER));
+        public IRegistrySupplier<ColoredDeviceItem, Item> register(IRegistrar<Item> registrar, DyeColor color) {
+            return registrar.register(color.getName() + "_router", () -> new ColoredDeviceItem(DeviceBlocks.ROUTERS.of(color).get(), new Item.Properties(), color, ModDeviceTypes.ROUTER));
         }
 
         @Override
-        protected Registrar<Item> autoInit() {
+        protected IRegistrar<Item> autoInit() {
             return REGISTER;
         }
     };
 
     // Office Chairs
-    public static final DyeableRegistration<Item> OFFICE_CHAIRS = new DyeableRegistration<>() {
+    public static final DyeableRegistration<ColoredDeviceItem, Item> OFFICE_CHAIRS = new DyeableRegistration<>() {
         @Override
-        public RegistrySupplier<Item> register(Registrar<Item> registrar, DyeColor color) {
-            return registrar.register(Devices.id(color.getName() + "_office_chair"), () -> new ColoredDeviceItem(DeviceBlocks.OFFICE_CHAIRS.of(color).get(), new Item.Properties(), color, ModDeviceTypes.SEAT));
+        public IRegistrySupplier<ColoredDeviceItem, Item> register(IRegistrar<Item> registrar, DyeColor color) {
+            return registrar.register(color.getName() + "_office_chair", () -> new ColoredDeviceItem(DeviceBlocks.OFFICE_CHAIRS.of(color).get(), new Item.Properties(), color, ModDeviceTypes.SEAT));
         }
 
         @Override
-        protected Registrar<Item> autoInit() {
+        protected IRegistrar<Item> autoInit() {
             return REGISTER;
         }
     };
 
     // Flash drives
-    public static final DyeableRegistration<Item> FLASH_DRIVE = new DyeableRegistration<>() {
+    public static final DyeableRegistration<FlashDriveItem, Item> FLASH_DRIVE = new DyeableRegistration<>() {
         @Override
-        public RegistrySupplier<Item> register(Registrar<Item> registrar, DyeColor color) {
-            return registrar.register(Devices.id(color.getName() + "_flash_drive"), () -> new FlashDriveItem(color));
+        public IRegistrySupplier<FlashDriveItem, Item> register(IRegistrar<Item> registrar, DyeColor color) {
+            return registrar.register(color.getName() + "_flash_drive", () -> new FlashDriveItem(color));
         }
 
         @Override
-        protected Registrar<Item> autoInit() {
+        protected IRegistrar<Item> autoInit() {
             return REGISTER;
         }
     };
 
-    public static final RegistrySupplier<BlockItem> PAPER = REGISTER.register(Devices.id("paper"), () -> new BlockItem(DeviceBlocks.PAPER.get(), new Item.Properties()));
+    public static final IRegistrySupplier<BlockItem, Item> PAPER = REGISTER.register("paper", () -> new BlockItem(DeviceBlocks.PAPER.get(), new Item.Properties()));
 
-    public static final RegistrySupplier<BasicItem> PLASTIC_UNREFINED = REGISTER.register(Devices.id("plastic_unrefined"), () -> new BasicItem(new Item.Properties()));
-    public static final RegistrySupplier<BasicItem> PLASTIC = REGISTER.register(Devices.id("plastic"), () -> new BasicItem(new Item.Properties()));
-    public static final RegistrySupplier<BasicItem> PLASTIC_FRAME = REGISTER.register(Devices.id("plastic_frame"), () -> new BasicItem(new Item.Properties()));
-    public static final RegistrySupplier<BasicItem> WHEEL = REGISTER.register(Devices.id("wheel"), () -> new BasicItem(new Item.Properties()));
-    public static final RegistrySupplier<Item> GLASS_DUST = REGISTER.register(Devices.id("glass_dust"), () -> new Item(new Item.Properties()));
+    public static final IRegistrySupplier<BasicItem, Item> PLASTIC_UNREFINED = REGISTER.register("plastic_unrefined", () -> new BasicItem(new Item.Properties()));
+    public static final IRegistrySupplier<BasicItem, Item> PLASTIC = REGISTER.register("plastic", () -> new BasicItem(new Item.Properties()));
+    public static final IRegistrySupplier<BasicItem, Item> PLASTIC_FRAME = REGISTER.register("plastic_frame", () -> new BasicItem(new Item.Properties()));
+    public static final IRegistrySupplier<BasicItem, Item> WHEEL = REGISTER.register("wheel", () -> new BasicItem(new Item.Properties()));
+    public static final IRegistrySupplier<Item, Item> GLASS_DUST = REGISTER.register("glass_dust", () -> new Item(new Item.Properties()));
 
-    public static final RegistrySupplier<ComponentItem> COMPONENT_CIRCUIT_BOARD = REGISTER.register(Devices.id("circuit_board"), () -> new ComponentItem(new Item.Properties()));
-    public static final RegistrySupplier<ComponentItem> COMPONENT_MOTHERBOARD = REGISTER.register(Devices.id("motherboard"), () -> new MotherboardItem(new Item.Properties()));
-    public static final RegistrySupplier<ComponentItem> COMPONENT_MOTHERBOARD_FULL = REGISTER.register(Devices.id("motherboard_full"), () -> new ComponentItem(new Item.Properties()));
-    public static final RegistrySupplier<ComponentItem> COMPONENT_CPU = REGISTER.register(Devices.id("cpu"), () -> new MotherboardItem.Component(new Item.Properties()));
-    public static final RegistrySupplier<ComponentItem> COMPONENT_RAM = REGISTER.register(Devices.id("ram"), () -> new MotherboardItem.Component(new Item.Properties()));
-    public static final RegistrySupplier<ComponentItem> COMPONENT_GPU = REGISTER.register(Devices.id("gpu"), () -> new MotherboardItem.Component(new Item.Properties()));
-    public static final RegistrySupplier<ComponentItem> COMPONENT_WIFI = REGISTER.register(Devices.id("wifi"), () -> new MotherboardItem.Component(new Item.Properties()));
-    public static final RegistrySupplier<ComponentItem> COMPONENT_HARD_DRIVE = REGISTER.register(Devices.id("hard_drive"), () -> new ComponentItem(new Item.Properties()));
-    public static final RegistrySupplier<ComponentItem> COMPONENT_FLASH_CHIP = REGISTER.register(Devices.id("flash_chip"), () -> new ComponentItem(new Item.Properties()));
-    public static final RegistrySupplier<ComponentItem> COMPONENT_SOLID_STATE_DRIVE = REGISTER.register(Devices.id("solid_state_drive"), () -> new ComponentItem(new Item.Properties()));
-    public static final RegistrySupplier<ComponentItem> COMPONENT_BATTERY = REGISTER.register(Devices.id("battery"), () -> new ComponentItem(new Item.Properties()));
-    public static final RegistrySupplier<ComponentItem> COMPONENT_SCREEN = REGISTER.register(Devices.id("screen"), () -> new ComponentItem(new Item.Properties()));
-    public static final RegistrySupplier<ComponentItem> COMPONENT_CONTROLLER_UNIT = REGISTER.register(Devices.id("controller_unit"), () -> new ComponentItem(new Item.Properties()));
-    public static final RegistrySupplier<ComponentItem> COMPONENT_SMALL_ELECTRIC_MOTOR = REGISTER.register(Devices.id("small_electric_motor"), () -> new ComponentItem(new Item.Properties()));
-    public static final RegistrySupplier<ComponentItem> COMPONENT_CARRIAGE = REGISTER.register(Devices.id("carriage"), () -> new ComponentItem(new Item.Properties()));
+    public static final IRegistrySupplier<ComponentItem, Item> COMPONENT_CIRCUIT_BOARD = REGISTER.register("circuit_board", () -> new ComponentItem(new Item.Properties()));
+    public static final IRegistrySupplier<ComponentItem, Item> COMPONENT_MOTHERBOARD = REGISTER.register("motherboard", () -> new MotherboardItem(new Item.Properties()));
+    public static final IRegistrySupplier<ComponentItem, Item> COMPONENT_MOTHERBOARD_FULL = REGISTER.register("motherboard_full", () -> new ComponentItem(new Item.Properties()));
+    public static final IRegistrySupplier<ComponentItem, Item> COMPONENT_CPU = REGISTER.register("cpu", () -> new MotherboardItem.Component(new Item.Properties()));
+    public static final IRegistrySupplier<ComponentItem, Item> COMPONENT_RAM = REGISTER.register("ram", () -> new MotherboardItem.Component(new Item.Properties()));
+    public static final IRegistrySupplier<ComponentItem, Item> COMPONENT_GPU = REGISTER.register("gpu", () -> new MotherboardItem.Component(new Item.Properties()));
+    public static final IRegistrySupplier<ComponentItem, Item> COMPONENT_WIFI = REGISTER.register("wifi", () -> new MotherboardItem.Component(new Item.Properties()));
+    public static final IRegistrySupplier<ComponentItem, Item> COMPONENT_HARD_DRIVE = REGISTER.register("hard_drive", () -> new ComponentItem(new Item.Properties()));
+    public static final IRegistrySupplier<ComponentItem, Item> COMPONENT_FLASH_CHIP = REGISTER.register("flash_chip", () -> new ComponentItem(new Item.Properties()));
+    public static final IRegistrySupplier<ComponentItem, Item> COMPONENT_SOLID_STATE_DRIVE = REGISTER.register("solid_state_drive", () -> new ComponentItem(new Item.Properties()));
+    public static final IRegistrySupplier<ComponentItem, Item> COMPONENT_BATTERY = REGISTER.register("battery", () -> new ComponentItem(new Item.Properties()));
+    public static final IRegistrySupplier<ComponentItem, Item> COMPONENT_SCREEN = REGISTER.register("screen", () -> new ComponentItem(new Item.Properties()));
+    public static final IRegistrySupplier<ComponentItem, Item> COMPONENT_CONTROLLER_UNIT = REGISTER.register("controller_unit", () -> new ComponentItem(new Item.Properties()));
+    public static final IRegistrySupplier<ComponentItem, Item> COMPONENT_SMALL_ELECTRIC_MOTOR = REGISTER.register("small_electric_motor", () -> new ComponentItem(new Item.Properties()));
+    public static final IRegistrySupplier<ComponentItem, Item> COMPONENT_CARRIAGE = REGISTER.register("carriage", () -> new ComponentItem(new Item.Properties()));
 
-    public static final RegistrySupplier<EthernetCableItem> ETHERNET_CABLE = REGISTER.register(Devices.id("ethernet_cable"), EthernetCableItem::new);
+    public static final IRegistrySupplier<EthernetCableItem, Item> ETHERNET_CABLE = REGISTER.register("ethernet_cable", EthernetCableItem::new);
     
 
     public static Stream<Item> getAllItems() {
-        return REGISTER.getIds().stream().map(REGISTER::get);
+        return REGISTER.ids().stream().map(REGISTER::get);
     }
 
     @Nullable
     public static FlashDriveItem getFlashDriveByColor(DyeColor color) {
-        return (FlashDriveItem) FLASH_DRIVE.of(color).get();
+        return FLASH_DRIVE.of(color).get();
     }
 
     public static List<FlashDriveItem> getAllFlashDrives() {

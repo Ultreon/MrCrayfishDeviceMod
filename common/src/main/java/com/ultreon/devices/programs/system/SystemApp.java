@@ -2,7 +2,6 @@ package com.ultreon.devices.programs.system;
 
 import com.ultreon.devices.api.app.Application;
 import com.ultreon.devices.core.Laptop;
-
 import org.jetbrains.annotations.Nullable;
 
 /// Created by Casey on 03-Aug-17.

@@ -11,7 +11,7 @@ import com.ultreon.devices.debug.DumpType;
 import com.ultreon.devices.init.DeviceBlockEntities;
 import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.programs.system.object.ColorSchemePresets;
-import dev.architectury.platform.Platform;
+import dev.ultreon.mods.xinexlib.platform.Services;
 import dev.architectury.registry.ReloadListenerRegistry;
 import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
 import net.minecraft.client.Minecraft;
@@ -67,7 +67,7 @@ public class ClientModEvents {
         registerRenderLayers();
         registerRenderers();
         registerLayerDefinitions();
-        if (Platform.isForgeLike()) { // Note: Forge requires the icon atlas to be generator beforehand.
+        if (Services.isForgeLike()) { // Note: Forge requires the icon atlas to be generator beforehand.
             generateIconAtlas();
         }
 
@@ -151,7 +151,7 @@ public class ClientModEvents {
                     }
                     BufferedImage icon = ImageIO.read(input);
                     if (icon.getWidth() != ICON_SIZE || icon.getHeight() != ICON_SIZE) {
-                        Devices.LOGGER.error("Incorrect icon size for " + (info == null ? null : info.getId()) + " (Must be 14 by 14 pixels)");
+                        Devices.LOGGER.error("Incorrect icon size for {} (Must be 14 by 14 pixels)", info == null ? null : info.getId());
                         return;
                     }
                     int iconU = (index % 16) * ICON_SIZE;
@@ -169,17 +169,17 @@ public class ClientModEvents {
                     }
                     index++;
                     if (DebugFlags.LOG_APP_ICON_STITCHES) {
-                        Devices.LOGGER.info("Stitching texture: " + location);
+                        Devices.LOGGER.info("Stitching texture: {}", location);
                     }
                 } catch (FileNotFoundException e) {
-                    Devices.LOGGER.error("Unable to load icon for '" + (info == null ? null : info.getId()) + "': " + e.getMessage());
+                    Devices.LOGGER.error("Unable to load icon for '{}': {}", info == null ? null : info.getId(), e.getMessage());
                     if (DebugFlags.PRINT_MISSING_APP_ICONS_STACK_TRACES) {
-                        LOGGER.error("Unable to load icon for " + (info == null ? null : info.getId()), e);
+                        LOGGER.error("Unable to load icon for {}", info == null ? null : info.getId(), e);
                     }
                 } catch (Exception e) {
-                    Devices.LOGGER.error("Unable to load icon for " + (info == null ? null : info.getId()));
+                    Devices.LOGGER.error("Unable to load icon for {}", info == null ? null : info.getId());
                     if (DebugFlags.PRINT_APP_ICONS_STACK_TRACES) {
-                        LOGGER.error("Unable to load icon for " + (info == null ? null : info.getId()), e);
+                        LOGGER.error("Unable to load icon for {}", info == null ? null : info.getId(), e);
                     }
                 }
             }

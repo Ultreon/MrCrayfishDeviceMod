@@ -1,7 +1,6 @@
 package com.ultreon.devices;
 
 import dev.architectury.injectables.targets.ArchitecturyTarget;
-import dev.architectury.platform.Platform;
 
 public class LaunchException extends RuntimeException {
     @Override

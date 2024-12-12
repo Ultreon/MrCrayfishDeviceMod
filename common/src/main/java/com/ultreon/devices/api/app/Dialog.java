@@ -1,11 +1,6 @@
 package com.ultreon.devices.api.app;
 
-import com.ultreon.devices.api.app.component.Button;
-import com.ultreon.devices.api.app.component.Image;
-import com.ultreon.devices.api.app.component.ItemList;
-import com.ultreon.devices.api.app.component.Label;
-import com.ultreon.devices.api.app.component.Text;
-import com.ultreon.devices.api.app.component.TextField;
+import com.ultreon.devices.api.app.component.*;
 import com.ultreon.devices.api.app.listener.ClickListener;
 import com.ultreon.devices.api.app.renderer.ListItemRenderer;
 import com.ultreon.devices.api.io.FSResponse;
@@ -13,7 +8,10 @@ import com.ultreon.devices.api.print.IPrint;
 import com.ultreon.devices.api.task.Task;
 import com.ultreon.devices.api.task.TaskManager;
 import com.ultreon.devices.api.utils.RenderUtil;
-import com.ultreon.devices.core.*;
+import com.ultreon.devices.core.Laptop;
+import com.ultreon.devices.core.PermissionRequest;
+import com.ultreon.devices.core.PermissionResult;
+import com.ultreon.devices.core.Wrappable;
 import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.core.network.NetworkDevice;
 import com.ultreon.devices.core.network.task.TaskGetDevices;
@@ -33,7 +31,6 @@ import net.minecraft.nbt.Tag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.function.Consumer;

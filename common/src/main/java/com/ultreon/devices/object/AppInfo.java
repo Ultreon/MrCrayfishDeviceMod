@@ -18,8 +18,8 @@ import java.awt.*;
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Type;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -303,7 +303,7 @@ public class AppInfo {
                     default -> throw new RuntimeException("Schema " + getSchemaVersion(json) + " is not implemented in " + Reference.VERSION + "!");
                 }
             } catch (JsonParseException e) {
-                Devices.LOGGER.error("Malformed app info json for '" + info.getFormattedId() + "'");
+                Devices.LOGGER.error("Malformed app info json for '{}'", info.getFormattedId());
             }
 
             return info;

@@ -1,12 +1,9 @@
 package com.ultreon.devices.block.entity;
 
-import com.ultreon.devices.api.io.Drive;
 import com.ultreon.devices.block.LaptopBlock;
 import com.ultreon.devices.core.Bios;
 import com.ultreon.devices.core.io.FileSystem;
 import com.ultreon.devices.util.BlockEntityUtil;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -32,10 +29,8 @@ public abstract class ComputerBlockEntity extends NetworkDeviceBlockEntity.Color
     private CompoundTag systemData = new CompoundTag();
     private FileSystem fileSystem;
 
-    @Environment(EnvType.CLIENT)
     private int rotation;
 
-    @Environment(EnvType.CLIENT)
     private int prevRotation;
 
     private DyeColor externalDriveColor;
@@ -203,17 +198,14 @@ public abstract class ComputerBlockEntity extends NetworkDeviceBlockEntity.Color
         BlockEntityUtil.markBlockForUpdate(level, worldPosition);
     }
 
-    @Environment(EnvType.CLIENT)
     public float getScreenAngle(float partialTicks) {
         return -OPENED_ANGLE * ((prevRotation + (rotation - prevRotation) * partialTicks) / OPENED_ANGLE);
     }
 
-    @Environment(EnvType.CLIENT)
     public boolean isExternalDriveAttached() {
         return externalDriveColor != null;
     }
 
-    @Environment(EnvType.CLIENT)
     public DyeColor getExternalDriveColor() {
         return externalDriveColor;
     }

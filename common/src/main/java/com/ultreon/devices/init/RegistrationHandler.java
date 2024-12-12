@@ -1,7 +1,7 @@
 package com.ultreon.devices.init;
 
-import dev.architectury.utils.EnvExecutor;
-import net.fabricmc.api.EnvType;
+import dev.ultreon.mods.xinexlib.Env;
+import dev.ultreon.mods.xinexlib.EnvExecutor;
 
 /// @author MrCrayfish
 public class RegistrationHandler {
@@ -14,6 +14,6 @@ public class RegistrationHandler {
         DeviceSounds.register();
         DeviceCreativeTabs.register();
         DeviceDataComponents.register();
-        EnvExecutor.runInEnv(EnvType.CLIENT, () -> DeviceEntityRenderers::register);
+        EnvExecutor.runInEnv(Env.CLIENT, () -> DeviceEntityRenderers::register);
     }
 }

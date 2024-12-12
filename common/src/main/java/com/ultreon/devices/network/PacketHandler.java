@@ -4,8 +4,6 @@ import com.ultreon.devices.core.laptop.common.C2SUpdatePacket;
 import com.ultreon.devices.core.laptop.common.S2CUpdatePacket;
 import com.ultreon.devices.network.task.*;
 import dev.architectury.networking.NetworkManager;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -88,7 +86,6 @@ public class PacketHandler {
         return new CustomPacketPayload.Type<>(ResourceLocation.parse("devices:generated/id" + id++));
     }
 
-    @Environment(EnvType.CLIENT)
     public static <T extends Packet<T>> void sendToServer(T message) {
         if (Minecraft.getInstance().getConnection() != null) {
             NetworkManager.sendToServer(message);

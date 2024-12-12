@@ -6,8 +6,6 @@ import com.ultreon.devices.api.WorldSavedData;
 import com.ultreon.devices.api.app.Icons;
 import com.ultreon.devices.api.app.Notification;
 import com.ultreon.devices.programs.email.object.Email;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.server.MinecraftServer;
@@ -23,7 +21,6 @@ public class EmailManager implements WorldSavedData {
     public static final EmailManager INSTANCE = new EmailManager();
     private final HashBiMap<UUID, String> uuidToName = HashBiMap.create();
     private final Map<String, List<Email>> nameToInbox = new HashMap<>();
-    @Environment(EnvType.CLIENT)
     private List<Email> inbox;
 
     public boolean addEmailToInbox(Email email, String to) {
@@ -35,7 +32,6 @@ public class EmailManager implements WorldSavedData {
         return false;
     }
 
-    @Environment(EnvType.CLIENT)
     public List<Email> getInbox() {
         if (inbox == null) {
             inbox = new ArrayList<>();

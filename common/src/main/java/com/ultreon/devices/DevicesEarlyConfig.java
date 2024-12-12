@@ -1,6 +1,6 @@
 package com.ultreon.devices;
 
-import dev.architectury.platform.Platform;
+import dev.ultreon.mods.xinexlib.platform.Services;
 
 import java.io.*;
 
@@ -9,7 +9,7 @@ import java.io.*;
 ///
 /// @author <a href="https://github.com/XyperCode">XyperCode</a>
 public class DevicesEarlyConfig {
-    private static final File FILE = Platform.getConfigFolder().resolve("devices-early-config.json").toFile();
+    private static final File FILE = Services.getConfigFolder().resolve("devices-early-config.json").toFile();
     public boolean enableBetaApps = false;
     public boolean enableDebugApps = false;
 

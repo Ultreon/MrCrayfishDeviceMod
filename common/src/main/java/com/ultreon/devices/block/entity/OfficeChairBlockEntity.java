@@ -4,8 +4,6 @@ import com.ultreon.devices.block.LaptopBlock;
 import com.ultreon.devices.entity.Seat;
 import com.ultreon.devices.init.DeviceBlockEntities;
 import com.ultreon.devices.util.Colorable;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -56,7 +54,6 @@ public class OfficeChairBlockEntity extends SyncBlockEntity implements Colorable
         return tag;
     }
 
-    @Environment(EnvType.CLIENT)
     public float getRotation() {
         List<Seat> seats = level.getEntitiesOfClass(Seat.class, new AABB(getBlockPos()));
         if (!seats.isEmpty()) {
@@ -78,7 +75,6 @@ public class OfficeChairBlockEntity extends SyncBlockEntity implements Colorable
         return direction - 90F;
     }
 
-    @Environment(EnvType.CLIENT)
     public float getRotation(float partialTick) {
         List<Seat> seats = level.getEntitiesOfClass(Seat.class, new AABB(getBlockPos()));
         if (!seats.isEmpty()) {

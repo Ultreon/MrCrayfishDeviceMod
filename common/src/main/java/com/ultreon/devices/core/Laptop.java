@@ -28,8 +28,6 @@ import com.ultreon.devices.programs.system.component.FileInfo;
 import com.ultreon.devices.programs.system.task.TaskUpdateApplicationData;
 import com.ultreon.devices.programs.system.task.TaskUpdateSystemData;
 import com.ultreon.devices.util.GLHelper;
-import dev.architectury.injectables.annotations.PlatformOnly;
-import dev.architectury.platform.Mod;
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.ints.IntArraySet;
 import net.minecraft.client.Minecraft;
@@ -80,9 +78,8 @@ public class Laptop extends Screen implements System {
     private Dialog systemDialog = null;
     private Window<Dialog> systemDialogWindow = null;
     private static boolean loaded;
-    private Bios bios;
+    private final Bios bios;
 
-    @PlatformOnly("fabric")
     public static List<Application> getApplicationsForFabric() {
         return APPLICATIONS;
     }
@@ -212,10 +209,6 @@ public class Laptop extends Screen implements System {
     public static @Nullable Drive getDrive(UUID drive) {
         if (drive == null) return null;
         return instance.drives.get(drive);
-    }
-
-    public CompoundTag getModSystemTag(Mod mod) {
-        return getModSystemTag(mod.getModId());
     }
 
     public CompoundTag getModSystemTag(String modId) {

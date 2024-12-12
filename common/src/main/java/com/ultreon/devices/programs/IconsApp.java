@@ -6,7 +6,6 @@ import com.ultreon.devices.api.app.component.ComboBox;
 import com.ultreon.devices.programs.system.layout.StandardLayout;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
-
 import org.jetbrains.annotations.Nullable;
 
 /// @author MrCrayfish

@@ -1,11 +1,10 @@
 package com.ultreon.devices.core.laptop.common;
 
-import com.ultreon.devices.core.laptop.client.ClientLaptop;
 import com.ultreon.devices.core.laptop.server.ServerLaptop;
 import com.ultreon.devices.network.Packet;
 import com.ultreon.devices.network.PacketHandler;
 import dev.architectury.networking.NetworkManager;
-import net.fabricmc.api.EnvType;
+import dev.ultreon.mods.xinexlib.Env;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -35,7 +34,7 @@ public class C2SUpdatePacket extends Packet<C2SUpdatePacket> {
 
     @Override
     public boolean onMessage(Supplier<NetworkManager.PacketContext> ctx) {
-        if (ctx.get().getEnv().equals(EnvType.SERVER)) {
+        if (ctx.get().getEnv().equals(Env.SERVER)) {
             ServerLaptop.laptops.get(this.nbt.getUUID("uuid")).handlePacket(ctx.get().getPlayer(), this.nbt.getString("type"), this.nbt.getCompound("data"));
         }
         return false;

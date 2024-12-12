@@ -10,7 +10,6 @@ import com.ultreon.devices.object.AppInfo;
 import com.ultreon.devices.object.TrayItem;
 import com.ultreon.devices.programs.system.component.FileBrowser;
 import net.minecraft.nbt.CompoundTag;
-
 import org.jetbrains.annotations.Nullable;
 
 public class FileBrowserApp extends SystemApp {

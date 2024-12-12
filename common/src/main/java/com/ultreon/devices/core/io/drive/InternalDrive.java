@@ -1,9 +1,7 @@
 package com.ultreon.devices.core.io.drive;
 
-import com.ultreon.devices.core.io.ServerFolder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
-import net.minecraft.nbt.Tag;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jnode.fs.FileSystemException;

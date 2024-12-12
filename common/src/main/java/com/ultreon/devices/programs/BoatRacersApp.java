@@ -14,7 +14,6 @@ import com.ultreon.devices.object.Game;
 import com.ultreon.devices.object.TileGrid;
 import com.ultreon.devices.object.tiles.Tile;
 import net.minecraft.nbt.CompoundTag;
-
 import org.jetbrains.annotations.Nullable;
 
 public class BoatRacersApp extends Application {

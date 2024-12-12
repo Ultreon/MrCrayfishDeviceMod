@@ -1,7 +1,5 @@
 package com.ultreon.devices.core;
 
-import java.io.IOException;
-
 public class DeviceFSException extends RuntimeException {
     public DeviceFSException(String message, Throwable cause) {
         super(message, cause);

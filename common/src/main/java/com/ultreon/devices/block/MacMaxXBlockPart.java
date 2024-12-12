@@ -1,7 +1,7 @@
 package com.ultreon.devices.block;
 
 import com.mojang.serialization.MapCodec;
-import dev.architectury.platform.Platform;
+import dev.ultreon.mods.xinexlib.platform.Services;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -404,7 +404,7 @@ public class MacMaxXBlockPart extends HorizontalDirectionalBlock {
     @Override
     public @NotNull MutableComponent getName() {
         MutableComponent normalName = Component.translatable("block.devices.mac_max_x");
-        if (Platform.isModLoaded("emojiful")) {
+        if (Services.isModLoaded("emojiful")) {
             return Component.translatable("block.devices.mac_max_x_emoji");
         }
         return normalName;

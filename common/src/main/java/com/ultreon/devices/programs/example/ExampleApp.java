@@ -6,7 +6,6 @@ import com.ultreon.devices.api.app.component.*;
 import com.ultreon.devices.api.task.TaskManager;
 import com.ultreon.devices.programs.example.task.TaskNotificationTest;
 import net.minecraft.nbt.CompoundTag;
-
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings({"FieldCanBeLocal", "SpellCheckingInspection"})

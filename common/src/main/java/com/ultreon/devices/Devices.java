@@ -41,29 +41,31 @@ import com.ultreon.devices.programs.system.SystemApp;
 import com.ultreon.devices.programs.system.task.*;
 import com.ultreon.devices.util.SiteRegistration;
 import com.ultreon.devices.util.Vulnerability;
-import dev.architectury.event.EventResult;
-import dev.architectury.event.events.client.ClientPlayerEvent;
-import dev.architectury.event.events.common.InteractionEvent;
-import dev.architectury.event.events.common.LifecycleEvent;
-import dev.architectury.event.events.common.PlayerEvent;
-import dev.architectury.injectables.targets.ArchitecturyTarget;
-import dev.architectury.platform.Platform;
-import dev.architectury.registry.registries.DeferredSupplier;
-import dev.architectury.registry.registries.RegistrarManager;
-import dev.architectury.utils.Env;
-import dev.architectury.utils.EnvExecutor;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import dev.ultreon.mods.xinexlib.Env;
+import dev.ultreon.mods.xinexlib.EnvExecutor;
+import dev.ultreon.mods.xinexlib.ModPlatform;
+import dev.ultreon.mods.xinexlib.event.interact.UseBlockEvent;
+import dev.ultreon.mods.xinexlib.event.server.ServerPlayerJoinEvent;
+import dev.ultreon.mods.xinexlib.event.server.ServerStartingEvent;
+import dev.ultreon.mods.xinexlib.event.server.ServerStoppedEvent;
+import dev.ultreon.mods.xinexlib.event.system.EventSystem;
+import dev.ultreon.mods.xinexlib.platform.Services;
+import dev.ultreon.mods.xinexlib.platform.services.IRegistrarManager;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -79,12 +81,11 @@ import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 public abstract class Devices {
-    public static final boolean DEVELOPER_MODE = Platform.isDevelopmentEnvironment();
+    public static final boolean DEVELOPER_MODE = Services.isDevelopmentEnvironment();
     public static final String MOD_ID = "devices";
     public static final Logger LOGGER = LoggerFactory.getLogger("Devices Mod");
 
-    public static final DeferredSupplier<CreativeModeTab> TAB_DEVICE = DeviceTab.create();
-    public static final Supplier<RegistrarManager> REGISTRIES = Suppliers.memoize(() -> RegistrarManager.get(MOD_ID));
+    public static final Supplier<IRegistrarManager> REGISTRIES = Suppliers.memoize(() -> Services.getRegistrarManager(MOD_ID));
     public static final List<SiteRegistration> SITE_REGISTRATIONS = new ProtectedArrayList<>();
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     public static final DevicesEarlyConfig EARLY_CONFIG = new DevicesEarlyConfig();
@@ -120,7 +121,7 @@ public abstract class Devices {
     }
 
     public void init() {
-        if (ArchitecturyTarget.getCurrentTarget().equals("fabric")) {
+        if (Services.getPlatformName().equals(ModPlatform.Fabric)) {
             preInit();
             serverSetup();
         }
@@ -154,13 +155,13 @@ public abstract class Devices {
         setupEvents();
 
         EnvExecutor.runInEnv(Env.CLIENT, () -> Devices::setupClientEvents); //todo
-        if (!ArchitecturyTarget.getCurrentTarget().equals("forge")) {
+        if (Services.getPlatformName() != ModPlatform.Forge) {
             loadComplete();
         }
     }
 
     public static void preInit() {
-        if (DEVELOPER_MODE && !Platform.isDevelopmentEnvironment()) {
+        if (DEVELOPER_MODE && !Services.isDevelopmentEnvironment()) {
             throw new LaunchException();
         }
 
@@ -219,7 +220,7 @@ public abstract class Devices {
         TaskManager.registerTask(TaskDeleteEmail::new);
         TaskManager.registerTask(TaskViewEmail::new);
 
-        if (Platform.isDevelopmentEnvironment() || Devices.EARLY_CONFIG.enableBetaApps) {
+        if (Services.isDevelopmentEnvironment() || Devices.EARLY_CONFIG.enableBetaApps) {
             // Auction
             TaskManager.registerTask(TaskAddAuction::new);
             TaskManager.registerTask(TaskGetAuctions::new);
@@ -234,7 +235,7 @@ public abstract class Devices {
             TaskManager.registerTask(TaskRemove::new);
         }
 
-        if (Platform.isDevelopmentEnvironment() || Devices.EARLY_CONFIG.enableDebugApps) {
+        if (Services.isDevelopmentEnvironment() || Devices.EARLY_CONFIG.enableDebugApps) {
             // Applications (Developers)
             ApplicationManager.registerApplication(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "example"), () -> ExampleApp::new, false);
             ApplicationManager.registerApplication(ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "icons"), () -> IconsApp::new, false);
@@ -251,7 +252,6 @@ public abstract class Devices {
 
     protected abstract void registerApplicationEvent();
 
-    @Environment(EnvType.CLIENT)
     protected List<Application> loadApps() {
         if (apps != null) {
             return apps;
@@ -263,10 +263,6 @@ public abstract class Devices {
 
     public static void setAllowedApps(List<AppInfo> allowedApps) {
         Devices.allowedApps = allowedApps;
-    }
-
-    public static String getModVersion() {
-        return Platform.getMod(MOD_ID).getVersion();
     }
 
     public interface ApplicationSupplier {
@@ -314,7 +310,6 @@ public abstract class Devices {
     }
 
     @NotNull
-    @Environment(EnvType.CLIENT)
     private static AppInfo generateAppInfo(ResourceLocation identifier, Class<? extends Application> clazz) {
         LOGGER.debug("Generating app info for {}", identifier.toString());
 
@@ -323,13 +318,10 @@ public abstract class Devices {
         return info;
     }
 
-    @Environment(EnvType.CLIENT)
     protected abstract Map<String, IPrint.Renderer> getRegisteredRenders();
 
-    @Environment(EnvType.CLIENT)
     protected abstract void setRegisteredRenders(Map<String, IPrint.Renderer> map);
 
-    @Environment(EnvType.CLIENT)
     public boolean registerPrint(ResourceLocation identifier, Class<? extends IPrint> classPrint) {
         LOGGER.debug("Registering print: {}", identifier.toString());
 
@@ -391,27 +383,33 @@ public abstract class Devices {
     }
 
     private static void setupEvents() {
-        LifecycleEvent.SERVER_STARTING.register((instance -> server = instance));
-        LifecycleEvent.SERVER_STOPPED.register(instance -> server = null);
-        InteractionEvent.RIGHT_CLICK_BLOCK.register(((player, hand, pos, face) -> {
+        EventSystem.MAIN.on(ServerStartingEvent.class, event -> server = event.getServer());
+        EventSystem.MAIN.on(ServerStoppedEvent.class, event -> server = null);
+
+        EventSystem.MAIN.on(UseBlockEvent.class, event -> {
+            Player player = event.getPlayer();
+            InteractionHand hand = event.getHand();
+            BlockPos blockPosition = event.getBlockPosition();
+            Block block = event.getBlock();
             Level level = player.level();
             if (!player.getItemInHand(hand).isEmpty() && player.getItemInHand(hand).getItem() == Items.PAPER) {
-                if (level.getBlockState(pos).getBlock() instanceof PrinterBlock) {
-                    return EventResult.interruptTrue();
+                if (block instanceof PrinterBlock) {
+                    event.cancel(InteractionResult.CONSUME);
                     //event.setUseBlock(Event.Result.ALLOW); //todo
                 }
             }
-            return EventResult.pass();
-        }));
+        });
 
-        PlayerEvent.PLAYER_JOIN.register((player -> {
+        EventSystem.MAIN.on(ServerPlayerJoinEvent.class, event -> {
+            ServerPlayer player = event.getPlayer();
+
             LOGGER.info("Player logged in: {}", player.getName());
 
             if (allowedApps != null) {
                 PacketHandler.sendToClient(new SyncApplicationPacket(allowedApps), player);
             }
             PacketHandler.sendToClient(new SyncConfigPacket(), player);
-        }));
+        });
     }
 
     private static void setupSiteRegistrations() {

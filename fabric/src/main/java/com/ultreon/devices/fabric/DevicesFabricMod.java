@@ -47,7 +47,8 @@ public class DevicesFabricMod extends Devices implements ModInitializer {
         }
         assert builtin != null;
         builtin.getEntrypoint().registerApplications();
-        (eve = new ArrayList<>(eve)).remove(builtin);
+        eve = new ArrayList<>(eve);
+        eve.remove(builtin);
         for (EntrypointContainer<FabricApplicationRegistration> fabricApplicationRegistrationEntrypointContainer : eve) {
             fabricApplicationRegistrationEntrypointContainer.getEntrypoint().registerApplications();
         }

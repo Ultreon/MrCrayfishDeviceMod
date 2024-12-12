@@ -1,15 +1,12 @@
 package com.ultreon.devices.item;
 
 import com.ultreon.devices.DeviceConfig;
-import com.ultreon.devices.Devices;
 import com.ultreon.devices.block.entity.NetworkDeviceBlockEntity;
 import com.ultreon.devices.block.entity.RouterBlockEntity;
 import com.ultreon.devices.core.network.Router;
 import com.ultreon.devices.init.CableData;
 import com.ultreon.devices.init.DeviceDataComponents;
 import com.ultreon.devices.util.KeyboardHelper;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -32,7 +29,7 @@ import java.util.List;
 /// @author MrCrayfish
 public class EthernetCableItem extends Item {
     public EthernetCableItem() {
-        super(new Properties().arch$tab(Devices.TAB_DEVICE).stacksTo(1));
+        super(new Properties().stacksTo(1));
     }
 
     private static double getDistance(BlockPos source, BlockPos target) {
@@ -163,7 +160,6 @@ public class EthernetCableItem extends Item {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
     }
 
-    @Environment(EnvType.CLIENT)
     @Override
     public boolean isFoil(ItemStack stack) {
         return stack.has(DeviceDataComponents.CABLE_DATA.get());

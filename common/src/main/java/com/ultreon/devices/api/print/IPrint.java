@@ -2,8 +2,6 @@ package com.ultreon.devices.api.print;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.ultreon.devices.init.DeviceBlocks;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -69,7 +67,6 @@ public interface IPrint {
 
     void fromTag(CompoundTag tag);
 
-    @Environment(EnvType.CLIENT)
     Class<? extends Renderer> getRenderer();
 
     interface Renderer {

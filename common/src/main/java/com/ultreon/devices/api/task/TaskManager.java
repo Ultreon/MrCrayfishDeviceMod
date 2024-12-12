@@ -29,7 +29,7 @@ public final class TaskManager {
     public static void registerTask(Supplier<Task> clazz) {
         var task = clazz.get();
         try {
-            Devices.LOGGER.info("Registering task '" + task.getName() + "'");
+            Devices.LOGGER.info("Registering task '{}'", task.getName());
             get().registeredRequests.put(task.getName(), task);
         } catch (Exception e) {
             e.printStackTrace();

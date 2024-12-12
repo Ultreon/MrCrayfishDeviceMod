@@ -20,7 +20,7 @@ public record SiteRegistration(String registrant, String string, Type type, Stri
     public static String getURL(String website) {
         Matcher matcher = GitWebFrame.PATTERN_LINK.matcher(website);
         if (!matcher.matches()) {
-            Devices.LOGGER.error("No Match Found For " + website + "!");
+            Devices.LOGGER.error("No Match Found For {}!", website);
             return "https://raw.githubusercontent.com/Ultreon/gitweb-sites/main/";
         }
         String domain = matcher.group("domain");
@@ -44,7 +44,7 @@ public record SiteRegistration(String registrant, String string, Type type, Stri
                 }
             }
         }
-        Devices.LOGGER.info(MARKER, "Registered Sites: " + Devices.SITE_REGISTRATIONS.size() + ", " + "URL: " + url);
+        Devices.LOGGER.info(MARKER, "Registered Sites: {}, URL: {}", Devices.SITE_REGISTRATIONS.size(), url);
         return url;
     }
 

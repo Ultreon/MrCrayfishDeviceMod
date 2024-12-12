@@ -1,7 +1,8 @@
 package com.ultreon.devices.block.entity.renderer;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.ultreon.devices.DeviceConfig;
 import com.ultreon.devices.Devices;
 import com.ultreon.devices.api.print.IPrint;
