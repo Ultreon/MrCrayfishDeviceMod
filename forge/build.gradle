@@ -6,6 +6,10 @@ plugins {
 
 version rootProject.version
 
+base {
+    archivesName = rootProject.archives_base_name + "-forge"
+}
+
 architectury {
     platformSetupLoomIde()
     forge()
