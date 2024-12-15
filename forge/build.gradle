@@ -36,7 +36,6 @@ dependencies {
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 
-    include "org.apache.commons:commons-lang3:3.11"
 //    forgeRuntimeLibrary "com.ultreon:ultranlang:0.1.0+6"
 //    implementation include("com.ultreon:ultranlang:0.1.0+6")
 }
