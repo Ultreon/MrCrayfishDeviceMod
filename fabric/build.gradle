@@ -41,20 +41,11 @@ configurations {
 dependencies {
     modImplementation "net.fabricmc:fabric-loader:$fabric_loader_version"
     modApi "net.fabricmc.fabric-api:fabric-api:$fabric_api_version"
-    // Remove the next line if you don't want to depend on the API
     modApi "dev.architectury:architectury-fabric:$architectury_version"
 
     modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:8.0.0"
     modImplementation 'com.electronwill.night-config:core:3.6.5'
     modImplementation 'com.electronwill.night-config:toml:3.6.5'
-
-//    include(implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.10"))
-//    include(implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10"))
-//    include(implementation("com.ultreon:ultranlang:0.1.0+6"))
-
-    //shadowCommon "org.jetbrains.kotlin:kotlin-reflect:1.7.10"
-    //shadowCommon "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10"
-//    shadowCommon "com.ultreon:ultranlang:0.1.0+6"
 
     modApi include("net.fabricmc:fabric-language-kotlin:1.8.2+kotlin.1.7.10")
 
@@ -69,10 +60,11 @@ dependencies {
         exclude module: "fabric-api"
     }
 
+    include "org.apache.commons:commons-lang3:3.11"
   //  modApi "curse.maven:emojiful-284324:4672307"
 }
 
-configurations.all {
+configurations.configureEach {
     resolutionStrategy {
         force("net.fabricmc:fabric-loader:$fabric_loader_version")
     }
@@ -120,19 +112,17 @@ components.java {
     }
 }
 
+
 publishing {
     publications {
-        mavenFabric(MavenPublication) {
-            System.out.println(artifactId)
-            artifactId = rootProject.archivesBaseName + "-fabric"
-            //artifactId = rootProject.archives_base_name + "-fabric" + //project.name
+        register('mavenFabric', MavenPublication) {
+            artifactId base.archivesName.get()
             from components.java
         }
     }
-
-    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
     repositories {
-        // Add repositories to publish to here.
+        maven {
+            url System.getenv('local_maven_url')
+        }
     }
-    rootProject.setupRepositories(repositories)
 }

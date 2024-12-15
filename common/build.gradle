@@ -39,17 +39,17 @@ sourceSets {
     }
 }
 
+
 publishing {
     publications {
-        mavenCommon(MavenPublication) {
-            artifactId = rootProject.archives_base_name
+        register('mavenCommon', MavenPublication) {
+            artifactId base.archivesName.get()
             from components.java
         }
     }
-
-    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
     repositories {
-        // Add repositories to publish to here.
+        maven {
+            url System.getenv('local_maven_url')
+        }
     }
-    rootProject.setupRepositories(repositories)
 }

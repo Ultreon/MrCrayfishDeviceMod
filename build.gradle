@@ -11,6 +11,10 @@ architectury {
     minecraft = minecraft_version
 }
 
+if (project.hasProperty('ci') && project.ci.toBoolean() && project.hasProperty('snapshot') && project.snapshot.toBoolean()) {
+    mod_version += '-SNAPSHOT'
+}
+
 version mod_version
 
 Object getIngameVersion() {

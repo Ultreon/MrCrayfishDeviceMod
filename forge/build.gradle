@@ -36,6 +36,7 @@ dependencies {
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 
+    include "org.apache.commons:commons-lang3:3.11"
 //    forgeRuntimeLibrary "com.ultreon:ultranlang:0.1.0+6"
 //    implementation include("com.ultreon:ultranlang:0.1.0+6")
 }
@@ -93,20 +94,17 @@ components.java {
     }
 }
 
+
 publishing {
     publications {
-        mavenForge(MavenPublication) {
-            System.out.println(artifactId)
-            artifactId = rootProject.archivesBaseName + "-forge"
-            //artifactId = rootProject.archivesBaseName + "-forge" + //project.name
+        register('mavenForge', MavenPublication) {
+            artifactId base.archivesName.get()
             from components.java
         }
     }
-
-    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
     repositories {
-        // Add repositories to publish to here.
+        maven {
+            url System.getenv('local_maven_url')
+        }
     }
-    rootProject.setupRepositories(repositories)
 }
-
