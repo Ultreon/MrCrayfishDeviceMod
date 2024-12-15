@@ -59,6 +59,11 @@ subprojects {
             url 'https://maven.quiltmc.org/repository/release/'
         }
 
+        maven {
+            name "Jitpack"
+            url "https://jitpack.io"
+        }
+
 
         maven {
             url "https://cursemaven.com"
@@ -81,6 +86,8 @@ subprojects {
             officialMojangMappings()
             parchment("org.parchmentmc.data:parchment-1.20.1:2023.09.03@zip")
         }
+
+        implementation "com.github.Ultreon:json5-api:d0a559bc9b"
 
 //        layered
         // The following line declares the yarn mappings you may select this one as well.

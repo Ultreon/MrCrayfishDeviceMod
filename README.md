@@ -8,6 +8,8 @@
 
 ## License Notes
 Some code is used from other projects with other licenses.
+* The package `io.github.xypercode.craftyconfig` and all it's subpackages are licensed under AGPL v3.
+  Originates in [Ultracraft](https://github.com/Ultreon/ultracraft)
 * The package `com.jab125` and all it's subpackages are licensed the GPL 3.0.
 * Everything in [updater/](updater) also is licensed under the GPL 3.0.
 
