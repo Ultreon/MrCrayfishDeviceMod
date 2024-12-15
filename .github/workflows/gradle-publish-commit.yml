@@ -44,7 +44,7 @@ jobs:
     # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
     # the publishing section of your build.gradle
     - name: Publish to GitHub Packages
-      run: ./gradlew publish -Pci=true -Pbranch=${{ steps.extract_branch.outputs.branch }} -Psnapshot=true
+      run: ./gradlew :common:publish :fabric:publish :forge:publish -Pci=true -Pbranch=${{ steps.extract_branch.outputs.branch }} -Psnapshot=true
       env:
         USERNAME: ${{ github.actor }}
         TOKEN: ${{ secrets.GITHUB_TOKEN }}
